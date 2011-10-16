@@ -1,0 +1,62 @@
+package com.igormaznitsa.jcpreprocessor.expression.operators;
+
+import com.igormaznitsa.jcpreprocessor.expression.Expression;
+import com.igormaznitsa.jcpreprocessor.expression.Value;
+import com.igormaznitsa.jcpreprocessor.expression.ValueType;
+import java.io.File;
+
+public final class OperatorAND extends AbstractOperator {
+
+    @Override
+    public boolean isUnary() {
+        return false;
+    }
+
+    @Override
+    public String getKeyword() {
+        return "&&";
+    }
+
+    public void execute(File currentFile, Expression stack, int index) {
+        if (!stack.areThereTwoValuesBefore(index)) 
+            throw new IllegalStateException("Operator \'&&\' needs two operands");
+
+        Value _val0 = (Value) stack.getItemAtPosition(index - 2);
+        Value _val1 = (Value) stack.getItemAtPosition(index - 1);
+
+        index -= 2;
+        stack.removeElementAt(index);
+        stack.removeElementAt(index);
+
+        switch (_val0.getType())
+        {
+            case BOOLEAN:
+                {
+                    if (_val1.getType() == ValueType.BOOLEAN)
+                    {
+                        boolean lg_result = ((Boolean) _val0.getValue()).booleanValue() && ((Boolean) _val1.getValue()).booleanValue();
+                        stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                    }
+                }
+                ;
+                break;
+            case INT:
+                {
+                    if (_val1.getType() == ValueType.INT)
+                    {
+                        long i_result = ((Long) _val0.getValue()).longValue() & ((Long) _val1.getValue()).longValue();
+                        stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
+                    }
+                }
+                ;
+                break;
+            default :
+                throw new IllegalArgumentException("Operator \'&&\' processes only either BOOLEAN or INTEGER types");
+        }
+    }
+
+    public int getPriority() {
+        return 0;
+    }
+    
+}
