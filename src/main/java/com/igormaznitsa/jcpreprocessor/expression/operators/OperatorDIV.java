@@ -17,15 +17,15 @@ public final class OperatorDIV extends AbstractOperator {
         return "/";
     }
 
-    public void execute(File currentFile, Expression _stack, int _index) {
+    public void execute(Expression _stack, int _index) {
        if (!_stack.areThereTwoValuesBefore(_index)) throw new IllegalStateException("Operation \'\\\' needs two operands");
 
         Value _val0 = (Value) _stack.getItemAtPosition(_index - 2);
         Value _val1 = (Value) _stack.getItemAtPosition(_index - 1);
 
         _index = _index - 2;
-        _stack.removeElementAt(_index);
-        _stack.removeElementAt(_index);
+        _stack.removeItemAt(_index);
+        _stack.removeItemAt(_index);
 
         if (_val0.getType() == ValueType.STRING || _val1.getType() == ValueType.STRING)
         {

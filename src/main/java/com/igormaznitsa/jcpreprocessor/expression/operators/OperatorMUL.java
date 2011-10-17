@@ -17,15 +17,15 @@ public final class OperatorMUL extends AbstractOperator {
         return "*";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
        if (!stack.areThereTwoValuesBefore(index)) throw new IllegalStateException("Operation \'*\' needs two operands");
 
         Value _val0 = (Value) stack.getItemAtPosition(index - 2);
         Value _val1 = (Value) stack.getItemAtPosition(index - 1);
 
         index = index - 2;
-        stack.removeElementAt(index);
-        stack.removeElementAt(index);
+        stack.removeItemAt(index);
+        stack.removeItemAt(index);
 
         if (_val0 == null || _val1 == null) throw new IllegalStateException("Operation \'*\' needs two operands");
 

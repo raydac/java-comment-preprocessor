@@ -12,12 +12,12 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
         return "xml_elementsnumber";
     }
 
-    public void execute(File currentFile, Expression _stack, int _index) {
+    public void execute(Expression _stack, int _index) {
         if (!_stack.isThereOneValueBefore(_index)) throw new IllegalStateException("Operation XML_ELEMENTSNUMBER needs an operand");
 
         Value _val0 = (Value)_stack.getItemAtPosition(_index-1);
         _index--;
-        _stack.removeElementAt(_index);
+        _stack.removeItemAt(_index);
 
         switch (_val0.getType())
         {

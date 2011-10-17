@@ -79,7 +79,7 @@ public final class Value implements ExpressionStackItem {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) // Boolean
         {
             return ValueType.BOOLEAN;
-        } else if (value.startsWith("\"") && value.endsWith("\"")) // String value
+        } else if (value.length()>1 && value.charAt(0)=='\"' && value.charAt(value.length()-1) == '\"') // String value
         {
             return ValueType.STRING;
         } else {

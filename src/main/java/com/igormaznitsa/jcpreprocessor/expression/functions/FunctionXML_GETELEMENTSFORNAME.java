@@ -13,16 +13,16 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
         return "xml_getelementsforname";
     }
 
-    public void execute(File currentFile, Expression _stack, int _index) {
+    public void execute(Expression _stack, int _index) {
         if (!_stack.areThereTwoValuesBefore(_index)) throw new IllegalStateException("Operation XML_GETELEMENTSFORNAME needs two operands");
 
         Value _val1 = (Value)_stack.getItemAtPosition(_index-1);
         _index--;
-        _stack.removeElementAt(_index);
+        _stack.removeItemAt(_index);
 
         Value _val0 = (Value)_stack.getItemAtPosition(_index-1);
         _index--;
-        _stack.removeElementAt(_index);
+        _stack.removeItemAt(_index);
 
         String s_tagName = "";
         Element p_element = null;

@@ -27,6 +27,8 @@ import java.util.Set;
 
 public class JCPreprocessor {
 
+    private static final ThreadLocal<JCPreprocessor> preprocessorInstances = new ThreadLocal<JCPreprocessor>();
+    
     private final Configurator configurator;
     private static final CommandLineArgumentProcessor [] COMMAND_LINE_PROCESSORS = new CommandLineArgumentProcessor [] 
     {
@@ -42,6 +44,13 @@ public class JCPreprocessor {
        new ProcessorVerbose()
     };
     
+    public static JCPreprocessor getPreprocessorInstanceForThread() {
+        return preprocessorInstances.get();
+    }
+    
+    public Configurator getConfigurator() {
+        return configurator;
+    }
     
     public JCPreprocessor(final Configurator configurator) {
         if (configurator == null) {
@@ -51,6 +60,8 @@ public class JCPreprocessor {
     }
 
     public void execute() throws IOException {
+        preprocessorInstances.set(this);
+        
         final File[] srcDirs = configurator.getParsedSourceDirectoryAsFiles();
 
         final Collection<FileReference> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
@@ -129,7 +140,7 @@ public class JCPreprocessor {
                         // Processing #ifg instruction
                         if (lg_ifenabled) {
                             s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.evaluateFormula(p_fr.getSourceFile(),s_str, configurator);
+                            Value p_value = Expression.eval(s_str);
                             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                 throw new IOException("You don't have a boolean result in the #_if instruction");
                             }
@@ -185,7 +196,7 @@ public class JCPreprocessor {
                                 throw new IOException("You have duplicated the global variable " + s_name);
                             }
 
-                            Value p_value = Expression.evaluateFormula(p_fr.getSourceFile(), s_eval, configurator);
+                            Value p_value = Expression.eval(s_eval);
                             if (p_value == null) {
                                 throw new IOException("Error value");
                             }
@@ -243,7 +254,7 @@ public class JCPreprocessor {
                         // Processing #_if instruction
                         if (lg_ifenabled) {
                             s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.evaluateFormula(p_fr.getSourceFile(), s_str, configurator);
+                            Value p_value = Expression.eval(s_str);
                             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                 throw new IOException("You don't have a boolean result in the #_if instruction");
                             }
@@ -286,7 +297,7 @@ public class JCPreprocessor {
                         if (lg_ifenabled) {
                             try {
                                 s_str = s_str.substring(12).trim();
-                                Value p_value = Expression.evaluateFormula(p_fr.getSourceFile(), s_str, configurator);
+                                Value p_value = Expression.eval(s_str);
 
                                 if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                     throw new IOException("non boolean expression");
@@ -445,7 +456,7 @@ public class JCPreprocessor {
                 if (varValue.startsWith("@")) {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
-                    evaluatedValue = Expression.evaluateFormula(cfgFile, varValue, configurator);
+                    evaluatedValue = Expression.eval(varValue);
                     if (evaluatedValue == null || evaluatedValue.getType() != ValueType.STRING) {
                         throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
                     }
@@ -454,7 +465,7 @@ public class JCPreprocessor {
                     loadVariablesFromFile(varValue, configurator);
                 } else {
                     // This is a value
-                    evaluatedValue = Expression.evaluateFormula(cfgFile, varValue, configurator);
+                    evaluatedValue = Expression.eval(varValue);
                     if (evaluatedValue == null) {
                         throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
                     }

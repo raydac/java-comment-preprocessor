@@ -200,7 +200,7 @@ public enum PreprocessorUtils {
                     String s_strVal = _string.substring(i_begin + 3, i_indx);
                     String s_rightPart = _string.substring(i_indx + 3);
 
-                    Value p_val = Expression.evaluateFormula(processingFile, s_strVal, cfg);
+                    Value p_val = Expression.eval(s_strVal);
                     if (p_val == null) {
                         throw new IOException("Error value");
                     }
@@ -214,6 +214,18 @@ public enum PreprocessorUtils {
             }
         }
         return _string;
+    }
+
+    public static String generateStringWithPrecendingSpaces(final int spacesCounter, final String tail) {
+        if (spacesCounter == 0) {
+            return tail;
+        }
+        
+        final StringBuilder result = new StringBuilder(spacesCounter+tail.length());
+        for(int li=0;li<spacesCounter;li++){
+            result.append(' ');
+        }
+        return result.append(tail).toString();
     }
 
 }

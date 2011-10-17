@@ -17,7 +17,7 @@ public final class OperatorSUB extends AbstractOperator {
         return "-";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
          Value _val0;
         Value _val1;
 
@@ -28,7 +28,7 @@ public final class OperatorSUB extends AbstractOperator {
                 _val0 = new Value("0");
                 _val1 = (Value) stack.getItemAtPosition(index - 1);
                 index = index - 1;
-                stack.removeElementAt(index);
+                stack.removeItemAt(index);
             }
             else
             {
@@ -44,8 +44,8 @@ public final class OperatorSUB extends AbstractOperator {
             _val1 = (Value) stack.getItemAtPosition(index - 1);
 
             index = index - 2;
-            stack.removeElementAt(index);
-            stack.removeElementAt(index);
+            stack.removeItemAt(index);
+            stack.removeItemAt(index);
         }
 
         if (_val0.getType() == ValueType.STRING || _val1.getType() == ValueType.STRING)

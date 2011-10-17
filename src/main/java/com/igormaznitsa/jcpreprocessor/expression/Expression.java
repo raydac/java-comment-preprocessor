@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression;
 
+import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.functions.FunctionDefinedByUser;
@@ -7,22 +8,24 @@ import com.igormaznitsa.jcpreprocessor.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorLEFTBRACKET;
 import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorRIGHTBRACKET;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
+import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public final class Expression {
 
-    private static final Map<String,AbstractOperator> OPERATORS = new HashMap<String,AbstractOperator>();
-    private static final Map<String,AbstractOperator> SHORT_OPERATORS = new HashMap<String,AbstractOperator>();
-    private static final Map<String,AbstractOperator> LONG_OPERATORS = new HashMap<String,AbstractOperator>();
-    private static final Map<String,AbstractFunction> FUNCTIONS = new HashMap<String, AbstractFunction>();
-    
+    private static final Map<String, AbstractOperator> OPERATORS = new HashMap<String, AbstractOperator>();
+    private static final Map<String, AbstractOperator> SHORT_OPERATORS = new HashMap<String, AbstractOperator>();
+    private static final Map<String, AbstractOperator> LONG_OPERATORS = new HashMap<String, AbstractOperator>();
+    private static final Map<String, AbstractFunction> FUNCTIONS = new HashMap<String, AbstractFunction>();
+
     static {
-        for(final AbstractOperator operator : AbstractOperator.ALL_OPERATORS){
+        for (final AbstractOperator operator : AbstractOperator.ALL_OPERATORS) {
             OPERATORS.put(operator.getKeyword(), operator);
             if (operator.getKeyword().length() == 1) {
                 SHORT_OPERATORS.put(operator.getKeyword(), operator);
@@ -30,34 +33,29 @@ public final class Expression {
                 LONG_OPERATORS.put(operator.getKeyword(), operator);
             }
         }
-        
-        for(final AbstractFunction function : AbstractFunction.ALL_FUNCTIONS){
+
+        for (final AbstractFunction function : AbstractFunction.ALL_FUNCTIONS) {
             FUNCTIONS.put(function.getName(), function);
         }
     }
-    
-    
-    public static final int PRIORITY_FUNCTION = 5;
     public static final int PRIORITY_VALUE = 6;
-    
     private transient final List<ExpressionStackItem> INSIDE_STACK = new ArrayList<ExpressionStackItem>();
 
-    private Expression()
-    {
+    private Expression() {
     }
-    
+
     public ExpressionStackItem getItemAtPosition(final int position) {
         return INSIDE_STACK.get(position);
     }
 
-    public void pushItem(final ExpressionStackItem item) {
+    public void pushItemOnStack(final ExpressionStackItem item) {
         if (item == null) {
             throw new NullPointerException("Item is null");
         }
         INSIDE_STACK.add(item);
     }
 
-    public ExpressionStackItem popItem(final ExpressionStackItem item) {
+    public ExpressionStackItem popItemFromStack(final ExpressionStackItem item) {
         return INSIDE_STACK.remove(INSIDE_STACK.size() - 1);
     }
 
@@ -65,7 +63,7 @@ public final class Expression {
         return INSIDE_STACK.size();
     }
 
-    public void removeElementAt(final int index) {
+    public void removeItemAt(final int index) {
         INSIDE_STACK.remove(index);
     }
 
@@ -86,124 +84,104 @@ public final class Expression {
     public boolean areThereTwoValuesBefore(final int checkingIndex) {
         boolean result = false;
         if (checkingIndex > 1) {
-            result = INSIDE_STACK.get(checkingIndex - 1).getStackItemType() == ExpressionStackItemType.VALUE 
+            result = INSIDE_STACK.get(checkingIndex - 1).getStackItemType() == ExpressionStackItemType.VALUE
                     && INSIDE_STACK.get(checkingIndex - 2).getStackItemType() == ExpressionStackItemType.VALUE;
-        } 
-        
+        }
+
         return result;
     }
 
     public boolean isThereOneValueBefore(final int checkingPosition) {
         boolean result = false;
         if (checkingPosition > 0) {
-            result =  INSIDE_STACK.get(checkingPosition - 1).getStackItemType() == ExpressionStackItemType.VALUE;
-        } 
-        
+            result = INSIDE_STACK.get(checkingPosition - 1).getStackItemType() == ExpressionStackItemType.VALUE;
+        }
+
         return result;
     }
-    
-    public static final boolean sortFormulaStack(Expression _stack) throws IOException
-    {
-        boolean lg_result = false;
 
-        for (int li = 0; li < _stack.size() - 1; li++)
-        {
-            ExpressionStackItem p_obj = _stack.getItemAtPosition(li);
+    private boolean removeAllDelimitersAndBrackets() {
+        boolean delimiterMet = false;
+        final Iterator<ExpressionStackItem> iterator = INSIDE_STACK.iterator();
+        while (iterator.hasNext()) {
+            final ExpressionStackItem item = iterator.next();
+            final Class itemClass = item.getClass();
+            if (itemClass == Delimiter.class) {
+                delimiterMet = true;
+                iterator.remove();
+            } else if (itemClass == OperatorLEFTBRACKET.class || itemClass == OperatorRIGHTBRACKET.class) {
+                iterator.remove();
+            }
+        }
+        return delimiterMet;
+    }
 
-            int i_prioritet = getPriorityForObject(p_obj);
-            int i_bracketNumber = 0;
-            boolean lg_unary = false;
+    //TODO Optimize it because it takes a lot of time!!!
+    public static boolean sortFormulaStack(final Expression expressionStack) throws IOException {
+        for (int li = 0; li < expressionStack.size() - 1; li++) {
+            final ExpressionStackItem stackItem = expressionStack.getItemAtPosition(li);
 
-            if (p_obj instanceof Delimiter)
-            {
-                lg_unary = false;
+            final int itemPriority = getPriorityForObject(stackItem);
+            int bracketNumber = 0;
+            boolean isUnary = false;
+
+            if (stackItem instanceof Delimiter) {
+                isUnary = false;
                 continue;
-            }
-            else
-            if (p_obj instanceof Value)
-            {
-                lg_unary = false;
+            } else if (stackItem instanceof Value) {
+                isUnary = false;
                 continue;
-            }
-            else if (p_obj instanceof AbstractOperator)
-            {
-                lg_unary = ((AbstractOperator)p_obj).isUnary();
-                if (p_obj instanceof OperatorLEFTBRACKET || p_obj instanceof OperatorRIGHTBRACKET) continue;
-            }
-            else if (p_obj instanceof AbstractFunction)
-            {
-                lg_unary = true;
+            } else if (stackItem instanceof AbstractOperator) {
+                isUnary = ((AbstractOperator) stackItem).isUnary();
+                if (stackItem instanceof OperatorLEFTBRACKET || stackItem instanceof OperatorRIGHTBRACKET) {
+                    continue;
+                }
+            } else if (stackItem instanceof AbstractFunction) {
+                isUnary = true;
             }
 
             int i_lioff = 0;
 
-            for (int lx = li + 1; lx < _stack.size(); lx++)
-            {
-                ExpressionStackItem p_nobj = _stack.getItemAtPosition(lx);
-                int i_priorityOfNewObj = getPriorityForObject(p_nobj);
+            for (int lx = li + 1; lx < expressionStack.size(); lx++) {
+                final ExpressionStackItem secondStackItem = expressionStack.getItemAtPosition(lx);
+                final int newObjPriority = getPriorityForObject(secondStackItem);
 
-                if (p_nobj instanceof OperatorLEFTBRACKET)
-                {
-                    i_bracketNumber++;
-                }
-                else
-                if (p_nobj instanceof OperatorRIGHTBRACKET)
-                {
-                    if (i_bracketNumber == 0)
-                    {
+                if (secondStackItem instanceof OperatorLEFTBRACKET) {
+                    bracketNumber++;
+                } else if (secondStackItem instanceof OperatorRIGHTBRACKET) {
+                    if (bracketNumber == 0) {
                         break;
+                    } else {
+                        bracketNumber--;
                     }
-                    else
-                        i_bracketNumber--;
                 }
 
-                if (i_bracketNumber == 0)
-                {
-                    if (i_priorityOfNewObj > i_prioritet)
-                    {
-                        _stack.swapElements(lx, lx - 1);
+                if (bracketNumber == 0) {
+                    if (newObjPriority > itemPriority) {
+                        expressionStack.swapElements(lx, lx - 1);
                         i_lioff = -1;
-                        if (lg_unary) break;
-                    }
-                    else
+                        if (isUnary) {
+                            break;
+                        }
+                    } else {
                         break;
+                    }
+                } else {
+                    expressionStack.swapElements(lx, lx - 1);
                 }
-                else
-                    _stack.swapElements(lx, lx - 1);
             }
             li += i_lioff;
 
-            if (i_bracketNumber != 0) throw new IOException("There is not closed blacket");
+            if (bracketNumber != 0) {
+                throw new IOException("There is not closed blacket");
+            }
         }
 
-        int li = 0;
-        while (li < _stack.size())
-        {
-            Object p_obj = _stack.getItemAtPosition(li);
-            if (p_obj instanceof Delimiter)
-            {
-                lg_result = true;
-                _stack.removeElementAt(li);
-            }
-            else
-            if (p_obj instanceof AbstractOperator)
-            {
-                if (p_obj instanceof OperatorLEFTBRACKET || p_obj instanceof OperatorRIGHTBRACKET)
-                    _stack.removeElementAt(li);
-                else
-                    li++;
-            }
-            else
-                li++;
-        }
-
-        return lg_result;
+        // remove delimiters and brackets
+        return expressionStack.removeAllDelimitersAndBrackets();
     }
 
-    
-    
-    private static final String getNumberOrVariable(String _string, int _pos) throws IOException
-    {
+    private static String getNumberOrVariable(final String inString, final int startPosition) throws IOException {
         final int TYPE_NONE = 0;
         final int TYPE_INTEGER = 1;
         final int TYPE_STRING = 2;
@@ -211,236 +189,188 @@ public final class Expression {
         final int TYPE_HEXINTEGER = 4;
         final int TYPE_FUNCTION = 5;
 
-        int i_type = TYPE_NONE;
+        int insideState = TYPE_NONE;
 
-        String s_ak = "";
+        final StringBuilder stringAccumulator = new StringBuilder(4);
 
         boolean lg_specchar = false;
-        int i_stringLength = _string.length();
+        int currentPosition = startPosition;
+        int stringLength = inString.length();
         int i_specStr = 0;
 
-        while (_pos < i_stringLength)
-        {
-            char c_char = _string.charAt(_pos++);
+        while (currentPosition < stringLength) {
+            final char readChar = inString.charAt(currentPosition++);
 
-            switch (i_type)
-            {
-                case TYPE_NONE:
-                    {
-                        switch (c_char)
-                        {
-                            case ' ':
-                                s_ak += c_char;
-                                break;
-                            case '\"':
-                                {
-                                    s_ak += c_char;
-                                    i_type = TYPE_STRING;
-                                }
-                                ;
-                                break;
-                            default :
-                                {
-                                    if ((c_char >= '0' && c_char <= '9') || c_char == '.')
-                                    {
-                                        s_ak += c_char;
-                                        i_type = TYPE_INTEGER;
-                                    }
-                                    else if (c_char == '$')
-                                    {
-                                        s_ak += c_char;
-                                        i_type = TYPE_FUNCTION;
-                                    }
-                                    else if ((c_char >= 'a' && c_char <= 'z') || (c_char >= 'A' && c_char <= 'Z') || c_char == '_')
-                                    {
-                                        s_ak += c_char;
-                                        i_type = TYPE_VARIABLE;
-                                    }
-                                    else
-                                        return ""+c_char;
-                                }
+            switch (insideState) {
+                case TYPE_NONE: {
+                    switch (readChar) {
+                        case ' ': {
+                            stringAccumulator.append(readChar);
                         }
-                    }
-                    ;
-                    break;
-                case TYPE_INTEGER:
-                    {
-                        if (c_char == 'x')
-                        {
-                            s_ak += c_char;
-                            i_type = TYPE_HEXINTEGER;
+                        break;
+                        case '\"': {
+                            stringAccumulator.append(readChar);
+                            insideState = TYPE_STRING;
                         }
-                        else if (c_char == '.' || (c_char >= '0' && c_char <= '9'))
-                        {
-                            s_ak += c_char;
-                        }
-                        else
-                            return s_ak;
-                    }
-                    ;
-                    break;
-                case TYPE_STRING:
-                    {
-                        if (lg_specchar)
-                        {
-                            switch (c_char)
-                            {
-                                case '\"':
-                                    {
-                                        s_ak += '\"';
-                                    }
-                                    ;
-                                    break;
-                                case 'n':
-                                    {
-                                        s_ak += '\n';
-                                    }
-                                    ;
-                                    break;
-                                case 'r':
-                                    {
-                                        s_ak += '\r';
-                                    }
-                                    ;
-                                    break;
-                                case '\\':
-                                    {
-                                        s_ak += '\\';
-                                    }
-                                    ;
-                                    break;
-                                default :
-                                    throw new IOException("Unknown special char");
+                        break;
+                        default: {
+                            if ((readChar >= '0' && readChar <= '9') || readChar == '.') {
+                                stringAccumulator.append(readChar);
+                                insideState = TYPE_INTEGER;
+                            } else if (readChar == '$') {
+                                stringAccumulator.append(readChar);
+                                insideState = TYPE_FUNCTION;
+                            } else if ((readChar >= 'a' && readChar <= 'z') || (readChar >= 'A' && readChar <= 'Z') || readChar == '_') {
+                                stringAccumulator.append(readChar);
+                                insideState = TYPE_VARIABLE;
+                            } else {
+                                return String.valueOf(readChar);
                             }
-                            i_specStr++;
-                            lg_specchar = false;
                         }
-                        else if (c_char == '\"')
-                        {
-                            s_ak += c_char;
-                            if (i_specStr != 0)
-                            {
-                                while (i_specStr > 0)
-                                {
-                                    s_ak += ' ';
-                                    i_specStr--;
-                                }
+                    }
+                }
+                break;
+                case TYPE_INTEGER: {
+                    if (readChar == 'x') {
+                        stringAccumulator.append(readChar);
+                        insideState = TYPE_HEXINTEGER;
+                    } else if (readChar == '.' || (readChar >= '0' && readChar <= '9')) {
+                        stringAccumulator.append(readChar);
+                    } else {
+                        return stringAccumulator.toString();
+                    }
+                }
+                break;
+                case TYPE_STRING: {
+                    if (lg_specchar) {
+                        switch (readChar) {
+                            case '\"': {
+                                stringAccumulator.append('\"');
                             }
-                            return s_ak;
+                            break;
+                            case 'n': {
+                                stringAccumulator.append('\n');
+                            }
+                            break;
+                            case 'r': {
+                                stringAccumulator.append('\r');
+                            }
+                            break;
+                            case 't': {
+                                stringAccumulator.append('\t');
+                            }
+                            break;
+                            case '\\': {
+                                stringAccumulator.append('\\');
+                            }
+                            break;
+                            default:
+                                throw new IOException("Unknown special char");
                         }
-                        else if (c_char == '\\')
-                        {
-                            lg_specchar = true;
+                        i_specStr++;
+                        lg_specchar = false;
+                    } else if (readChar == '\"') {
+                        stringAccumulator.append(readChar);
+                        if (i_specStr != 0) {
+                            while (i_specStr > 0) {
+                                stringAccumulator.append(' ');
+                                i_specStr--;
+                            }
                         }
-                        else
-                        {
-                            s_ak += c_char;
-                        }
+                        return stringAccumulator.toString();
+                    } else if (readChar == '\\') {
+                        lg_specchar = true;
+                    } else {
+                        stringAccumulator.append(readChar);
                     }
-                    ;
-                    break;
-                case TYPE_VARIABLE:
-                    {
-                        if ((c_char >= 'a' && c_char <= 'z') || (c_char >= 'A' && c_char <= 'Z') || c_char == '_' || (c_char >= '0' && c_char <= '9'))
-                        {
-                            s_ak += c_char;
-                        }
-                        else
-                            return s_ak;
+                }
+                break;
+                case TYPE_VARIABLE: {
+                    if ((readChar >= 'a' && readChar <= 'z') || (readChar >= 'A' && readChar <= 'Z') || readChar == '_' || (readChar >= '0' && readChar <= '9')) {
+                        stringAccumulator.append(readChar);
+                    } else {
+                        return stringAccumulator.toString();
                     }
-                    ;
-                    break;
-                case TYPE_FUNCTION:
-                    {
-                        if ((c_char >= 'a' && c_char <= 'z') || (c_char >= 'A' && c_char <= 'Z') || c_char == '_' || (c_char >= '0' && c_char <= '9'))
-                        {
-                            s_ak += c_char;
-                        }
-                        else
-                            return s_ak;
+                }
+                break;
+                case TYPE_FUNCTION: {
+                    if ((readChar >= 'a' && readChar <= 'z') || (readChar >= 'A' && readChar <= 'Z') || readChar == '_' || (readChar >= '0' && readChar <= '9')) {
+                        stringAccumulator.append(readChar);
+                    } else {
+                        return stringAccumulator.toString();
                     }
-                    ;
-                    break;
-                case TYPE_HEXINTEGER:
-                    {
-                        if ((c_char >= 'a' && c_char <= 'f') || (c_char >= 'A' && c_char <= 'F') || (c_char >= '0' && c_char <= '9'))
-                        {
-                            s_ak += c_char;
-                        }
-                        else
-                            return s_ak;
+                }
+                break;
+                case TYPE_HEXINTEGER: {
+                    if ((readChar >= 'a' && readChar <= 'f') || (readChar >= 'A' && readChar <= 'F') || (readChar >= '0' && readChar <= '9')) {
+                        stringAccumulator.append(readChar);
+                    } else {
+                        return stringAccumulator.toString();
                     }
-                    ;
-                    break;
+                }
+                break;
             }
         }
-        if (i_type == TYPE_STRING) throw new IOException("You have not closed string value");
-        return s_ak;
+        if (insideState == TYPE_STRING) {
+            throw new IOException("You have not closed string value");
+        }
+        return stringAccumulator.toString();
     }
 
     private static boolean isFunction(final String str) {
-        if (str.startsWith("$")) return true;
+        if (str.length() > 0 && str.charAt(0) == '$') {
+            return true;
+        }
         return FUNCTIONS.containsKey(str);
     }
-    
+
     public static Expression parseStringExpression(final String _string, final Configurator cfg) throws IOException {
-       Expression p_stack = new Expression();
+        final Expression p_stack = new Expression();
         int i_pos = 0;
-        while (i_pos < _string.length())
-        {
+        while (i_pos < _string.length()) {
             String s_ar = getOperationToken(_string, i_pos);
-            if (s_ar != null)
-            {
+            if (s_ar != null) {
                 i_pos += s_ar.length();
                 s_ar = s_ar.trim();
 
-                p_stack.pushItem(OPERATORS.get(s_ar));
+                p_stack.pushItemOnStack(OPERATORS.get(s_ar));
                 continue;
             }
 
             s_ar = getNumberOrVariable(_string, i_pos);
-            if (s_ar.length() != 0)
-            {
+            if (s_ar.length() != 0) {
                 i_pos += s_ar.length();
                 s_ar = s_ar.trim();
 
                 final Delimiter delimiter = Delimiter.valueOf(s_ar);
-                
-                if (delimiter!=null)
-                {
-                    p_stack.pushItem(delimiter);
-                }
-                else
-                if (isFunction(s_ar.toLowerCase()))
-                {
-                    final String normalizedName = s_ar.toLowerCase();
-                    if (normalizedName.charAt(0) == '$') {
+                final String s_arLc = s_ar.toLowerCase();
+
+                if (delimiter != null) {
+                    p_stack.pushItemOnStack(delimiter);
+                } else if (isFunction(s_arLc)) {
+                    if (s_arLc.charAt(0) == '$') {
                         // user defined function
-                        if (cfg.getPreprocessorExtension() == null) throw new IOException("You have an user function \""+s_ar+"\" but don't have defined an action listener");
-                        int i_args = cfg.getPreprocessorExtension().getArgumentsNumberForUserFunction(normalizedName);
-                        if (i_args<0) throw new IOException("Unknown user function \""+s_ar+"\"");
-                        p_stack.pushItem(new FunctionDefinedByUser(normalizedName, i_args, cfg));
+                        if (cfg.getPreprocessorExtension() == null) {
+                            throw new IOException("You have an user function \"" + s_ar + "\" but don't have defined an action listener");
+                        }
+                        final int i_args = cfg.getPreprocessorExtension().getArgumentsNumberForUserFunction(s_arLc);
+                        if (i_args < 0) {
+                            throw new IOException("Unknown user function \"" + s_ar + "\"");
+                        }
+                        p_stack.pushItemOnStack(new FunctionDefinedByUser(s_arLc, i_args, cfg));
                     } else {
                         // standard function
-                        p_stack.pushItem(FUNCTIONS.get(normalizedName));
+                        p_stack.pushItemOnStack(FUNCTIONS.get(s_arLc));
                     }
-                }
-                else
-                {
-                    Value p_val = cfg.findVariableForName(s_ar);
+                } else {
+                    final Value p_val = cfg.findVariableForName(s_ar);
 
-                    if (p_val != null)
-                    {
-                        p_stack.pushItem(p_val);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            p_stack.pushItem(new Value(s_ar));
-                        }
-                        catch (Exception e)
-                        {
+                    if (p_val != null) {
+                        p_stack.pushItemOnStack(p_val);
+                    } else {
+                        try {
+                            p_stack.pushItemOnStack(new Value(s_ar));
+                        } catch (Exception e) {
                             throw new IOException("Unsupported value or function \'" + s_ar + "\'");
                         }
                     }
@@ -450,100 +380,95 @@ public final class Expression {
 
         return p_stack;
     }
-    
-    private static final int getPriorityForObject(ExpressionStackItem _obj)
-    {
-        switch(_obj.getStackItemType()){
-            case VALUE : return PRIORITY_VALUE;
-            case OPERATOR : return ((AbstractOperator) _obj).getPriority();
-            case FUNCTION : return ((AbstractFunction)_obj).getPriority();
-            default: return -1;
+
+    private static final int getPriorityForObject(ExpressionStackItem _obj) {
+        switch (_obj.getStackItemType()) {
+            case VALUE:
+                return PRIORITY_VALUE;
+            case OPERATOR:
+                return ((AbstractOperator) _obj).getPriority();
+            case FUNCTION:
+                return ((AbstractFunction) _obj).getPriority();
+            default:
+                return -1;
         }
     }
 
-
-    public static final Value calculateFormulaStack(File processingFile,Expression _stack,boolean _delimetersPresented,PreprocessorExtension _actionListener) throws IOException
-    {
-        int i_indx = 0;
-        while (_stack.size() != 1)
-        {
-            if (_stack.size()==i_indx)
+    public static Value calculateFormulaStack(final Expression expressionStack, final boolean delimitersPresented, final PreprocessorExtension preprocessorExtension) throws IOException {
+        int index = 0;
+        while (expressionStack.size() != 1) {
+            if (expressionStack.size() == index) {
                 throw new IOException("Error formula");
+            }
 
-           
-            ExpressionStackItem p_obj = _stack.getItemAtPosition(i_indx);
-           
-            switch(p_obj.getStackItemType()){
-                case VALUE : {
-                    i_indx++;
-                }break;
-                case FUNCTION : {
+            ExpressionStackItem p_obj = expressionStack.getItemAtPosition(index);
+
+            switch (p_obj.getStackItemType()) {
+                case VALUE: {
+                    index++;
+                }
+                break;
+                case FUNCTION: {
                     AbstractFunction p_func = (AbstractFunction) p_obj;
-                    p_func.execute(processingFile,_stack, i_indx);
-                    i_indx -= p_func.getArity();
-                }break;
-                case OPERATOR : {
-                     ((AbstractOperator)p_obj).execute(processingFile, _stack, i_indx);
-                    i_indx = 0;                   
-                }break;
-                default: throw new IllegalArgumentException("Unsupportes object on stack");
+                    p_func.execute(expressionStack, index);
+                    index -= p_func.getArity();
+                }
+                break;
+                case OPERATOR: {
+                    ((AbstractOperator) p_obj).execute(expressionStack, index);
+                    index = 0;
+                }
+                break;
+                default:
+                    throw new IllegalArgumentException("Unsupportes object on stack");
             }
         }
-        if (!_delimetersPresented && _stack.size() > 1) throw new IOException("There is an operand without an operation");
-        return _delimetersPresented ? _stack.size()>1 ? null : (Value) _stack.getItemAtPosition(0) : (Value) _stack.getItemAtPosition(0);
+        if (!delimitersPresented && expressionStack.size() > 1) {
+            throw new IOException("There is an operand without an operation");
+        }
+        return delimitersPresented ? expressionStack.size() > 1 ? null : (Value) expressionStack.getItemAtPosition(0) : (Value) expressionStack.getItemAtPosition(0);
     }
 
-    public static final Value evaluateFormula(File processingFile, String _string, final Configurator cfg) throws IOException
-    {
-        Expression p_stack = parseStringExpression(_string, cfg);
+    public static final Value eval(final String expression) throws IOException {
+        Configurator configurator = null;
+        final JCPreprocessor preprocessorInstance = JCPreprocessor.getPreprocessorInstanceForThread();
+        if (preprocessorInstance != null) {
+            configurator = preprocessorInstance.getConfigurator();
+        }
 
-//        p_stack.printFormulaStack();
-//        System.out.println("-------------");
-         boolean lg_delimeters = sortFormulaStack(p_stack);
-
-//        p_stack.printFormulaStack();
-
-        return calculateFormulaStack(processingFile, p_stack,lg_delimeters,cfg.getPreprocessorExtension());
+        final Expression parsedStack = parseStringExpression(expression, configurator);
+        final boolean delimitersPresented = sortFormulaStack(parsedStack);
+        return calculateFormulaStack(parsedStack, delimitersPresented, getPreprocessorExtension(configurator));
     }
 
-    public static final String getOperationToken(String _string, int _position)
-    {
-        String s_spaces = "";
-        while (_position < _string.length())
-        {
-            if (_string.charAt(_position) == ' ')
-            {
-                s_spaces += ' ';
+    private static PreprocessorExtension getPreprocessorExtension(final Configurator cfg) {
+        return cfg == null ? null : cfg.getPreprocessorExtension();
+    }
+
+    public static String getOperationToken(String _string, int _position) {
+        int spacesCounter = 0;
+        while (_position < _string.length()) {
+            if (_string.charAt(_position) == ' ') {
+                spacesCounter++;
                 _position++;
                 continue;
             }
             break;
         }
 
-        if (_position + 1 < _string.length())
-        {
+        if (_position + 1 < _string.length()) {
             // Checking  for long operations
-            String s_str = _string.substring(_position, _position + 2);
-            if (LONG_OPERATORS.containsKey(s_str)){
-                return s_spaces + s_str;
+            final String s_str = _string.substring(_position, _position + 2);
+            if (LONG_OPERATORS.containsKey(s_str)) {
+                return PreprocessorUtils.generateStringWithPrecendingSpaces(spacesCounter, s_str);
             }
         }
 
-        
-        String s_str = "" + _string.charAt(_position);
-        if (SHORT_OPERATORS.containsKey(s_str)){
-            return s_spaces + s_str;
+
+        final String s_str = String.valueOf(_string.charAt(_position));
+        if (SHORT_OPERATORS.containsKey(s_str)) {
+            return PreprocessorUtils.generateStringWithPrecendingSpaces(spacesCounter, s_str);
         }
         return null;
     }
-
-    
-    public static final Value evaluateFormula(File processingFile, Expression _formula,PreprocessorExtension _actionListener) throws IOException
-    {
-        boolean lg_delimeters = sortFormulaStack(_formula);
-
-        return calculateFormulaStack(processingFile, _formula,lg_delimeters,_actionListener);
-    }
-
-    
 }

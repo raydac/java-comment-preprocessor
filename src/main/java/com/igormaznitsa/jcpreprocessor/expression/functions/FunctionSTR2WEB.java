@@ -11,11 +11,11 @@ public final class FunctionSTR2WEB extends AbstractFunction {
         return "str2web";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
        if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation STR2WEB needs an operand");
 
         Value p_val = (Value)stack.getItemAtPosition(index-1);
-        stack.removeElementAt(index);
+        stack.removeItemAt(index);
 
         switch (p_val.getType())
         {

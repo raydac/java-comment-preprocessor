@@ -192,7 +192,7 @@ public final class FileReference {
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#exitif")) {
                     // To end processing the file processing immediatly if the value is true
                     stringToBeProcessed = PreprocessorUtils.extractTrimmedTail("//#exitif", stringToBeProcessed);
-                    final Value condition = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                    final Value condition = Expression.eval(stringToBeProcessed);
                     if (condition == null || condition.getType() != ValueType.BOOLEAN) {
                         throw new IOException("You must use a boolean argument for an #endif operator");
                     }
@@ -223,7 +223,7 @@ public final class FileReference {
                     // To end processing the file immediatly
                     if (processingEnabled) {
                         stringToBeProcessed = stringToBeProcessed.substring(8).trim();
-                        Value p_value = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                        Value p_value = Expression.eval(stringToBeProcessed);
                         if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                             throw new IOException("You don't have a boolean result in the #while instruction");
                         }
@@ -286,7 +286,7 @@ public final class FileReference {
                     // Processing #if instruction
                     if (processingEnabled) {
                         stringToBeProcessed = stringToBeProcessed.substring(5).trim();
-                        Value p_value = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                        Value p_value = Expression.eval(stringToBeProcessed);
                         if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                             throw new IOException("You don't have a boolean result in the #if instruction");
                         }
@@ -317,7 +317,7 @@ public final class FileReference {
                     if (processingEnabled) {
                         try {
                             stringToBeProcessed = stringToBeProcessed.substring(9).trim();
-                            Value p_value = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                            Value p_value = Expression.eval(stringToBeProcessed);
                             
                             if (p_value == null || p_value.getType() != ValueType.STRING) {
                                 throw new IOException("non string expression");
@@ -332,7 +332,7 @@ public final class FileReference {
                     if (processingEnabled) {
                         try {
                             stringToBeProcessed = stringToBeProcessed.substring(10).trim();
-                            Value p_value = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                            Value p_value = Expression.eval(stringToBeProcessed);
                             
                             if (p_value == null || p_value.getType() != ValueType.STRING) {
                                 throw new IOException("non string expression");
@@ -429,9 +429,9 @@ public final class FileReference {
                     // Вызов внешнего обработчика, если есть
                     if (configurator.getPreprocessorExtension() != null) {
                         stringToBeProcessed = stringToBeProcessed.substring(9).trim();
-                        Expression p_stack =Expression.parseStringExpression(stringToBeProcessed, configurator);
+                        Expression p_stack = Expression.parseStringExpression(stringToBeProcessed, configurator);
                         Expression.sortFormulaStack(p_stack);
-                        Expression.calculateFormulaStack(getSourceFile(), p_stack, true, configurator.getPreprocessorExtension());
+                        Expression.calculateFormulaStack(p_stack, true, configurator.getPreprocessorExtension());
                         
                         Value[] ap_results = new Value[p_stack.size()];
                         for (int li = 0; li < p_stack.size(); li++) {
@@ -449,7 +449,7 @@ public final class FileReference {
                 } else if (processingEnabled && flagOutputEnabled && stringToBeProcessed.startsWith("//#include")) {
                     // include a file with the path to the place (with processing)
                     stringToBeProcessed = stringToBeProcessed.substring(10).trim();
-                    Value p_value = Expression.evaluateFormula(getSourceFile(), stringToBeProcessed, configurator);
+                    Value p_value = Expression.eval(stringToBeProcessed);
                     
                     if (p_value == null || p_value.getType() != ValueType.STRING) {
                         throw new IOException("You don't have a string result in the #include instruction");
@@ -625,7 +625,7 @@ public final class FileReference {
                 throw new IOException("Wrong expression ["+_str+']');
             }
 
-            Value p_value = Expression.evaluateFormula(getSourceFile(), splitted[1].trim(), cfg);
+            Value p_value = Expression.eval(splitted[1].trim());
 
             if (p_value == null) throw new IOException("Error value");
 

@@ -11,12 +11,12 @@ public final class FunctionSTR2INT extends AbstractFunction {
         return "str2int";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
         if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation STR2INT needs an operand");
 
         Value _val0 = (Value)stack.getItemAtPosition(index-1);
         index--;
-        stack.removeElementAt(index);
+        stack.removeItemAt(index);
 
         switch (_val0.getType())
         {

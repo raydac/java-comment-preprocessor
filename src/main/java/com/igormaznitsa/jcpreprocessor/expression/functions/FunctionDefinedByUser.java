@@ -39,7 +39,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
         return argsNumber;
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
         Value[] ap_values = new Value[argsNumber];
 
         int i_arg = argsNumber;
@@ -50,7 +50,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
                 }
                 Object p_obj = stack.getItemAtPosition(index - 1);
                 index--;
-                stack.removeElementAt(index);
+                stack.removeItemAt(index);
 
                 if (p_obj instanceof Value) {
                     ap_values[i_arg - 1] = (Value) p_obj;

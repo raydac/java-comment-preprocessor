@@ -15,7 +15,7 @@ public final class OperatorRIGHTBRACKET extends AbstractOperator {
         return ")";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
         throw new UnsupportedOperationException("Can't be executed");
     }
 

@@ -17,7 +17,7 @@ public final class OperatorAND extends AbstractOperator {
         return "&&";
     }
 
-    public void execute(File currentFile, Expression stack, int index) {
+    public void execute(Expression stack, int index) {
         if (!stack.areThereTwoValuesBefore(index)) 
             throw new IllegalStateException("Operator \'&&\' needs two operands");
 
@@ -25,8 +25,8 @@ public final class OperatorAND extends AbstractOperator {
         Value _val1 = (Value) stack.getItemAtPosition(index - 1);
 
         index -= 2;
-        stack.removeElementAt(index);
-        stack.removeElementAt(index);
+        stack.removeItemAt(index);
+        stack.removeItemAt(index);
 
         switch (_val0.getType())
         {

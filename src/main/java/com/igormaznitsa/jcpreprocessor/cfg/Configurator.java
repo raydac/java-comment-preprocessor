@@ -185,7 +185,7 @@ public final class Configurator {
         
         Value calculatedValue = null;
         try {
-            calculatedValue = Expression.evaluateFormula(null, pair[1],this);
+            calculatedValue = Expression.eval(pair[1]);
             if (calculatedValue == null) {
                 throw new RuntimeException("Error value [" + valueDescription + ']');
             }
