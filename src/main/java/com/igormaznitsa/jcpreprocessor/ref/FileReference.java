@@ -3,6 +3,8 @@ package com.igormaznitsa.jcpreprocessor.ref;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemType;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -429,14 +431,13 @@ public final class FileReference {
                     // Вызов внешнего обработчика, если есть
                     if (configurator.getPreprocessorExtension() != null) {
                         stringToBeProcessed = stringToBeProcessed.substring(9).trim();
-                        Expression p_stack = Expression.parseStringExpression(stringToBeProcessed, configurator);
-                        Expression.sortFormulaStack(p_stack);
-                        Expression.calculateFormulaStack(p_stack, true, configurator.getPreprocessorExtension());
+                        Expression p_stack = Expression.parseExpression(stringToBeProcessed);
+                        p_stack.eval();
                         
                         Value[] ap_results = new Value[p_stack.size()];
                         for (int li = 0; li < p_stack.size(); li++) {
-                            Object p_obj = p_stack.getItemAtPosition(li);
-                            if (!(p_obj instanceof Value)) {
+                            ExpressionStackItem p_obj = p_stack.getItemAtPosition(li);
+                            if (p_obj.getStackItemType()!=ExpressionStackItemType.VALUE) {
                                 throw new IOException("Error arguments list \'" + stringToBeProcessed + "\'");
                             }
                             ap_results[li] = (Value) p_obj;

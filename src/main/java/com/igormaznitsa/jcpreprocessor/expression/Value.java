@@ -152,7 +152,7 @@ public final class Value implements ExpressionStackItem {
     }
 
     public int getPriority() {
-        return Expression.PRIORITY_VALUE;
+        return 6;
     }
 
     

@@ -1,8 +1,10 @@
 package com.igormaznitsa.jcpreprocessor.utils;
 
+import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
+import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +17,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 public enum PreprocessorUtils {
+
     ;
     public static String getFileExtension(final File file) {
         if (file == null) {
@@ -97,30 +100,32 @@ public enum PreprocessorUtils {
         if (reader != null) {
             try {
                 reader.close();
-            }catch(IOException ex){}
+            } catch (IOException ex) {
+            }
         }
     }
-    
+
     public static BufferedReader makeFileReader(final File file, final String charset) throws IOException {
-        if (file == null)
+        if (file == null) {
             throw new NullPointerException("File is null");
-        
-        if (charset == null)
-            throw new NullPointerException("Charset is null");
-        
-        if (!Charset.isSupported(charset)) {
-            throw new IllegalArgumentException("Unsupported charset ["+charset+']');
         }
-        
+
+        if (charset == null) {
+            throw new NullPointerException("Charset is null");
+        }
+
+        if (!Charset.isSupported(charset)) {
+            throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
+        }
+
         return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
     }
-    
-    public static String [] replaceChar(final String [] source, final char toBeReplaced, final char replacement)
-    {
-        final String [] result = new String[source.length];
+
+    public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
+        final String[] result = new String[source.length];
         int index = 0;
-        for(final String curStr : source) {
-            result [index ++] = curStr.replace(toBeReplaced, replacement); 
+        for (final String curStr : source) {
+            result[index++] = curStr.replace(toBeReplaced, replacement);
         }
         return result;
     }
@@ -128,23 +133,23 @@ public enum PreprocessorUtils {
     public static String extractTrimmedTail(final String prefix, final String value) {
         return extractTail(prefix, value).trim();
     }
-    
+
     public static String extractTail(final String prefix, final String value) {
         if (prefix == null) {
             throw new NullPointerException("Prefix is null");
         }
-        
+
         if (value == null) {
             throw new NullPointerException("Value is null");
         }
-        
-        if (prefix.length()>value.length()) {
+
+        if (prefix.length() > value.length()) {
             throw new IllegalArgumentException("Prefix is taller than the value");
         }
-        
+
         return value.substring(prefix.length());
     }
-    
+
     public static void copyFile(final File source, final File dest) throws IOException {
         if (source == null) {
             throw new NullPointerException("Source file is null");
@@ -158,10 +163,10 @@ public enum PreprocessorUtils {
             throw new IllegalArgumentException("Source file is directory");
         }
 
-        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()){
-            throw new IOException("Can't make directory ["+dest.getParentFile().getCanonicalPath()+']');
+        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
+            throw new IOException("Can't make directory [" + dest.getParentFile().getCanonicalPath() + ']');
         }
-        
+
 
         final FileChannel fileSrc = new FileInputStream(source).getChannel();
         try {
@@ -220,12 +225,43 @@ public enum PreprocessorUtils {
         if (spacesCounter == 0) {
             return tail;
         }
-        
-        final StringBuilder result = new StringBuilder(spacesCounter+tail.length());
-        for(int li=0;li<spacesCounter;li++){
+
+        final StringBuilder result = new StringBuilder(spacesCounter + tail.length());
+        for (int li = 0; li < spacesCounter; li++) {
             result.append(' ');
         }
         return result.append(tail).toString();
     }
 
+    public static Configurator getConfiguratorForThread() {
+        final JCPreprocessor preprocessorInstance = JCPreprocessor.getPreprocessorInstanceForThread();
+        if (preprocessorInstance == null) {
+            return null;
+        } else {
+            return preprocessorInstance.getConfigurator();
+        }
+    }
+
+    public static PreprocessorExtension getPreprocessorExtension(final Configurator cfg) {
+        return cfg == null ? null : cfg.getPreprocessorExtension();
+    }
+
+    public static PreprocessorExtension getPreprocessorExtensionForThread() {
+        final JCPreprocessor preprocessorInstance = JCPreprocessor.getPreprocessorInstanceForThread();
+        if (preprocessorInstance == null) {
+            return null;
+        } else {
+            final Configurator cfg = preprocessorInstance.getConfigurator();
+            return cfg == null ? null : cfg.getPreprocessorExtension();
+        }
+    }
+    
+    public static boolean isCharAllowedAtHexNumber(final char chr) {
+        return (chr>='a' && chr<='f') || (chr>='A' && chr<='F') || (chr>='0' && chr<='9');
+    }
+    
+    public static boolean isCharAllowedInVariableOrFunctionName(final char chr) {
+        return chr=='_' || Character.isLetterOrDigit(chr);
+    }
+    
 }
