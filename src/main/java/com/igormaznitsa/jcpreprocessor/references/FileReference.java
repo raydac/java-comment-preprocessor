@@ -1,6 +1,7 @@
-package com.igormaznitsa.jcpreprocessor.ref;
+package com.igormaznitsa.jcpreprocessor.references;
 
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.directives.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
@@ -85,47 +86,13 @@ public final class FileReference {
         return str.startsWith("//#_if") || str.startsWith("//#_else") || str.startsWith("//#_endif") || str.startsWith("//#global") || str.startsWith("//#exclude");
     }
     
-    public void preprocessFile(final Configurator configurator) throws IOException {
+    public void preprocess(final Configurator configurator) throws IOException {
         configurator.clearLocalVariables();
         
-        String lastIfFileName = null;
-        String lastWhileFileName = null;
-        int lastIfStringNumber = 0;
-        int lastWhileStringNumber = 0;
-        
-        BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(getSourceFile(),configurator.getCharacterEncoding());
-        // We need read whole file into memory
-        List<String> currentFileStringContainer = new ArrayList<String>(5000);
-        try {
-            while (true) {
-                final String nextLine = srcBufferedReader.readLine();
-                
-                // we need have null at the end of the list
-                currentFileStringContainer.add(nextLine);
-                if (nextLine == null) {
-                    break;
-                }
-            }
-        } finally {
-            srcBufferedReader.close();
-            srcBufferedReader = null;
-        }
-        
-        boolean flagOutputEnabled = true;
-        boolean flagIfEnabled = true;
-        boolean flagToCommentNextLine = false;
-        boolean flagNoContinueCommand = true;
-        boolean flagNoBreakCommand = true;
-        
-        int stringNumberCounter = 0;
-        int ifConstructionCounter = 0;
-        int whileConstructionCounter = 0;
-        int activeWhileConstructionCounter = 0;
-        int activeIfConstructionCounter = 0;
-        String filePath = getSourceFile().getCanonicalPath();
+        ParameterContainer paramContainer = new ParameterContainer(getSourceFile());
+        paramContainer.setStrings(PreprocessorUtils.readTextFileAndAddNullAtEnd(getSourceFile(), configurator.getCharacterEncoding()));
         
         final LinkedList<IncludeReference> includeReferenceStack = new LinkedList<IncludeReference>();
-        boolean flagEndPreprocessing = false;
         File preprocessingFile = getSourceFile();
         
         final ByteArrayOutputStream normalDataBuffer = new ByteArrayOutputStream(64000);
@@ -139,15 +106,14 @@ public final class FileReference {
         PrintStream currentTextOutStream = normalTextOutStream;
         
         final LinkedList<String> fileNameStack = new LinkedList<String>();
-        fileNameStack.add(filePath);
+        fileNameStack.add(paramContainer.getCurrentFileCanonicalPath());
         
         final LinkedList<Integer> whileIndexesStack = new LinkedList<Integer>();
         
         try {
             while (true) {
-                String nonTrimmedProcessingString = currentFileStringContainer.get(stringNumberCounter++);
-                
-                if (flagEndPreprocessing) {
+                String nonTrimmedProcessingString = paramContainer.nextLine();                
+                if (paramContainer.shouldEndPreprocessing()) {
                     nonTrimmedProcessingString = null;
                 }
                 
@@ -155,11 +121,9 @@ public final class FileReference {
                     if (!includeReferenceStack.isEmpty()) {
                         IncludeReference p_inRef = includeReferenceStack.pop();
                         preprocessingFile = p_inRef.getFile();
-                        currentFileStringContainer = p_inRef.getStrings();
-                        stringNumberCounter = p_inRef.getStringCounter();
-                        flagEndPreprocessing = false;
+                        paramContainer.setStrings(p_inRef.getStrings()).setCurrentStringIndex(p_inRef.getStringCounter()).setEndPreprocessing(false);
                         fileNameStack.pop();
-                        filePath = fileNameStack.getFirst();
+                        paramContainer.setCurrentFileCanonicalPath(fileNameStack.getFirst());
                         continue;
                     } else {
                         break;
@@ -170,7 +134,7 @@ public final class FileReference {
                 
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
                 
-                boolean processingEnabled = flagNoBreakCommand && flagIfEnabled && flagNoContinueCommand;
+                boolean processingEnabled = paramContainer.isThereNoBreakCommand() && paramContainer.isIfEnabled() &&  paramContainer.isThereNoContinueCommand();
                 
                 String stringToBeProcessed;
                 
@@ -185,7 +149,7 @@ public final class FileReference {
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#local")) {
                     // Processing of a local variable definition
                     stringToBeProcessed = PreprocessorUtils.extractTrimmedTail("//#local", stringToBeProcessed);
-                    processLocalDefiniting(stringToBeProcessed, configurator);
+                    processLocalDefinition(stringToBeProcessed, configurator);
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#define")) {
                     // Processing of a local definition
                     final String name = PreprocessorUtils.extractTrimmedTail("//#define",stringToBeProcessed);
@@ -199,27 +163,27 @@ public final class FileReference {
                         throw new IOException("You must use a boolean argument for an #endif operator");
                     }
                     if (((Boolean) condition.getValue()).booleanValue()) {
-                        flagEndPreprocessing = true;
+                        paramContainer.setEndPreprocessing(true);
                         continue;
                     }
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#exit")) {
                     // To end processing the file immediatly
-                    flagEndPreprocessing = true;
+                    paramContainer.setEndPreprocessing(true);
                     continue;
                 } else if (stringToBeProcessed.startsWith("//#continue")) {
-                    if (whileConstructionCounter == 0) {
+                    if (paramContainer.getWhileCounter() == 0) {
                         throw new IOException("You have #continue without #when");
                     }
-                    if (processingEnabled && whileConstructionCounter == activeWhileConstructionCounter) {
-                        flagNoContinueCommand = false;
+                    if (processingEnabled && paramContainer.getWhileCounter() == paramContainer.getActiveWhileCounter()) {
+                        paramContainer.setThereIsNoContinueCommand(false);
                     }
                 } else if (stringToBeProcessed.startsWith("//#break")) {
-                    if (whileConstructionCounter == 0) {
+                    if (paramContainer.getWhileCounter() == 0) {
                         throw new IOException("You have #break without #when");
                     }
                     
-                    if (processingEnabled && whileConstructionCounter == activeWhileConstructionCounter) {
-                        flagNoBreakCommand = false;
+                    if (processingEnabled && paramContainer.getWhileCounter() == paramContainer.getActiveWhileCounter()) {
+                        paramContainer.setThereIsNoBreakCommand(false);
                     }
                 } else if (stringToBeProcessed.startsWith("//#while")) {
                     // To end processing the file immediatly
@@ -229,23 +193,23 @@ public final class FileReference {
                         if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                             throw new IOException("You don't have a boolean result in the #while instruction");
                         }
-                        if (whileConstructionCounter == 0) {
-                            lastWhileFileName = filePath;
-                            lastWhileStringNumber = stringNumberCounter;
+                        if (paramContainer.getWhileCounter() == 0) {
+                            paramContainer.setLastWhileFileName(paramContainer.getCurrentFileCanonicalPath());
+                            paramContainer.setLastWhileStringNumber(paramContainer.getCurrentStringIndex());
                         }
-                        whileConstructionCounter++;
-                        activeWhileConstructionCounter = whileConstructionCounter;
+                        paramContainer.setWhileCounter(paramContainer.getWhileCounter()+1);
+                        paramContainer.setActiveWhileCounter(paramContainer.getWhileCounter());
                         
                         if (((Boolean) p_value.getValue()).booleanValue()) {
-                            flagNoBreakCommand = true;
+                            paramContainer.setThereIsNoBreakCommand(true);
                         } else {
-                            flagNoBreakCommand = false;
+                            paramContainer.setThereIsNoBreakCommand(false);
                         }
                     } else {
-                        whileConstructionCounter++;
+                        paramContainer.setWhileCounter(paramContainer.getWhileCounter()+1);
                     }
                     
-                    whileIndexesStack.push(new Integer(stringNumberCounter - 1));
+                    whileIndexesStack.push(new Integer(paramContainer.getCurrentStringIndex() - 1));
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#prefix+")) {
                     currentTextOutStream = prefixTextOutStream;
                     continue;
@@ -431,7 +395,7 @@ public final class FileReference {
                     // Вызов внешнего обработчика, если есть
                     if (configurator.getPreprocessorExtension() != null) {
                         stringToBeProcessed = stringToBeProcessed.substring(9).trim();
-                        Expression p_stack = Expression.parseExpression(stringToBeProcessed);
+                        Expression p_stack = Expression.prepare(stringToBeProcessed);
                         p_stack.eval();
                         
                         Value[] ap_results = new Value[p_stack.size()];
@@ -464,18 +428,7 @@ public final class FileReference {
                         p_inclFile = new File(getSourceFile().getParent(), s_fName);
                         
                         preprocessingFile = p_inclFile;
-                        
-                        srcBufferedReader = PreprocessorUtils.makeFileReader(p_inclFile,configurator.getCharacterEncoding());
-                        currentFileStringContainer = new ArrayList(2000);
-                        while (true) {
-                            String s_s = srcBufferedReader.readLine();
-                            currentFileStringContainer.add(s_s);
-                            if (s_s == null) {
-                                break;
-                            }
-                        }
-                        srcBufferedReader.close();
-                        srcBufferedReader = null;
+                        currentFileStringContainer = PreprocessorUtils.readTextFileAndAddNullAtEnd(p_inclFile, configurator.getCharacterEncoding());
                     } catch (FileNotFoundException e) {
                         throw new IOException("You have got the bad file pointer in the #include instruction [" + s_fName + "]");
                     }
@@ -618,9 +571,9 @@ public final class FileReference {
         }
     }
     
-   private void processLocalDefiniting(String _str, Configurator cfg) throws IOException
+   private void processLocalDefinition(String _str, Configurator cfg) throws IOException
     {
-            final String [] splitted = _str.split("=");
+            final String [] splitted = PreprocessorUtils.splitForChar(_str,'=');
         
             if (splitted.length!=2) {
                 throw new IOException("Wrong expression ["+_str+']');

@@ -2,7 +2,7 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 
-public class ProcessorVerbose implements CommandLineArgumentProcessor {
+public class VerboseHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/V";
     

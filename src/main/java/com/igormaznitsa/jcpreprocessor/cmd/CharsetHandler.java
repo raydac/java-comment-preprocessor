@@ -3,25 +3,25 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
-public class ProcessorSourceDirectory implements CommandLineArgumentProcessor {
+public class CharsetHandler implements CommandLineHandler {
 
-    private static final String ARG_NAME = "/I:";
+    private static final String ARG_NAME = "/T:";
     
+    public String getKeyName() {
+        return ARG_NAME;
+    }
+
     public String getDescription() {
-        return "set the source root directory to be preprocessed, default is "+Configurator.DEFAULT_SOURCE_DIRECTORY;
+        return "set the charset for processing text files, default value is "+Configurator.DEFAULT_CHARSET;
     }
 
     public boolean processArgument(final String argument, final Configurator configurator) {
         if (argument.toUpperCase().startsWith(ARG_NAME)){
-            configurator.setSourceDirectory(PreprocessorUtils.extractTail(ARG_NAME, argument));
+            configurator.setCharacterEncoding(PreprocessorUtils.extractTail(ARG_NAME, argument));
             return true;
         } else {
             return false;
         }
-    }
-
-    public String getKeyName() {
-        return ARG_NAME;
     }
     
 }

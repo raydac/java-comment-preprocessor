@@ -1,18 +1,18 @@
 package com.igormaznitsa.jcpreprocessor;
 
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
-import com.igormaznitsa.jcpreprocessor.cmd.CommandLineArgumentProcessor;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorCharset;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorClearDstDirectory;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorDestinationDirectory;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorExcludedFileExtensions;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorHelp;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorProcessingFileExtensions;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorRemoveComments;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorSourceDirectory;
-import com.igormaznitsa.jcpreprocessor.cmd.ProcessorVerbose;
+import com.igormaznitsa.jcpreprocessor.cmd.CommandLineHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.CharsetHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.ClearDstDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.DestinationDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.ExcludedFileExtensionsHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.HelpHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.FileExtensionsHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.RemoveCommentsHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.SourceDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmd.VerboseHandler;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
-import com.igormaznitsa.jcpreprocessor.ref.FileReference;
+import com.igormaznitsa.jcpreprocessor.references.FileReference;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -30,18 +30,18 @@ public class JCPreprocessor {
     private static final ThreadLocal<JCPreprocessor> preprocessorInstances = new ThreadLocal<JCPreprocessor>();
     
     private final Configurator configurator;
-    private static final CommandLineArgumentProcessor [] COMMAND_LINE_PROCESSORS = new CommandLineArgumentProcessor [] 
+    private static final CommandLineHandler [] COMMAND_LINE_PROCESSORS = new CommandLineHandler [] 
     {
-       new ProcessorHelp(),
-       new ProcessorVerbose(),
-       new ProcessorCharset(),
-       new ProcessorClearDstDirectory(),
-       new ProcessorSourceDirectory(),
-       new ProcessorDestinationDirectory(),
-       new ProcessorProcessingFileExtensions(),
-       new ProcessorExcludedFileExtensions(),
-       new ProcessorRemoveComments(),
-       new ProcessorVerbose()
+       new HelpHandler(),
+       new VerboseHandler(),
+       new CharsetHandler(),
+       new ClearDstDirectoryHandler(),
+       new SourceDirectoryHandler(),
+       new DestinationDirectoryHandler(),
+       new FileExtensionsHandler(),
+       new ExcludedFileExtensionsHandler(),
+       new RemoveCommentsHandler(),
+       new VerboseHandler()
     };
     
     public static JCPreprocessor getPreprocessorInstanceForThread() {
@@ -79,7 +79,7 @@ public class JCPreprocessor {
                 PreprocessorUtils.copyFile(fileRef.getSourceFile(), new File(configurator.getDestinationDirectoryAsFile(),fileRef.getDestinationFilePath()));
                 continue;
             } else {
-                fileRef.preprocessFile(configurator);
+                fileRef.preprocess(configurator);
             }
         }
 
@@ -123,7 +123,7 @@ public class JCPreprocessor {
                 if (p_fr.isOnlyForCopy()) {
                     continue;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding());
+                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding(),-1);
                 boolean lg_ifenabled = true;
                 i_stringLine = 0;
 
@@ -237,7 +237,7 @@ public class JCPreprocessor {
                 if (p_fr.isOnlyForCopy()) {
                     continue;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding());
+                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding(),-1);
                 boolean lg_ifenabled = true;
                 i_stringLine = 0;
 
@@ -392,10 +392,10 @@ public class JCPreprocessor {
 
         for(final String arg : args){
             boolean processed = false;
-            for(final CommandLineArgumentProcessor processor : COMMAND_LINE_PROCESSORS){
+            for(final CommandLineHandler processor : COMMAND_LINE_PROCESSORS){
                 if (processor.processArgument(arg, result)){
                     processed = true;
-                    if (processor instanceof ProcessorHelp){
+                    if (processor instanceof HelpHandler){
                         help();
                         System.exit(1);
                     }
@@ -419,7 +419,7 @@ public class JCPreprocessor {
             throw new IOException("I can't find the file " + cfgFile.getPath());
         }
 
-        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, configurator.getCharacterEncoding());
+        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, configurator.getCharacterEncoding(),-1);
         try {
             int strCounter = 0;
 
@@ -438,7 +438,7 @@ public class JCPreprocessor {
 
                 readString = PreprocessorUtils.processMacros(cfgFile, readString, configurator);
 
-                String[] parsedValue = readString.split("=");
+                String[] parsedValue = PreprocessorUtils.splitForChar(readString,'=');
 
                 String varName = null;
                 String varValue = null;
@@ -498,7 +498,7 @@ public class JCPreprocessor {
         System.out.println("Command line arguments");
         System.out.println("---------------------------");
         
-        for (final CommandLineArgumentProcessor processor : COMMAND_LINE_PROCESSORS) {
+        for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
             System.out.println(processor.getKeyName()+"\t\t"+processor.getDescription());
         }
     }

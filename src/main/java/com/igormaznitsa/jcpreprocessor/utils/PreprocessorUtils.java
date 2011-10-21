@@ -15,6 +15,8 @@ import java.io.Reader;
 import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum PreprocessorUtils {
 
@@ -44,7 +46,7 @@ public enum PreprocessorUtils {
         if (trimmed.isEmpty()) {
             result = new String[0];
         } else {
-            result = extensions.split(",");
+            result = splitForChar(extensions, ',');
             for (int li = 0; li < result.length; li++) {
                 result[li] = result[li].trim().toLowerCase();
             }
@@ -105,7 +107,7 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static BufferedReader makeFileReader(final File file, final String charset) throws IOException {
+    public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
         if (file == null) {
             throw new NullPointerException("File is null");
         }
@@ -118,7 +120,11 @@ public enum PreprocessorUtils {
             throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
         }
 
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        if (bufferSize <= 0) {
+            return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        } else {
+            return new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
+        }
     }
 
     public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
@@ -255,13 +261,66 @@ public enum PreprocessorUtils {
             return cfg == null ? null : cfg.getPreprocessorExtension();
         }
     }
-    
+
     public static boolean isCharAllowedAtHexNumber(final char chr) {
-        return (chr>='a' && chr<='f') || (chr>='A' && chr<='F') || (chr>='0' && chr<='9');
+        return (chr >= 'a' && chr <= 'f') || (chr >= 'A' && chr <= 'F') || (chr >= '0' && chr <= '9');
     }
-    
+
     public static boolean isCharAllowedInVariableOrFunctionName(final char chr) {
-        return chr=='_' || Character.isLetterOrDigit(chr);
+        return chr == '_' || Character.isLetterOrDigit(chr);
     }
-    
+
+    public static String[] readTextFileAndAddNullAtEnd(final File file, final String encoding) throws IOException {
+        if (file == null) {
+            throw new NullPointerException("File is null");
+        }
+
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("File can't be read because it's not a normal file");
+        }
+
+        final String enc = encoding == null ? "UTF8" : encoding;
+
+        final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc,(int)file.length());
+        List<String> currentFileStringContainer = new ArrayList<String>(1024);
+        try {
+            while (true) {
+                final String nextLine = srcBufferedReader.readLine();
+                // we need have null at the end of the list
+                currentFileStringContainer.add(nextLine);
+                if (nextLine == null) {
+                    break;
+                }
+            }
+        } finally {
+            srcBufferedReader.close();
+        }
+
+        return currentFileStringContainer.toArray(new String[currentFileStringContainer.size()]);
+    }
+
+    public static String[] splitForChar(final String string, final char delimiter) {
+        final char[] array = string.toCharArray();
+        final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
+
+        final List<String> tokens = new ArrayList<String>(10);
+
+        for (final char curChar : array) {
+            if (curChar == delimiter) {
+                if (buffer.length() != 0) {
+                    tokens.add(buffer.toString());
+                    buffer.setLength(0);
+                }
+                continue;
+            } else {
+                buffer.append(curChar);
+            }
+        }
+
+        if (buffer.length() != 0) {
+            tokens.add(buffer.toString());
+        }
+
+        return tokens.toArray(new String[tokens.size()]);
+    }
 }

@@ -3,7 +3,7 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
-public class ProcessorDestinationDirectory implements CommandLineArgumentProcessor {
+public class DestinationDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/O:";
     

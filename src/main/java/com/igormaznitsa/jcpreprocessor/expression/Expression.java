@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public final class Expression {
+public class Expression {
 
     private static final Map<String, AbstractOperator> SHORT_OPERATORS = new HashMap<String, AbstractOperator>();
     private static final Map<String, AbstractOperator> LONG_OPERATORS = new HashMap<String, AbstractOperator>();
@@ -259,6 +259,14 @@ public final class Expression {
                                 stringAccumulator.append('\"');
                             }
                             break;
+                            case 'f': {
+                                stringAccumulator.append('\f');
+                            }
+                            break;
+                            case 'b': {
+                                stringAccumulator.append('\b');
+                            }
+                            break;
                             case 'n': {
                                 stringAccumulator.append('\n');
                             }
@@ -328,14 +336,14 @@ public final class Expression {
         return stringAccumulator.toString();
     }
 
-    public static Expression parseExpression(final String expressionAsString) throws IOException {
+    public static Expression prepare(final String stringToBeParsed) throws IOException {
         final Configurator configurator = PreprocessorUtils.getConfiguratorForThread();
         final PreprocessorExtension preprocessorExtension = PreprocessorUtils.getPreprocessorExtensionForThread();
         
         final Expression expressionStack = new Expression();
         int position = 0;
-        while (position < expressionAsString.length()) {
-            String token = getOperationToken(expressionAsString, position);
+        while (position < stringToBeParsed.length()) {
+            String token = getOperationToken(stringToBeParsed, position);
             if (token != null) {
                 position += token.length();
                 token = token.trim();
@@ -351,7 +359,7 @@ public final class Expression {
                 continue;
             }
 
-            token = readNumberOrVariableFromString(expressionAsString, position);
+            token = readNumberOrVariableFromString(stringToBeParsed, position);
             if (token.length() != 0) {
                 position += token.length();
                 token = token.trim();
@@ -436,7 +444,7 @@ public final class Expression {
     }
 
     public static Value eval(final String expression) throws IOException {
-        final Expression parsedStack = parseExpression(expression);
+        final Expression parsedStack = prepare(expression);
         return parsedStack.eval();
     }
 

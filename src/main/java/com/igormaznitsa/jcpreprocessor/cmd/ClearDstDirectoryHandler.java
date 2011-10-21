@@ -2,17 +2,17 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 
-public class ProcessorRemoveComments implements CommandLineArgumentProcessor {
+public class ClearDstDirectoryHandler implements CommandLineHandler {
 
-    private static final String ARG_NAME = "/R";
+    private static final String ARG_NAME = "/C";
     
     public String getDescription() {
-        return "after preprocessing the new file will be completely cleared of comments in Java-C style";
+        return "the destination directory will be cleared before processing";
     }
 
     public boolean processArgument(final String argument, final Configurator configurator) {
         if (ARG_NAME.equalsIgnoreCase(argument)){
-            configurator.setRemovingComments(true);
+            configurator.setClearDestinationDirBefore(true);
             return true;
         } else {
             return false;
@@ -20,7 +20,7 @@ public class ProcessorRemoveComments implements CommandLineArgumentProcessor {
     }
 
     public String getKeyName() {
-        return ARG_NAME;
+       return ARG_NAME;
     }
     
 }

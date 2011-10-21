@@ -2,7 +2,7 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 
-public class ProcessorHelp implements CommandLineArgumentProcessor {
+public class HelpHandler implements CommandLineHandler {
 
     private static final String [] ARG_NAMES = new String[]{"/H","/?","-H","-?"};
     

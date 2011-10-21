@@ -1,4 +1,4 @@
-package com.igormaznitsa.jcpreprocessor.ref;
+package com.igormaznitsa.jcpreprocessor.references;
 
 import java.io.File;
 import java.util.Collections;
@@ -6,12 +6,12 @@ import java.util.List;
 
 public final class IncludeReference
 {
-        private List<String> strings;
+        private String[] strings;
         private int stringCounter;
         private String fileName;
         private File file;
 
-        public List<String> getStrings() {
+        public String[] getStrings() {
             return strings;
         }
         
@@ -27,11 +27,11 @@ public final class IncludeReference
             return fileName;
         }
         
-        public IncludeReference(final File currentFile,final String fileName, final List<String> stringsArray, final int stringCounter)
+        public IncludeReference(final File currentFile,final String fileName, final String [] stringsArray, final int stringCounter)
         {
             this.file = currentFile;
             this.fileName = fileName;
-            this.strings = Collections.unmodifiableList(stringsArray);
+            this.strings = stringsArray;
             this.stringCounter = stringCounter;
         }
 }

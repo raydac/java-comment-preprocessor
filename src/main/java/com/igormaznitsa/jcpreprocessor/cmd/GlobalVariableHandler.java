@@ -3,7 +3,7 @@ package com.igormaznitsa.jcpreprocessor.cmd;
 import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
-public class ProcessorGlobalVariable implements CommandLineArgumentProcessor {
+public class GlobalVariableHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/P:";
     

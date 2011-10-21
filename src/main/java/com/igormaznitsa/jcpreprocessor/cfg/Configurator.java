@@ -31,8 +31,8 @@ public final class Configurator {
     private String destinationDirectory = DEFAULT_DEST_DIRECTORY;
     private File destinationDirectoryFile = new File(destinationDirectory);
     
-    private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(DEFAULT_PROCESSING_EXTENSIONS.split(",")));
-    private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(DEFAULT_EXCLUDED_EXTENSIONS.split(",")));
+    private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
+    private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS,',')));
     private boolean clearDestinationDirectoryBefore = true;
     private Map<String, Value> globalVarTable = new HashMap<String, Value>();
     private Map<String, Value> localVarTable = new HashMap<String, Value>();
@@ -84,7 +84,7 @@ public final class Configurator {
     }
 
     public File [] getParsedSourceDirectoryAsFiles() throws IOException {
-        final String [] splitted = sourceDirectory.split(";");
+        final String [] splitted = PreprocessorUtils.splitForChar(sourceDirectory, ';');
         final File [] result = new File[splitted.length];
         int index = 0;
         for(final String dirName : splitted){
@@ -174,7 +174,7 @@ public final class Configurator {
     }
 
     public Configurator addGlobalVariable(final String valueDescription) {
-        final String[] pair = valueDescription.split("=");
+        final String[] pair = PreprocessorUtils.splitForChar(valueDescription, '=');
         if (pair.length != 2) {
             throw new IllegalArgumentException("Wrong variable definition format [" + valueDescription + ']');
         }
