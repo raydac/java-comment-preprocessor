@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -11,7 +12,7 @@ public final class FunctionSTR2WEB extends AbstractFunction {
         return "str2web";
     }
 
-    public void execute(Expression stack, int index) {
+    public void execute(PreprocessorContext context, Expression stack, int index) {
        if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation STR2WEB needs an operand");
 
         Value p_val = (Value)stack.getItemAtPosition(index-1);

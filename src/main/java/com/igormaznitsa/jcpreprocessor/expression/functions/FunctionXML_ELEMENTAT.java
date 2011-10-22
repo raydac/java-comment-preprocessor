@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -13,7 +14,7 @@ public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
         return "xml_elementat";
     }
 
-    public void execute(Expression _stack, int _index) {
+    public void execute(PreprocessorContext context, Expression _stack, int _index) {
         if (!_stack.areThereTwoValuesBefore(_index)) throw new IllegalStateException("Operation XML_ELEMENTAT needs two operands");
 
         Value _val1 = (Value)_stack.getItemAtPosition(_index-1);
@@ -52,6 +53,9 @@ public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
         }
 
         Element p_Element = (Element) p_nodeList.item((int)l_indexElement);
+
+        System.out.println("EEEEE "+p_Element);
+        
         long l_index = findXmlElementIndex(p_Element);
 
         _stack.setItemAtPosition(_index, Value.valueOf(Long.valueOf(l_index)));

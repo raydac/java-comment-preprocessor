@@ -56,6 +56,38 @@ public final class Value implements ExpressionStackItem {
         return new Value(val);
     }
     
+    public Long asLong(){
+        if (type == ValueType.INT){
+            return (Long)value;
+        } else {
+            return null;
+        }
+    }
+    
+    public Float asFloat(){
+        if (type == ValueType.FLOAT){
+            return (Float)value;
+        } else {
+            return null;
+        }
+    }
+    
+    public String asString(){
+        if (type == ValueType.STRING){
+            return (String)value;
+        } else {
+            return null;
+        }
+    }
+    
+    public Boolean asBoolean(){
+        if (type == ValueType.BOOLEAN){
+            return (Boolean)value;
+        } else {
+            return null;
+        }
+    }
+    
     public static Value recognizeOf(final String str) {
         final ValueType type = recognizeType(str);
 

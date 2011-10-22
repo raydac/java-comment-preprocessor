@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
@@ -17,7 +18,7 @@ public final class OperatorDIV extends AbstractOperator {
         return "/";
     }
 
-    public void execute(Expression _stack, int _index) {
+    public void execute(PreprocessorContext context, Expression _stack, int _index) {
        if (!_stack.areThereTwoValuesBefore(_index)) throw new IllegalStateException("Operation \'\\\' needs two operands");
 
         Value _val0 = (Value) _stack.getItemAtPosition(_index - 2);

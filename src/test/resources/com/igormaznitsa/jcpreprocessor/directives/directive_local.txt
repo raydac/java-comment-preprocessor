@@ -1,0 +1,10 @@
+hello
+//#local x=5
+world
+//#local y=10
+and me
+//#local z=x+y
+---START_ETALON---
+hello
+world
+and me

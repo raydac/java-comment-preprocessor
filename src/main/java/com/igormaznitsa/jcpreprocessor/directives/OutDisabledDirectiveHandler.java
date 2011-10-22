@@ -1,6 +1,9 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public class OutDisabledDirectiveHandler  extends DirectiveHandler {
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import java.io.IOException;
+
+public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -8,8 +11,15 @@ public class OutDisabledDirectiveHandler  extends DirectiveHandler {
     }
 
     @Override
-    public boolean hasSpaceOrEndAfter() {
-        return true;
+    public boolean hasExpression() {
+        return false;
     }
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+        state.setOutEnabled(false);
+        return DirectiveBehaviour.NORMAL;
+    }
+    
     
 }

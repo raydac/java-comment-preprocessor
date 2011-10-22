@@ -1,6 +1,6 @@
-package com.igormaznitsa.jcpreprocessor.cmd;
+package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
 public class FileExtensionsHandler implements CommandLineHandler {
@@ -8,10 +8,10 @@ public class FileExtensionsHandler implements CommandLineHandler {
     private static final String ARG_NAME = "/F:";
     
     public String getDescription() {
-        return "set case sensetive file extensions which will be preprocessed, default is ["+Configurator.DEFAULT_PROCESSING_EXTENSIONS+']';
+        return "set case sensetive file extensions which will be preprocessed, default is ["+PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS+']';
     }
 
-    public boolean processArgument(final String argument, final Configurator configurator) {
+    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
         if (argument.toUpperCase().startsWith(ARG_NAME)){
             
             configurator.setProcessingFileExtensions(PreprocessorUtils.extractTail(ARG_NAME, argument));

@@ -1,6 +1,10 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public class DefineDirectiveHandler  extends DirectiveHandler {
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.expression.Value;
+import java.io.IOException;
+
+public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -8,8 +12,14 @@ public class DefineDirectiveHandler  extends DirectiveHandler {
     }
 
     @Override
-    public boolean hasSpaceOrEndAfter() {
+    public boolean hasExpression() {
         return true;
     }
-    
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+        configurator.setLocalVariable(string, Value.BOOLEAN_TRUE);
+        return DirectiveBehaviour.NORMAL;
+    }
+
 }

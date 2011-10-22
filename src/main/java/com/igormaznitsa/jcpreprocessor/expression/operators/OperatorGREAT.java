@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -16,7 +17,7 @@ public final class OperatorGREAT extends AbstractOperator {
         return ">";
     }
 
-    public void execute(Expression stack, int index) {
+    public void execute(PreprocessorContext context, Expression stack, int index) {
        if (!stack.areThereTwoValuesBefore(index)) throw new IllegalStateException("Operation \'>\' needs two operands");
 
         Value _val0 = (Value) stack.getItemAtPosition(index - 2);

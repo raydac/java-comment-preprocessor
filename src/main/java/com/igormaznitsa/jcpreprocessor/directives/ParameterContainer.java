@@ -1,7 +1,14 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.references.FileReference;
+import com.igormaznitsa.jcpreprocessor.references.IncludeReference;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.LinkedList;
 
 public class ParameterContainer {
     private String [] strings;
@@ -24,8 +31,100 @@ public class ParameterContainer {
     private int activeIfConstructionCounter;
     private String currentFileCanonicalPath;
     
-    public ParameterContainer(final File file) throws IOException {
+    private ByteArrayOutputStream normalDataBuffer;
+    private ByteArrayOutputStream prefixDataBuffer;
+    private ByteArrayOutputStream postfixDataBuffer;
+        
+    
+    
+    private PrintStream prefixOutStream;
+    private PrintStream postfixOutStream;
+    private PrintStream normalOutStream;
+    
+    private PrintStream currentOutStream;
+    private final FileReference fileReference;
+    private final LinkedList<Integer> whileIndexes = new LinkedList<Integer>();
+    private final LinkedList<IncludeReference> includeReferenceStack = new LinkedList<IncludeReference>();
+    private final LinkedList<String> fileNameStack = new LinkedList<String>();
+
+    private File currentProcessingFile;
+    
+    private final String encoding;
+    
+    public ParameterContainer(final FileReference reference, final File file, final String encoding) throws IOException {
+        fileReference = reference;
+        this.encoding = encoding;
         init(file);
+    }
+    
+    public PrintStream print(final String str) {
+        currentOutStream.print(str);
+        return currentOutStream;
+    }
+    
+    public PrintStream println(final String str) {
+        currentOutStream.println(str);
+        return currentOutStream;
+    }
+    
+    public File getCurrentProcessingFile() {
+        return currentProcessingFile;
+    }
+   
+    public String popFileName() {
+        return fileNameStack.pop();
+    }
+    
+    public ParameterContainer pushFileName(final String name){
+        fileNameStack.push(name);
+        return this;
+    }
+    
+    public ParameterContainer setCurrentProcessingFile(final File file) {
+        currentProcessingFile = file;
+        return this;
+    }
+    
+    public FileReference getFileReference() {
+        return fileReference;
+    }
+    
+    public PrintStream getPrefixOutStream() {
+        return prefixOutStream;
+    }
+    
+    public PrintStream getPostfixOutStream() {
+        return postfixOutStream;
+    }
+    
+    public PrintStream getNormalOutStream() {
+        return normalOutStream;
+    }
+    
+    public ParameterContainer pushIncludeReference(final IncludeReference ref) {
+        includeReferenceStack.push(ref);
+        return this;
+    }
+    
+    public IncludeReference popIncludeReference() {
+        return includeReferenceStack.pop();
+    }
+    
+    public boolean isIncludeReferenceEmpty() {
+        return includeReferenceStack.isEmpty();
+    }
+    
+    public ParameterContainer setCurrentOutStream(final PrintStream stream) {
+        currentOutStream = stream;
+        return this;
+    }
+    
+    public int popWhileIndex() {
+        return whileIndexes.pop();
+    }
+    
+    public void pushWhileIndex(int index) {
+        whileIndexes.push(index);
     }
     
     public ParameterContainer setStrings(final String [] stringSet) {
@@ -251,6 +350,10 @@ public class ParameterContainer {
     public boolean isWhileCounterZero() {
         return whileConstructionCounter == 0;
     }
+
+    public boolean isProcessingEnabled() {
+        return isThereNoBreakCommand() && isIfEnabled() &&  isThereNoContinueCommand();        
+    }
     
     public void init(final File file) throws IOException {
         endPreprocessing = false;
@@ -269,6 +372,73 @@ public class ParameterContainer {
         lastIfStringNumber = 0;
         lastWhileFileName = null;
         lastWhileStringNumber = 0;
+
+        reinitOutBuffers();
+        
+        currentOutStream = normalOutStream;
+    }
+    
+    public void reinitOutBuffers() throws IOException {
+        normalDataBuffer= new ByteArrayOutputStream(64*1024);
+        prefixDataBuffer = new ByteArrayOutputStream(1024);
+        postfixDataBuffer =  new ByteArrayOutputStream(1024);
+        
+        normalOutStream = new PrintStream(normalDataBuffer, false, encoding);
+        prefixOutStream = new PrintStream(prefixDataBuffer, false, encoding);
+        postfixOutStream = new PrintStream(postfixDataBuffer, false, encoding);
+        
+        currentOutStream = normalOutStream;
     }
 
+    public void saveBuffersToStreams(final OutputStream prefix, final OutputStream normal, final OutputStream postfix) throws IOException {
+        prefixOutStream.flush();
+        postfixOutStream.flush();
+        normalOutStream.flush();
+        
+        prefix.write(prefixDataBuffer.toByteArray());
+        normal.write(normalDataBuffer.toByteArray());
+        postfix.write(postfixDataBuffer.toByteArray());
+    }
+    
+    public boolean saveBuffersToFile(File outFile) throws IOException {
+        normalOutStream.flush();
+        normalOutStream.close();
+        
+        postfixOutStream.flush();
+        postfixOutStream.close();
+        
+        prefixOutStream.flush();
+        prefixOutStream.close();
+        
+        
+        if (prefixDataBuffer.size() != 0 || postfixDataBuffer.size() != 0 || normalDataBuffer.size() != 0) {
+            
+            outFile.getParentFile().mkdirs();
+            FileOutputStream p_fos = new FileOutputStream(outFile);
+            
+            if (prefixDataBuffer.size() != 0) {
+                p_fos.write(prefixDataBuffer.toByteArray());
+                p_fos.flush();
+            }
+            
+            p_fos.write(normalDataBuffer.toByteArray());
+            p_fos.flush();
+            
+            if (postfixDataBuffer.size() != 0) {
+                p_fos.write(postfixDataBuffer.toByteArray());
+                p_fos.flush();
+            }
+            
+            p_fos.close();
+            p_fos = null;
+            
+            return true;
+         }
+        else {
+            return false;
+        }
+        
+        
+    }
+    
 }

@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.utils;
 
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
@@ -194,7 +194,7 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static final String processMacros(File processingFile, String _string, Configurator cfg) throws IOException {
+    public static final String processMacros(File processingFile, String _string, PreprocessorContext cfg) throws IOException {
         if (_string.startsWith("//$$")) {
             return _string;
         }
@@ -211,7 +211,7 @@ public enum PreprocessorUtils {
                     String s_strVal = _string.substring(i_begin + 3, i_indx);
                     String s_rightPart = _string.substring(i_indx + 3);
 
-                    Value p_val = Expression.eval(s_strVal);
+                    Value p_val = Expression.eval(s_strVal,cfg);
                     if (p_val == null) {
                         throw new IOException("Error value");
                     }
@@ -239,27 +239,8 @@ public enum PreprocessorUtils {
         return result.append(tail).toString();
     }
 
-    public static Configurator getConfiguratorForThread() {
-        final JCPreprocessor preprocessorInstance = JCPreprocessor.getPreprocessorInstanceForThread();
-        if (preprocessorInstance == null) {
-            return null;
-        } else {
-            return preprocessorInstance.getConfigurator();
-        }
-    }
-
-    public static PreprocessorExtension getPreprocessorExtension(final Configurator cfg) {
+    public static PreprocessorExtension getPreprocessorExtension(final PreprocessorContext cfg) {
         return cfg == null ? null : cfg.getPreprocessorExtension();
-    }
-
-    public static PreprocessorExtension getPreprocessorExtensionForThread() {
-        final JCPreprocessor preprocessorInstance = JCPreprocessor.getPreprocessorInstanceForThread();
-        if (preprocessorInstance == null) {
-            return null;
-        } else {
-            final Configurator cfg = preprocessorInstance.getConfigurator();
-            return cfg == null ? null : cfg.getPreprocessorExtension();
-        }
     }
 
     public static boolean isCharAllowedAtHexNumber(final char chr) {

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -9,9 +9,9 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
     private final String name;
     private final int argsNumber;
-    private final Configurator configurator;
+    private final PreprocessorContext configurator;
 
-    public FunctionDefinedByUser(final String name, final int argsNumber, final Configurator cfg) {
+    public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext cfg) {
         super();
         if (name == null) {
             throw new NullPointerException("Name is null");
@@ -39,7 +39,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
         return argsNumber;
     }
 
-    public void execute(Expression stack, int index) {
+    public void execute(PreprocessorContext context, Expression stack, int index) {
         Value[] ap_values = new Value[argsNumber];
 
         int i_arg = argsNumber;

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcpreprocessor.expression.operators.AbstractOperator;
@@ -34,10 +34,12 @@ public class Expression {
             FUNCTIONS.put(function.getName(), function);
         }
     }
-    
     private transient final List<ExpressionStackItem> INSIDE_STACK = new ArrayList<ExpressionStackItem>(5);
 
-    private Expression() {
+    private final PreprocessorContext context;
+    
+    private Expression(final PreprocessorContext context) {
+        this.context = context;
     }
 
     public ExpressionStackItem getItemAtPosition(final int position) {
@@ -55,10 +57,10 @@ public class Expression {
         if (INSIDE_STACK.isEmpty()) {
             return null;
         } else {
-            return INSIDE_STACK.get(INSIDE_STACK.size()-1);
+            return INSIDE_STACK.get(INSIDE_STACK.size() - 1);
         }
     }
-    
+
     public ExpressionStackItem pop(final ExpressionStackItem item) {
         return INSIDE_STACK.remove(INSIDE_STACK.size() - 1);
     }
@@ -125,31 +127,34 @@ public class Expression {
         for (int processingItemIndex = 0; processingItemIndex < INSIDE_STACK.size() - 1; processingItemIndex++) {
             final ExpressionStackItem stackItem = INSIDE_STACK.get(processingItemIndex);
 
-            final int itemPriority =  stackItem.getPriority();
+            final int itemPriority = stackItem.getPriority();
             boolean isUnary = false;
 
             boolean toContinue = true;
-            switch(stackItem.getStackItemType()){
+            switch (stackItem.getStackItemType()) {
                 case VALUE:
-                case DELIMITER :{
+                case DELIMITER: {
                     isUnary = false;
-                }break;
-                case OPERATOR :{
+                }
+                break;
+                case OPERATOR: {
                     isUnary = ((AbstractOperator) stackItem).isUnary();
                     toContinue = stackItem instanceof OperatorLEFTBRACKET || stackItem instanceof OperatorRIGHTBRACKET;
-                }break;
-                case FUNCTION :{
+                }
+                break;
+                case FUNCTION: {
                     toContinue = false;
                     isUnary = true;
-                }break;
-                default:{
+                }
+                break;
+                default: {
                     throw new RuntimeException("Unsupported type detected");
                 }
             }
-            if (toContinue){
+            if (toContinue) {
                 continue;
             }
-            
+
             int offsetOfIndexForCurrentProcessingItem = 0;
             int bracketCounter = 0;
 
@@ -336,11 +341,14 @@ public class Expression {
         return stringAccumulator.toString();
     }
 
-    public static Expression prepare(final String stringToBeParsed) throws IOException {
-        final Configurator configurator = PreprocessorUtils.getConfiguratorForThread();
-        final PreprocessorExtension preprocessorExtension = PreprocessorUtils.getPreprocessorExtensionForThread();
-        
-        final Expression expressionStack = new Expression();
+    public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context) throws IOException {
+        if (stringToBeParsed == null) {
+            throw new NullPointerException("String is null");
+        }
+
+        final PreprocessorExtension preprocessorExtension = context == null ? null : context.getPreprocessorExtension();
+
+        final Expression expressionStack = new Expression(context);
         int position = 0;
         while (position < stringToBeParsed.length()) {
             String token = getOperationToken(stringToBeParsed, position);
@@ -349,7 +357,7 @@ public class Expression {
                 token = token.trim();
 
                 AbstractOperator operator = SHORT_OPERATORS.get(token);
-                if (operator==null){
+                if (operator == null) {
                     operator = LONG_OPERATORS.get(token);
                 }
                 if (operator == null) {
@@ -371,7 +379,7 @@ public class Expression {
                     expressionStack.push(delimiter);
                 } else if (isFunctionName(tokenInLowerCase)) {
                     if (tokenInLowerCase.charAt(0) == '$') {
-                            // user defined function
+                        // user defined function
                         if (preprocessorExtension == null) {
                             throw new IOException("You have an user function \"" + token + "\" but don't have defined an action listener");
                         }
@@ -379,17 +387,17 @@ public class Expression {
                         if (i_args < 0) {
                             throw new IOException("Unknown user function \"" + token + "\"");
                         }
-                        expressionStack.push(new FunctionDefinedByUser(tokenInLowerCase, i_args, configurator));
+                        expressionStack.push(new FunctionDefinedByUser(tokenInLowerCase, i_args, context));
                     } else {
                         // standard function
                         expressionStack.push(FUNCTIONS.get(tokenInLowerCase));
                     }
                 } else {
-                    if (configurator == null) {
+                    if (context == null) {
                         throw new IllegalStateException("There is not any configurator to use variables");
                     }
-                    
-                    final Value p_val = configurator.findVariableForName(token);
+
+                    final Value p_val = context.findVariableForName(token);
 
                     if (p_val != null) {
                         expressionStack.push(p_val);
@@ -408,7 +416,7 @@ public class Expression {
     }
 
     //TODO it ignores DELIMITERS flag during calculation
-    private Value calculate(final boolean delimitersPresented) throws IOException {
+    private Value calculate(final boolean delimitersPresented, final PreprocessorContext context) throws IOException {
         int index = 0;
         while (INSIDE_STACK.size() != 1) {
             if (INSIDE_STACK.size() == index) {
@@ -424,12 +432,12 @@ public class Expression {
                 break;
                 case FUNCTION: {
                     AbstractFunction p_func = (AbstractFunction) expressionItem;
-                    p_func.execute(this, index);
+                    p_func.execute(context,this, index);
                     index -= p_func.getArity();
                 }
                 break;
                 case OPERATOR: {
-                    ((AbstractOperator) expressionItem).execute(this, index);
+                    ((AbstractOperator) expressionItem).execute(context,this, index);
                     index = 0;
                 }
                 break;
@@ -443,18 +451,18 @@ public class Expression {
         return delimitersPresented ? (INSIDE_STACK.size() > 1 ? null : (Value) INSIDE_STACK.get(0)) : (Value) INSIDE_STACK.get(0);
     }
 
-    public static Value eval(final String expression) throws IOException {
-        final Expression parsedStack = prepare(expression);
+    public static Value eval(final String expression, final PreprocessorContext context) throws IOException {
+        final Expression parsedStack = prepare(expression,context);
         return parsedStack.eval();
     }
 
     public Value eval() throws IOException {
         final boolean delimitersPresented = sortFormulaStack();
-        return calculate(delimitersPresented);
-    } 
-    
+        return calculate(delimitersPresented, context);
+    }
+
     private static String getOperationToken(final String inString, int pos) {
-        
+
         // count of spaces 
         int spacesCounter = 0;
         while (pos < inString.length()) {

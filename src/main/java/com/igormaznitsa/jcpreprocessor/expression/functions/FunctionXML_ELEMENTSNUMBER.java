@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -12,7 +13,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
         return "xml_elementsnumber";
     }
 
-    public void execute(Expression _stack, int _index) {
+    public void execute(PreprocessorContext context, Expression _stack, int _index) {
         if (!_stack.isThereOneValueBefore(_index)) throw new IllegalStateException("Operation XML_ELEMENTSNUMBER needs an operand");
 
         Value _val0 = (Value)_stack.getItemAtPosition(_index-1);

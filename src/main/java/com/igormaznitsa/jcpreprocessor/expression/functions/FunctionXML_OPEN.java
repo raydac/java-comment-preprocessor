@@ -1,6 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -15,7 +16,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
         return "xml_open";
     }
 
-    public void execute(Expression stack, int index) {
+    public void execute(PreprocessorContext context, Expression stack, int index) {
        if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation XML_OPEN needs an operand");
 
         Value _val0 = (Value)stack.getItemAtPosition(index-1);
@@ -35,7 +36,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
                     try
                     {
                         DocumentBuilder p_db = p_dbf.newDocumentBuilder();
-                        p_doc = p_db.parse(new File(JCPreprocessor.getPreprocessorInstanceForThread().getConfigurator().getSourceDirectory(),s_result));
+                        p_doc = p_db.parse(context.getSourceFile(s_result));
                     }
                     catch (Exception e)
                     {

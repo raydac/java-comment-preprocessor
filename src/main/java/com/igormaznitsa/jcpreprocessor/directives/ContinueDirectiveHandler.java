@@ -1,6 +1,9 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public class ContinueDirectiveHandler  extends DirectiveHandler  {
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import java.io.IOException;
+
+public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -8,8 +11,23 @@ public class ContinueDirectiveHandler  extends DirectiveHandler  {
     }
 
     @Override
-    public boolean hasSpaceOrEndAfter() {
-        return true;
+    public boolean hasExpression() {
+        return false;
     }
-    
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+        if (state.isWhileCounterZero()) {
+            throw new IOException("You have #continue without #when");
+        }
+        if (state.isProcessingEnabled() && state.getWhileCounter() == state.getActiveWhileCounter()) {
+            state.setThereIsNoContinueCommand(false);
+        }
+        return DirectiveBehaviour.NORMAL;
+    }
+
+    @Override
+    public boolean processOnlyIfProcessingEnabled() {
+        return false;
+    }
 }

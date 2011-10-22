@@ -1,6 +1,9 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public class CommentNextLineDirectiveHandler extends DirectiveHandler {
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import java.io.IOException;
+
+public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -8,8 +11,15 @@ public class CommentNextLineDirectiveHandler extends DirectiveHandler {
     }
 
     @Override
-    public boolean hasSpaceOrEndAfter() {
-        return true;
+    public boolean hasExpression() {
+        return false;
     }
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+         state.setCommentNextLine(true);
+         return DirectiveBehaviour.NORMAL;
+    }
+ 
     
 }

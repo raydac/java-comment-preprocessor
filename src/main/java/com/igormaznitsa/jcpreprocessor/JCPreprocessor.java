@@ -1,16 +1,16 @@
 package com.igormaznitsa.jcpreprocessor;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
-import com.igormaznitsa.jcpreprocessor.cmd.CommandLineHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.CharsetHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.ClearDstDirectoryHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.DestinationDirectoryHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.ExcludedFileExtensionsHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.HelpHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.FileExtensionsHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.RemoveCommentsHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.SourceDirectoryHandler;
-import com.igormaznitsa.jcpreprocessor.cmd.VerboseHandler;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.cmdline.CommandLineHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.CharsetHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.ClearDstDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.DestinationDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.ExcludedFileExtensionsHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.HelpHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.FileExtensionsHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.RemoveCommentsHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.SourceDirectoryHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.references.FileReference;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -27,9 +27,7 @@ import java.util.Set;
 
 public class JCPreprocessor {
 
-    private static final ThreadLocal<JCPreprocessor> preprocessorInstances = new ThreadLocal<JCPreprocessor>();
-    
-    private final Configurator configurator;
+    private final PreprocessorContext context;
     private static final CommandLineHandler [] COMMAND_LINE_PROCESSORS = new CommandLineHandler [] 
     {
        new HelpHandler(),
@@ -44,25 +42,19 @@ public class JCPreprocessor {
        new VerboseHandler()
     };
     
-    public static JCPreprocessor getPreprocessorInstanceForThread() {
-        return preprocessorInstances.get();
+    public PreprocessorContext getContext() {
+        return context;
     }
     
-    public Configurator getConfigurator() {
-        return configurator;
-    }
-    
-    public JCPreprocessor(final Configurator configurator) {
-        if (configurator == null) {
+    public JCPreprocessor(final PreprocessorContext context) {
+        if (context == null) {
             throw new NullPointerException("Configurator is null");
         }
-        this.configurator = configurator;
+        this.context = context;
     }
 
     public void execute() throws IOException {
-        preprocessorInstances.set(this);
-        
-        final File[] srcDirs = configurator.getParsedSourceDirectoryAsFiles();
+        final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
 
         final Collection<FileReference> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 
@@ -76,21 +68,21 @@ public class JCPreprocessor {
                 continue;
             } else
             if (fileRef.isOnlyForCopy()) {
-                PreprocessorUtils.copyFile(fileRef.getSourceFile(), new File(configurator.getDestinationDirectoryAsFile(),fileRef.getDestinationFilePath()));
+                PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
                 continue;
             } else {
-                fileRef.preprocess(configurator);
+                fileRef.preprocess(context);
             }
         }
 
     }
 
     private final void createDestinationDirectory() throws IOException {
-        final File destination = new File(configurator.getDestinationDirectory());
+        final File destination = context.getDestinationDirectoryAsFile();
 
         final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
         
-        if (configurator.doesClearDestinationDirBefore()){
+        if (context.doesClearDestinationDirBefore()){
             if (destinationExistsAndDirectory)
                 if (!PreprocessorUtils.clearDirectory(destination))
                 {
@@ -123,7 +115,7 @@ public class JCPreprocessor {
                 if (p_fr.isOnlyForCopy()) {
                     continue;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding(),-1);
+                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),context.getCharacterEncoding(),-1);
                 boolean lg_ifenabled = true;
                 i_stringLine = 0;
 
@@ -140,7 +132,7 @@ public class JCPreprocessor {
                         // Processing #ifg instruction
                         if (lg_ifenabled) {
                             s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.eval(s_str);
+                            Value p_value = Expression.eval(s_str,context);
                             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                 throw new IOException("You don't have a boolean result in the #_if instruction");
                             }
@@ -192,17 +184,17 @@ public class JCPreprocessor {
                             String s_name = s_str.substring(0, i_equ).trim();
                             String s_eval = s_str.substring(i_equ + 1).trim();
 
-                            if (configurator.containsGlobalVariable(s_name)) {
+                            if (context.containsGlobalVariable(s_name)) {
                                 throw new IOException("You have duplicated the global variable " + s_name);
                             }
 
-                            Value p_value = Expression.eval(s_eval);
+                            Value p_value = Expression.eval(s_eval,context);
                             if (p_value == null) {
                                 throw new IOException("Error value");
                             }
-                            configurator.setGlobalVariable(s_name, p_value);
+                            context.setGlobalVariable(s_name, p_value);
 
-                            configurator.info("\'" + s_name + "\' = \'" + p_value + "\'");
+                            context.info("\'" + s_name + "\' = \'" + p_value + "\'");
                         } catch (IOException e) {
                             throw new IOException("Global definition error in " + p_fr.getSourceFile().getCanonicalPath() + " line: " + i_stringLine + " [" + e.getMessage() + "]");
                         }
@@ -237,7 +229,7 @@ public class JCPreprocessor {
                 if (p_fr.isOnlyForCopy()) {
                     continue;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),configurator.getCharacterEncoding(),-1);
+                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),context.getCharacterEncoding(),-1);
                 boolean lg_ifenabled = true;
                 i_stringLine = 0;
 
@@ -254,7 +246,7 @@ public class JCPreprocessor {
                         // Processing #_if instruction
                         if (lg_ifenabled) {
                             s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.eval(s_str);
+                            Value p_value = Expression.eval(s_str,context);
                             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                 throw new IOException("You don't have a boolean result in the #_if instruction");
                             }
@@ -297,7 +289,7 @@ public class JCPreprocessor {
                         if (lg_ifenabled) {
                             try {
                                 s_str = s_str.substring(12).trim();
-                                Value p_value = Expression.eval(s_str);
+                                Value p_value = Expression.eval(s_str,context);
 
                                 if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                     throw new IOException("non boolean expression");
@@ -333,7 +325,7 @@ public class JCPreprocessor {
             for (final File file : allFoundFiles) {
                 final String extension = PreprocessorUtils.getFileExtension(file);
 
-                if (configurator.isFileExcludedFromProcess(file)) {
+                if (context.isFileExcludedFromProcess(file)) {
                     // ignore excluded file
                     continue;
                 }
@@ -341,7 +333,7 @@ public class JCPreprocessor {
                 final String filePath = file.getCanonicalPath();
                 final String relativePath = filePath.substring(canonicalPathForSrcDirectory.length());
 
-                final FileReference reference = new FileReference(file, relativePath, !configurator.isFileAllowedToBeProcessed(file));
+                final FileReference reference = new FileReference(file, relativePath, !context.isFileAllowedToBeProcessed(file));
                 result.add(reference);
             }
 
@@ -366,7 +358,7 @@ public class JCPreprocessor {
     public static final void main(final String... args) {
         final String[] processedCommandStringArgs = PreprocessorUtils.replaceChar(args, '$', '\"');
 
-        Configurator cfg = null;
+        PreprocessorContext cfg = null;
 
         try {
             cfg = processCommandString(null, processedCommandStringArgs);
@@ -387,8 +379,8 @@ public class JCPreprocessor {
         System.exit(0);
     }
 
-    private static Configurator processCommandString(final Configurator configurator, final String... args) throws IOException {
-        final Configurator result = configurator == null ? new Configurator() : configurator;
+    private static PreprocessorContext processCommandString(final PreprocessorContext configurator, final String... args) throws IOException {
+        final PreprocessorContext result = configurator == null ? new PreprocessorContext() : configurator;
 
         for(final String arg : args){
             boolean processed = false;
@@ -412,14 +404,14 @@ public class JCPreprocessor {
         return result;
     }
 
-    private static void loadVariablesFromFile(final String fileName, final Configurator configurator) throws IOException {
+    private static void loadVariablesFromFile(final String fileName, final PreprocessorContext context) throws IOException {
         final File cfgFile = new File(fileName);
 
         if (!cfgFile.exists() || cfgFile.isDirectory()) {
             throw new IOException("I can't find the file " + cfgFile.getPath());
         }
 
-        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, configurator.getCharacterEncoding(),-1);
+        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(),-1);
         try {
             int strCounter = 0;
 
@@ -436,7 +428,7 @@ public class JCPreprocessor {
                     continue;
                 }
 
-                readString = PreprocessorUtils.processMacros(cfgFile, readString, configurator);
+                readString = PreprocessorUtils.processMacros(cfgFile, readString, context);
 
                 String[] parsedValue = PreprocessorUtils.splitForChar(readString,'=');
 
@@ -456,29 +448,29 @@ public class JCPreprocessor {
                 if (varValue.startsWith("@")) {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
-                    evaluatedValue = Expression.eval(varValue);
+                    evaluatedValue = Expression.eval(varValue,context);
                     if (evaluatedValue == null || evaluatedValue.getType() != ValueType.STRING) {
                         throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
                     }
                     varValue = (String) evaluatedValue.getValue();
 
-                    loadVariablesFromFile(varValue, configurator);
+                    loadVariablesFromFile(varValue, context);
                 } else {
                     // This is a value
-                    evaluatedValue = Expression.eval(varValue);
+                    evaluatedValue = Expression.eval(varValue,context);
                     if (evaluatedValue == null) {
                         throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
                     }
                 }
 
-                if (configurator.containsGlobalVariable(varName)) {
+                if (context.containsGlobalVariable(varName)) {
                     throw new IOException("Duplicated global variable name [" + varName + "] in " + cfgFile.getPath() + " at line:" + strCounter);
                 }
 
-                if (configurator.isVerbose()) {
-                    configurator.info("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
+                if (context.isVerbose()) {
+                    context.info("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
                 }
-                configurator.setGlobalVariable(varName, evaluatedValue);
+                context.setGlobalVariable(varName, evaluatedValue);
             }
         } finally {
             if (p_bufreader != null) {

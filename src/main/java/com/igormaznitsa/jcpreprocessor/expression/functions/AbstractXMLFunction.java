@@ -40,6 +40,9 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
 
     protected static int addXmlElement(final Element element) {
+        if (element == null) {
+            throw new NullPointerException("Element is null");
+        }
         final int index = xmlElements.size();
         xmlElements.add(index, element);
         return index;

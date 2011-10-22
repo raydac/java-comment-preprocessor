@@ -1,6 +1,6 @@
-package com.igormaznitsa.jcpreprocessor.cmd;
+package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 
 public class VerboseHandler implements CommandLineHandler {
 
@@ -10,7 +10,7 @@ public class VerboseHandler implements CommandLineHandler {
         return "make the preprocessor to out additional info about its operations";
     }
 
-    public boolean processArgument(final String argument, final Configurator configurator) {
+    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
         if (ARG_NAME.equalsIgnoreCase(argument)){
             configurator.setVerbose(true);
             return true;

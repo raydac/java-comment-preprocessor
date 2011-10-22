@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -13,7 +14,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
         return "xml_getelementsforname";
     }
 
-    public void execute(Expression _stack, int _index) {
+    public void execute(PreprocessorContext context, Expression _stack, int _index) {
         if (!_stack.areThereTwoValuesBefore(_index)) throw new IllegalStateException("Operation XML_GETELEMENTSFORNAME needs two operands");
 
         Value _val1 = (Value)_stack.getItemAtPosition(_index-1);

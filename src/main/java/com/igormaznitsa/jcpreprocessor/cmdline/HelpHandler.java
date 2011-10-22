@@ -1,6 +1,6 @@
-package com.igormaznitsa.jcpreprocessor.cmd;
+package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 
 public class HelpHandler implements CommandLineHandler {
 
@@ -10,7 +10,7 @@ public class HelpHandler implements CommandLineHandler {
         return "print help about commands";
     }
 
-    public boolean processArgument(final String argument, final Configurator configurator) {
+    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
         for(final String str : ARG_NAMES){
             if (str.equalsIgnoreCase(argument)){
                 return true;

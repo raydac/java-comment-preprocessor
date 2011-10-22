@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;
@@ -12,7 +13,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractXMLFunction {
         return "xml_getelementname";
     }
 
-    public void execute(Expression _stack, int _index) {
+    public void execute(PreprocessorContext context, Expression _stack, int _index) {
         if (!_stack.isThereOneValueBefore(_index)) {
             throw new IllegalStateException("Operation XML_GETELEMENTNAME needs an operand");
         }
@@ -26,6 +27,11 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractXMLFunction {
                 long l_elementIndex = ((Long) _val0.getValue()).longValue();
 
                 Element p_element = getXmlElementForIndex((int) l_elementIndex);
+                
+                if (p_element == null) {
+                    throw new RuntimeException("Element is null ["+l_elementIndex+']');
+                }
+                
                 String s_name = p_element.getNodeName();
 
                 if (s_name == null) {

@@ -5,6 +5,7 @@ import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
@@ -15,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public final class Configurator {
+public final class PreprocessorContext {
 
     public static final String DEFAULT_SOURCE_DIRECTORY = "." + File.separatorChar;
     public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
@@ -27,9 +28,10 @@ public final class Configurator {
     private PrintStream normalOutStream = System.out;
     private PrintStream errorOutStream = System.err;
     private boolean removingComments = false;
-    private String sourceDirectory = DEFAULT_SOURCE_DIRECTORY;
-    private String destinationDirectory = DEFAULT_DEST_DIRECTORY;
-    private File destinationDirectoryFile = new File(destinationDirectory);
+    private String sourceDirectory;
+    private String destinationDirectory;
+    private File destinationDirectoryFile;
+    private File sourceDirectoryFile;
     
     private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
     private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS,',')));
@@ -39,9 +41,10 @@ public final class Configurator {
     private PreprocessorExtension preprocessorExtension;
     private String characterEncoding = DEFAULT_CHARSET;
     
-    public Configurator() {
+    public PreprocessorContext() {
         normalOutStream = System.out;
         errorOutStream = System.err;
+        setSourceDirectory(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
     }
 
     public void info(final String text) {
@@ -60,7 +63,7 @@ public final class Configurator {
         errorOutStream.println(text);
     }
 
-    public Configurator setRemovingComments(final boolean removingComments) {
+    public PreprocessorContext setRemovingComments(final boolean removingComments) {
         this.removingComments = removingComments;
         return this;
     }
@@ -69,18 +72,23 @@ public final class Configurator {
         return this.removingComments;
     }
 
-    public Configurator setSourceDirectory(final String directory) {
+    public PreprocessorContext setSourceDirectory(final String directory) {
         if (directory == null) {
             throw new NullPointerException("Directory is null");
         }
 
         this.sourceDirectory = directory;
+        this.sourceDirectoryFile = new File(sourceDirectory);
 
         return this;
     }
 
     public String getSourceDirectory() {
         return sourceDirectory;
+    }
+    
+    public File getSourceDirectoryAsFile() {
+        return sourceDirectoryFile;
     }
 
     public File [] getParsedSourceDirectoryAsFiles() throws IOException {
@@ -98,13 +106,12 @@ public final class Configurator {
         return result;
     }
     
-    public Configurator setDestinationDirectory(final String directory) {
+    public PreprocessorContext setDestinationDirectory(final String directory) {
         if (directory == null) {
             throw new NullPointerException("Directory is null");
         }
 
         this.destinationDirectory = directory;
-
         destinationDirectoryFile = new File(this.destinationDirectory);
         
         return this;
@@ -117,10 +124,8 @@ public final class Configurator {
     public String getDestinationDirectory() {
         return destinationDirectory;
     }
-
     
-    
-    public Configurator setProcessingFileExtensions(final String extensions) {
+    public PreprocessorContext setProcessingFileExtensions(final String extensions) {
         processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.extractExtensions(extensions)));
         return this;
     }
@@ -145,7 +150,7 @@ public final class Configurator {
         return excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
     }
 
-    public Configurator setExcludedFileExtensions(final String extensions) {
+    public PreprocessorContext setExcludedFileExtensions(final String extensions) {
         excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.extractExtensions(extensions)));
         return this;
     }
@@ -154,7 +159,7 @@ public final class Configurator {
         return excludedFileExtensions.toArray(new String[excludedFileExtensions.size()]);
     }
 
-    public Configurator setClearDestinationDirBefore(final boolean clearDir) {
+    public PreprocessorContext setClearDestinationDirBefore(final boolean clearDir) {
         this.clearDestinationDirectoryBefore = clearDir;
         return this;
     }
@@ -163,17 +168,17 @@ public final class Configurator {
         return this.clearDestinationDirectoryBefore;
     }
 
-    public Configurator setNormalOutStream(final PrintStream stream) {
+    public PreprocessorContext setNormalOutStream(final PrintStream stream) {
         normalOutStream = stream;
         return this;
     }
 
-    public Configurator setErrorOutStream(final PrintStream stream) {
+    public PreprocessorContext setErrorOutStream(final PrintStream stream) {
         errorOutStream = stream;
         return this;
     }
 
-    public Configurator addGlobalVariable(final String valueDescription) {
+    public PreprocessorContext addGlobalVariable(final String valueDescription) {
         final String[] pair = PreprocessorUtils.splitForChar(valueDescription, '=');
         if (pair.length != 2) {
             throw new IllegalArgumentException("Wrong variable definition format [" + valueDescription + ']');
@@ -185,7 +190,7 @@ public final class Configurator {
         
         Value calculatedValue = null;
         try {
-            calculatedValue = Expression.eval(pair[1]);
+            calculatedValue = Expression.eval(pair[1],this);
             if (calculatedValue == null) {
                 throw new RuntimeException("Error value [" + valueDescription + ']');
             }
@@ -200,7 +205,7 @@ public final class Configurator {
         return this;
     }
 
-    public Configurator setLocalVariable(final String name, final Value value) {
+    public PreprocessorContext setLocalVariable(final String name, final Value value) {
         localVarTable.put(name, value);
         return this;
     }
@@ -219,12 +224,12 @@ public final class Configurator {
         return localVarTable.containsKey(name);
     }
     
-    public Configurator clearLocalVariables() {
+    public PreprocessorContext clearLocalVariables() {
         localVarTable.clear();
         return this;
     }
     
-    public Configurator setGlobalVariable(final String name, final Value value) {
+    public PreprocessorContext setGlobalVariable(final String name, final Value value) {
         globalVarTable.put(name, value);
 
         if (isVerbose()) {
@@ -274,7 +279,7 @@ public final class Configurator {
         return getGlobalVariable(name);
     }
     
-    public Configurator setVerbose(final boolean flag) {
+    public PreprocessorContext setVerbose(final boolean flag) {
         verbose = flag;
         return this;
     }
@@ -283,7 +288,7 @@ public final class Configurator {
         return verbose;
     }
 
-    public Configurator setPreprocessorExtension(final PreprocessorExtension extension) {
+    public PreprocessorContext setPreprocessorExtension(final PreprocessorExtension extension) {
         this.preprocessorExtension = extension;
         return this;
     }
@@ -292,7 +297,7 @@ public final class Configurator {
         return preprocessorExtension;
     }
 
-    public Configurator setCharacterEncoding(final String characterEncoding) {
+    public PreprocessorContext setCharacterEncoding(final String characterEncoding) {
         if (!Charset.isSupported(characterEncoding)){
             throw new IllegalArgumentException("Unsupported character encoding ["+characterEncoding+']');
         }
@@ -312,4 +317,39 @@ public final class Configurator {
         return errorOutStream;
     }
 
+    public File makeDestinationFile(final String file)throws IOException {
+        if (file == null) {
+            throw new NullPointerException("File is null");
+        }
+        
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File name is an empty string");
+        }
+        
+        return new File(getDestinationDirectoryAsFile(),file);
+    }
+    
+    public File getSourceFile(final String file) throws IOException {
+        if (file == null) {
+            throw new NullPointerException("File is null");
+        }
+        
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File name is an empty string");
+        }
+        
+        File result = null;
+        
+        if (file.charAt(0) == '.')
+        {
+            result = new File(getSourceDirectoryAsFile(),file);
+        } else {
+            result = new File(file);
+        }
+        
+        if (!result.isFile() || !result.exists()) {
+            throw new FileNotFoundException("File "+result.getAbsolutePath()+" is not found");
+        }
+        return result;
+    }
 }

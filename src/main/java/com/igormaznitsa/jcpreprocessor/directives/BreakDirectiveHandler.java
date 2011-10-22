@@ -1,6 +1,9 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public class BreakDirectiveHandler  extends DirectiveHandler  {
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import java.io.IOException;
+
+public class BreakDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -8,8 +11,24 @@ public class BreakDirectiveHandler  extends DirectiveHandler  {
     }
 
     @Override
-    public boolean hasSpaceOrEndAfter() {
-        return true;
+    public boolean hasExpression() {
+        return false;
     }
-    
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+        if (state.isWhileCounterZero()) {
+            throw new IOException("You have #break without #when");
+        }
+
+        if (state.isProcessingEnabled() && state.getWhileCounter() == state.getActiveWhileCounter()) {
+            state.setThereIsNoBreakCommand(false);
+        }
+        return DirectiveBehaviour.NORMAL;
+    }
+
+    @Override
+    public boolean processOnlyIfProcessingEnabled() {
+        return false;
+    }
 }

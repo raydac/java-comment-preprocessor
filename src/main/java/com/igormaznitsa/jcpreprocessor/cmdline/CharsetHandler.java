@@ -1,6 +1,6 @@
-package com.igormaznitsa.jcpreprocessor.cmd;
+package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.Configurator;
+import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
 public class CharsetHandler implements CommandLineHandler {
@@ -12,10 +12,10 @@ public class CharsetHandler implements CommandLineHandler {
     }
 
     public String getDescription() {
-        return "set the charset for processing text files, default value is "+Configurator.DEFAULT_CHARSET;
+        return "set the charset for processing text files, default value is "+PreprocessorContext.DEFAULT_CHARSET;
     }
 
-    public boolean processArgument(final String argument, final Configurator configurator) {
+    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
         if (argument.toUpperCase().startsWith(ARG_NAME)){
             configurator.setCharacterEncoding(PreprocessorUtils.extractTail(ARG_NAME, argument));
             return true;
