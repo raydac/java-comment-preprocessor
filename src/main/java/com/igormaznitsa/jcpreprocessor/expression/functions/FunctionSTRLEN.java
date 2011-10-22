@@ -23,8 +23,8 @@ public final class FunctionSTRLEN extends AbstractFunction {
         switch (_val0.getType()) {
             case STRING: {
                 String s_result = (String) _val0.getValue();
-                long l_len = s_result.length();
-                stack.setItemAtPosition(index, new Value(Long.toString(l_len)));
+                final long l_len = s_result.length();
+                stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(l_len)));
             }
             ;
             break;

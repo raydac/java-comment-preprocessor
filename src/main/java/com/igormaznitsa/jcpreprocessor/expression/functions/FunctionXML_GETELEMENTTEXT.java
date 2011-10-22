@@ -38,7 +38,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
                         if (p_node instanceof Text) p_strBuffer.append(((Text)p_node).getData());
                     }
 
-                    _stack.setItemAtPosition(_index, new Value((Object)p_strBuffer.toString()));
+                    _stack.setItemAtPosition(_index, Value.valueOf(p_strBuffer.toString()));
                 };break;
             default :
                 throw new IllegalArgumentException("Function XML_GETELEMENTTEXT processes only the INTEGER types");

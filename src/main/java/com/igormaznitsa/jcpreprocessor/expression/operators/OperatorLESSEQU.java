@@ -28,6 +28,8 @@ public final class OperatorLESSEQU extends AbstractOperator {
 
         if (_val0.getType() != _val1.getType()) throw new IllegalArgumentException("Incompatible types in \"<=\" operation");
 
+        Boolean result;
+        
         switch (_val0.getType())
         {
             case BOOLEAN:
@@ -36,27 +38,22 @@ public final class OperatorLESSEQU extends AbstractOperator {
                 }
             case FLOAT:
                 {
-                    boolean lg_result = ((Float) _val0.getValue()).floatValue() <= ((Float) _val1.getValue()).floatValue();
-                    stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                    result = ((Float) _val0.getValue()).floatValue() <= ((Float) _val1.getValue()).floatValue();
                 }
-                ;
                 break;
             case INT:
                 {
-                    boolean lg_result = ((Long) _val0.getValue()).longValue() <= ((Long) _val1.getValue()).longValue();
-                    stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                    result = ((Long) _val0.getValue()).longValue() <= ((Long) _val1.getValue()).longValue();
                 }
-                ;
                 break;
             case STRING:
                 {
-                    boolean lg_result = ((String) _val0.getValue()).length() <= ((String) _val1.getValue()).length();
-                    stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                    result = ((String) _val0.getValue()).length() <= ((String) _val1.getValue()).length();
                 }
-                ;
                 break;
             default: throw new IllegalArgumentException("Unsupported type");
         }
+        stack.setItemAtPosition(index, Value.valueOf(result));
     }
 
     public int getPriority() {

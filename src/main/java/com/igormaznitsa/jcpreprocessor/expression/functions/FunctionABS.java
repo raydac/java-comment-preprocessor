@@ -23,12 +23,12 @@ public final class FunctionABS extends AbstractFunction {
             case INT:
                 {
                     long l_result = Math.abs(((Long) _val0.getValue()).longValue());
-                    stack.setItemAtPosition(index, new Value(Long.toString(l_result)));
+                    stack.setItemAtPosition(index, Value.valueOf(l_result));
                 };break;
             case FLOAT:
                 {
                     float f_result = Math.abs(((Float) _val0.getValue()).floatValue());
-                    stack.setItemAtPosition(index, new Value(Float.toString(f_result)));
+                    stack.setItemAtPosition(index, Value.valueOf(f_result));
                 };break;
             default :
                 throw new IllegalArgumentException("Function ABS processes only the INTEGER or the FLOAT types");

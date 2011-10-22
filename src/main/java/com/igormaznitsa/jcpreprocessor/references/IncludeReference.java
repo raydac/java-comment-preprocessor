@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.references;
 
+import com.igormaznitsa.jcpreprocessor.directives.ParameterContainer;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +28,11 @@ public final class IncludeReference
             return fileName;
         }
         
-        public IncludeReference(final File currentFile,final String fileName, final String [] stringsArray, final int stringCounter)
+        public IncludeReference(final File currentFile,final ParameterContainer container)
         {
             this.file = currentFile;
-            this.fileName = fileName;
-            this.strings = stringsArray;
-            this.stringCounter = stringCounter;
+            this.fileName = container.getCurrentFileCanonicalPath();
+            this.strings = container.getStrings();
+            this.stringCounter = container.getCurrentStringIndex();
         }
 }

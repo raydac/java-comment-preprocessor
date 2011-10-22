@@ -53,7 +53,7 @@ public final class FunctionSTR2WEB extends AbstractFunction {
                     }
 
 
-                    p_val.setValue(p_strBuffer.toString());
+                    stack.setItemAtPosition(index-1, Value.valueOf(p_strBuffer.toString()));
                 };break;
             default :
                 throw new IllegalArgumentException("Function STR2WEB processes only the STRING type");

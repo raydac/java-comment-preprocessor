@@ -52,7 +52,7 @@ public final class FunctionXML_GETATTRIBUTE extends AbstractXMLFunction {
 
         String s_value = p_element.getAttribute(s_attribute);
 
-        _stack.setItemAtPosition(_index, new Value((Object)s_value));
+        _stack.setItemAtPosition(_index, Value.valueOf(s_value));
     }
       @Override
     public int getArity() {

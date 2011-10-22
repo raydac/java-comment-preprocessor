@@ -27,7 +27,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
 
                     NodeList p_nodeList = getXmlNodeListIndex((int)l_listIndex);
 
-                    _stack.setItemAtPosition(_index, new Value(new Long(p_nodeList.getLength())));
+                    _stack.setItemAtPosition(_index, Value.valueOf(Long.valueOf(p_nodeList.getLength())));
                 };break;
             default :
                 throw new IllegalArgumentException("Function XML_ELEMENTSNUMBER processes only the INTEGER types");

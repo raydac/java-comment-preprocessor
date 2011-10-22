@@ -44,7 +44,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
                     int i_index = addXmlDocument(p_doc);
 
-                    stack.setItemAtPosition(index, new Value(new Long(i_index)));
+                    stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_index)));
                 };break;
             default :
                 throw new IllegalArgumentException("Function XML_OPEN processes only the STRING types");

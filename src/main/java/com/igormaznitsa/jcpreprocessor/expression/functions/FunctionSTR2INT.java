@@ -33,7 +33,7 @@ public final class FunctionSTR2INT extends AbstractFunction {
                     {
                         throw new IllegalArgumentException("I can't convert value ["+s_result+']');
                     }
-                   stack.setItemAtPosition(index, new Value(new Long(l_value)));
+                   stack.setItemAtPosition(index, Value.valueOf(l_value));
                 };break;
             default :
                 throw new IllegalArgumentException("Function STR2INT processes only the STRING type");

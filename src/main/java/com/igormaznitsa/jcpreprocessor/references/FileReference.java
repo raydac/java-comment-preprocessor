@@ -153,7 +153,7 @@ public final class FileReference {
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#define")) {
                     // Processing of a local definition
                     final String name = PreprocessorUtils.extractTrimmedTail("//#define",stringToBeProcessed);
-                    final Value value = new Value("true");
+                    final Value value = Value.BOOLEAN_TRUE;
                     configurator.setLocalVariable(name, value);
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#exitif")) {
                     // To end processing the file processing immediatly if the value is true
@@ -171,14 +171,14 @@ public final class FileReference {
                     paramContainer.setEndPreprocessing(true);
                     continue;
                 } else if (stringToBeProcessed.startsWith("//#continue")) {
-                    if (paramContainer.getWhileCounter() == 0) {
+                    if (paramContainer.isWhileCounterZero()) {
                         throw new IOException("You have #continue without #when");
                     }
                     if (processingEnabled && paramContainer.getWhileCounter() == paramContainer.getActiveWhileCounter()) {
                         paramContainer.setThereIsNoContinueCommand(false);
                     }
                 } else if (stringToBeProcessed.startsWith("//#break")) {
-                    if (paramContainer.getWhileCounter() == 0) {
+                    if (paramContainer.isWhileCounterZero()) {
                         throw new IOException("You have #break without #when");
                     }
                     
@@ -193,11 +193,11 @@ public final class FileReference {
                         if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                             throw new IOException("You don't have a boolean result in the #while instruction");
                         }
-                        if (paramContainer.getWhileCounter() == 0) {
+                        if (paramContainer.isWhileCounterZero()) {
                             paramContainer.setLastWhileFileName(paramContainer.getCurrentFileCanonicalPath());
                             paramContainer.setLastWhileStringNumber(paramContainer.getCurrentStringIndex());
                         }
-                        paramContainer.setWhileCounter(paramContainer.getWhileCounter()+1);
+                        paramContainer.increaseWhileCounter();
                         paramContainer.setActiveWhileCounter(paramContainer.getWhileCounter());
                         
                         if (((Boolean) p_value.getValue()).booleanValue()) {
@@ -206,7 +206,7 @@ public final class FileReference {
                             paramContainer.setThereIsNoBreakCommand(false);
                         }
                     } else {
-                        paramContainer.setWhileCounter(paramContainer.getWhileCounter()+1);
+                        paramContainer.increaseWhileCounter();
                     }
                     
                     whileIndexesStack.push(new Integer(paramContainer.getCurrentStringIndex() - 1));
@@ -227,26 +227,26 @@ public final class FileReference {
                     if (processingEnabled) {
                         stringToBeProcessed = stringToBeProcessed.substring(12).trim();
                         
-                        if (stringToBeProcessed.length() == 0) {
+                        if (stringToBeProcessed.isEmpty()) {
                             throw new IOException("You have not defined any variable in a //#ifdefined deirective");
                         }
                         
                         boolean lg_defined = configurator.findVariableForName(stringToBeProcessed)!=null;
                         
-                        if (ifConstructionCounter == 0) {
-                            lastIfFileName = filePath;
-                            lastIfStringNumber = stringNumberCounter;
+                        if (paramContainer.isIfCounterZero()) {
+                            paramContainer.setLastIfFileName(paramContainer.getCurrentFileCanonicalPath());
+                            paramContainer.setLastIfStringNumber(paramContainer.getCurrentStringIndex());
                         }
-                        ifConstructionCounter++;
-                        activeIfConstructionCounter = ifConstructionCounter;
+                        paramContainer.increaseIfCounter();
+                        paramContainer.setActiveIfCounter(paramContainer.getIfCounter());
                         
                         if (lg_defined) {
-                            flagIfEnabled = true;
+                            paramContainer.setIfEnabled(true);
                         } else {
-                            flagIfEnabled = false;
+                            paramContainer.setIfEnabled(false);
                         }
                     } else {
-                        ifConstructionCounter++;
+                        paramContainer.increaseIfCounter();
                     }
                 } else if (stringToBeProcessed.startsWith("//#if")) {
                     // Processing #if instruction
@@ -256,28 +256,28 @@ public final class FileReference {
                         if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                             throw new IOException("You don't have a boolean result in the #if instruction");
                         }
-                        if (ifConstructionCounter == 0) {
-                            lastIfFileName = filePath;
-                            lastIfStringNumber = stringNumberCounter;
+                        if (paramContainer.isIfCounterZero()) {
+                            paramContainer.setLastIfFileName(paramContainer.getCurrentFileCanonicalPath());
+                            paramContainer.setLastIfStringNumber(paramContainer.getCurrentStringIndex());
                         }
-                        ifConstructionCounter++;
-                        activeIfConstructionCounter = ifConstructionCounter;
+                        paramContainer.increaseIfCounter();
+                        paramContainer.setActiveIfCounter(paramContainer.getIfCounter());
                         
                         if (((Boolean) p_value.getValue()).booleanValue()) {
-                            flagIfEnabled = true;
+                            paramContainer.setIfEnabled(true);
                         } else {
-                            flagIfEnabled = false;
+                            paramContainer.setIfEnabled(false);
                         }
                     } else {
-                        ifConstructionCounter++;
+                        paramContainer.increaseIfCounter();
                     }
                 } else if (stringToBeProcessed.startsWith("//#else")) {
-                    if (ifConstructionCounter == 0) {
+                    if (paramContainer.isIfCounterZero()) {
                         throw new IOException("You have got an #else instruction without #if");
                     }
                     
-                    if (ifConstructionCounter == activeIfConstructionCounter) {
-                        flagIfEnabled = !flagIfEnabled;
+                    if (paramContainer.getIfCounter() == paramContainer.getActiveIfCounter()) {
+                        paramContainer.setIfEnabled(!paramContainer.isIfEnabled());
                     }
                 } else if (stringToBeProcessed.startsWith("//#outdir")) {
                     if (processingEnabled) {
@@ -291,7 +291,7 @@ public final class FileReference {
                             stringToBeProcessed = (String) p_value.getValue();
                             setDestinationDir(stringToBeProcessed);
                         } catch (IOException e) {
-                            throw new IOException("You have the error in the #outdir instruction in the file " + getSourceFile().getAbsolutePath() + " at line: " + stringNumberCounter + " [" + e.getMessage() + ']');
+                            throw new IOException("You have the error in the #outdir instruction in the file " + getSourceFile().getAbsolutePath() + " at line: " + paramContainer.getCurrentStringIndex() + " [" + e.getMessage() + ']');
                         }
                     }
                 } else if (stringToBeProcessed.startsWith("//#outname")) {
@@ -306,7 +306,7 @@ public final class FileReference {
                             stringToBeProcessed = (String) p_value.getValue();
                             setDestinationName(stringToBeProcessed);
                         } catch (IOException e) {
-                            throw new IOException("You have the error in the #outname instruction in the file " + getSourceFile().getAbsolutePath() + " line: " + stringNumberCounter + " [" + e.getMessage() + ']');
+                            throw new IOException("You have the error in the #outname instruction in the file " + getSourceFile().getAbsolutePath() + " line: " + paramContainer.getCurrentStringIndex() + " [" + e.getMessage() + ']');
                         }
                     }
                 } else if (stringToBeProcessed.startsWith("//#flush")) {
@@ -356,42 +356,42 @@ public final class FileReference {
                                 currentTextOutStream = normalTextOutStream;
                             }
                         } catch (IOException e) {
-                            throw new IOException("Exception during //#flush operator in the file " + getSourceFile().getCanonicalPath() + " at line: " + stringNumberCounter + " [" + e.getMessage() + ']',e);
+                            throw new IOException("Exception during //#flush operator in the file " + getSourceFile().getCanonicalPath() + " at line: " + paramContainer.getCurrentStringIndex() + " [" + e.getMessage() + ']',e);
                         }
                     }
                 } else if (stringToBeProcessed.startsWith("//#endif")) {
-                    if (ifConstructionCounter == 0) {
+                    if (paramContainer.isIfCounterZero()) {
                         throw new IOException("You have got an #endif instruction without #if");
                     }
                     
-                    if (ifConstructionCounter == activeIfConstructionCounter) {
-                        ifConstructionCounter--;
-                        activeIfConstructionCounter--;
-                        flagIfEnabled = true;
+                    if (paramContainer.getIfCounter() == paramContainer.getActiveIfCounter()) {
+                        paramContainer.decreaseIfCounter();
+                        paramContainer.decreaseActiveIfCounter();
+                        paramContainer.setIfEnabled(true);
                     } else {
-                        ifConstructionCounter--;
+                        paramContainer.decreaseIfCounter();
                     }
                 } else if (stringToBeProcessed.startsWith("//#end")) {
-                    if (whileConstructionCounter == 0) {
+                    if (paramContainer.isWhileCounterZero()) {
                         throw new IOException("You have got an #end instruction without #while");
                     }
                     
                     int i_lastWhileIndex = ((Integer) whileIndexesStack.pop()).intValue();
                     
-                    if (whileConstructionCounter == activeWhileConstructionCounter) {
-                        whileConstructionCounter--;
-                        activeWhileConstructionCounter--;
+                    if (paramContainer.getWhileCounter() == paramContainer.getActiveWhileCounter()) {
+                        paramContainer.decreaseWhileCounter();
+                        paramContainer.decreaseActiveWhileCounter();
                         
-                        if (flagNoBreakCommand) {
-                            stringNumberCounter = i_lastWhileIndex;
+                        if (paramContainer.isThereNoBreakCommand()) {
+                            paramContainer.setCurrentStringIndex(i_lastWhileIndex);
                         }
                         
-                        flagNoContinueCommand = true;
-                        flagNoBreakCommand = true;
+                        paramContainer.setThereIsNoContinueCommand(true);
+                        paramContainer.setThereIsNoBreakCommand(true);
                     } else {
-                        whileConstructionCounter--;
+                        paramContainer.decreaseWhileCounter();
                     }
-                } else if (processingEnabled && flagOutputEnabled && stringToBeProcessed.startsWith("//#action")) {
+                } else if (processingEnabled && paramContainer.isOutEnabled() && stringToBeProcessed.startsWith("//#action")) {
                     // Вызов внешнего обработчика, если есть
                     if (configurator.getPreprocessorExtension() != null) {
                         stringToBeProcessed = stringToBeProcessed.substring(9).trim();
@@ -411,7 +411,7 @@ public final class FileReference {
                             throw new IOException("There is an error during an action processing [" + stringToBeProcessed + "]");
                         }
                     }
-                } else if (processingEnabled && flagOutputEnabled && stringToBeProcessed.startsWith("//#include")) {
+                } else if (processingEnabled && paramContainer.isOutEnabled() && stringToBeProcessed.startsWith("//#include")) {
                     // include a file with the path to the place (with processing)
                     stringToBeProcessed = stringToBeProcessed.substring(10).trim();
                     Value p_value = Expression.eval(stringToBeProcessed);
@@ -420,7 +420,7 @@ public final class FileReference {
                         throw new IOException("You don't have a string result in the #include instruction");
                     }
                     
-                    IncludeReference p_inRef = new IncludeReference(preprocessingFile, filePath, currentFileStringContainer, stringNumberCounter);
+                    IncludeReference p_inRef = new IncludeReference(preprocessingFile, paramContainer);
                     includeReferenceStack.push(p_inRef);
                     String s_fName = (String) p_value.getValue();
                     try {
@@ -428,37 +428,37 @@ public final class FileReference {
                         p_inclFile = new File(getSourceFile().getParent(), s_fName);
                         
                         preprocessingFile = p_inclFile;
-                        currentFileStringContainer = PreprocessorUtils.readTextFileAndAddNullAtEnd(p_inclFile, configurator.getCharacterEncoding());
+                        paramContainer.setStrings(PreprocessorUtils.readTextFileAndAddNullAtEnd(p_inclFile, configurator.getCharacterEncoding()));
                     } catch (FileNotFoundException e) {
                         throw new IOException("You have got the bad file pointer in the #include instruction [" + s_fName + "]");
                     }
-                    fileNameStack.push(filePath);
-                    filePath = s_fName;
-                    stringNumberCounter = 0;
-                } else if (stringToBeProcessed.startsWith("//$$") && processingEnabled && flagOutputEnabled) {
+                    fileNameStack.push(paramContainer.getCurrentFileCanonicalPath());
+                    paramContainer.setCurrentFileCanonicalPath(s_fName);
+                    paramContainer.setCurrentStringIndex(0);
+                } else if (stringToBeProcessed.startsWith("//$$") && processingEnabled && paramContainer.isOutEnabled()) {
                     // Output the tail of the string to the output stream without comments and macroses
                     stringToBeProcessed = stringToBeProcessed.substring(4);
                     currentTextOutStream.println(stringToBeProcessed);
-                } else if (stringToBeProcessed.startsWith("//$") && processingEnabled && flagOutputEnabled) {
+                } else if (stringToBeProcessed.startsWith("//$") && processingEnabled && paramContainer.isOutEnabled()) {
                     // Output the tail of the string to the output stream without comments
                     stringToBeProcessed = stringToBeProcessed.substring(3);
                     currentTextOutStream.println(stringToBeProcessed);
-                } else if (processingEnabled && flagOutputEnabled && stringToBeProcessed.startsWith("//#assert")) {
+                } else if (processingEnabled && paramContainer.isOutEnabled() && stringToBeProcessed.startsWith("//#assert")) {
                     // Out a message to the output stream
                     stringToBeProcessed = stringToBeProcessed.substring(9).trim();
                     configurator.info("-->: " + stringToBeProcessed);
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#+")) {
                     // Turn on outputing to the output stream
-                    flagOutputEnabled = true;
+                    paramContainer.setOutEnabled(true);
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#-")) {
                     // Turn off outputing to the output stream
-                    flagOutputEnabled = false;
+                    paramContainer.setOutEnabled(false);
                 } else if (processingEnabled && stringToBeProcessed.startsWith("//#//")) {
                     // To comment next string
-                    flagToCommentNextLine = true;
+                    paramContainer.setCommentNextLine(true);
                 } else if (processingEnabled) {
                     // Just string :)
-                    if (flagOutputEnabled) {
+                    if (paramContainer.isOutEnabled()) {
                         if (!stringToBeProcessed.startsWith("//#")) {
                             int i_indx;
                             
@@ -467,9 +467,9 @@ public final class FileReference {
                                 stringToBeProcessed = stringToBeProcessed.substring(0, i_indx);
                             }
                             
-                            if (flagToCommentNextLine) {
+                            if (paramContainer.shouldCommentNextLine()) {
                                 currentTextOutStream.print("// ");
-                                flagToCommentNextLine = false;
+                                paramContainer.setCommentNextLine(false);
                             }
                             for (int li = 0; li < numberOfSpacesAtTheLineBeginning; li++) {
                                 currentTextOutStream.print(" ");
@@ -482,14 +482,14 @@ public final class FileReference {
                 }
             }
         } catch (IOException e) {
-            throw new IOException(e.getMessage() + " file: " + filePath + " str: " + stringNumberCounter);
+            throw new IOException(e.getMessage() + " file: " + paramContainer.getCurrentFileCanonicalPath() + " str: " + paramContainer.getCurrentStringIndex());
         }
         
-        if (ifConstructionCounter > 0) {
-            throw new IOException("You have an unclosed #if construction [" + lastIfFileName + ':' + lastIfStringNumber + ']');
+        if (!paramContainer.isIfCounterZero()) {
+            throw new IOException("You have an unclosed #if construction [" + paramContainer.getCurrentFileCanonicalPath() + ':' + paramContainer.getLastIfStringNumber() + ']');
         }
-        if (whileConstructionCounter > 0) {
-            throw new IOException("You have an unclosed #while construction [" + lastWhileFileName + ':' + lastWhileStringNumber + ']');
+        if (!paramContainer.isWhileCounterZero()) {
+            throw new IOException("You have an unclosed #while construction [" + paramContainer.getCurrentFileCanonicalPath() + ':' + paramContainer.getLastWhileStringNumber() + ']');
         }
         
         

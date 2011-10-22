@@ -18,7 +18,9 @@ public final class OperatorOR extends AbstractOperator {
     }
 
     public void execute(Expression stack, int index) {
-                if (!stack.areThereTwoValuesBefore(index)) throw new IllegalArgumentException("Operation \'||\' needs two operands");
+        if (!stack.areThereTwoValuesBefore(index)) {
+            throw new IllegalArgumentException("Operation \'||\' needs two operands");
+        }
 
         Value _val0 = (Value) stack.getItemAtPosition(index - 2);
         Value _val1 = (Value) stack.getItemAtPosition(index - 1);
@@ -27,29 +29,23 @@ public final class OperatorOR extends AbstractOperator {
         stack.removeItemAt(index);
         stack.removeItemAt(index);
 
-        switch (_val0.getType())
-        {
-            case BOOLEAN:
-                {
-                    if (_val1.getType() == ValueType.BOOLEAN)
-                    {
-                        boolean lg_result = ((Boolean) _val0.getValue()).booleanValue() || ((Boolean) _val1.getValue()).booleanValue();
-                        stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
-                    }
-                }
-                ;
-                break;
-            case INT:
-                {
-                    if (_val1.getType() == ValueType.INT)
-                    {
-                        long i_result = ((Long) _val0.getValue()).longValue() | ((Long) _val1.getValue()).longValue();
-                        stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
-                    }
-                }
-                ;
-                break;
-            default :
+        if (_val0.getType() != _val1.getType()) {
+            throw new RuntimeException("Different value types detected");
+        }
+
+        switch (_val0.getType()) {
+            case BOOLEAN: {
+                Boolean result = ((Boolean) _val0.getValue()).booleanValue() || ((Boolean) _val1.getValue()).booleanValue();
+                stack.setItemAtPosition(index, Value.valueOf(result));
+            }
+
+            break;
+            case INT: {
+                Long result = ((Long) _val0.getValue()).longValue() | ((Long) _val1.getValue()).longValue();
+                stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(result)));
+            }
+            break;
+            default:
                 throw new IllegalArgumentException("Operation || processes only the BOOLEAN or the INTEGER types");
         }
 
@@ -58,5 +54,4 @@ public final class OperatorOR extends AbstractOperator {
     public int getPriority() {
         return 0;
     }
-    
 }

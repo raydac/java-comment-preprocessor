@@ -4,8 +4,12 @@ import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
 public final class Value implements ExpressionStackItem {
 
-    private Object value;
-    private ValueType type;
+    public static final Value BOOLEAN_TRUE = new Value(Boolean.TRUE);
+    public static final Value BOOLEAN_FALSE = new Value(Boolean.FALSE);
+    public static final Value INT_ZERO = new Value(Long.valueOf(0));
+    
+    private final Object value;
+    private final ValueType type;
 
     public ValueType getType() {
         return type;
@@ -15,36 +19,65 @@ public final class Value implements ExpressionStackItem {
         return value;
     }
 
-    public void setValue(final Object val) {
+    
+    private Value(final String val) {
         value = val;
+        type = ValueType.STRING;
     }
 
-    public Value(final String val) {
-        type = recognizeType(val);
-        value = getValue(val, type);
-        if (value == null) {
-            throw new RuntimeException();
-        }
+    private Value(final Long val) {
+        value = val;
+        type = ValueType.INT;
     }
 
-    public Value(Object _value) {
-        type = ValueType.UNKNOWN;
-        if (_value instanceof String) {
-            type = ValueType.STRING;
-        } else if (_value instanceof Boolean) {
-            type = ValueType.BOOLEAN;
-        } else if (_value instanceof Float) {
-            type = ValueType.FLOAT;
-        } else if (_value instanceof Long) {
-            type = ValueType.INT;
-        }
-
-        value = _value;
-        if (type == ValueType.UNKNOWN) {
-            throw new RuntimeException("Unsupported value type");
-        }
+    private Value(final Float val) {
+        value = val;
+        type = ValueType.FLOAT;
     }
 
+    private Value(final Boolean val) {
+        value = val;
+        type = ValueType.BOOLEAN;
+    }
+
+    public static Value valueOf(final Long val) {
+        return new Value(val);
+    }
+    
+    public static Value valueOf(final Boolean val) {
+        return val.booleanValue() ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+    }
+    
+    public static Value valueOf(final Float val){
+        return new Value(val);
+    }
+    
+    public static Value valueOf(final String val){
+        return new Value(val);
+    }
+    
+    public static Value recognizeOf(final String str) {
+        final ValueType type = recognizeType(str);
+
+        switch(type) {
+            case BOOLEAN : {
+                return "true".equalsIgnoreCase(str) ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+            }
+            case INT : {
+                return new Value((Long)getValue(str, ValueType.INT));
+            }
+            case FLOAT : {
+                return new Value((Float)getValue(str, ValueType.FLOAT));
+            }
+            case STRING : {
+                return new Value((String)getValue(str, ValueType.STRING));
+            }
+            default:{
+                throw new RuntimeException("Unsupported object type");
+            } 
+        }
+    }
+    
     public static final Object getValue(final String value, final ValueType type) {
         try {
             switch (type) {
@@ -52,11 +85,12 @@ public final class Value implements ExpressionStackItem {
                     return value.substring(1, value.length() - 1);
                 }
                 case BOOLEAN: {
-                    return value.toLowerCase().equals("true") ? Boolean.TRUE : Boolean.FALSE;
+                    return value.equalsIgnoreCase("true") ? Boolean.TRUE : Boolean.FALSE;
                 }
                 case INT: {
                     long longValue = -1;
-                    if (value.startsWith("0x")) {
+                    if (value.length()>2 && value.charAt(0) == '0' && (value.charAt(1)=='x' || value.charAt(1)=='X'))
+                        {
                         // HEX value
                         return Long.valueOf(PreprocessorUtils.extractTail("0x", value), 16);
                     } else {

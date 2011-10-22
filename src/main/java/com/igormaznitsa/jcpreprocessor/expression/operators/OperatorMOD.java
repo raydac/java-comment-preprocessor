@@ -52,7 +52,7 @@ public final class OperatorMOD extends AbstractOperator {
                         {
                             f_result = ((Float) _val0.getValue()).floatValue() % ((Long) _val1.getValue()).longValue();
                         }
-                        stack.setItemAtPosition(index, new Value(Float.toString(f_result)));
+                        stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
                     }
                     ;
                     break;
@@ -62,12 +62,12 @@ public final class OperatorMOD extends AbstractOperator {
                         if (_val0.getType() == _val1.getType())
                         {
                             long i_result = ((Long) _val0.getValue()).longValue() % ((Long) _val1.getValue()).longValue();
-                            stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
+                            stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
                         }
                         else
                         {
                             float f_result = ((Long) _val0.getValue()).longValue() % ((Float) _val1.getValue()).floatValue();
-                            stack.setItemAtPosition(index, new Value(Float.toString(f_result)));
+                            stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
                         }
                     }
                     ;

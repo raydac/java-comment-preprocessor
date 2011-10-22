@@ -32,7 +32,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractXMLFunction {
                     s_name = "";
                 }
 
-                _stack.setItemAtPosition(_index, new Value((Object) s_name));
+                _stack.setItemAtPosition(_index, Value.valueOf(s_name));
             }
             ;
             break;

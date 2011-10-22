@@ -25,7 +25,7 @@ public final class OperatorSUB extends AbstractOperator {
         {
             if (stack.isThereOneValueBefore(index))
             {
-                _val0 = new Value("0");
+                _val0 = Value.INT_ZERO;
                 _val1 = (Value) stack.getItemAtPosition(index - 1);
                 index = index - 1;
                 stack.removeItemAt(index);
@@ -72,7 +72,7 @@ public final class OperatorSUB extends AbstractOperator {
                         {
                             f_result = ((Float) _val0.getValue()).floatValue() - ((Long) _val1.getValue()).intValue();
                         }
-                        stack.setItemAtPosition(index, new Value(Float.toString(f_result)));
+                        stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
                     }
                     ;
                     break;
@@ -81,13 +81,13 @@ public final class OperatorSUB extends AbstractOperator {
                         if (_val0.getType() == _val1.getType())
                         {
                             long i_result = ((Long) _val0.getValue()).longValue() - ((Long) _val1.getValue()).longValue();
-                            stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
+                            stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
                         }
                         else
                         {
 
                             float f_result = ((Long) _val0.getValue()).longValue() - ((Float) _val1.getValue()).floatValue();
-                            stack.setItemAtPosition(index, new Value(Float.toString(f_result)));
+                            stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
 
                         }
                     }

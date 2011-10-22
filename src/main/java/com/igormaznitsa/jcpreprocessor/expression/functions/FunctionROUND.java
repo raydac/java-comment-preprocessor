@@ -27,7 +27,7 @@ public final class FunctionROUND extends AbstractFunction {
             case FLOAT:
                 {
                     long l_result = Math.round(((Float) _val0.getValue()).longValue());
-                    stack.setItemAtPosition(index, new Value(Long.toString(l_result)));
+                    stack.setItemAtPosition(index, Value.valueOf(l_result));
                 };break;
             default :
                 throw new IllegalArgumentException("Function ROUND processes only the INTEGER or the FLOAT types");

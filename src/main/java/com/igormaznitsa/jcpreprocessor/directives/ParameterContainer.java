@@ -67,7 +67,7 @@ public class ParameterContainer {
         return this;
     }
     
-    public boolean shouldConvertNextLine() {
+    public boolean shouldCommentNextLine() {
         return toCommentNextLine;
     }
     
@@ -233,8 +233,24 @@ public class ParameterContainer {
 
     public ParameterContainer setCurrentFileCanonicalPath(final String path) {
         currentFileCanonicalPath = path;
+        return this;
     }
     
+    public boolean isCurrentIfIndexEqualsActive() {
+        return ifConstructionCounter == activeIfConstructionCounter;
+    }
+    
+    public boolean isCurrentWhileEqualsActive() {
+        return whileConstructionCounter == activeWhileConstructionCounter;
+    }
+    
+    public boolean isIfCounterZero() {
+        return ifConstructionCounter == 0;
+    }
+    
+    public boolean isWhileCounterZero() {
+        return whileConstructionCounter == 0;
+    }
     
     public void init(final File file) throws IOException {
         endPreprocessing = false;

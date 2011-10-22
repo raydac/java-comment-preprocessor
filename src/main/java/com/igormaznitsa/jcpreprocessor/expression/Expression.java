@@ -395,7 +395,7 @@ public class Expression {
                         expressionStack.push(p_val);
                     } else {
                         try {
-                            expressionStack.push(new Value(token));
+                            expressionStack.push(Value.recognizeOf(token));
                         } catch (Exception e) {
                             throw new IOException("Unsupported value or function \'" + token + "\'");
                         }

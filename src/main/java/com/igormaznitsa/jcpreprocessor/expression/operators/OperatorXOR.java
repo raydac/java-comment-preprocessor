@@ -34,7 +34,7 @@ public class OperatorXOR extends AbstractOperator {
                     if (_val1.getType() == ValueType.BOOLEAN)
                     {
                         boolean lg_result = ((Boolean) _val0.getValue()).booleanValue() ^ ((Boolean) _val1.getValue()).booleanValue();
-                        stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                        stack.setItemAtPosition(index, Value.valueOf(Boolean.valueOf(lg_result)));
                     }
                 }
                 ;
@@ -44,7 +44,7 @@ public class OperatorXOR extends AbstractOperator {
                     if (_val1.getType() == ValueType.INT)
                     {
                         long i_result = ((Long) _val0.getValue()).longValue() ^ ((Long) _val1.getValue()).longValue();
-                        stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
+                        stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
                     }
                 }
                 ;

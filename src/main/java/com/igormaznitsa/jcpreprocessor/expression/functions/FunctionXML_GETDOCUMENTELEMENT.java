@@ -28,7 +28,7 @@ public final class FunctionXML_GETDOCUMENTELEMENT extends AbstractXMLFunction {
                     Document p_document = (Document) getXmlDocumentForIndex((int)l_documentIndex);
                     Element p_element = p_document.getDocumentElement();
                     int i_index  = findXmlElementIndex(p_element);
-                    _stack.setItemAtPosition(_index, new Value(new Long(i_index)));
+                    _stack.setItemAtPosition(_index, Value.valueOf(Long.valueOf(i_index)));
                 };break;
             default :
                 throw new IllegalArgumentException("Function XML_GETDOCUMENTELEMENT processes only the INTEGER types");

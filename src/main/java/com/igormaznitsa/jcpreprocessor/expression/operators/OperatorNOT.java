@@ -28,14 +28,14 @@ public class OperatorNOT extends AbstractOperator {
             case BOOLEAN:
                 {
                     boolean lg_result = !((Boolean) _val0.getValue()).booleanValue();
-                    stack.setItemAtPosition(index, new Value(Boolean.toString(lg_result)));
+                    stack.setItemAtPosition(index, Value.valueOf(Boolean.valueOf(lg_result)));
                 }
                 ;
                 break;
             case INT:
                 {
                     long i_result = 0xFFFFFFFF ^ ((Long) _val0.getValue()).longValue();
-                    stack.setItemAtPosition(index, new Value(Long.toString(i_result)));
+                    stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
                 }
                 ;
                 break;

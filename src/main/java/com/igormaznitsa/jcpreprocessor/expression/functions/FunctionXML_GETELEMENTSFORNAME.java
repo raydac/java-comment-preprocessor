@@ -56,7 +56,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
             NodeList p_nodeList = p_element.getElementsByTagName(s_tagName);
             int i_listIndex = findXmlNodelistIndex(p_nodeList);
 
-            _stack.setItemAtPosition(_index, new Value(new Long(i_listIndex)));
+            _stack.setItemAtPosition(_index, Value.valueOf(Long.valueOf(i_listIndex)));
         } catch (NullPointerException e)
         {
             throw new RuntimeException("Strange error [s_tagName="+s_tagName+", p_element="+p_element+"]");

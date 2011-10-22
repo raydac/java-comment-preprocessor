@@ -54,7 +54,7 @@ public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
         Element p_Element = (Element) p_nodeList.item((int)l_indexElement);
         long l_index = findXmlElementIndex(p_Element);
 
-        _stack.setItemAtPosition(_index, new Value(new Long(l_index)));
+        _stack.setItemAtPosition(_index, Value.valueOf(Long.valueOf(l_index)));
        
     }
     @Override
