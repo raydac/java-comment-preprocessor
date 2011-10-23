@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import java.io.File;
 

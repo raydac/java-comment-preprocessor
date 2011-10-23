@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
@@ -16,9 +16,14 @@ public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         state.setEndPreprocessing(true);
-        return DirectiveBehaviour.CONTINUE;
+        return DirectiveBehaviourEnum.READ_NEXT_LINE;
     }
     
     

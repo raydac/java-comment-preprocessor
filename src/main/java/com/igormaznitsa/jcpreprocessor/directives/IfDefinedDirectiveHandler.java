@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
@@ -21,11 +21,16 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         // Processing #ifdefine instruction
         if (state.isProcessingEnabled()) {
             if (string.isEmpty()) {
-                throw new IOException("You have not defined any variable in a //#ifdefined deirective");
+                throw new RuntimeException("//#ifdefined needs a variable");
             }
 
             boolean lg_defined = configurator.findVariableForName(string) != null;
@@ -46,6 +51,6 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
             state.increaseIfCounter();
         }
 
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 }

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.IOException;
 
@@ -17,9 +17,14 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         configurator.setLocalVariable(string, Value.BOOLEAN_TRUE);
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 
 }

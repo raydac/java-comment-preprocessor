@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class RemoveCommentsHandler implements CommandLineHandler {
 

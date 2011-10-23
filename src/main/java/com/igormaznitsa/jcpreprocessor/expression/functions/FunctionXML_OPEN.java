@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.File;

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.cmdline;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
 public class SourceDirectoryHandler implements CommandLineHandler {

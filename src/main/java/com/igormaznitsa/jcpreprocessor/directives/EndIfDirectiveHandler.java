@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class EndIfDirectiveHandler  extends AbstractDirectiveHandler {
@@ -20,12 +20,15 @@ public class EndIfDirectiveHandler  extends AbstractDirectiveHandler {
         return false;
     }
 
-    
-    
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
                     if (state.isIfCounterZero()) {
-                        throw new IOException("You have got an #endif instruction without #if");
+                        throw new RuntimeException("//#endif without //#if detected");
                     }
                     
                     if (state.getIfCounter() == state.getActiveIfCounter()) {
@@ -35,7 +38,7 @@ public class EndIfDirectiveHandler  extends AbstractDirectiveHandler {
                     } else {
                         state.decreaseIfCounter();
                     }
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
     
     

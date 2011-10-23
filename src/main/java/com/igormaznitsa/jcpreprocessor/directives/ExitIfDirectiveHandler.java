@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
@@ -19,17 +19,22 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext context) {
         // To end processing the file processing immediatly if the value is true
         final Value condition = Expression.eval(string,context);
         if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-            throw new IOException("You must use a boolean argument for an #endif operator");
+            throw new RuntimeException("//#exitif needs a boolean condition");
         }
         if (((Boolean) condition.getValue()).booleanValue()) {
             state.setEndPreprocessing(true);
-            return DirectiveBehaviour.CONTINUE;
+            return DirectiveBehaviourEnum.READ_NEXT_LINE;
         }
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 
  }

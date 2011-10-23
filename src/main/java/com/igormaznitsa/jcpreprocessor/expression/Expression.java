@@ -1,6 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.expression;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcpreprocessor.expression.operators.AbstractOperator;
@@ -123,7 +124,7 @@ public class Expression {
     }
 
     //TODO Optimize it because it takes a lot of time!!!
-    private boolean sortFormulaStack() throws IOException {
+    private boolean sortFormulaStack() {
         for (int processingItemIndex = 0; processingItemIndex < INSIDE_STACK.size() - 1; processingItemIndex++) {
             final ExpressionStackItem stackItem = INSIDE_STACK.get(processingItemIndex);
 
@@ -189,7 +190,7 @@ public class Expression {
             processingItemIndex += offsetOfIndexForCurrentProcessingItem;
 
             if (bracketCounter != 0) {
-                throw new IOException("There is not closed blacket");
+                throw new RuntimeException ("An Unclosed bracket has been detected");
             }
         }
 
@@ -197,7 +198,7 @@ public class Expression {
         return removeAllDelimitersAndBrackets();
     }
 
-    private static String readNumberOrVariableFromString(final String inString, final int startPosition) throws IOException {
+    private static String readNumberOrVariableFromString(final String inString, final int startPosition) {
         final int TYPE_NONE = 0;
         final int TYPE_INTEGER = 1;
         final int TYPE_STRING = 2;
@@ -289,7 +290,7 @@ public class Expression {
                             }
                             break;
                             default:
-                                throw new IOException("Unknown special char");
+                                throw new RuntimeException("Unknown special char detected \'\\"+readChar+'\'');
                         }
                         specialCharCounter++;
                         flagSpecialChar = false;
@@ -336,12 +337,12 @@ public class Expression {
             }
         }
         if (insideState == TYPE_STRING) {
-            throw new IOException("You have not closed string value");
+            throw new RuntimeException("Detected an unclosed string");
         }
         return stringAccumulator.toString();
     }
 
-    public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context) throws IOException {
+    public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context) {
         if (stringToBeParsed == null) {
             throw new NullPointerException("String is null");
         }
@@ -361,7 +362,7 @@ public class Expression {
                     operator = LONG_OPERATORS.get(token);
                 }
                 if (operator == null) {
-                    throw new NullPointerException("Operator must not be null");
+                    throw new NullPointerException("Operator is null");
                 }
                 expressionStack.push(operator);
                 continue;
@@ -381,11 +382,11 @@ public class Expression {
                     if (tokenInLowerCase.charAt(0) == '$') {
                         // user defined function
                         if (preprocessorExtension == null) {
-                            throw new IOException("You have an user function \"" + token + "\" but don't have defined an action listener");
+                            throw new RuntimeException("A User function \'"+token+"\'has been detected but a processor is not defined");
                         }
                         final int i_args = preprocessorExtension.getArgumentsNumberForUserFunction(tokenInLowerCase);
                         if (i_args < 0) {
-                            throw new IOException("Unknown user function \"" + token + "\"");
+                            throw new RuntimeException("Unknown user defined function \'"+token+"\' has been detected");
                         }
                         expressionStack.push(new FunctionDefinedByUser(tokenInLowerCase, i_args, context));
                     } else {
@@ -394,7 +395,7 @@ public class Expression {
                     }
                 } else {
                     if (context == null) {
-                        throw new IllegalStateException("There is not any configurator to use variables");
+                        throw new IllegalStateException("There is not a context to use variables");
                     }
 
                     final Value p_val = context.findVariableForName(token);
@@ -405,7 +406,7 @@ public class Expression {
                         try {
                             expressionStack.push(Value.recognizeOf(token));
                         } catch (Exception e) {
-                            throw new IOException("Unsupported value or function \'" + token + "\'");
+                            throw new RuntimeException("Unsupported value or function detected \'" + token + "\'",e);
                         }
                     }
                 }
@@ -416,11 +417,11 @@ public class Expression {
     }
 
     //TODO it ignores DELIMITERS flag during calculation
-    private Value calculate(final boolean delimitersPresented, final PreprocessorContext context) throws IOException {
+    private Value calculate(final boolean delimitersPresented, final PreprocessorContext context) {
         int index = 0;
         while (INSIDE_STACK.size() != 1) {
             if (INSIDE_STACK.size() == index) {
-                throw new IOException("Error formula");
+                throw new RuntimeException("Internal expression error detected");
             }
 
             final ExpressionStackItem expressionItem = INSIDE_STACK.get(index);
@@ -446,17 +447,17 @@ public class Expression {
             }
         }
         if (!delimitersPresented && INSIDE_STACK.size() > 1) {
-            throw new IOException("There is an operand without an operation");
+            throw new RuntimeException("An Operand without an operator has been detected");
         }
         return delimitersPresented ? (INSIDE_STACK.size() > 1 ? null : (Value) INSIDE_STACK.get(0)) : (Value) INSIDE_STACK.get(0);
     }
 
-    public static Value eval(final String expression, final PreprocessorContext context) throws IOException {
+    public static Value eval(final String expression, final PreprocessorContext context) {
         final Expression parsedStack = prepare(expression,context);
         return parsedStack.eval();
     }
 
-    public Value eval() throws IOException {
+    public Value eval() {
         final boolean delimitersPresented = sortFormulaStack();
         return calculate(delimitersPresented, context);
     }

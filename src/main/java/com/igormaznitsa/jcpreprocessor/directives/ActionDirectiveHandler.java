@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemType;
@@ -20,11 +20,16 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext context) {
         if (state.isOutEnabled()) {
             // Вызов внешнего обработчика, если есть
             if (context.getPreprocessorExtension() != null) {
-                String stringToBeProcessed = string.trim();
+                final String stringToBeProcessed = string.trim();
                 Expression p_stack = Expression.prepare(stringToBeProcessed,context);
                 p_stack.eval();
 
@@ -32,16 +37,16 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
                 for (int li = 0; li < p_stack.size(); li++) {
                     ExpressionStackItem p_obj = p_stack.getItemAtPosition(li);
                     if (p_obj.getStackItemType() != ExpressionStackItemType.VALUE) {
-                        throw new IOException("Error arguments list \'" + stringToBeProcessed + "\'");
+                        throw new RuntimeException("Wrong argument type detected");
                     }
                     ap_results[li] = (Value) p_obj;
                 }
 
                 if (!context.getPreprocessorExtension().processAction(ap_results, state.getFileReference().getDestinationDir(), state.getFileReference().getDestinationName(), state.getNormalOutStream(), state.getPrefixOutStream(), state.getPostfixOutStream(), context.getInfoPrintStream())) {
-                    throw new IOException("There is an error during an action processing [" + stringToBeProcessed + "]");
+                    throw new RuntimeException("Extension can't process the action");
                 }
             }
         }
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 }

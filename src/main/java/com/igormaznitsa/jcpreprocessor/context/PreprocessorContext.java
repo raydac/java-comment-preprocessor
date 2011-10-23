@@ -1,4 +1,4 @@
-package com.igormaznitsa.jcpreprocessor.cfg;
+package com.igormaznitsa.jcpreprocessor.context;
 
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -194,7 +194,7 @@ public final class PreprocessorContext {
             if (calculatedValue == null) {
                 throw new RuntimeException("Error value [" + valueDescription + ']');
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error value for the global variable \'" + pair[0] + "\' [" + e.getMessage() + "]",e);
         }
         
@@ -317,7 +317,7 @@ public final class PreprocessorContext {
         return errorOutStream;
     }
 
-    public File makeDestinationFile(final String file)throws IOException {
+    public File makeDestinationFile(final String file) {
         if (file == null) {
             throw new NullPointerException("File is null");
         }

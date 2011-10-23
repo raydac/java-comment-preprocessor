@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
@@ -16,9 +16,16 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
+    
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
          state.setCommentNextLine(true);
-         return DirectiveBehaviour.NORMAL;
+         return DirectiveBehaviourEnum.PROCESSED;
     }
  
     

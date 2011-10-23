@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.File;
 
 public interface AbstractExpressionExecutor {

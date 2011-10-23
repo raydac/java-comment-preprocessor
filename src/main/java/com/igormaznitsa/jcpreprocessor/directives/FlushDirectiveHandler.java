@@ -1,11 +1,11 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FlushDirectiveHandler  extends AbstractDirectiveHandler {
+public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -18,14 +18,19 @@ public class FlushDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
-        final File outFile = configurator.makeDestinationFile(state.getFileReference().getDestinationFilePath());
-        
-        state.saveBuffersToFile(outFile);
-        state.reinitOutBuffers();
-        
-        return DirectiveBehaviour.NORMAL;
+    public String getReference() {
+        return null;
     }
-    
-    
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
+        final File outFile = configurator.makeDestinationFile(state.getFileReference().getDestinationFilePath());
+        try {
+            state.saveBuffersToFile(outFile);
+            state.reinitOutBuffers();
+        } catch (IOException ex) {
+            throw new RuntimeException("IO exception during execution", ex);
+        }
+        return DirectiveBehaviourEnum.PROCESSED;
+    }
 }

@@ -1,8 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.references;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
-import com.igormaznitsa.jcpreprocessor.directives.DirectiveBehaviour;
+import com.igormaznitsa.jcpreprocessor.directives.DirectiveBehaviourEnum;
 import com.igormaznitsa.jcpreprocessor.directives.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -131,9 +131,9 @@ public class FileReference {
                 }
 
                 switch (processDirective(paramContainer, stringToBeProcessed, configurator)) {
-                    case CONTINUE:
+                    case READ_NEXT_LINE:
                         continue;
-                    case NORMAL: {
+                    case PROCESSED: {
                     }
                     break;
                     case NOT_PROCESSED: {
@@ -191,7 +191,7 @@ public class FileReference {
        
     }
     
-    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String string, final PreprocessorContext configurator) throws IOException {
+    protected DirectiveBehaviourEnum processDirective(final ParameterContainer state, final String string, final PreprocessorContext configurator) throws IOException {
         if (string.startsWith("//#")) {
             final String tail = PreprocessorUtils.extractTail("//#", string);
             for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
@@ -212,7 +212,7 @@ public class FileReference {
             throw new RuntimeException("Unknown cmd [" + string + ']');
         }
 
-        return DirectiveBehaviour.NOT_PROCESSED;
+        return DirectiveBehaviourEnum.NOT_PROCESSED;
     }
 
     private final void removeCommentsFromFile(final File file, final PreprocessorContext cfg) throws IOException {

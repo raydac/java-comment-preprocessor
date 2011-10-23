@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.CharsetHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.ClearDstDirectoryHandler;
@@ -11,6 +11,7 @@ import com.igormaznitsa.jcpreprocessor.cmdline.FileExtensionsHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.RemoveCommentsHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.SourceDirectoryHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.references.FileReference;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -28,24 +29,23 @@ import java.util.Set;
 public class JCPreprocessor {
 
     private final PreprocessorContext context;
-    private static final CommandLineHandler [] COMMAND_LINE_PROCESSORS = new CommandLineHandler [] 
-    {
-       new HelpHandler(),
-       new VerboseHandler(),
-       new CharsetHandler(),
-       new ClearDstDirectoryHandler(),
-       new SourceDirectoryHandler(),
-       new DestinationDirectoryHandler(),
-       new FileExtensionsHandler(),
-       new ExcludedFileExtensionsHandler(),
-       new RemoveCommentsHandler(),
-       new VerboseHandler()
+    private static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
+        new HelpHandler(),
+        new VerboseHandler(),
+        new CharsetHandler(),
+        new ClearDstDirectoryHandler(),
+        new SourceDirectoryHandler(),
+        new DestinationDirectoryHandler(),
+        new FileExtensionsHandler(),
+        new ExcludedFileExtensionsHandler(),
+        new RemoveCommentsHandler(),
+        new VerboseHandler()
     };
-    
+
     public PreprocessorContext getContext() {
         return context;
     }
-    
+
     public JCPreprocessor(final PreprocessorContext context) {
         if (context == null) {
             throw new NullPointerException("Configurator is null");
@@ -53,21 +53,20 @@ public class JCPreprocessor {
         this.context = context;
     }
 
-    public void execute() throws IOException {
+    public void execute() throws PreprocessorException, IOException {
         final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
 
         final Collection<FileReference> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 
         fillGlobalVariables(filesToBePreprocessed);
         processExcludeIf(filesToBePreprocessed);
-        
+
         createDestinationDirectory();
-        
-        for(final FileReference fileRef : filesToBePreprocessed) {
+
+        for (final FileReference fileRef : filesToBePreprocessed) {
             if (fileRef.isExcluded()) {
                 continue;
-            } else
-            if (fileRef.isOnlyForCopy()) {
+            } else if (fileRef.isOnlyForCopy()) {
                 PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
                 continue;
             } else {
@@ -81,133 +80,135 @@ public class JCPreprocessor {
         final File destination = context.getDestinationDirectoryAsFile();
 
         final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
-        
-        if (context.doesClearDestinationDirBefore()){
-            if (destinationExistsAndDirectory)
-                if (!PreprocessorUtils.clearDirectory(destination))
-                {
-                    throw new IOException("I can't clear the destination directory ["+destination.getAbsolutePath()+']');
+
+        if (context.doesClearDestinationDirBefore()) {
+            if (destinationExistsAndDirectory) {
+                if (!PreprocessorUtils.clearDirectory(destination)) {
+                    throw new IOException("I can't clear the destination directory [" + destination.getAbsolutePath() + ']');
                 }
+            }
         }
-        
+
         if (!destinationExistsAndDirectory) {
             if (!destination.mkdirs()) {
-                throw new IOException("I can't make the destination directory ["+destination.getAbsolutePath()+']');
+                throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
             }
         }
     }
-    
-    private final void fillGlobalVariables(Collection<FileReference> files) throws IOException {
+
+    private final void fillGlobalVariables(Collection<FileReference> files) throws PreprocessorException, IOException {
         int i_stringLine = 0;
         String s_fileName = null;
 
-        try {
-            Iterator p_iter = files.iterator();
-            int i_ifcounter = 0;
-            int i_activeif = 0;
+        Iterator p_iter = files.iterator();
+        int i_ifcounter = 0;
+        int i_activeif = 0;
 
-            String s_strLastIfFileName = null;
-            int i_lastIfStringNumber = 0;
+        String s_strLastIfFileName = null;
+        String s_LastIfTrimmedString = null;
+        int i_lastIfStringNumber = 0;
 
-            while (p_iter.hasNext()) {
-                FileReference p_fr = (FileReference) p_iter.next();
-                s_fileName = p_fr.getSourceFile().getCanonicalPath();
-                if (p_fr.isOnlyForCopy()) {
-                    continue;
+        while (p_iter.hasNext()) {
+            FileReference p_fr = (FileReference) p_iter.next();
+
+            final File processingFile = p_fr.getSourceFile();
+
+            s_fileName = p_fr.getSourceFile().getAbsolutePath();
+            if (p_fr.isOnlyForCopy()) {
+                continue;
+            }
+            BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(), context.getCharacterEncoding(), -1);
+            boolean lg_ifenabled = true;
+            i_stringLine = 0;
+
+            while (true) {
+                final String readString = p_bufreader.readLine();
+                if (readString == null) {
+                    break;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),context.getCharacterEncoding(),-1);
-                boolean lg_ifenabled = true;
-                i_stringLine = 0;
+                i_stringLine++;
 
-                while (true) {
-                    String s_str = p_bufreader.readLine();
-                    if (s_str == null) {
-                        break;
-                    }
-                    i_stringLine++;
+                final String trimmedReadString = readString.trim();
 
-                    s_str = s_str.trim();
+                if (trimmedReadString.startsWith("//#_if")) {
+                    // Processing #ifg instruction
+                    if (lg_ifenabled) {
+                        final Value p_value = Expression.eval(PreprocessorUtils.extractTrimmedTail("//#_if", trimmedReadString), context);
 
-                    if (s_str.startsWith("//#_if")) {
-                        // Processing #ifg instruction
-                        if (lg_ifenabled) {
-                            s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.eval(s_str,context);
-                            if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
-                                throw new IOException("You don't have a boolean result in the #_if instruction");
-                            }
-                            if (i_ifcounter == 0) {
-                                s_strLastIfFileName = s_fileName;
-                                i_lastIfStringNumber = i_stringLine;
-                            }
-                            i_ifcounter++;
-                            i_activeif = i_ifcounter;
-
-                            if (((Boolean) p_value.getValue()).booleanValue()) {
-                                lg_ifenabled = true;
-                            } else {
-                                lg_ifenabled = false;
-                            }
-                        } else {
-                            i_ifcounter++;
+                        if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
+                            throw new PreprocessorException("There must be a BOOLEAN expression result to be used by a //#_if directive", processingFile, processingFile, trimmedReadString, i_stringLine, null);
                         }
-                    } else if (s_str.startsWith("//#_else")) {
+
                         if (i_ifcounter == 0) {
-                            throw new IOException("You have got an #_else instruction without #_if");
+                            s_strLastIfFileName = s_fileName;
+                            i_lastIfStringNumber = i_stringLine;
+                            s_LastIfTrimmedString = trimmedReadString;
                         }
+                        i_ifcounter++;
+                        i_activeif = i_ifcounter;
 
-                        if (i_ifcounter == i_activeif) {
-                            lg_ifenabled = !lg_ifenabled;
-                        }
-                    } else if (s_str.startsWith("//#_endif")) {
-                        if (i_ifcounter == 0) {
-                            throw new IOException("You have got an #_endif instruction without #_if");
-                        }
-
-                        if (i_ifcounter == i_activeif) {
-                            i_ifcounter--;
-                            i_activeif--;
+                        if (((Boolean) p_value.getValue()).booleanValue()) {
                             lg_ifenabled = true;
                         } else {
-                            i_ifcounter--;
+                            lg_ifenabled = false;
                         }
-                    } else if (s_str.startsWith("//#global")) {
-                        if (!lg_ifenabled) {
-                            continue;
+                    } else {
+                        i_ifcounter++;
+                    }
+                } else if (trimmedReadString.startsWith("//#_else")) {
+                    if (i_ifcounter == 0) {
+                        throw new PreprocessorException("Found //#_else without //#_if", processingFile, processingFile, trimmedReadString, i_stringLine, null);
+                    }
+
+                    if (i_ifcounter == i_activeif) {
+                        lg_ifenabled = !lg_ifenabled;
+                    }
+                } else if (trimmedReadString.startsWith("//#_endif")) {
+                    if (i_ifcounter == 0) {
+                        throw new PreprocessorException("Found //#_endif without //#_if", processingFile, processingFile, trimmedReadString, i_stringLine, null);
+                    }
+
+                    if (i_ifcounter == i_activeif) {
+                        i_ifcounter--;
+                        i_activeif--;
+                        lg_ifenabled = true;
+                    } else {
+                        i_ifcounter--;
+                    }
+                } else if (trimmedReadString.startsWith("//#global")) {
+                    if (!lg_ifenabled) {
+                        continue;
+                    }
+                    try {
+                        final String trimmedTailString = PreprocessorUtils.extractTrimmedTail("//#global", trimmedReadString);
+                        int i_equ = trimmedTailString.indexOf('=');
+                        if (i_equ < 0) {
+                            throw new IOException();
                         }
-                        try {
-                            s_str = s_str.substring(9).trim();
-                            int i_equ = s_str.indexOf('=');
-                            if (i_equ < 0) {
-                                throw new IOException();
-                            }
-                            String s_name = s_str.substring(0, i_equ).trim();
-                            String s_eval = s_str.substring(i_equ + 1).trim();
+                        String s_name = trimmedTailString.substring(0, i_equ).trim();
+                        String s_eval = trimmedTailString.substring(i_equ + 1).trim();
 
-                            if (context.containsGlobalVariable(s_name)) {
-                                throw new IOException("You have duplicated the global variable " + s_name);
-                            }
-
-                            Value p_value = Expression.eval(s_eval,context);
-                            if (p_value == null) {
-                                throw new IOException("Error value");
-                            }
-                            context.setGlobalVariable(s_name, p_value);
-
-                            context.info("\'" + s_name + "\' = \'" + p_value + "\'");
-                        } catch (IOException e) {
-                            throw new IOException("Global definition error in " + p_fr.getSourceFile().getCanonicalPath() + " line: " + i_stringLine + " [" + e.getMessage() + "]");
+                        if (context.containsGlobalVariable(s_name)) {
+                            throw new IOException("You have duplicated the global variable " + s_name);
                         }
+
+                        Value p_value = Expression.eval(s_eval, context);
+                        if (p_value == null) {
+                            throw new IOException("Error value");
+                        }
+                        context.setGlobalVariable(s_name, p_value);
+
+                        context.info("\'" + s_name + "\' = \'" + p_value + "\'");
+                    } catch (IOException e) {
+                        throw new PreprocessorException("Exception during a global variable definition", processingFile, processingFile, trimmedReadString, i_stringLine, null);
                     }
                 }
-                p_bufreader.close();
-
-                if (i_ifcounter > 0) {
-                    throw new IOException("You have an unclosed #ifg construction [" + s_strLastIfFileName + ":" + i_lastIfStringNumber + "]");
-                }
             }
-        } catch (Exception _ex) {
-            throw new IOException(s_fileName + ":" + i_stringLine + " " + _ex.getMessage());
+            p_bufreader.close();
+
+            if (i_ifcounter > 0) {
+                throw new PreprocessorException("Unclosed //#_if directive detected", processingFile, processingFile, s_LastIfTrimmedString, i_lastIfStringNumber, null);
+            }
         }
     }
 
@@ -229,7 +230,7 @@ public class JCPreprocessor {
                 if (p_fr.isOnlyForCopy()) {
                     continue;
                 }
-                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(),context.getCharacterEncoding(),-1);
+                BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(), context.getCharacterEncoding(), -1);
                 boolean lg_ifenabled = true;
                 i_stringLine = 0;
 
@@ -246,7 +247,7 @@ public class JCPreprocessor {
                         // Processing #_if instruction
                         if (lg_ifenabled) {
                             s_str = s_str.substring(6).trim();
-                            Value p_value = Expression.eval(s_str,context);
+                            Value p_value = Expression.eval(s_str, context);
                             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                 throw new IOException("You don't have a boolean result in the #_if instruction");
                             }
@@ -289,7 +290,7 @@ public class JCPreprocessor {
                         if (lg_ifenabled) {
                             try {
                                 s_str = s_str.substring(12).trim();
-                                Value p_value = Expression.eval(s_str,context);
+                                Value p_value = Expression.eval(s_str, context);
 
                                 if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
                                     throw new IOException("non boolean expression");
@@ -371,8 +372,8 @@ public class JCPreprocessor {
 
         try {
             preprocessor.execute();
-        } catch (IOException ex) {
-            cfg.error(ex.getMessage());
+        } catch (Exception ex) {
+            cfg.error(ex.toString());
             System.exit(1);
         }
 
@@ -382,20 +383,20 @@ public class JCPreprocessor {
     private static PreprocessorContext processCommandString(final PreprocessorContext configurator, final String... args) throws IOException {
         final PreprocessorContext result = configurator == null ? new PreprocessorContext() : configurator;
 
-        for(final String arg : args){
+        for (final String arg : args) {
             boolean processed = false;
-            for(final CommandLineHandler processor : COMMAND_LINE_PROCESSORS){
-                if (processor.processArgument(arg, result)){
+            for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
+                if (processor.processArgument(arg, result)) {
                     processed = true;
-                    if (processor instanceof HelpHandler){
+                    if (processor instanceof HelpHandler) {
                         help();
                         System.exit(1);
                     }
                     break;
                 }
             }
-            
-            if (!processed){
+
+            if (!processed) {
                 help();
                 System.exit(1);
             }
@@ -411,7 +412,7 @@ public class JCPreprocessor {
             throw new IOException("I can't find the file " + cfgFile.getPath());
         }
 
-        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(),-1);
+        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(), -1);
         try {
             int strCounter = 0;
 
@@ -430,7 +431,7 @@ public class JCPreprocessor {
 
                 readString = PreprocessorUtils.processMacros(cfgFile, readString, context);
 
-                String[] parsedValue = PreprocessorUtils.splitForChar(readString,'=');
+                String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
 
                 String varName = null;
                 String varValue = null;
@@ -448,7 +449,7 @@ public class JCPreprocessor {
                 if (varValue.startsWith("@")) {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
-                    evaluatedValue = Expression.eval(varValue,context);
+                    evaluatedValue = Expression.eval(varValue, context);
                     if (evaluatedValue == null || evaluatedValue.getType() != ValueType.STRING) {
                         throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
                     }
@@ -457,7 +458,7 @@ public class JCPreprocessor {
                     loadVariablesFromFile(varValue, context);
                 } else {
                     // This is a value
-                    evaluatedValue = Expression.eval(varValue,context);
+                    evaluatedValue = Expression.eval(varValue, context);
                     if (evaluatedValue == null) {
                         throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
                     }
@@ -486,12 +487,12 @@ public class JCPreprocessor {
         System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
         System.out.println(InfoHelper.getCopyright());
         System.out.println();
-    
+
         System.out.println("Command line arguments");
         System.out.println("---------------------------");
-        
+
         for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
-            System.out.println(processor.getKeyName()+"\t\t"+processor.getDescription());
+            System.out.println(processor.getKeyName() + "\t\t" + processor.getDescription());
         }
     }
 }

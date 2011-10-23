@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
@@ -16,14 +16,19 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         if (state.isWhileCounterZero()) {
-            throw new IOException("You have #continue without #when");
+            throw new RuntimeException("#continue without #when detected");
         }
         if (state.isProcessingEnabled() && state.getWhileCounter() == state.getActiveWhileCounter()) {
             state.setThereIsNoContinueCommand(false);
         }
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 
     @Override

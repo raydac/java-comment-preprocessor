@@ -1,6 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import java.io.IOException;
 
 public abstract class AbstractDirectiveHandler {
@@ -30,7 +31,9 @@ public abstract class AbstractDirectiveHandler {
     
     public abstract String getName();
     public abstract boolean hasExpression();
-    public abstract DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException;
+    public abstract String getReference();
+    
+    public abstract DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator);
     
     public boolean processOnlyIfProcessingEnabled(){
         return true;

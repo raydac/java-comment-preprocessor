@@ -1,7 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.references.FileReference;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -28,7 +29,19 @@ public abstract class AbstractDirectiveHandlerTest {
     @Test
     public abstract void testHasExpression() throws Exception;
 
-    public PreprocessorContext preprocessString(final String text, final List<String> preprocessedText) throws Exception {
+    @Test
+    public abstract void testReference() throws Exception;
+    
+    protected void assertReference(final AbstractDirectiveHandler handler) {
+        assertNotNull("Handler must not be null",handler);
+        final String reference = handler.getReference();
+        
+        assertNotNull("Reference must not be null",reference);
+        assertNotNull("Reference must not empty",reference.isEmpty());
+        assertFalse("Reference must not be too short",reference.length()<10);
+    }
+    
+    public PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
         if (text == null) {
             throw new NullPointerException("Text to be preprocessed is null");
         }
@@ -59,7 +72,8 @@ public abstract class AbstractDirectiveHandlerTest {
             }
         }
         final PreprocessorContext context = new PreprocessorContext();
-
+        context.setPreprocessorExtension(ext);
+        
         final FileReference reference = new FileReference(new File("fake"), "fake_file", false);
         final ParameterContainer param = new ParameterContainer(reference, new File("fake"), "UTF8");
 
@@ -110,7 +124,7 @@ public abstract class AbstractDirectiveHandlerTest {
         return context;
     }
 
-    public PreprocessorContext assertPreprocessing(final String testFileName) throws Exception {
+    public PreprocessorContext assertPreprocessing(final String testFileName, final PreprocessorExtension ext) throws Exception {
         final InputStream stream = getClass().getResourceAsStream(testFileName);
         if (stream == null) {
             throw new FileNotFoundException("Can't find test file " + testFileName);
@@ -154,6 +168,8 @@ public abstract class AbstractDirectiveHandlerTest {
         }
         final PreprocessorContext context = new PreprocessorContext();
 
+        context.setPreprocessorExtension(ext);
+        
         final FileReference reference = new FileReference(new File("fake"), "fake_file", false);
         final ParameterContainer param = new ParameterContainer(reference, new File("fake"), "UTF8");
 

@@ -1,7 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
-import java.io.IOException;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
 
@@ -14,9 +13,14 @@ public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
     public boolean hasExpression() {
         return false;
     }
+
+    @Override
+    public String getReference() {
+        return null;
+    }
     
    @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) throws IOException {
+    public DirectiveBehaviourEnum execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
         if (!string.isEmpty()) {
             switch (string.charAt(0)) {
                 case '+': {
@@ -28,10 +32,10 @@ public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
                 }
                 break;
                 default:
-                    throw new IllegalArgumentException("Unsupported char");
+                    throw new IllegalArgumentException("Unsupported paremeter");
             }
-            return DirectiveBehaviour.CONTINUE;
+            return DirectiveBehaviourEnum.READ_NEXT_LINE;
         }
-        throw new RuntimeException("Empty string");
+        throw new RuntimeException("//#prefix needs a parameter");
     }
 }

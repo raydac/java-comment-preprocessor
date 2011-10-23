@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
@@ -19,12 +19,17 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext context) {
         if (state.isProcessingEnabled()) {
             String stringToBeProcessed = string.trim();
             Value p_value = Expression.eval(stringToBeProcessed,context);
             if (p_value == null || p_value.getType() != ValueType.BOOLEAN) {
-                throw new IOException("You don't have a boolean result in the #while instruction");
+                throw new RuntimeException("//#while needs a boolean expression");
             }
             if (state.isWhileCounterZero()) {
                 state.setLastWhileFileName(state.getCurrentFileCanonicalPath());
@@ -43,7 +48,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
         }
         state.pushWhileIndex(state.getCurrentStringIndex() - 1);
         
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 
     @Override

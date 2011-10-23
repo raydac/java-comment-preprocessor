@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.cfg.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
 public class ElseDirectiveHandler extends AbstractDirectiveHandler {
@@ -21,14 +21,19 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) throws IOException {
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         if (state.isIfCounterZero()) {
-            throw new IOException("You have got an #else instruction without #if");
+            throw new RuntimeException("//#else without //#if detected");
         }
 
         if (state.getIfCounter() == state.getActiveIfCounter()) {
             state.setIfEnabled(!state.isIfEnabled());
         }
-        return DirectiveBehaviour.NORMAL;
+        return DirectiveBehaviourEnum.PROCESSED;
     }
 }
