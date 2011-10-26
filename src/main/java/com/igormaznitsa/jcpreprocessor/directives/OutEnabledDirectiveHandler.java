@@ -1,7 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
 public class OutEnabledDirectiveHandler  extends AbstractDirectiveHandler {
 
@@ -21,9 +22,9 @@ public class OutEnabledDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        state.setOutEnabled(true);
-        return DirectiveBehaviourEnum.PROCESSED;
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        state.getState().remove(PreprocessingState.TEXT_OUTPUT_DISABLED);
+        return DirectiveBehaviour.PROCESSED;
     }
     
     

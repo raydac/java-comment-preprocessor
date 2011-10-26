@@ -1,8 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
-import java.io.IOException;
 
 public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -22,10 +21,8 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        if (state.isOutEnabled()) {
-            configurator.info("-->: " + string.trim());
-        }
-        return DirectiveBehaviourEnum.PROCESSED;
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        configurator.info("--> " + string.trim());
+        return DirectiveBehaviour.PROCESSED;
     }
 }

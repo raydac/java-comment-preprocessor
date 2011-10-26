@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,14 +24,14 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        final File outFile = configurator.makeDestinationFile(state.getFileReference().getDestinationFilePath());
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        final File outFile = configurator.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
         try {
             state.saveBuffersToFile(outFile);
-            state.reinitOutBuffers();
+            state.resetPrinters();
         } catch (IOException ex) {
             throw new RuntimeException("IO exception during execution", ex);
         }
-        return DirectiveBehaviourEnum.PROCESSED;
+        return DirectiveBehaviour.PROCESSED;
     }
 }

@@ -1,7 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -16,41 +17,31 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfProcessingEnabled() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return null;
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        // Processing #ifdefine instruction
-        if (state.isProcessingEnabled()) {
+    public boolean processOnlyIfCanBeProcessed() {
+        return false;
+    }
+
+    
+    @Override
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        if (state.isDirectiveCanBeProcessed()){
             if (string.isEmpty()) {
                 throw new RuntimeException("//#ifdefined needs a variable");
             }
-
-            boolean lg_defined = configurator.findVariableForName(string) != null;
-
-            if (state.isIfCounterZero()) {
-                state.setLastIfFileName(state.getCurrentFileCanonicalPath());
-                state.setLastIfStringNumber(state.getCurrentStringIndex());
+            state.pushIf(true);
+            final boolean definitionFlag = configurator.findVariableForName(string) != null;
+            if (!definitionFlag){
+                state.getState().add(PreprocessingState.IF_CONDITION_FALSE);
             }
-            state.increaseIfCounter();
-            state.setActiveIfCounter(state.getIfCounter());
-
-            if (lg_defined) {
-                state.setIfEnabled(true);
-            } else {
-                state.setIfEnabled(false);
-            }
-        } else {
-            state.increaseIfCounter();
+        }else{
+            state.pushIf(false);
         }
-
-        return DirectiveBehaviourEnum.PROCESSED;
+ 
+        return DirectiveBehaviour.PROCESSED;
     }
 }

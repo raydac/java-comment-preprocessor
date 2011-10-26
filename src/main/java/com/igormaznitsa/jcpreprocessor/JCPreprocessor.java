@@ -13,7 +13,7 @@ import com.igormaznitsa.jcpreprocessor.cmdline.SourceDirectoryHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
-import com.igormaznitsa.jcpreprocessor.references.FileReference;
+import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -56,17 +56,17 @@ public class JCPreprocessor {
     public void execute() throws PreprocessorException, IOException {
         final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
 
-        final Collection<FileReference> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
+        final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 
         fillGlobalVariables(filesToBePreprocessed);
         processExcludeIf(filesToBePreprocessed);
 
         createDestinationDirectory();
 
-        for (final FileReference fileRef : filesToBePreprocessed) {
-            if (fileRef.isExcluded()) {
+        for (final FileInfoContainer fileRef : filesToBePreprocessed) {
+            if (fileRef.isExcludedFromPreprocessing()) {
                 continue;
-            } else if (fileRef.isOnlyForCopy()) {
+            } else if (fileRef.isForCopyOnly()) {
                 PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
                 continue;
             } else {
@@ -96,7 +96,7 @@ public class JCPreprocessor {
         }
     }
 
-    private final void fillGlobalVariables(Collection<FileReference> files) throws PreprocessorException, IOException {
+    private final void fillGlobalVariables(Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
         int i_stringLine = 0;
         String s_fileName = null;
 
@@ -109,12 +109,12 @@ public class JCPreprocessor {
         int i_lastIfStringNumber = 0;
 
         while (p_iter.hasNext()) {
-            FileReference p_fr = (FileReference) p_iter.next();
+            FileInfoContainer p_fr = (FileInfoContainer) p_iter.next();
 
             final File processingFile = p_fr.getSourceFile();
 
             s_fileName = p_fr.getSourceFile().getAbsolutePath();
-            if (p_fr.isOnlyForCopy()) {
+            if (p_fr.isForCopyOnly()) {
                 continue;
             }
             BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(), context.getCharacterEncoding(), -1);
@@ -212,7 +212,7 @@ public class JCPreprocessor {
         }
     }
 
-    private void processExcludeIf(final Collection<FileReference> files) throws IOException {
+    private void processExcludeIf(final Collection<FileInfoContainer> files) throws IOException {
         int i_stringLine = 0;
         String s_fileName = null;
 
@@ -225,9 +225,9 @@ public class JCPreprocessor {
             int i_lastIfStringNumber = 0;
 
             while (p_iter.hasNext()) {
-                FileReference p_fr = (FileReference) p_iter.next();
+                FileInfoContainer p_fr = (FileInfoContainer) p_iter.next();
                 s_fileName = p_fr.getSourceFile().getCanonicalPath();
-                if (p_fr.isOnlyForCopy()) {
+                if (p_fr.isForCopyOnly()) {
                     continue;
                 }
                 BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(p_fr.getSourceFile(), context.getCharacterEncoding(), -1);
@@ -315,8 +315,8 @@ public class JCPreprocessor {
         }
     }
 
-    private Collection<FileReference> findAllFilesToBePreprocessed(final File[] srcDirs) throws IOException {
-        final Collection<FileReference> result = new ArrayList<FileReference>();
+    private Collection<FileInfoContainer> findAllFilesToBePreprocessed(final File[] srcDirs) throws IOException {
+        final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
 
         for (final File dir : srcDirs) {
             final String canonicalPathForSrcDirectory = dir.getCanonicalPath();
@@ -334,7 +334,7 @@ public class JCPreprocessor {
                 final String filePath = file.getCanonicalPath();
                 final String relativePath = filePath.substring(canonicalPathForSrcDirectory.length());
 
-                final FileReference reference = new FileReference(file, relativePath, !context.isFileAllowedToBeProcessed(file));
+                final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !context.isFileAllowedToBeProcessed(file));
                 result.add(reference);
             }
 
@@ -429,7 +429,7 @@ public class JCPreprocessor {
                     continue;
                 }
 
-                readString = PreprocessorUtils.processMacros(cfgFile, readString, context);
+                readString = PreprocessorUtils.processMacros(readString, context);
 
                 String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
 

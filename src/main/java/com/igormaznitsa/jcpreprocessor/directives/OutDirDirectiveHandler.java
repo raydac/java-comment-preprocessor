@@ -1,10 +1,10 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.IOException;
 
 public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -24,13 +24,13 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext context) {
-            Value p_value = Expression.eval(string,context);
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context) {
+        final Value name = Expression.eval(string, context);
 
-            if (p_value == null || p_value.getType() != ValueType.STRING) {
-                throw new RuntimeException("//#outdir needs a string expression");
-            }
-            state.getFileReference().setDestinationDir((String) p_value.getValue());
-        return DirectiveBehaviourEnum.PROCESSED;
+        if (name == null || name.getType() != ValueType.STRING) {
+            throw new RuntimeException("//#outdir needs a string expression");
+        }
+        state.getRootFileInfo().setDestinationDir((String) name.getValue());
+        return DirectiveBehaviour.PROCESSED;
     }
 }

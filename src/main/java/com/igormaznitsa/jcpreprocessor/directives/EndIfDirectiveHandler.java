@@ -1,9 +1,10 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
-public class EndIfDirectiveHandler  extends AbstractDirectiveHandler {
+public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
@@ -16,30 +17,27 @@ public class EndIfDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfProcessingEnabled() {
+    public boolean processOnlyIfCanBeProcessed() {
         return false;
     }
 
     @Override
     public String getReference() {
-        return null;
+        return "it is the end part of a //#if...//#endif structure";
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-                    if (state.isIfCounterZero()) {
-                        throw new RuntimeException("//#endif without //#if detected");
-                    }
-                    
-                    if (state.getIfCounter() == state.getActiveIfCounter()) {
-                        state.decreaseIfCounter();
-                        state.decreaseActiveIfCounter();
-                        state.setIfEnabled(true);
-                    } else {
-                        state.decreaseIfCounter();
-                    }
-        return DirectiveBehaviourEnum.PROCESSED;
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
+        if (state.isIfStackEmpty()) {
+            throw new RuntimeException("//#endif without //#if detected");
+        }
+
+        if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {
+            state.getState().remove(PreprocessingState.IF_CONDITION_FALSE);
+        } 
+        
+        state.popIf();
+        
+        return DirectiveBehaviour.PROCESSED;
     }
-    
-    
 }

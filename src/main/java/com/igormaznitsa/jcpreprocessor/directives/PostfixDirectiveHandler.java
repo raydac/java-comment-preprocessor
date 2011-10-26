@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
@@ -20,21 +21,21 @@ public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
     }
     
    @Override
-    public DirectiveBehaviourEnum execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
         if (!string.isEmpty()) {
             switch (string.charAt(0)) {
                 case '+': {
-                    state.setCurrentOutStream(state.getPostfixOutStream());
+                    state.setPrinter(ParameterContainer.PrinterType.POSTFIX);
                 }
                 break;
                 case '-': {
-                    state.setCurrentOutStream(state.getNormalOutStream());
+                    state.setPrinter(ParameterContainer.PrinterType.NORMAL);
                 }
                 break;
                 default:
                     throw new IllegalArgumentException("Unsupported paremeter");
             }
-            return DirectiveBehaviourEnum.READ_NEXT_LINE;
+            return DirectiveBehaviour.PROCESSED;
         }
         throw new RuntimeException("//#prefix needs a parameter");
     }

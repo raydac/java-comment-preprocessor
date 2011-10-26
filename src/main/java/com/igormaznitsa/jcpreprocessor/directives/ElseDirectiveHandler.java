@@ -1,7 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
 public class ElseDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -16,24 +17,29 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfProcessingEnabled() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
-        return null;
+        return "a part of a //#if..//#endif structure, it inverts condition flag";
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        if (state.isIfCounterZero()) {
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        if (state.isIfStackEmpty()) {
             throw new RuntimeException("//#else without //#if detected");
         }
 
-        if (state.getIfCounter() == state.getActiveIfCounter()) {
-            state.setIfEnabled(!state.isIfEnabled());
+        if (state.isAtActiveIf()) {
+            if (state.getState().contains(PreprocessingState.IF_CONDITION_FALSE)){
+                state.getState().remove(PreprocessingState.IF_CONDITION_FALSE);
+            } else {
+                state.getState().add(PreprocessingState.IF_CONDITION_FALSE);
+            }
         }
-        return DirectiveBehaviourEnum.PROCESSED;
+        return DirectiveBehaviour.PROCESSED;
     }
+    
+    @Override
+    public boolean processOnlyIfCanBeProcessed() {
+        return false;
+    }
+
 }

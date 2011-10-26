@@ -1,0 +1,24 @@
+hello
+//#local x=true
+//#local y=false
+//#local z=false
+//#if x
+    //#if y
+unexpected1
+    //#else
+        //#if z
+unexpected2
+        //#else
+            //#if !z
+expected
+            //#endif
+        //#endif
+    //#endif
+//#else
+unexpected3
+//#endif
+world
+---START_ETALON---
+hello
+expected
+world

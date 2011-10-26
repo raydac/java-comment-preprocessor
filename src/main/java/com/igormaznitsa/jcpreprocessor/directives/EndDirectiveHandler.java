@@ -1,5 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
@@ -16,36 +19,32 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfProcessingEnabled() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return null;
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        if (state.isWhileCounterZero()) {
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
+        if (state.isWhileStackEmpty()) {
             throw new RuntimeException("//#end without //#while detected");
         }
 
-        int i_lastWhileIndex = state.popWhileIndex();
-
-        if (state.getWhileCounter() == state.getActiveWhileCounter()) {
-            state.decreaseWhileCounter();
-            state.decreaseActiveWhileCounter();
-
-            if (state.isThereNoBreakCommand()) {
-                state.setCurrentStringIndex(i_lastWhileIndex);
+        if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
+            final TextFileDataContainer thisWhile = state.peekWhile();
+            final boolean breakIsSet = state.getState().contains(PreprocessingState.BREAK_COMMAND);
+            state.popWhile();
+            if (!breakIsSet) {
+                state.goToString(thisWhile.getNextStringIndex());
             }
-
-            state.setThereIsNoContinueCommand(true);
-            state.setThereIsNoBreakCommand(true);
         } else {
-            state.decreaseWhileCounter();
+            state.popWhile();
         }
-        return DirectiveBehaviourEnum.PROCESSED;
+        return DirectiveBehaviour.PROCESSED;
     }
+
+    @Override
+    public boolean processOnlyIfCanBeProcessed() {
+        return false;
+    }
+
 }

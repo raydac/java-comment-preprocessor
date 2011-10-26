@@ -10,7 +10,12 @@ public class PreprocessorException extends Exception {
     private final String processingString;
     private final int stringIndex;
 
-    public PreprocessorException(final String message, final File rootProcessingFile, final File processingFile, final String processingString, final int processingStringIndex, Throwable cause) {
+    public PreprocessorException(final String message, 
+            final File rootProcessingFile, 
+            final File processingFile, 
+            final String processingString, 
+            final int processingStringIndex, 
+            final Throwable cause) {
         super(message, cause);
         this.rootProcessingFile = rootProcessingFile;
         this.processingFile = processingFile;

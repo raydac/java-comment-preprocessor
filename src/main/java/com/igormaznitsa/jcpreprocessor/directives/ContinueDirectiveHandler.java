@@ -1,5 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
 
@@ -21,18 +23,11 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviourEnum execute(String string, ParameterContainer state, PreprocessorContext configurator) {
-        if (state.isWhileCounterZero()) {
+    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+        if (state.isWhileStackEmpty()) {
             throw new RuntimeException("#continue without #when detected");
         }
-        if (state.isProcessingEnabled() && state.getWhileCounter() == state.getActiveWhileCounter()) {
-            state.setThereIsNoContinueCommand(false);
-        }
-        return DirectiveBehaviourEnum.PROCESSED;
-    }
-
-    @Override
-    public boolean processOnlyIfProcessingEnabled() {
-        return false;
+        state.getState().add(PreprocessingState.CONTINUE_COMMAND);
+        return DirectiveBehaviour.PROCESSED;
     }
 }

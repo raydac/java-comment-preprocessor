@@ -1,9 +1,11 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
-import com.igormaznitsa.jcpreprocessor.references.FileReference;
+import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
+import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +20,7 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public abstract class AbstractDirectiveHandlerTest {
+public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     @Test
     public abstract void testExecution() throws Exception;
@@ -29,6 +31,9 @@ public abstract class AbstractDirectiveHandlerTest {
     @Test
     public abstract void testHasExpression() throws Exception;
 
+    @Test
+    public abstract void testProcessOnlyIfCanBeProcessed() throws Exception;
+    
     @Test
     public abstract void testReference() throws Exception;
     
@@ -74,10 +79,10 @@ public abstract class AbstractDirectiveHandlerTest {
         final PreprocessorContext context = new PreprocessorContext();
         context.setPreprocessorExtension(ext);
         
-        final FileReference reference = new FileReference(new File("fake"), "fake_file", false);
-        final ParameterContainer param = new ParameterContainer(reference, new File("fake"), "UTF8");
+        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
 
-        param.setStrings(preprocessingPart.toArray(new String[preprocessingPart.size()])).setCurrentStringIndex(0);
+        final TextFileDataContainer dataContainer = new TextFileDataContainer(new File("fake file"), preprocessingPart.toArray(new String[preprocessingPart.size()]), 0);
+        final ParameterContainer param = new ParameterContainer(reference, dataContainer, "UTF8");
 
         reference.preprocess(param, context);
 
@@ -170,10 +175,8 @@ public abstract class AbstractDirectiveHandlerTest {
 
         context.setPreprocessorExtension(ext);
         
-        final FileReference reference = new FileReference(new File("fake"), "fake_file", false);
-        final ParameterContainer param = new ParameterContainer(reference, new File("fake"), "UTF8");
-
-        param.setStrings(preprocessingPart.toArray(new String[preprocessingPart.size()])).setCurrentStringIndex(0);
+        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
+        final ParameterContainer param = new ParameterContainer(reference, new TextFileDataContainer(new File("fake"), preprocessingPart.toArray(new String[preprocessingPart.size()]), 0), "UTF8");
 
         reference.preprocess(param, context);
 

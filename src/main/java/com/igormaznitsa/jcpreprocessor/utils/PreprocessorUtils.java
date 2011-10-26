@@ -194,29 +194,28 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static final String processMacros(File processingFile, String _string, PreprocessorContext cfg) throws IOException {
-        if (_string.startsWith("//$$")) {
-            return _string;
-        }
-
+    public static final String processMacros(final String processingString,final PreprocessorContext context) {
         int i_indx;
+
+        String result = processingString;
+        
         while (true) {
-            i_indx = _string.indexOf("/*$");
+            i_indx = result.indexOf("/*$");
 
             if (i_indx >= 0) {
-                String s_leftpart = _string.substring(0, i_indx);
+                String s_leftpart = result.substring(0, i_indx);
                 int i_begin = i_indx;
-                i_indx = _string.indexOf("$*/", i_indx);
+                i_indx = result.indexOf("$*/", i_indx);
                 if (i_indx >= 0) {
-                    String s_strVal = _string.substring(i_begin + 3, i_indx);
-                    String s_rightPart = _string.substring(i_indx + 3);
+                    String s_strVal = result.substring(i_begin + 3, i_indx);
+                    String s_rightPart = result.substring(i_indx + 3);
 
-                    Value p_val = Expression.eval(s_strVal,cfg);
+                    Value p_val = Expression.eval(s_strVal,context);
                     if (p_val == null) {
-                        throw new IOException("Error value");
+                        throw new RuntimeException("Wrong macros expression ["+s_strVal+']');
                     }
 
-                    _string = s_leftpart + p_val.toString() + s_rightPart;
+                    result = s_leftpart + p_val.toString() + s_rightPart;
                 } else {
                     break;
                 }
@@ -224,7 +223,7 @@ public enum PreprocessorUtils {
                 break;
             }
         }
-        return _string;
+        return result;
     }
 
     public static String generateStringWithPrecendingSpaces(final int spacesCounter, final String tail) {
@@ -251,7 +250,7 @@ public enum PreprocessorUtils {
         return chr == '_' || Character.isLetterOrDigit(chr);
     }
 
-    public static String[] readTextFileAndAddNullAtEnd(final File file, final String encoding) throws IOException {
+    public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
         if (file == null) {
             throw new NullPointerException("File is null");
         }
@@ -267,8 +266,6 @@ public enum PreprocessorUtils {
         try {
             while (true) {
                 final String nextLine = srcBufferedReader.readLine();
-                // we need have null at the end of the list
-                currentFileStringContainer.add(nextLine);
                 if (nextLine == null) {
                     break;
                 }

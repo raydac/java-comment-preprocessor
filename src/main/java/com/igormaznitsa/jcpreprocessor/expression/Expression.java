@@ -384,7 +384,7 @@ public class Expression {
                         if (preprocessorExtension == null) {
                             throw new RuntimeException("A User function \'"+token+"\'has been detected but a processor is not defined");
                         }
-                        final int i_args = preprocessorExtension.getArgumentsNumberForUserFunction(tokenInLowerCase);
+                        final int i_args = preprocessorExtension.getUserFunctionArity(tokenInLowerCase);
                         if (i_args < 0) {
                             throw new RuntimeException("Unknown user defined function \'"+token+"\' has been detected");
                         }

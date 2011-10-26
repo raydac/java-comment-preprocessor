@@ -1,0 +1,23 @@
+begin
+//#local counter = 3
+//#while counter>0
+    //#local counter2 = 3
+    //#while counter2>0
+/*$counter$*/ /*$counter2$*/
+        //#local counter2=counter2-1
+    //#end
+    //#local counter=counter-1
+//#end
+end
+---START_ETALON---
+begin
+3 3
+3 2
+3 1
+2 3
+2 2
+2 1
+1 3
+1 2
+1 1
+end
