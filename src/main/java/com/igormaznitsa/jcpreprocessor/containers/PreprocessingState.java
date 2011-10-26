@@ -11,10 +11,6 @@ public enum PreprocessingState {
      */
     COMMENT_NEXT_LINE,
     /**
-     * This flag shows that //#continue directive has been met
-     */
-    CONTINUE_COMMAND,
-    /**
      * This flag shows that the current //#if construction in the passive state
      */
     IF_CONDITION_FALSE,

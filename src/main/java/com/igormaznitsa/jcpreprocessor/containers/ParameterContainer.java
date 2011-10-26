@@ -159,6 +159,19 @@ public final class ParameterContainer {
         return this;
     }
 
+    public void popAllIfUntil(final TextFileDataContainer container) {
+        final File file = container.getFile();
+        final int stringIndex = container.getNextStringIndex();
+        while(!ifStack.isEmpty()){
+            final TextFileDataContainer top = ifStack.peek();
+            if (!top.getFile().equals(file) || top.getNextStringIndex()<=stringIndex){
+                break;
+            } else {
+                ifStack.pop();
+            }
+        }
+    }
+    
     public ParameterContainer popIf() {
         final TextFileDataContainer ifRef = ifStack.pop();
         if (ifRef == activeIf) {

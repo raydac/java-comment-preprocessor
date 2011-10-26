@@ -1,23 +1,58 @@
 begin
 //#local counter = 3
 //#while counter>0
+    //#if counter == 2
+        //#local counter = counter-1
+        //#continue
+    //#endif
     //#local counter2 = 3
     //#while counter2>0
+        //#if counter2==1
+            //#break
+        //#endif
 /*$counter$*/ /*$counter2$*/
         //#local counter2=counter2-1
     //#end
     //#local counter=counter-1
 //#end
 end
+//#local c=4
+//#while c>=0
+    //#local c=c-1
+    //#if c==1
+break detected
+        //#break
+    //#else
+/*$c$*/
+    //#endif
+//#end
+//#if false
+    //#while true
+000
+        //#continue
+        //#break
+222
+        //#local unknown = unknown
+        //#break
+111
+        //#while false
+            //#if true
+333
+            //#endif
+            //#continue
+444
+        //#end
+    //#end
+//#endif
+endall
 ---START_ETALON---
 begin
 3 3
 3 2
-3 1
-2 3
-2 2
-2 1
 1 3
 1 2
-1 1
 end
+3
+2
+break detected
+endall

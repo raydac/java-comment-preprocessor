@@ -21,7 +21,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it makes a loop until //#end if the condition is true";
     }
 
     @Override

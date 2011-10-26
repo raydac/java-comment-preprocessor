@@ -145,7 +145,7 @@ public class FileInfoContainer {
                                     paramContainer.getPrinter().print("//");
                                     paramContainer.getState().remove(PreprocessingState.COMMENT_NEXT_LINE);
                                 }
-                                
+
                                 printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
                                 paramContainer.getPrinter().println(stringToBeProcessed);
                             }
@@ -176,29 +176,41 @@ public class FileInfoContainer {
 
     }
 
-    private static String processStringForTailRemover(final String str){
+    private static String processStringForTailRemover(final String str) {
         final int tailRemoverStart = str.indexOf("/*-*/");
-        if (tailRemoverStart>=0){
+        if (tailRemoverStart >= 0) {
             return str.substring(0, tailRemoverStart);
         }
         return str;
     }
-    
+
     protected DirectiveBehaviour processDirective(final ParameterContainer state, final String string, final PreprocessorContext configurator) throws IOException {
         if (string.startsWith("//#")) {
             final String tail = PreprocessorUtils.extractTail("//#", string);
+            final boolean executionIsEnabled = state.isDirectiveCanBeProcessed();
+
             for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
                 final String name = handler.getName();
                 if (tail.startsWith(name)) {
-                    final String s = PreprocessorUtils.extractTail(name, tail);
+                    final boolean allowedForExecution = executionIsEnabled || !handler.processOnlyIfCanBeProcessed();
+                    
+                    final String restOfString = PreprocessorUtils.extractTail(name, tail);
                     if (handler.hasExpression()) {
-                        if (!s.isEmpty() && Character.isSpaceChar(s.charAt(0))) {
-                            return handler.execute(s.trim(), state, configurator);
+                        if (!restOfString.isEmpty() && Character.isSpaceChar(restOfString.charAt(0))) {
+                            if (allowedForExecution) {
+                                return handler.execute(restOfString.trim(), state, configurator);
+                            } else {
+                                return DirectiveBehaviour.PROCESSED;
+                            }
                         } else {
                             continue;
                         }
                     } else {
-                        return handler.execute(s.trim(), state, configurator);
+                        if (allowedForExecution) {
+                            return handler.execute(restOfString.trim(), state, configurator);
+                        } else {
+                            return DirectiveBehaviour.PROCESSED;
+                        }
                     }
                 }
             }

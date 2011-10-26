@@ -20,7 +20,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it ends a //#while...//#end construction";
     }
 
     @Override

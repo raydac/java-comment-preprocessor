@@ -30,30 +30,34 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
 
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("if",new IfDirectiveHandler().getName());
-        assertEquals("else",new ElseDirectiveHandler().getName());
-        assertEquals("endif",new EndIfDirectiveHandler().getName());
+        assertEquals("while",new WhileDirectiveHandler().getName());
+        assertEquals("break",new BreakDirectiveHandler().getName());
+        assertEquals("continue",new ContinueDirectiveHandler().getName());
+        assertEquals("end",new EndDirectiveHandler().getName());
     }
 
     @Override
     public void testHasExpression() throws Exception {
-        assertTrue(new IfDirectiveHandler().hasExpression());
-        assertFalse(new ElseDirectiveHandler().hasExpression());
-        assertFalse(new EndIfDirectiveHandler().hasExpression());
+        assertTrue(new WhileDirectiveHandler().hasExpression());
+        assertFalse(new BreakDirectiveHandler().hasExpression());
+        assertFalse(new ContinueDirectiveHandler().hasExpression());
+        assertFalse(new EndDirectiveHandler().hasExpression());
     }
 
     @Override
     public void testProcessOnlyIfCanBeProcessed() throws Exception {
-        assertFalse(new IfDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertFalse(new ElseDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertFalse(new EndIfDirectiveHandler().processOnlyIfCanBeProcessed());
+        assertFalse(new WhileDirectiveHandler().processOnlyIfCanBeProcessed());
+        assertTrue(new BreakDirectiveHandler().processOnlyIfCanBeProcessed());
+        assertTrue(new ContinueDirectiveHandler().processOnlyIfCanBeProcessed());
+        assertFalse(new EndDirectiveHandler().processOnlyIfCanBeProcessed());
     }
 
     @Override
     public void testReference() throws Exception {
-        assertReference(new IfDirectiveHandler());
-        assertReference(new ElseDirectiveHandler());
-        assertReference(new EndIfDirectiveHandler());
+        assertReference(new WhileDirectiveHandler());
+        assertReference(new BreakDirectiveHandler());
+        assertReference(new ContinueDirectiveHandler());
+        assertReference(new EndDirectiveHandler());
     }
     
 }
