@@ -31,7 +31,7 @@ public class TextFileDataContainer {
 
     public void setNextStringIndex(final int index){
         if (index<0 || index>=text.length){
-            throw new IndexOutOfBoundsException("String index out of bound");
+            throw new IndexOutOfBoundsException("String index out of bound ["+index+']');
         }
         this.nextStringIndex = index; 
     }

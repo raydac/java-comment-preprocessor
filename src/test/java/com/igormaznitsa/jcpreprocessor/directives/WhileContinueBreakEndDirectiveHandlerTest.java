@@ -1,31 +1,43 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import org.junit.Test;
-import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import java.util.List;
-import java.util.ArrayList;
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import static org.junit.Assert.*;
 
 public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
     @Override
     public void testExecution() throws Exception {
-        assertPreprocessing("directive_while_continue_break_end.txt", null);
+        assertFilePreprocessing("directive_while_continue_break_end.txt", null);
     }
 
     @Test
-    public void testExecution_WhileThereIsNotExpression() throws Exception {
-        try {
-            final List<String> out = new ArrayList<String>();
-            final PreprocessorContext context = preprocessString("\n\n\n   \n\n  //#while   \ntest\n  //#end", out, null);
-            fail("Must throw PreprocessorException");
-        } catch (PreprocessorException expected) {
-            assertEquals(6, expected.getStringIndex());
-        } catch (Exception unExpected) {
-            unExpected.printStackTrace();
-            fail("Unexpected exception");
-        }
+    public void testWhile_ExceptionWithoutExpression() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#while   \ntest\n  //#end", 6);
+    }
+
+    @Test
+    public void testWhile_ExceptionForNonBooleanExpression() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#while 234  \ntest\n  //#end", 6);
+    }
+
+    @Test
+    public void testWhile_ExceptionForNonClosed() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#while true  \ntest\n", 6);
+    }
+
+    @Test
+    public void testBreak_ExceptionWithoutWhile() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#break \ntest\n", 6);
+    }
+
+    @Test
+    public void testContinue_ExceptionWithoutWhile() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#continue \ntest\n", 6);
+    }
+
+    @Test
+    public void testEnd_ExceptionWithoutWhile() throws Exception {
+        assertPreprocessorException("\n\n\n   \n\n  //#end \ntest\n", 6);
     }
 
     @Override
@@ -45,11 +57,11 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
     }
 
     @Override
-    public void testProcessOnlyIfCanBeProcessed() throws Exception {
-        assertFalse(new WhileDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertTrue(new BreakDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertTrue(new ContinueDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertFalse(new EndDirectiveHandler().processOnlyIfCanBeProcessed());
+    public void testExecutionCondition() throws Exception {
+        assertFalse(new WhileDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertTrue(new BreakDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertTrue(new ContinueDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertFalse(new EndDirectiveHandler().executeOnlyWhenExecutionAllowed());
     }
 
     @Override

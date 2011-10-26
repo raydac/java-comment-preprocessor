@@ -43,7 +43,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfCanBeProcessed() {
+    public boolean executeOnlyWhenExecutionAllowed() {
         return false;
     }
 

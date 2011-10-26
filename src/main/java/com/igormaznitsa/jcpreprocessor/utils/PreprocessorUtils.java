@@ -8,6 +8,7 @@ import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -231,7 +232,9 @@ public enum PreprocessorUtils {
             return tail;
         }
 
-        final StringBuilder result = new StringBuilder(spacesCounter + tail.length());
+        final int minimalCapacity = spacesCounter + tail.length();
+        
+        final StringBuilder result = new StringBuilder(minimalCapacity);
         for (int li = 0; li < spacesCounter; li++) {
             result.append(' ');
         }
@@ -255,6 +258,10 @@ public enum PreprocessorUtils {
             throw new NullPointerException("File is null");
         }
 
+        if (!file.exists()) {
+            throw new FileNotFoundException("File "+file.getAbsolutePath()+" doesn't exist");
+        }
+        
         if (!file.isFile()) {
             throw new IllegalArgumentException("File can't be read because it's not a normal file");
         }
@@ -262,13 +269,14 @@ public enum PreprocessorUtils {
         final String enc = encoding == null ? "UTF8" : encoding;
 
         final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc,(int)file.length());
-        List<String> currentFileStringContainer = new ArrayList<String>(1024);
+        final List<String> currentFileStringContainer = new ArrayList<String>(1024);
         try {
             while (true) {
                 final String nextLine = srcBufferedReader.readLine();
                 if (nextLine == null) {
                     break;
                 }
+                currentFileStringContainer.add(nextLine);
             }
         } finally {
             srcBufferedReader.close();

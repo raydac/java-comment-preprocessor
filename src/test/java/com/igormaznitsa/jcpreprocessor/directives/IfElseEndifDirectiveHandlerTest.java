@@ -1,31 +1,35 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import org.junit.Test;
-import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import java.util.List;
-import java.util.ArrayList;
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import static org.junit.Assert.*;
 
 public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
     @Override
     public void testExecution() throws Exception {
-        assertPreprocessing("directive_if_else_endif.txt", null);
+        assertFilePreprocessing("directive_if_else_endif.txt", null);
     }
 
     @Test
-    public void testExecution_ThereIsNotExpression() throws Exception {
-        try {
-            final List<String> out = new ArrayList<String>();
-            final PreprocessorContext context = preprocessString("\n\n\n   \n  //#if   \ntest\n  //#endif", out, null);
-            fail("Must throw PreprocessorException");
-        } catch (PreprocessorException expected) {
-            assertEquals(5, expected.getStringIndex());
-        } catch (Exception unExpected) {
-            unExpected.printStackTrace();
-            fail("Unexpected exception");
-        }
+    public void testIf_ExceptionWithoutExpression() throws Exception {
+        assertPreprocessorException("\n\n\n   \n  //#if   \ntest\n  //#endif", 5);
+        assertPreprocessorException("\n\n\n   \n  //#if\ntest\n  //#endif", 5);
+    }
+
+    @Test
+    public void testIf_ExceptionWithoutEndIf() throws Exception {
+        assertPreprocessorException("\n\n\n   \n  //#if true\n\n", 5);
+        assertPreprocessorException("\n\n\n   \n  //#if true\n//#if true\n//#endif\n", 5);
+    }
+
+    @Test
+    public void testElse_ExeptionWithoutIf() throws Exception {
+        assertPreprocessorException("\n\n\n   \n  //#else  \ntest\n  //#endif", 5);
+    }
+
+    @Test
+    public void testEndIf_ExceptionWithoutIf() throws Exception {
+        assertPreprocessorException("\n\n\n   \n  //#endif", 5);
     }
 
     @Override
@@ -43,10 +47,10 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerInt
     }
 
     @Override
-    public void testProcessOnlyIfCanBeProcessed() throws Exception {
-        assertFalse(new IfDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertFalse(new ElseDirectiveHandler().processOnlyIfCanBeProcessed());
-        assertFalse(new EndIfDirectiveHandler().processOnlyIfCanBeProcessed());
+    public void testExecutionCondition() throws Exception {
+        assertFalse(new IfDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertFalse(new ElseDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertFalse(new EndIfDirectiveHandler().executeOnlyWhenExecutionAllowed());
     }
 
     @Override

@@ -34,7 +34,7 @@ public abstract class AbstractDirectiveHandler {
     
     public abstract DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context);
     
-    public boolean processOnlyIfCanBeProcessed(){
+    public boolean executeOnlyWhenExecutionAllowed(){
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
@@ -32,20 +33,92 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     public abstract void testHasExpression() throws Exception;
 
     @Test
-    public abstract void testProcessOnlyIfCanBeProcessed() throws Exception;
-    
+    public abstract void testExecutionCondition() throws Exception;
+
     @Test
     public abstract void testReference() throws Exception;
-    
+
     protected void assertReference(final AbstractDirectiveHandler handler) {
-        assertNotNull("Handler must not be null",handler);
+        assertNotNull("Handler must not be null", handler);
         final String reference = handler.getReference();
-        
-        assertNotNull("Reference must not be null",reference);
-        assertNotNull("Reference must not empty",reference.isEmpty());
-        assertFalse("Reference must not be too short",reference.length()<10);
+
+        assertNotNull("Reference must not be null", reference);
+        assertNotNull("Reference must not empty", reference.isEmpty());
+        assertFalse("Reference must not be too short", reference.length() < 10);
+    }
+
+    public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex) {
+        try {
+            final PreprocessorContext context = preprocessString(preprocessingText, null, null);
+            fail("Must throw PreprocessorException");
+        } catch (PreprocessorException expected) {
+            assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
+        } catch (Exception unExpected) {
+            unExpected.printStackTrace();
+            fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
+        }
+
+    }
+
+    private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {
+       while (true) {
+            final String line = reader.readLine();
+            if (line == null) {
+                break;
+            }
+            accumulator.add(line);
+        }
     }
     
+    private PreprocessorContext insidePreprocessingAndMatching(final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension) throws Exception {
+        if (preprocessingText == null) {
+            throw new NullPointerException("Preprocessing text is null");
+        }
+
+        if (result == null) {
+            throw new NullPointerException("Result container is null");
+        }
+
+        final PreprocessorContext context = new PreprocessorContext();
+
+        context.setPreprocessorExtension(extension);
+
+        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
+        final ParameterContainer param = new ParameterContainer(reference, new TextFileDataContainer(new File("fake"), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
+
+        reference.preprocess(param, context);
+
+        final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
+        final ByteArrayOutputStream normal = new ByteArrayOutputStream();
+        final ByteArrayOutputStream postfix = new ByteArrayOutputStream();
+
+        param.saveBuffersToStreams(prefix, normal, postfix);
+
+        final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), "UTF8"));
+        final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), "UTF8"));
+        final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), "UTF8"));
+
+        readWholeDataFromReader(prefixreader, result);
+        readWholeDataFromReader(normalreader, result);
+        readWholeDataFromReader(postfixreader, result);
+
+        if (etalonList != null) {
+            int lineIndex = 0;
+            while (true) {
+                if (lineIndex >= etalonList.size() || lineIndex >= result.size()) {
+                    break;
+                }
+                assertEquals("Lines must be equals [" + (lineIndex + 1) + ']', etalonList.get(lineIndex), result.get(lineIndex));
+                lineIndex++;
+            }
+        }
+
+        assertEquals("Must be equal in their size", etalonList.size(), result.size());
+
+        return context;
+
+    }
+
     public PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
         if (text == null) {
             throw new NullPointerException("Text to be preprocessed is null");
@@ -76,60 +149,11 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
                 }
             }
         }
-        final PreprocessorContext context = new PreprocessorContext();
-        context.setPreprocessorExtension(ext);
-        
-        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
 
-        final TextFileDataContainer dataContainer = new TextFileDataContainer(new File("fake file"), preprocessingPart.toArray(new String[preprocessingPart.size()]), 0);
-        final ParameterContainer param = new ParameterContainer(reference, dataContainer, "UTF8");
-
-        reference.preprocess(param, context);
-
-        final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
-        final ByteArrayOutputStream normal = new ByteArrayOutputStream();
-        final ByteArrayOutputStream postfix = new ByteArrayOutputStream();
-
-        param.saveBuffersToStreams(prefix, normal, postfix);
-
-        final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), "UTF8"));
-        final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), "UTF8"));
-        final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), "UTF8"));
-
-        while (true) {
-            final String line = prefixreader.readLine();
-            if (line == null) {
-                break;
-            }
-            if (preprocessedText != null) {
-                preprocessedText.add(line);
-            }
-        }
-
-        while (true) {
-            final String line = normalreader.readLine();
-            if (line == null) {
-                break;
-            }
-            if (preprocessedText != null) {
-                preprocessedText.add(line);
-            }
-        }
-
-        while (true) {
-            final String line = postfixreader.readLine();
-            if (line == null) {
-                break;
-            }
-            if (preprocessedText != null) {
-                preprocessedText.add(line);
-            }
-        }
-
-        return context;
+        return insidePreprocessingAndMatching(preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext);
     }
 
-    public PreprocessorContext assertPreprocessing(final String testFileName, final PreprocessorExtension ext) throws Exception {
+    public PreprocessorContext assertFilePreprocessing(final String testFileName, final PreprocessorExtension ext) throws Exception {
         final InputStream stream = getClass().getResourceAsStream(testFileName);
         if (stream == null) {
             throw new FileNotFoundException("Can't find test file " + testFileName);
@@ -171,62 +195,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
                 }
             }
         }
-        final PreprocessorContext context = new PreprocessorContext();
 
-        context.setPreprocessorExtension(ext);
-        
-        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
-        final ParameterContainer param = new ParameterContainer(reference, new TextFileDataContainer(new File("fake"), preprocessingPart.toArray(new String[preprocessingPart.size()]), 0), "UTF8");
-
-        reference.preprocess(param, context);
-
-        final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
-        final ByteArrayOutputStream normal = new ByteArrayOutputStream();
-        final ByteArrayOutputStream postfix = new ByteArrayOutputStream();
-
-        param.saveBuffersToStreams(prefix, normal, postfix);
-
-        final List<String> result = new ArrayList<String>(100);
-
-        final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), "UTF8"));
-        final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), "UTF8"));
-        final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), "UTF8"));
-
-        while (true) {
-            final String line = prefixreader.readLine();
-            if (line == null) {
-                break;
-            }
-            result.add(line);
-        }
-
-        while (true) {
-            final String line = normalreader.readLine();
-            if (line == null) {
-                break;
-            }
-            result.add(line);
-        }
-
-        while (true) {
-            final String line = postfixreader.readLine();
-            if (line == null) {
-                break;
-            }
-            result.add(line);
-        }
-
-        int lineIndex = 0;
-        while (true) {
-            if (lineIndex >= etalonPart.size() || lineIndex >= result.size()) {
-                break;
-            }
-            assertEquals("Lines must be equals [" + (lineIndex + 1) + ']', etalonPart.get(lineIndex), result.get(lineIndex));
-            lineIndex++;
-        }
-
-        assertEquals("Must be equal in their size", etalonPart.size(), result.size());
-
-        return context;
+        return insidePreprocessingAndMatching(preprocessingPart, new ArrayList<String>(), etalonPart, ext);
     }
 }

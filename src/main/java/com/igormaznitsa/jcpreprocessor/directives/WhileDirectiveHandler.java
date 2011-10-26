@@ -25,7 +25,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfCanBeProcessed() {
+    public boolean executeOnlyWhenExecutionAllowed() {
         return false;
     }
 

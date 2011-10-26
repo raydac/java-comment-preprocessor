@@ -165,12 +165,12 @@ public class FileInfoContainer {
         if (!paramContainer.isIfStackEmpty()) {
             throw new PreprocessorException("Unclosed #if instruction",
                     paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex(), null);
+                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex()+1, null);
         }
         if (!paramContainer.isWhileStackEmpty()) {
             throw new PreprocessorException("Unclosed #when instruction",
                     paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex(), null);
+                    paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex()+1, null);
         }
 
 
@@ -192,7 +192,7 @@ public class FileInfoContainer {
             for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
                 final String name = handler.getName();
                 if (tail.startsWith(name)) {
-                    final boolean allowedForExecution = executionIsEnabled || !handler.processOnlyIfCanBeProcessed();
+                    final boolean allowedForExecution = executionIsEnabled || !handler.executeOnlyWhenExecutionAllowed();
                     
                     final String restOfString = PreprocessorUtils.extractTail(name, tail);
                     if (handler.hasExpression()) {

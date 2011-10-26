@@ -22,7 +22,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean processOnlyIfCanBeProcessed() {
+    public boolean executeOnlyWhenExecutionAllowed() {
         return false;
     }
 

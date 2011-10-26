@@ -1,17 +1,14 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import java.util.List;
 import org.junit.Test;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
     @Override
     public void testExecution() throws Exception {
-        final PreprocessorContext context = assertPreprocessing("directive_local.txt", null);
+        final PreprocessorContext context = assertFilePreprocessing("directive_local.txt", null);
 
         assertEquals(Long.valueOf(5), context.getLocalVariable("x").asLong());
         assertEquals(Long.valueOf(10), context.getLocalVariable("y").asLong());
@@ -19,22 +16,20 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
     }
 
     @Override
-    public void testProcessOnlyIfCanBeProcessed() throws Exception {
-        assertTrue(new LocalDirectiveHandler().processOnlyIfCanBeProcessed());
+    public void testExecutionCondition() throws Exception {
+        assertTrue(new LocalDirectiveHandler().executeOnlyWhenExecutionAllowed());
     }
 
     @Test
-    public void testExecution_ThereIsNotExpression() {
-        try {
-            final List<String> out = new ArrayList<String>();
-            final PreprocessorContext context = preprocessString("1\n2\n   //#local\n3", out, null);
-            fail("Must throw PreprocessorException");
-        } catch (PreprocessorException ex) {
-            assertEquals(3, ex.getStringIndex());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            fail("Unexpected exception");
-        }
+    public void testExecution_ExceptionOnExpressionAbsence() {
+        assertPreprocessorException("1\n2\n   //#local \n3", 3);
+        assertPreprocessorException("1\n2\n   //#local\n3", 3);
+    }
+
+    @Test
+    public void testExecution_ExceptionOnWrongExpression() {
+        assertPreprocessorException("1\n2\n   //#local 3\n3", 3);
+        assertPreprocessorException("1\n2\n   //#local a=\n3", 3);
     }
 
     @Override

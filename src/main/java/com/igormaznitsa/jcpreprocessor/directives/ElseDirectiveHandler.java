@@ -38,7 +38,7 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public boolean processOnlyIfCanBeProcessed() {
+    public boolean executeOnlyWhenExecutionAllowed() {
         return false;
     }
 
