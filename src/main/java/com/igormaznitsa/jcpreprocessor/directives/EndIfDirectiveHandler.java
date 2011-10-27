@@ -23,13 +23,13 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it is the end part of a //#if...//#endif structure";
+        return "it is the end part of a "+DIRECTIVE_PREFIX+"if..."+DIRECTIVE_PREFIX+"endif structure";
     }
 
     @Override
     public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         if (state.isIfStackEmpty()) {
-            throw new RuntimeException("//#endif without //#if detected");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"endif without "+DIRECTIVE_PREFIX+"if detected");
         }
 
         if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {

@@ -28,7 +28,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
         final Value name = Expression.eval(string, context);
 
         if (name == null || name.getType() != ValueType.STRING) {
-            throw new RuntimeException("//#outdir needs a string expression");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"outdir needs a string expression");
         }
         state.getRootFileInfo().setDestinationDir((String) name.getValue());
         return DirectiveBehaviour.PROCESSED;

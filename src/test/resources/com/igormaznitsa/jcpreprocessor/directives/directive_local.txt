@@ -1,3 +1,6 @@
+//#if false
+//#local
+//#endif
     hello
                 //#local x=5
 world

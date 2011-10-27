@@ -29,7 +29,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
         final Value includedFilePath = Expression.eval(string, context);
 
         if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
-            throw new RuntimeException("//#include needs a string expression as a file path");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");
         }
 
         try {

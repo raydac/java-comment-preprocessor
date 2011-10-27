@@ -18,13 +18,13 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "a part of a //#if..//#endif structure, it inverts condition flag";
+        return "a part of a "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"endif structure, it inverts condition flag";
     }
 
     @Override
     public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
         if (state.isIfStackEmpty()) {
-            throw new RuntimeException("//#else without //#if detected");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"else without "+DIRECTIVE_PREFIX+"if detected");
         }
 
         if (state.isAtActiveIf()) {

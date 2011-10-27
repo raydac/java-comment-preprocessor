@@ -21,7 +21,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it makes a loop until //#end if the condition is true";
+        return "it makes a loop until "+DIRECTIVE_PREFIX+"end if the condition is true";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
         if (state.isDirectiveCanBeProcessed()) {
             final Value condition = Expression.eval(string,context);
             if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-                throw new RuntimeException("//#while needs a boolean expression");
+                throw new RuntimeException(DIRECTIVE_PREFIX+"while needs a boolean expression");
             }
 
             state.pushWhile(true);

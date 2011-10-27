@@ -18,13 +18,13 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to break the current //#while...//#end construction";
+        return "it allows to break the current "+DIRECTIVE_PREFIX+"while..."+DIRECTIVE_PREFIX+"end construction";
     }
 
     @Override
     public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException("//#break without //#while detected");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"break without "+DIRECTIVE_PREFIX+"while detected");
         }
 
         state.getState().add(PreprocessingState.BREAK_COMMAND);

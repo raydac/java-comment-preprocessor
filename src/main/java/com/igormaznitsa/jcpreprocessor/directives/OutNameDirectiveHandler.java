@@ -28,7 +28,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
         final Value dirName = Expression.eval(string, context);
 
         if (dirName == null || dirName.getType() != ValueType.STRING) {
-            throw new RuntimeException("//#outname needs a string expression");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"outname needs a string expression");
         }
         state.getRootFileInfo().setDestinationName(dirName.asString());
         return DirectiveBehaviour.PROCESSED;

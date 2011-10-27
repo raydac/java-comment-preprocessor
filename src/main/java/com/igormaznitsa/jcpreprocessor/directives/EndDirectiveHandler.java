@@ -20,13 +20,13 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it ends a //#while...//#end construction";
+        return "it ends a "+DIRECTIVE_PREFIX+"while..."+DIRECTIVE_PREFIX+"end construction";
     }
 
     @Override
     public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException("//#end without //#while detected");
+            throw new RuntimeException(DIRECTIVE_PREFIX+"end without "+DIRECTIVE_PREFIX+"while detected");
         }
 
         if (state.isDirectiveCanBeProcessedIgnoreBreak()) {

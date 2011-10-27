@@ -429,7 +429,7 @@ public class JCPreprocessor {
                     continue;
                 }
 
-                readString = PreprocessorUtils.processMacros(readString, context);
+                readString = PreprocessorUtils.processMacroses(readString, context);
 
                 String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
 

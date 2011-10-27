@@ -4,6 +4,8 @@ import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public abstract class AbstractDirectiveHandler {
+    public static final String DIRECTIVE_PREFIX = "//#";
+    
     public static final AbstractDirectiveHandler [] DIRECTIVES = new AbstractDirectiveHandler [] {
       new LocalDirectiveHandler(),
       new AssertDirectiveHandler(),

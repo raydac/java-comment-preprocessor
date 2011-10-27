@@ -21,7 +21,7 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "allows to make //#if..//#else..//#endif construction, needs a boolean expression as the argument";
+        return "allows to make "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"else.."+DIRECTIVE_PREFIX+"endif construction, needs a boolean expression as the argument";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
         if (state.isDirectiveCanBeProcessed()){
             final Value expressionResult = Expression.eval(string,context);
             if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
-                throw new RuntimeException("//#if needs a boolean expression");
+                throw new RuntimeException(DIRECTIVE_PREFIX+"if needs a boolean expression");
             }
             state.pushIf(true);
             if (!expressionResult.asBoolean().booleanValue()){

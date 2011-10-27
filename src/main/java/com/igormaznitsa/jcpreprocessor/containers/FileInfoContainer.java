@@ -114,45 +114,42 @@ public class FileInfoContainer {
 
                 String stringToBeProcessed = trimmedProcessingString;
                 if (!trimmedProcessingString.startsWith("//$$")) {
-                    stringToBeProcessed = PreprocessorUtils.processMacros(trimmedProcessingString, configurator);
+                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, configurator);
                 }
 
-                if (isGlobalOperation(stringToBeProcessed)) {
-                    continue;
-                }
-
-                switch (processDirective(paramContainer, stringToBeProcessed, configurator)) {
-                    case READ_NEXT_LINE:
-                        continue;
-                    case PROCESSED: {
+                if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX) && !isGlobalOperation(stringToBeProcessed)) {
+                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator)) {
+                        case PROCESSED:
+                        case READ_NEXT_LINE:
+                            continue;
+                        default:
+                            throw new Error("Unsupported result");
                     }
-                    break;
-                    case NOT_PROCESSED: {
-                        if (paramContainer.isDirectiveCanBeProcessed() && !paramContainer.getState().contains(PreprocessingState.TEXT_OUTPUT_DISABLED)) {
-                            if (stringToBeProcessed.startsWith("//$$")) {
-                                // Output the tail of the string to the output stream without comments and macroses
-                                printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                                paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
-                            } else if (stringToBeProcessed.startsWith("//$")) {
-                                // Output the tail of the string to the output stream without comments
-                                printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                                paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
-                            } else {
-                                // Just string :)
-                                final String strToOut = processStringForTailRemover(stringToBeProcessed);
+                }
 
-                                if (paramContainer.getState().contains(PreprocessingState.COMMENT_NEXT_LINE)) {
-                                    paramContainer.getPrinter().print("//");
-                                    paramContainer.getState().remove(PreprocessingState.COMMENT_NEXT_LINE);
-                                }
+                if (paramContainer.isDirectiveCanBeProcessed() && !paramContainer.getState().contains(PreprocessingState.TEXT_OUTPUT_DISABLED)) {
+                    if (stringToBeProcessed.startsWith("//$$")) {
+                        // Output the tail of the string to the output stream without comments and macroses
+                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
+                        paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
+                    } else if (stringToBeProcessed.startsWith("//$")) {
+                        // Output the tail of the string to the output stream without comments
+                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
+                        paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
+                    } else {
+                        // Just string :)
+                        final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
-                                printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                                paramContainer.getPrinter().println(stringToBeProcessed);
-                            }
+                        if (paramContainer.getState().contains(PreprocessingState.COMMENT_NEXT_LINE)) {
+                            paramContainer.getPrinter().print("//");
+                            paramContainer.getState().remove(PreprocessingState.COMMENT_NEXT_LINE);
                         }
+
+                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
+                        paramContainer.getPrinter().println(stringToBeProcessed);
                     }
-                    break;
                 }
+
             }
         } catch (Exception e) {
             throw new PreprocessorException("Exception during preprocessing [" + e.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
@@ -163,14 +160,14 @@ public class FileInfoContainer {
         }
 
         if (!paramContainer.isIfStackEmpty()) {
-            throw new PreprocessorException("Unclosed #if instruction",
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction",
                     paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex()+1, null);
+                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex() + 1, null);
         }
         if (!paramContainer.isWhileStackEmpty()) {
-            throw new PreprocessorException("Unclosed #when instruction",
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "when instruction",
                     paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex()+1, null);
+                    paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex() + 1, null);
         }
 
 
@@ -184,40 +181,39 @@ public class FileInfoContainer {
         return str;
     }
 
-    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String string, final PreprocessorContext configurator) throws IOException {
-        if (string.startsWith("//#")) {
-            final String tail = PreprocessorUtils.extractTail("//#", string);
-            final boolean executionIsEnabled = state.isDirectiveCanBeProcessed();
+    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String trimmedString, final PreprocessorContext configurator) throws IOException {
+        final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
-            for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
-                final String name = handler.getName();
-                if (tail.startsWith(name)) {
-                    final boolean allowedForExecution = executionIsEnabled || !handler.executeOnlyWhenExecutionAllowed();
-                    
-                    final String restOfString = PreprocessorUtils.extractTail(name, tail);
-                    if (handler.hasExpression()) {
-                        if (!restOfString.isEmpty() && Character.isSpaceChar(restOfString.charAt(0))) {
-                            if (allowedForExecution) {
-                                return handler.execute(restOfString.trim(), state, configurator);
-                            } else {
-                                return DirectiveBehaviour.PROCESSED;
-                            }
-                        } else {
-                            continue;
-                        }
-                    } else {
+        for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
+            final String name = handler.getName();
+            if (trimmedString.startsWith(name)) {
+                final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
+
+                final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
+                if (handler.hasExpression()) {
+                    if (!restOfString.isEmpty() && Character.isSpaceChar(restOfString.charAt(0))) {
                         if (allowedForExecution) {
                             return handler.execute(restOfString.trim(), state, configurator);
                         } else {
                             return DirectiveBehaviour.PROCESSED;
                         }
+                    } else {
+                        if (allowedForExecution) {
+                            throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " needs an expression");
+                        } else {
+                            return DirectiveBehaviour.PROCESSED;
+                        }
+                    }
+                } else {
+                    if (allowedForExecution) {
+                        return handler.execute(restOfString.trim(), state, configurator);
+                    } else {
+                        return DirectiveBehaviour.PROCESSED;
                     }
                 }
             }
-            throw new RuntimeException("Unknown preprocessor directive [" + string + ']');
         }
-
-        return DirectiveBehaviour.NOT_PROCESSED;
+        throw new RuntimeException("Unknown preprocessor directive [" + trimmedString + ']');
     }
 
     private final void removeCommentsFromFile(final File file, final PreprocessorContext cfg) throws IOException {

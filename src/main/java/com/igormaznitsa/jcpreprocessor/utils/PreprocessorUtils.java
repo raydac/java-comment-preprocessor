@@ -195,7 +195,7 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static final String processMacros(final String processingString,final PreprocessorContext context) {
+    public static final String processMacroses(final String processingString,final PreprocessorContext context) {
         int i_indx;
 
         String result = processingString;

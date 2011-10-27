@@ -37,6 +37,6 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
             }
             return DirectiveBehaviour.PROCESSED;
         }
-        throw new RuntimeException("//#prefix needs a parameter");
+        throw new RuntimeException(DIRECTIVE_PREFIX+"prefix needs a parameter");
     }
 }

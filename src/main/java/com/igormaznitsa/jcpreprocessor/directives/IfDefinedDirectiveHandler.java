@@ -31,7 +31,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
         if (state.isDirectiveCanBeProcessed()){
             if (string.isEmpty()) {
-                throw new RuntimeException("//#ifdefined needs a variable");
+                throw new RuntimeException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
             }
             state.pushIf(true);
             final boolean definitionFlag = configurator.findVariableForName(string) != null;
