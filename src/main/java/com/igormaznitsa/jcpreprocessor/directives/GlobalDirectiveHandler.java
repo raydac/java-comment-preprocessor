@@ -30,7 +30,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean executeDuringGlobalPass() {
+    public boolean isFirstPassAllowed() {
         return true;
     }
     

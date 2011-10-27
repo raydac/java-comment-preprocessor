@@ -8,13 +8,39 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public final class ParameterContainer {
 
+    public static class ExcludeIfInfo{
+        private final FileInfoContainer fileInfoContainer;
+        private final String condition;
+        private final int stringIndex;
+        
+        public ExcludeIfInfo(final FileInfoContainer fileInfoContainer, final String condition, final int stringIndex){
+            this.fileInfoContainer = fileInfoContainer;
+            this.condition = condition;
+            this.stringIndex = stringIndex;
+        }
+        
+        public int getStringIndex() {
+            return this.stringIndex;
+        }
+        
+        public FileInfoContainer getFileInfoContainer() {
+            return fileInfoContainer;
+        }
+        
+        public String getCondition(){
+            return condition;
+        }
+    }
+    
     public enum PrinterType {
         NORMAL,
         PREFIX,
@@ -29,7 +55,8 @@ public final class ParameterContainer {
     private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
     private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
     private final LinkedList<TextFileDataContainer> fileStack = new LinkedList<TextFileDataContainer>();
-
+    private final LinkedList<ExcludeIfInfo> excludeStack = new LinkedList<ExcludeIfInfo>();
+    
     private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
     private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
     private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
@@ -38,7 +65,6 @@ public final class ParameterContainer {
     private final EnumSet<PreprocessingState> insideState = EnumSet.noneOf(PreprocessingState.class);
     private TextFileDataContainer activeIf;
     private TextFileDataContainer activeWhile;
-
     
     public ParameterContainer(final FileInfoContainer rootFile, final String encoding) throws IOException {
         if (rootFile == null){
@@ -71,6 +97,33 @@ public final class ParameterContainer {
         fileStack.push(rootContainer);
     }
 
+    public void pushExcludeIfData(final FileInfoContainer infoContainer, final String excludeIfCondition, final int stringIndex){
+        if (infoContainer == null) {
+            throw new NullPointerException("File info is null");
+        }
+        
+        if (excludeIfCondition == null) {
+            throw new NullPointerException("Condition is null");
+        }
+        
+        if (stringIndex < 0) {
+            throw new IllegalArgumentException("String index is less than zero");
+        }
+        
+        excludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
+    }
+    
+    public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
+        final List<ExcludeIfInfo> result = new ArrayList<ExcludeIfInfo>(excludeStack);
+        excludeStack.clear();
+        return result;
+    }
+
+    
+    public ExcludeIfInfo popExcludeIfData() {
+        return excludeStack.pop();
+    }
+    
     public Set<PreprocessingState> getState() {
         return insideState;
     }

@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.context;
 
+import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
@@ -36,8 +37,8 @@ public final class PreprocessorContext {
     private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
     private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS,',')));
     private boolean clearDestinationDirectoryBefore = true;
-    private Map<String, Value> globalVarTable = new HashMap<String, Value>();
-    private Map<String, Value> localVarTable = new HashMap<String, Value>();
+    private final Map<String, Value> globalVarTable = new HashMap<String, Value>();
+    private final Map<String, Value> localVarTable = new HashMap<String, Value>();
     private PreprocessorExtension preprocessorExtension;
     private String characterEncoding = DEFAULT_CHARSET;
     

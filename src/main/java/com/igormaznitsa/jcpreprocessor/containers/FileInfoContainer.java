@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
 
 public class FileInfoContainer {
 
@@ -70,23 +71,67 @@ public class FileInfoContainer {
         return sourceFile.getAbsolutePath();
     }
 
-    public void preprocess(final PreprocessorContext configurator) throws PreprocessorException, IOException {
-        configurator.clearLocalVariables();
-
-        final ParameterContainer paramContainer = new ParameterContainer(this, configurator.getCharacterEncoding());
-        preprocess(paramContainer, configurator);
-
-        final File outFile = configurator.makeDestinationFile(getDestinationFilePath());
-        paramContainer.saveBuffersToFile(outFile);
-    }
-
     private void printSpaces(final ParameterContainer paramContainer, final int number) throws IOException {
         for (int li = 0; li < number; li++) {
             paramContainer.getPrinter().print(" ");
         }
     }
 
-    public void preprocess(final ParameterContainer paramContainer, final PreprocessorContext configurator) throws PreprocessorException {
+    public List<ParameterContainer.ExcludeIfInfo> firstPassProcessing(final PreprocessorContext configurator) throws PreprocessorException, IOException {
+        final ParameterContainer paramContainer = new ParameterContainer(this, configurator.getCharacterEncoding());
+
+        String trimmedProcessingString = null;
+        try {
+            while (true) {
+                String nonTrimmedProcessingString = paramContainer.nextLine();
+                if (paramContainer.getState().contains(PreprocessingState.END_PROCESSING)) {
+                    nonTrimmedProcessingString = null;
+                }
+
+                if (nonTrimmedProcessingString == null) {
+                    if (!paramContainer.isOnlyRootOnStack()) {
+                        paramContainer.popTextContainer();
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+
+                trimmedProcessingString = nonTrimmedProcessingString.trim();
+
+                final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
+
+                if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
+                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), configurator,true)) {
+                        case PROCESSED:
+                        case READ_NEXT_LINE:
+                            continue;
+                        default:
+                            throw new Error("Unsupported result");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new PreprocessorException("Exception during preprocessing [" + e.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
+                    paramContainer.getRootFileInfo().getSourceFile(),
+                    paramContainer.peekFile().getFile(),
+                    trimmedProcessingString,
+                    paramContainer.peekFile().getNextStringIndex(), e);
+        }
+
+        if (!paramContainer.isIfStackEmpty()) {
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction",
+                    paramContainer.getRootFileInfo().getSourceFile(),
+                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex() + 1, null);
+        }
+        
+        return paramContainer.popAllExcludeIfInfoData();
+    }
+    
+    public ParameterContainer secondPassProcessing(final ParameterContainer params, final PreprocessorContext configurator) throws IOException, PreprocessorException {
+        configurator.clearLocalVariables();
+        final ParameterContainer paramContainer = params != null ? params : new ParameterContainer(this, configurator.getCharacterEncoding());
+        
         String trimmedProcessingString = null;
         try {
             while (true) {
@@ -114,7 +159,7 @@ public class FileInfoContainer {
                 }
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator)) {
+                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator,false)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -166,7 +211,10 @@ public class FileInfoContainer {
                     paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex() + 1, null);
         }
 
-
+        final File outFile = configurator.makeDestinationFile(getDestinationFilePath());
+        paramContainer.saveBuffersToFile(outFile);
+        
+        return paramContainer;
     }
 
     private static String processStringForTailRemover(final String str) {
@@ -177,13 +225,13 @@ public class FileInfoContainer {
         return str;
     }
 
-    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String trimmedString, final PreprocessorContext configurator) throws IOException {
+    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
         final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
         for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
             final String name = handler.getName();
             if (trimmedString.startsWith(name)) {
-                if (!handler.executeDuringLocalPass()) {
+                if ((firstPass && !handler.isFirstPassAllowed()) || (!firstPass && !handler.isSecondPassAllowed())) {
                     return DirectiveBehaviour.READ_NEXT_LINE;
                 }
                 

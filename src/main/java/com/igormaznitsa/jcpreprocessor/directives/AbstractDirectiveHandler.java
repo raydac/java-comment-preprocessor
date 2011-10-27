@@ -57,11 +57,11 @@ public abstract class AbstractDirectiveHandler {
         return true;
     }
 
-    public boolean executeDuringGlobalPass() {
+    public boolean isFirstPassAllowed() {
         return false;
     }
 
-    public boolean executeDuringLocalPass() {
+    public boolean isSecondPassAllowed() {
         return true;
     }
 }

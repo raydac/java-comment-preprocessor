@@ -22,12 +22,12 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean executeDuringGlobalPass() {
+    public boolean isFirstPassAllowed() {
         return true;
     }
 
     @Override
-    public boolean executeDuringLocalPass() {
+    public boolean isSecondPassAllowed() {
         return false;
     }
     

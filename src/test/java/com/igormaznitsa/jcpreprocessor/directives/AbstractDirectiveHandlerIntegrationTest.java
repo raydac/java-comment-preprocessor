@@ -86,7 +86,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
         final ParameterContainer param = new ParameterContainer(reference, new TextFileDataContainer(new File("fake"), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
 
-        reference.preprocess(param, context);
+        reference.secondPassProcessing(param,context);
 
         final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
         final ByteArrayOutputStream normal = new ByteArrayOutputStream();

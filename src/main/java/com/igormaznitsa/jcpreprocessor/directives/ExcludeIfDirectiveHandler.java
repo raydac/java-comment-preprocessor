@@ -25,26 +25,18 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean executeDuringGlobalPass() {
+    public boolean isFirstPassAllowed() {
         return true;
     }
 
     @Override
-    public boolean executeDuringLocalPass() {
+    public boolean isSecondPassAllowed() {
         return false;
     }
 
     @Override
     public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) {
-        final Value flag = Expression.eval(string, context);
-
-        if (flag == null || flag.getType() != ValueType.BOOLEAN) {
-            throw new RuntimeException(DIRECTIVE_PREFIX + "excludeif needs a boolean expression");
-        }
-
-        if (flag.asBoolean().booleanValue()) {
-            state.getRootFileInfo().setExcluded(true);
-        }
+        state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getNextStringIndex()-1);
         return DirectiveBehaviour.PROCESSED;
     }
 }
