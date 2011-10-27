@@ -4,39 +4,64 @@ import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public abstract class AbstractDirectiveHandler {
+
     public static final String DIRECTIVE_PREFIX = "//#";
     
-    public static final AbstractDirectiveHandler [] DIRECTIVES = new AbstractDirectiveHandler [] {
-      new LocalDirectiveHandler(),
-      new AssertDirectiveHandler(),
-      new WhileDirectiveHandler(),
-      new BreakDirectiveHandler(),
-      new OutDirDirectiveHandler(),
-      new OutEnabledDirectiveHandler(),
-      new OutNameDirectiveHandler(),
-      new OutDisabledDirectiveHandler(),
-      new CommentNextLineDirectiveHandler(),
-      new ContinueDirectiveHandler(),
-      new DefineDirectiveHandler(),
-      new ElseDirectiveHandler(),
-      new EndIfDirectiveHandler(),
-      new EndDirectiveHandler(),
-      new ExitIfDirectiveHandler(),
-      new ExitDirectiveHandler(),
-      new FlushDirectiveHandler(),
-      new IfDefinedDirectiveHandler(),
-      new IfDirectiveHandler(),
-      new IncludeDirectiveHandler(),
-      new ActionDirectiveHandler(),
+    public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[]{
+        // Order makes sense !!!
+        new LocalDirectiveHandler(),
+        new IfDefinedDirectiveHandler(),
+        new IfDirectiveHandler(),
+        new WhileDirectiveHandler(),
+        new BreakDirectiveHandler(),
+        new ContinueDirectiveHandler(),
+        new ElseDirectiveHandler(),
+        new EndIfDirectiveHandler(),
+        new EndDirectiveHandler(),
+        new ExitIfDirectiveHandler(),
+        new ExitDirectiveHandler(),
+        new AssertDirectiveHandler(),
+        new OutDirDirectiveHandler(),
+        new OutEnabledDirectiveHandler(),
+        new OutNameDirectiveHandler(),
+        new OutDisabledDirectiveHandler(),
+        new CommentNextLineDirectiveHandler(),
+        new DefineDirectiveHandler(),
+        new FlushDirectiveHandler(),
+        new IncludeDirectiveHandler(),
+        new ActionDirectiveHandler(),
+        new GlobalDirectiveHandler(),
+        new GlobalElseDirectiveHandler(),
+        new GlobalEndIfDirectiveHandler(),
+        new GlobalIfDirectiveHandler(),
+        new ExcludeIfDirectiveHandler()
     };
-    
+
+    public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[]{
+        new GlobalDirectiveHandler(),
+        new GlobalElseDirectiveHandler(),
+        new GlobalEndIfDirectiveHandler(),
+        new GlobalIfDirectiveHandler(),
+        new ExcludeIfDirectiveHandler()
+    };
+
     public abstract String getName();
+
     public abstract boolean hasExpression();
+
     public abstract String getReference();
-    
+
     public abstract DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context);
-    
-    public boolean executeOnlyWhenExecutionAllowed(){
+
+    public boolean executeOnlyWhenExecutionAllowed() {
+        return true;
+    }
+
+    public boolean executeDuringGlobalPass() {
+        return false;
+    }
+
+    public boolean executeDuringLocalPass() {
         return true;
     }
 }

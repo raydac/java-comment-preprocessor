@@ -7,11 +7,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import java.io.IOException;
 
-public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
+public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
-        return "include";
+        return "excludeif";
     }
 
     @Override
@@ -25,17 +25,25 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) {
-        final Value includedFilePath = Expression.eval(string, context);
+    public boolean executeDuringGlobalPass() {
+        return true;
+    }
 
-        if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");
+    @Override
+    public boolean executeDuringLocalPass() {
+        return false;
+    }
+
+    @Override
+    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) {
+        final Value flag = Expression.eval(string, context);
+
+        if (flag == null || flag.getType() != ValueType.BOOLEAN) {
+            throw new RuntimeException(DIRECTIVE_PREFIX + "excludeif needs a boolean expression");
         }
 
-        try {
-            state.openFile(context.getSourceFile(includedFilePath.asString()));
-        }catch(IOException ex){
-            throw new RuntimeException("Can't open a file to include ["+includedFilePath.asString()+']',ex);
+        if (flag.asBoolean().booleanValue()) {
+            state.getRootFileInfo().setExcluded(true);
         }
         return DirectiveBehaviour.PROCESSED;
     }

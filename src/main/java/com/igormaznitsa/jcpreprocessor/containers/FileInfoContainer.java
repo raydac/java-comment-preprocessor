@@ -70,10 +70,6 @@ public class FileInfoContainer {
         return sourceFile.getAbsolutePath();
     }
 
-    private boolean isGlobalOperation(final String str) {
-        return str.startsWith("//#_if") || str.startsWith("//#_else") || str.startsWith("//#_endif") || str.startsWith("//#global") || str.startsWith("//#exclude");
-    }
-
     public void preprocess(final PreprocessorContext configurator) throws PreprocessorException, IOException {
         configurator.clearLocalVariables();
 
@@ -117,7 +113,7 @@ public class FileInfoContainer {
                     stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, configurator);
                 }
 
-                if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX) && !isGlobalOperation(stringToBeProcessed)) {
+                if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
                     switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
@@ -187,6 +183,10 @@ public class FileInfoContainer {
         for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
             final String name = handler.getName();
             if (trimmedString.startsWith(name)) {
+                if (!handler.executeDuringLocalPass()) {
+                    return DirectiveBehaviour.READ_NEXT_LINE;
+                }
+                
                 final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
 
                 final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
