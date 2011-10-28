@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -30,7 +30,12 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context) {
+    public String getExpressionType() {
+        return "BOOLEAN";
+    }
+    
+    @Override
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (state.isDirectiveCanBeProcessed()) {
             final Value condition = Expression.eval(string,context);
             if (condition == null || condition.getType() != ValueType.BOOLEAN) {
@@ -40,12 +45,12 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
             state.pushWhile(true);
             if (!condition.asBoolean().booleanValue())
             {
-                state.getState().add(PreprocessingState.BREAK_COMMAND);
+                state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);
             }
         } else {
            state.pushWhile(false);
         }
         
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

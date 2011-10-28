@@ -20,6 +20,11 @@ public final class Delimiter implements ExpressionStackItem {
     }
 
     @Override
+    public int hashCode() {
+        return delimiterText.hashCode();
+    }
+    
+    @Override
     public boolean equals(final Object that) {
         if (that == null) {
             return false;

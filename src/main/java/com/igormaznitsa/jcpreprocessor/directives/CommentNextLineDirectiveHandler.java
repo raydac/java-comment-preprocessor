@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
@@ -18,13 +18,13 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "it makes the next text line commented, only the next line (!)";
     }
     
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
-         state.getState().add(PreprocessingState.COMMENT_NEXT_LINE);
-         return DirectiveBehaviour.PROCESSED;
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+         state.getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
+         return AfterProcessingBehaviour.PROCESSED;
     }
  
     

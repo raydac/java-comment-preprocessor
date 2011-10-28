@@ -14,7 +14,7 @@ import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.ExcludeIfDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -61,17 +61,17 @@ public class JCPreprocessor {
 
         final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 
-        final List<ParameterContainer.ExcludeIfInfo> excludedIf = processFirstPass(filesToBePreprocessed);
+        final List<PreprocessingState.ExcludeIfInfo> excludedIf = processFirstPass(filesToBePreprocessed);
 
         processFileExclusion(excludedIf);
         createDestinationDirectory();
         processSecondPass(filesToBePreprocessed);
     }
 
-    private void processFileExclusion(final List<ParameterContainer.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
+    private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
         final String DIRECTIVE_NAME = AbstractDirectiveHandler.DIRECTIVE_PREFIX+(new ExcludeIfDirectiveHandler().getName());
   
-        for (final ParameterContainer.ExcludeIfInfo item : foundExcludeIf) {
+        for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
             try {
@@ -90,13 +90,13 @@ public class JCPreprocessor {
         }
     }
 
-    private List<ParameterContainer.ExcludeIfInfo> processFirstPass(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
-        final List<ParameterContainer.ExcludeIfInfo> result = new ArrayList<ParameterContainer.ExcludeIfInfo>();
+    private List<PreprocessingState.ExcludeIfInfo> processFirstPass(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
+        final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
         for (final FileInfoContainer fileRef : files) {
             if (fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly()) {
                 continue;
             } else {
-                result.addAll(fileRef.firstPassProcessing(context));
+                result.addAll(fileRef.processGlobalDirectives(context));
             }
         }
         return result;
@@ -110,7 +110,7 @@ public class JCPreprocessor {
                 PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
                 continue;
             } else {
-                fileRef.secondPassProcessing(null,context);
+                fileRef.preprocessFile(null,context);
             }
         }
     }

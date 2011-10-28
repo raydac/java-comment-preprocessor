@@ -15,20 +15,20 @@ public final class FunctionROUND extends AbstractFunction {
     public void execute(PreprocessorContext context, Expression stack, int index) {
         if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation ROUND needs an operand");
 
-        Value _val0 = (Value)stack.getItemAtPosition(index-1);
+        final Value stackItem = (Value)stack.getItemAtPosition(index-1);
         index--;
         stack.removeItemAt(index);
 
-        switch (_val0.getType())
+        switch (stackItem.getType())
         {
             case INT:
                 {
-                    stack.setItemAtPosition(index, _val0);
+                    stack.setItemAtPosition(index, stackItem);
                 };break;
             case FLOAT:
                 {
-                    long l_result = Math.round(((Float) _val0.getValue()).longValue());
-                    stack.setItemAtPosition(index, Value.valueOf(l_result));
+                    final long result = Math.round(stackItem.asFloat().floatValue());
+                    stack.setItemAtPosition(index, Value.valueOf(result));
                 };break;
             default :
                 throw new IllegalArgumentException("Function ROUND processes only the INTEGER or the FLOAT types");

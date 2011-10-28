@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public enum DirectiveBehaviour {
+public enum AfterProcessingBehaviour {
     /**
      * Processed
      */

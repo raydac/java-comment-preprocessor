@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
@@ -17,14 +17,22 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
+    public String getExpressionType() {
+        return "VAR_NAME";
+    }
+    
+    @Override
     public String getReference() {
-        return null;
+        return "it defines a local variable for the name and init it as TRUE, the name must be undefined before";
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
-        configurator.setLocalVariable(string, Value.BOOLEAN_TRUE);
-        return DirectiveBehaviour.PROCESSED;
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+        if (context.findVariableForName(string)!=null){
+            throw new RuntimeException("variable already defined");
+        }
+        context.setLocalVariable(string, Value.BOOLEAN_TRUE);
+        return AfterProcessingBehaviour.PROCESSED;
     }
 
 }

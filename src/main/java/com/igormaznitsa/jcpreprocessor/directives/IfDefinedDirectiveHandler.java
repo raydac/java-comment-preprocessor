@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
@@ -26,9 +26,13 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
         return false;
     }
 
+    @Override
+    public String getExpressionType() {
+        return "VAR_NAME";
+    }
     
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         if (state.isDirectiveCanBeProcessed()){
             if (string.isEmpty()) {
                 throw new RuntimeException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
@@ -36,12 +40,12 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
             state.pushIf(true);
             final boolean definitionFlag = configurator.findVariableForName(string) != null;
             if (!definitionFlag){
-                state.getState().add(PreprocessingState.IF_CONDITION_FALSE);
+                state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
         }else{
             state.pushIf(false);
         }
  
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

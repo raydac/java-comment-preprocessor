@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class BreakDirectiveHandler extends AbstractDirectiveHandler {
@@ -22,12 +22,12 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context) {
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"break without "+DIRECTIVE_PREFIX+"while detected");
+            throw new RuntimeException(getFullName()+" without "+DIRECTIVE_PREFIX+"while detected");
         }
 
-        state.getState().add(PreprocessingState.BREAK_COMMAND);
-        return DirectiveBehaviour.PROCESSED;
+        state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

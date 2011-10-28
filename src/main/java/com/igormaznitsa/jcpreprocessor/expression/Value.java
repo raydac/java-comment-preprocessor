@@ -7,7 +7,6 @@ public final class Value implements ExpressionStackItem {
     public static final Value BOOLEAN_TRUE = new Value(Boolean.TRUE);
     public static final Value BOOLEAN_FALSE = new Value(Boolean.FALSE);
     public static final Value INT_ZERO = new Value(Long.valueOf(0));
-    
     private final Object value;
     private final ValueType type;
 
@@ -19,7 +18,6 @@ public final class Value implements ExpressionStackItem {
         return value;
     }
 
-    
     private Value(final String val) {
         value = val;
         type = ValueType.STRING;
@@ -43,73 +41,69 @@ public final class Value implements ExpressionStackItem {
     public static Value valueOf(final Long val) {
         return new Value(val);
     }
-    
+
     public static Value valueOf(final Boolean val) {
         return val.booleanValue() ? BOOLEAN_TRUE : BOOLEAN_FALSE;
     }
-    
-    public static Value valueOf(final Float val){
+
+    public static Value valueOf(final Float val) {
         return new Value(val);
     }
-    
-    public static Value valueOf(final String val){
+
+    public static Value valueOf(final String val) {
         return new Value(val);
     }
-    
-    public Long asLong(){
-        if (type == ValueType.INT){
-            return (Long)value;
-        } else {
-            return null;
+
+    public Long asLong() {
+        if (type != ValueType.INT) {
+            throw new IllegalStateException("Value is not integer");
         }
+        return (Long) value;
     }
-    
-    public Float asFloat(){
-        if (type == ValueType.FLOAT){
-            return (Float)value;
-        } else {
-            return null;
+
+    public Float asFloat() {
+        if (type != ValueType.FLOAT) {
+            throw new IllegalStateException("Value is not float");
         }
+        return (Float) value;
     }
-    
-    public String asString(){
-        if (type == ValueType.STRING){
-            return (String)value;
-        } else {
-            return null;
+
+    public String asString() {
+        if (type != ValueType.STRING) {
+            throw new IllegalStateException("Value is not string");
         }
+        return (String) value;
     }
-    
-    public Boolean asBoolean(){
-        if (type == ValueType.BOOLEAN){
-            return (Boolean)value;
-        } else {
-            return null;
+
+    public Boolean asBoolean() {
+        if (type != ValueType.BOOLEAN) {
+            throw new IllegalStateException("Value is not boolean");
         }
+        return (Boolean) value;
     }
-    
+
     public static Value recognizeOf(final String str) {
         final ValueType type = recognizeType(str);
 
-        switch(type) {
-            case BOOLEAN : {
+        switch (type) {
+            case BOOLEAN: {
                 return "true".equalsIgnoreCase(str) ? BOOLEAN_TRUE : BOOLEAN_FALSE;
             }
-            case INT : {
-                return new Value((Long)getValue(str, ValueType.INT));
+            case INT: {
+                return new Value((Long) getValue(str, ValueType.INT));
             }
-            case FLOAT : {
-                return new Value((Float)getValue(str, ValueType.FLOAT));
+            case FLOAT: {
+                return new Value((Float) getValue(str, ValueType.FLOAT));
             }
-            case STRING : {
-                return new Value((String)getValue(str, ValueType.STRING));
+            case STRING: {
+                return new Value((String) getValue(str, ValueType.STRING));
             }
-            default:{
+            default: {
                 throw new RuntimeException("Unsupported object type");
-            } 
+            }
         }
     }
-    
+
     public static final Object getValue(final String value, final ValueType type) {
         try {
             switch (type) {
@@ -121,8 +115,7 @@ public final class Value implements ExpressionStackItem {
                 }
                 case INT: {
                     long longValue = -1;
-                    if (value.length()>2 && value.charAt(0) == '0' && (value.charAt(1)=='x' || value.charAt(1)=='X'))
-                        {
+                    if (value.length() > 2 && value.charAt(0) == '0' && (value.charAt(1) == 'x' || value.charAt(1) == 'X')) {
                         // HEX value
                         return Long.valueOf(PreprocessorUtils.extractTail("0x", value), 16);
                     } else {
@@ -145,7 +138,7 @@ public final class Value implements ExpressionStackItem {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) // Boolean
         {
             return ValueType.BOOLEAN;
-        } else if (value.length()>1 && value.charAt(0)=='\"' && value.charAt(value.length()-1) == '\"') // String value
+        } else if (value.length() > 1 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"') // String value
         {
             return ValueType.STRING;
         } else {
@@ -220,6 +213,4 @@ public final class Value implements ExpressionStackItem {
     public int getPriority() {
         return 6;
     }
-
-    
 }

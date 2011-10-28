@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public abstract class AbstractDirectiveHandler {
@@ -51,17 +51,25 @@ public abstract class AbstractDirectiveHandler {
 
     public abstract String getReference();
 
-    public abstract DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context);
+    public String getFullName(){
+        return DIRECTIVE_PREFIX+getName();
+    }
+    
+    public String getExpressionType() {
+        return null;
+    }
+    
+    public abstract AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context);
 
     public boolean executeOnlyWhenExecutionAllowed() {
         return true;
     }
 
-    public boolean isFirstPassAllowed() {
+    public boolean isGlobalPhaseAllowed() {
         return false;
     }
 
-    public boolean isSecondPassAllowed() {
+    public boolean isPreprocessingPhaseAllowed() {
         return true;
     }
 }

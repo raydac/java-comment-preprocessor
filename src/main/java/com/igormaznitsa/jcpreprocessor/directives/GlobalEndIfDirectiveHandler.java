@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
@@ -27,27 +27,27 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean isFirstPassAllowed() {
+    public boolean isGlobalPhaseAllowed() {
         return true;
     }
 
     @Override
-    public boolean isSecondPassAllowed() {
+    public boolean isPreprocessingPhaseAllowed() {
         return false;
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
+    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext configurator) {
         if (state.isIfStackEmpty()) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"_endif without "+DIRECTIVE_PREFIX+"_if detected");
         }
 
         if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {
-            state.getState().remove(PreprocessingState.IF_CONDITION_FALSE);
+            state.getPreprocessingFlags().remove(PreprocessingFlag.IF_CONDITION_FALSE);
         } 
         
         state.popIf();
         
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.context;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;

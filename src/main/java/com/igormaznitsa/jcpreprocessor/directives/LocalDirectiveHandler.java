@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -19,14 +19,19 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context){
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
         processLocalDefinition(string, context);
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 
     @Override
     public String getReference() {
         return "allows to define or change a local variable, it needs an expression";
+    }
+
+    @Override
+    public String getExpressionType() {
+        return "VAR_NAME=EXPR";
     }
 
     private void processLocalDefinition(final String _str, final PreprocessorContext context) {

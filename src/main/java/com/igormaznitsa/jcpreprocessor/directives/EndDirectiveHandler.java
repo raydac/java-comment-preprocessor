@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.IOException;
@@ -24,14 +24,14 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext configurator) {
+    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext configurator) {
         if (state.isWhileStackEmpty()) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"end without "+DIRECTIVE_PREFIX+"while detected");
         }
 
         if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
             final TextFileDataContainer thisWhile = state.peekWhile();
-            final boolean breakIsSet = state.getState().contains(PreprocessingState.BREAK_COMMAND);
+            final boolean breakIsSet = state.getPreprocessingFlags().contains(PreprocessingFlag.BREAK_COMMAND);
             state.popWhile();
             if (!breakIsSet) {
                 state.goToString(thisWhile.getNextStringIndex());
@@ -39,7 +39,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
         } else {
             state.popWhile();
         }
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 
     @Override

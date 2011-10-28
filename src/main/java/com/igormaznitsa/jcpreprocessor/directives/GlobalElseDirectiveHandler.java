@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
@@ -22,29 +22,29 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean isFirstPassAllowed() {
+    public boolean isGlobalPhaseAllowed() {
         return true;
     }
 
     @Override
-    public boolean isSecondPassAllowed() {
+    public boolean isPreprocessingPhaseAllowed() {
         return false;
     }
     
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         if (state.isIfStackEmpty()) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"_else without "+DIRECTIVE_PREFIX+"_if detected");
         }
 
         if (state.isAtActiveIf()) {
-            if (state.getState().contains(PreprocessingState.IF_CONDITION_FALSE)){
-                state.getState().remove(PreprocessingState.IF_CONDITION_FALSE);
+            if (state.getPreprocessingFlags().contains(PreprocessingFlag.IF_CONDITION_FALSE)){
+                state.getPreprocessingFlags().remove(PreprocessingFlag.IF_CONDITION_FALSE);
             } else {
-                state.getState().add(PreprocessingState.IF_CONDITION_FALSE);
+                state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
         }
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
     
     @Override

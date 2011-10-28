@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
@@ -21,21 +21,26 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+    public String getExpressionType() {
+        return "[+|-]";
+    }
+    
+    @Override
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         if (!string.isEmpty()) {
             switch (string.charAt(0)) {
                 case '+': {
-                    state.setPrinter(ParameterContainer.PrinterType.PREFIX);
+                    state.setPrinter(PreprocessingState.PrinterType.PREFIX);
                 }
                 break;
                 case '-': {
-                    state.setPrinter(ParameterContainer.PrinterType.NORMAL);
+                    state.setPrinter(PreprocessingState.PrinterType.NORMAL);
                 }
                 break;
                 default:
                     throw new IllegalArgumentException("Unsupported parameter");
             }
-            return DirectiveBehaviour.PROCESSED;
+            return AfterProcessingBehaviour.PROCESSED;
         }
         throw new RuntimeException(DIRECTIVE_PREFIX+"prefix needs a parameter");
     }

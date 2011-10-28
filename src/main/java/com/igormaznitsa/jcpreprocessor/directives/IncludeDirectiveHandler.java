@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -25,7 +25,12 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(String string, ParameterContainer state, PreprocessorContext context) {
+    public String getExpressionType() {
+        return "STRING";
+    }
+    
+    @Override
+    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context) {
         final Value includedFilePath = Expression.eval(string, context);
 
         if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
@@ -37,6 +42,6 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
         }catch(IOException ex){
             throw new RuntimeException("Can't open a file to include ["+includedFilePath.asString()+']',ex);
         }
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

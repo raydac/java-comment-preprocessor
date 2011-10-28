@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.extension;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public interface PreprocessorExtension
@@ -8,7 +8,7 @@ public interface PreprocessorExtension
     /**
      * Processing of an action
      */
-     public boolean processUserDirective(Value [] parameters, ParameterContainer container);
+     public boolean processUserDirective(Value [] parameters, PreprocessingState state);
 
     /**
      * Processing of an user function

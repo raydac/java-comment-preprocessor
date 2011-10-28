@@ -2,7 +2,7 @@ package com.igormaznitsa.jcpreprocessor.containers;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
-import com.igormaznitsa.jcpreprocessor.directives.DirectiveBehaviour;
+import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -71,20 +71,20 @@ public class FileInfoContainer {
         return sourceFile.getAbsolutePath();
     }
 
-    private void printSpaces(final ParameterContainer paramContainer, final int number) throws IOException {
+    private void printSpaces(final PreprocessingState paramContainer, final int number) throws IOException {
         for (int li = 0; li < number; li++) {
             paramContainer.getPrinter().print(" ");
         }
     }
 
-    public List<ParameterContainer.ExcludeIfInfo> firstPassProcessing(final PreprocessorContext configurator) throws PreprocessorException, IOException {
-        final ParameterContainer paramContainer = new ParameterContainer(this, configurator.getCharacterEncoding());
+    public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessorContext configurator) throws PreprocessorException, IOException {
+        final PreprocessingState paramContainer = new PreprocessingState(this, configurator.getCharacterEncoding());
 
         String trimmedProcessingString = null;
         try {
             while (true) {
                 String nonTrimmedProcessingString = paramContainer.nextLine();
-                if (paramContainer.getState().contains(PreprocessingState.END_PROCESSING)) {
+                if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
                     nonTrimmedProcessingString = null;
                 }
 
@@ -128,15 +128,15 @@ public class FileInfoContainer {
         return paramContainer.popAllExcludeIfInfoData();
     }
     
-    public ParameterContainer secondPassProcessing(final ParameterContainer params, final PreprocessorContext configurator) throws IOException, PreprocessorException {
+    public PreprocessingState preprocessFile(final PreprocessingState params, final PreprocessorContext configurator) throws IOException, PreprocessorException {
         configurator.clearLocalVariables();
-        final ParameterContainer paramContainer = params != null ? params : new ParameterContainer(this, configurator.getCharacterEncoding());
+        final PreprocessingState paramContainer = params != null ? params : new PreprocessingState(this, configurator.getCharacterEncoding());
         
         String trimmedProcessingString = null;
         try {
             while (true) {
                 String nonTrimmedProcessingString = paramContainer.nextLine();
-                if (paramContainer.getState().contains(PreprocessingState.END_PROCESSING)) {
+                if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
                     nonTrimmedProcessingString = null;
                 }
 
@@ -168,7 +168,7 @@ public class FileInfoContainer {
                     }
                 }
 
-                if (paramContainer.isDirectiveCanBeProcessed() && !paramContainer.getState().contains(PreprocessingState.TEXT_OUTPUT_DISABLED)) {
+                if (paramContainer.isDirectiveCanBeProcessed() && !paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
                     if (stringToBeProcessed.startsWith("//$$")) {
                         // Output the tail of the string to the output stream without comments and macroses
                         printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
@@ -181,9 +181,9 @@ public class FileInfoContainer {
                         // Just string :)
                         final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
-                        if (paramContainer.getState().contains(PreprocessingState.COMMENT_NEXT_LINE)) {
+                        if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
                             paramContainer.getPrinter().print("//");
-                            paramContainer.getState().remove(PreprocessingState.COMMENT_NEXT_LINE);
+                            paramContainer.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
                         }
 
                         printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
@@ -192,12 +192,12 @@ public class FileInfoContainer {
                 }
 
             }
-        } catch (Exception e) {
-            throw new PreprocessorException("Exception during preprocessing [" + e.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
+        } catch (Exception possibleExceptionDuringExpressionEval) {
+            throw new PreprocessorException("Exception during preprocessing [" + possibleExceptionDuringExpressionEval.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
                     paramContainer.getRootFileInfo().getSourceFile(),
                     paramContainer.peekFile().getFile(),
                     trimmedProcessingString,
-                    paramContainer.peekFile().getNextStringIndex(), e);
+                    paramContainer.peekFile().getNextStringIndex(), possibleExceptionDuringExpressionEval);
         }
 
         if (!paramContainer.isIfStackEmpty()) {
@@ -225,14 +225,14 @@ public class FileInfoContainer {
         return str;
     }
 
-    protected DirectiveBehaviour processDirective(final ParameterContainer state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
+    protected AfterProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
         final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
         for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
             final String name = handler.getName();
             if (trimmedString.startsWith(name)) {
-                if ((firstPass && !handler.isFirstPassAllowed()) || (!firstPass && !handler.isSecondPassAllowed())) {
-                    return DirectiveBehaviour.READ_NEXT_LINE;
+                if ((firstPass && !handler.isGlobalPhaseAllowed()) || (!firstPass && !handler.isPreprocessingPhaseAllowed())) {
+                    return AfterProcessingBehaviour.READ_NEXT_LINE;
                 }
                 
                 final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
@@ -243,20 +243,20 @@ public class FileInfoContainer {
                         if (allowedForExecution) {
                             return handler.execute(restOfString.trim(), state, configurator);
                         } else {
-                            return DirectiveBehaviour.PROCESSED;
+                            return AfterProcessingBehaviour.PROCESSED;
                         }
                     } else {
                         if (allowedForExecution) {
                             throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " needs an expression");
                         } else {
-                            return DirectiveBehaviour.PROCESSED;
+                            return AfterProcessingBehaviour.PROCESSED;
                         }
                     }
                 } else {
                     if (allowedForExecution) {
                         return handler.execute(restOfString.trim(), state, configurator);
                     } else {
-                        return DirectiveBehaviour.PROCESSED;
+                        return AfterProcessingBehaviour.PROCESSED;
                     }
                 }
             }

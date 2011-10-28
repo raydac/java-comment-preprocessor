@@ -2,7 +2,7 @@ package com.igormaznitsa.jcpreprocessor.containers;
 
 import java.io.File;
 
-public class TextFileDataContainer {
+public final class TextFileDataContainer {
 
     private final String[] text;
     private final File file;
@@ -75,7 +75,7 @@ public class TextFileDataContainer {
 
         if (that instanceof TextFileDataContainer) {
             final TextFileDataContainer thatItem = (TextFileDataContainer) that;
-            return file.equals(that) && nextStringIndex == thatItem.nextStringIndex;
+            return file.equals(thatItem.file) && nextStringIndex == thatItem.nextStringIndex;
         }
         return false;
     }

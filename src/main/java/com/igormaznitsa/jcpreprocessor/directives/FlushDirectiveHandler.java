@@ -1,9 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FlushDirectiveHandler extends AbstractDirectiveHandler {
@@ -20,11 +19,11 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it flushes the current text buffer state in the file";
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext configurator) {
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         final File outFile = configurator.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
         try {
             state.saveBuffersToFile(outFile);
@@ -32,6 +31,6 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
         } catch (IOException ex) {
             throw new RuntimeException("IO exception during execution", ex);
         }
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

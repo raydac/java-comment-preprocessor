@@ -6,6 +6,7 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -99,6 +100,15 @@ public enum PreprocessorUtils {
         }
     }
 
+    public static void closeStreamSilently(final Closeable stream) {
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException ex) {
+            }
+        }
+    }
+
     public static void closeReaderSilently(final Reader reader) {
         if (reader != null) {
             try {
@@ -175,31 +185,34 @@ public enum PreprocessorUtils {
         }
 
 
-        final FileChannel fileSrc = new FileInputStream(source).getChannel();
+        FileChannel fileSrc = null;
+        FileChannel fileDst = null;
+        final FileInputStream fileSrcInput = new FileInputStream(source);
+        FileOutputStream fileOutput = null;
         try {
-
-            final FileChannel fileDest = new FileOutputStream(dest).getChannel();
-            try {
-                long size = fileSrc.size();
-                long pos = 0L;
-                while (size > 0) {
-                    final long written = fileSrc.transferTo(pos, size, fileDest);
-                    pos += written;
-                    size -= written;
-                }
-            } finally {
-                closeChannelSilently(fileDest);
+            fileSrc = fileSrcInput.getChannel();
+            fileOutput = new FileOutputStream(dest);
+            fileDst = fileOutput.getChannel();
+            long size = fileSrc.size();
+            long pos = 0L;
+            while (size > 0) {
+                final long written = fileSrc.transferTo(pos, size, fileDst);
+                pos += written;
+                size -= written;
             }
         } finally {
+            closeStreamSilently(fileSrcInput);
+            closeStreamSilently(fileOutput);
+            closeChannelSilently(fileDst);
             closeChannelSilently(fileSrc);
         }
     }
 
-    public static final String processMacroses(final String processingString,final PreprocessorContext context) {
+    public static final String processMacroses(final String processingString, final PreprocessorContext context) {
         int i_indx;
 
         String result = processingString;
-        
+
         while (true) {
             i_indx = result.indexOf("/*$");
 
@@ -211,9 +224,9 @@ public enum PreprocessorUtils {
                     String s_strVal = result.substring(i_begin + 3, i_indx);
                     String s_rightPart = result.substring(i_indx + 3);
 
-                    Value p_val = Expression.eval(s_strVal,context);
+                    Value p_val = Expression.eval(s_strVal, context);
                     if (p_val == null) {
-                        throw new RuntimeException("Wrong macros expression ["+s_strVal+']');
+                        throw new RuntimeException("Wrong macros expression [" + s_strVal + ']');
                     }
 
                     result = s_leftpart + p_val.toString() + s_rightPart;
@@ -233,7 +246,7 @@ public enum PreprocessorUtils {
         }
 
         final int minimalCapacity = spacesCounter + tail.length();
-        
+
         final StringBuilder result = new StringBuilder(minimalCapacity);
         for (int li = 0; li < spacesCounter; li++) {
             result.append(' ');
@@ -259,16 +272,16 @@ public enum PreprocessorUtils {
         }
 
         if (!file.exists()) {
-            throw new FileNotFoundException("File "+file.getAbsolutePath()+" doesn't exist");
+            throw new FileNotFoundException("File " + file.getAbsolutePath() + " doesn't exist");
         }
-        
+
         if (!file.isFile()) {
             throw new IllegalArgumentException("File can't be read because it's not a normal file");
         }
 
         final String enc = encoding == null ? "UTF8" : encoding;
 
-        final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc,(int)file.length());
+        final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
         final List<String> currentFileStringContainer = new ArrayList<String>(1024);
         try {
             while (true) {

@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
@@ -25,7 +25,12 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context) {
+    public String getExpressionType() {
+        return "EXPR1,EXPR2...EXPRn";
+    }
+
+    @Override
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
             final String stringToBeProcessed = string.trim();
             Expression p_stack = Expression.prepare(stringToBeProcessed, context);
@@ -44,6 +49,6 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
                 throw new RuntimeException("Extension can't process the action");
             }
         }
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 }

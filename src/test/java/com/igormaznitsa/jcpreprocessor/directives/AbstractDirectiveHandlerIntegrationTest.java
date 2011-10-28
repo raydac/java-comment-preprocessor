@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
@@ -84,15 +84,15 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         context.setPreprocessorExtension(extension);
 
         final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
-        final ParameterContainer param = new ParameterContainer(reference, new TextFileDataContainer(new File("fake"), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
+        final PreprocessingState state = new PreprocessingState(reference, new TextFileDataContainer(new File("fake"), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
 
-        reference.secondPassProcessing(param,context);
+        reference.preprocessFile(state,context);
 
         final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
         final ByteArrayOutputStream normal = new ByteArrayOutputStream();
         final ByteArrayOutputStream postfix = new ByteArrayOutputStream();
 
-        param.saveBuffersToStreams(prefix, normal, postfix);
+        state.saveBuffersToStreams(prefix, normal, postfix);
 
         final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), "UTF8"));
         final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), "UTF8"));
@@ -103,6 +103,8 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         readWholeDataFromReader(postfixreader, result);
 
         if (etalonList != null) {
+            assertEquals("Must be equal in their size", etalonList.size(), result.size());
+    
             int lineIndex = 0;
             while (true) {
                 if (lineIndex >= etalonList.size() || lineIndex >= result.size()) {
@@ -112,8 +114,6 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
                 lineIndex++;
             }
         }
-
-        assertEquals("Must be equal in their size", etalonList.size(), result.size());
 
         return context;
 

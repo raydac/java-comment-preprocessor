@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.ParameterContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -19,19 +19,29 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public DirectiveBehaviour execute(final String string, final ParameterContainer state, final PreprocessorContext context){
+    public String getExpressionType() {
+        return "VAL_NAME=EXPR";
+    }
+    
+    @Override
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
         processLocalDefinition(string, context);
-        return DirectiveBehaviour.PROCESSED;
+        return AfterProcessingBehaviour.PROCESSED;
     }
 
     @Override
     public String getReference() {
-        return null;
+        return "it allows to set a global variable value";
     }
 
     @Override
-    public boolean isFirstPassAllowed() {
+    public boolean isGlobalPhaseAllowed() {
         return true;
+    }
+
+    @Override
+    public boolean isPreprocessingPhaseAllowed() {
+        return false;
     }
     
     private void processLocalDefinition(final String _str, final PreprocessorContext context) {
@@ -41,10 +51,10 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
             throw new RuntimeException("Can't recognize the expression");
         }
 
-        Value p_value = Expression.eval(splitted[1].trim(), context);
+        final Value p_value = Expression.eval(splitted[1].trim(), context);
 
         if (p_value == null) {
-            throw new RuntimeException("Unsupported the expression result");
+            throw new RuntimeException("Unsupported expression result");
         }
 
         context.setGlobalVariable(splitted[0].trim(), p_value);
