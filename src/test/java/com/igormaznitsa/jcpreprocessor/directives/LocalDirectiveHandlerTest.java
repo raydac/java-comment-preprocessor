@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 
 public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
+    private static final LocalDirectiveHandler HANDLER = new LocalDirectiveHandler();
+    
     @Override
     public void testExecution() throws Exception {
         final PreprocessorContext context = assertFilePreprocessing("directive_local.txt", null);
@@ -17,7 +19,7 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
 
     @Override
     public void testExecutionCondition() throws Exception {
-        assertTrue(new LocalDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
     }
 
     @Test
@@ -34,16 +36,24 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
 
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("local", new LocalDirectiveHandler().getName());
+        assertEquals("local", HANDLER.getName());
     }
 
     @Override
     public void testHasExpression() throws Exception {
-        assertTrue(new LocalDirectiveHandler().hasExpression());
+        assertTrue(HANDLER.hasExpression());
     }
 
     @Override
     public void testReference() throws Exception {
-        assertReference(new LocalDirectiveHandler());
+        assertReference(HANDLER);
     }
+
+    @Override
+    public void testPhase() throws Exception {
+        assertFalse(HANDLER.isGlobalPhaseAllowed());
+        assertTrue(HANDLER.isPreprocessingPhaseAllowed());
+    }
+    
+    
 }

@@ -5,6 +5,11 @@ import static org.junit.Assert.*;
 
 public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
+    private static final WhileDirectiveHandler WHILE_HANDLER = new WhileDirectiveHandler();
+    private static final ContinueDirectiveHandler CONTINUE_HANDLER = new ContinueDirectiveHandler();
+    private static final BreakDirectiveHandler BREAK_HANDLER = new BreakDirectiveHandler();
+    private static final EndDirectiveHandler END_HANDLER = new EndDirectiveHandler();
+    
     @Override
     public void testExecution() throws Exception {
         assertFilePreprocessing("directive_while_continue_break_end.txt", null);
@@ -42,34 +47,46 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
 
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("while",new WhileDirectiveHandler().getName());
-        assertEquals("break",new BreakDirectiveHandler().getName());
-        assertEquals("continue",new ContinueDirectiveHandler().getName());
-        assertEquals("end",new EndDirectiveHandler().getName());
+        assertEquals("while",WHILE_HANDLER.getName());
+        assertEquals("break",BREAK_HANDLER.getName());
+        assertEquals("continue",CONTINUE_HANDLER.getName());
+        assertEquals("end",END_HANDLER.getName());
     }
 
     @Override
     public void testHasExpression() throws Exception {
-        assertTrue(new WhileDirectiveHandler().hasExpression());
-        assertFalse(new BreakDirectiveHandler().hasExpression());
-        assertFalse(new ContinueDirectiveHandler().hasExpression());
-        assertFalse(new EndDirectiveHandler().hasExpression());
+        assertTrue(WHILE_HANDLER.hasExpression());
+        assertFalse(BREAK_HANDLER.hasExpression());
+        assertFalse(CONTINUE_HANDLER.hasExpression());
+        assertFalse(END_HANDLER.hasExpression());
     }
 
     @Override
     public void testExecutionCondition() throws Exception {
-        assertFalse(new WhileDirectiveHandler().executeOnlyWhenExecutionAllowed());
-        assertTrue(new BreakDirectiveHandler().executeOnlyWhenExecutionAllowed());
-        assertTrue(new ContinueDirectiveHandler().executeOnlyWhenExecutionAllowed());
-        assertFalse(new EndDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertFalse(WHILE_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertTrue(BREAK_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertTrue(CONTINUE_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertFalse(END_HANDLER.executeOnlyWhenExecutionAllowed());
     }
 
     @Override
     public void testReference() throws Exception {
-        assertReference(new WhileDirectiveHandler());
-        assertReference(new BreakDirectiveHandler());
-        assertReference(new ContinueDirectiveHandler());
-        assertReference(new EndDirectiveHandler());
+        assertReference(WHILE_HANDLER);
+        assertReference(BREAK_HANDLER);
+        assertReference(CONTINUE_HANDLER);
+        assertReference(END_HANDLER);
     }
-    
+
+    @Override
+    public void testPhase() throws Exception {
+        assertFalse(WHILE_HANDLER.isGlobalPhaseAllowed());
+        assertFalse(BREAK_HANDLER.isGlobalPhaseAllowed());
+        assertFalse(CONTINUE_HANDLER.isGlobalPhaseAllowed());
+        assertFalse(END_HANDLER.isGlobalPhaseAllowed());
+
+        assertTrue(WHILE_HANDLER.isPreprocessingPhaseAllowed());
+        assertTrue(BREAK_HANDLER.isPreprocessingPhaseAllowed());
+        assertTrue(CONTINUE_HANDLER.isPreprocessingPhaseAllowed());
+        assertTrue(END_HANDLER.isPreprocessingPhaseAllowed());
+    }
 }

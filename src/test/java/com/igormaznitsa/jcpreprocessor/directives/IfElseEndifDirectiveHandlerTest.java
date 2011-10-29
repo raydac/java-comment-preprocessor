@@ -5,6 +5,10 @@ import static org.junit.Assert.*;
 
 public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
 
+    private static final IfDirectiveHandler IF_HANDLER = new IfDirectiveHandler();
+    private static final ElseDirectiveHandler ELSE_HANDLER = new ElseDirectiveHandler();
+    private static final EndIfDirectiveHandler ENDIF_HANDLER = new EndIfDirectiveHandler();
+    
     @Override
     public void testExecution() throws Exception {
         assertFilePreprocessing("directive_if_else_endif.txt", null);
@@ -34,30 +38,41 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerInt
 
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("if",new IfDirectiveHandler().getName());
-        assertEquals("else",new ElseDirectiveHandler().getName());
-        assertEquals("endif",new EndIfDirectiveHandler().getName());
+        assertEquals("if",IF_HANDLER.getName());
+        assertEquals("else",ELSE_HANDLER.getName());
+        assertEquals("endif",ENDIF_HANDLER.getName());
     }
 
     @Override
     public void testHasExpression() throws Exception {
-        assertTrue(new IfDirectiveHandler().hasExpression());
-        assertFalse(new ElseDirectiveHandler().hasExpression());
-        assertFalse(new EndIfDirectiveHandler().hasExpression());
+        assertTrue(IF_HANDLER.hasExpression());
+        assertFalse(ELSE_HANDLER.hasExpression());
+        assertFalse(ENDIF_HANDLER.hasExpression());
     }
 
     @Override
     public void testExecutionCondition() throws Exception {
-        assertFalse(new IfDirectiveHandler().executeOnlyWhenExecutionAllowed());
-        assertFalse(new ElseDirectiveHandler().executeOnlyWhenExecutionAllowed());
-        assertFalse(new EndIfDirectiveHandler().executeOnlyWhenExecutionAllowed());
+        assertFalse(IF_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertFalse(ELSE_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertFalse(ENDIF_HANDLER.executeOnlyWhenExecutionAllowed());
     }
 
     @Override
     public void testReference() throws Exception {
-        assertReference(new IfDirectiveHandler());
-        assertReference(new ElseDirectiveHandler());
-        assertReference(new EndIfDirectiveHandler());
+        assertReference(IF_HANDLER);
+        assertReference(ELSE_HANDLER);
+        assertReference(ENDIF_HANDLER);
     }
+
+    @Override
+    public void testPhase() throws Exception {
+        assertTrue(IF_HANDLER.isPreprocessingPhaseAllowed());
+        assertFalse(IF_HANDLER.isGlobalPhaseAllowed());
+        assertTrue(ELSE_HANDLER.isPreprocessingPhaseAllowed());
+        assertFalse(ELSE_HANDLER.isGlobalPhaseAllowed());
+        assertTrue(ENDIF_HANDLER.isPreprocessingPhaseAllowed());
+        assertFalse(ENDIF_HANDLER.isGlobalPhaseAllowed());
+    }
+    
     
 }

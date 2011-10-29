@@ -34,19 +34,19 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
         return "VAR_NAME=EXPR";
     }
 
-    private void processLocalDefinition(final String _str, final PreprocessorContext context) {
-        final String[] splitted = PreprocessorUtils.splitForChar(_str, '=');
+    private void processLocalDefinition(final String string, final PreprocessorContext context) {
+        final String[] splitted = PreprocessorUtils.splitForChar(string, '=');
 
         if (splitted.length != 2) {
             throw new RuntimeException("Can't recognize an expression");
         }
 
-        Value p_value = Expression.eval(splitted[1].trim(), context);
+        final Value value = Expression.eval(splitted[1].trim(), context);
 
-        if (p_value == null) {
+        if (value == null) {
             throw new RuntimeException("Unsupported expression result");
         }
 
-        context.setLocalVariable(splitted[0].trim(), p_value);
+        context.setLocalVariable(splitted[0].trim(), value);
     }
 }

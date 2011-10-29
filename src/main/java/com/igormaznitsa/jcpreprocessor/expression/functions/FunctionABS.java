@@ -3,7 +3,6 @@ package com.igormaznitsa.jcpreprocessor.expression.functions;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import java.io.File;
 
 public final class FunctionABS extends AbstractFunction {
 
@@ -12,26 +11,27 @@ public final class FunctionABS extends AbstractFunction {
         return "abs";
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-       if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation ABS needs an operand");
+    public void execute(final PreprocessorContext context, final Expression stack, final int stackPos) {
+        if (!stack.isThereOneValueBefore(stackPos)) {
+            throw new IllegalStateException("Operation ABS needs an operand");
+        }
 
-        Value _val0 = (Value)stack.getItemAtPosition(index-1);
-        index--;
+        final int index = stackPos - 1;
+        final Value value = (Value) stack.getItemAtPosition(index);
         stack.removeItemAt(index);
 
-        switch (_val0.getType())
-        {
-            case INT:
-                {
-                    long l_result = Math.abs(((Long) _val0.getValue()).longValue());
-                    stack.setItemAtPosition(index, Value.valueOf(l_result));
-                };break;
-            case FLOAT:
-                {
-                    float f_result = Math.abs(((Float) _val0.getValue()).floatValue());
-                    stack.setItemAtPosition(index, Value.valueOf(f_result));
-                };break;
-            default :
+        switch (value.getType()) {
+            case INT: {
+                stack.setItemAtPosition(index, Value.valueOf(Math.abs(value.asLong())));
+            }
+            ;
+            break;
+            case FLOAT: {
+                stack.setItemAtPosition(index, Value.valueOf(Math.abs(value.asFloat())));
+            }
+            ;
+            break;
+            default:
                 throw new IllegalArgumentException("Function ABS processes only the INTEGER or the FLOAT types");
         }
     }
@@ -40,6 +40,4 @@ public final class FunctionABS extends AbstractFunction {
     public int getArity() {
         return 1;
     }
-
-    
 }

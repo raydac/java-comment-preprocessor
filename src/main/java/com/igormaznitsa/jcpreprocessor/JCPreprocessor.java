@@ -231,12 +231,12 @@ public class JCPreprocessor {
             throw new IOException("I can't find the file " + cfgFile.getPath());
         }
 
-        BufferedReader p_bufreader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(), -1);
+        final BufferedReader fileReader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(), -1);
         try {
             int strCounter = 0;
 
             while (true) {
-                String readString = p_bufreader.readLine();
+                String readString = fileReader.readLine();
                 if (readString == null) {
                     break;
                 }
@@ -293,9 +293,9 @@ public class JCPreprocessor {
                 context.setGlobalVariable(varName, evaluatedValue);
             }
         } finally {
-            if (p_bufreader != null) {
+            if (fileReader != null) {
                 try {
-                    p_bufreader.close();
+                    fileReader.close();
                 } catch (IOException ex) {
                 }
             }

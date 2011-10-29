@@ -39,21 +39,23 @@ public final class FunctionDefinedByUser extends AbstractFunction {
         return argsNumber;
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-        Value[] ap_values = new Value[argsNumber];
+    public void execute(final PreprocessorContext context, final Expression stack, final int indx) {
+        final Value[] values = new Value[argsNumber];
 
-        int i_arg = argsNumber;
-        while (i_arg > 0) {
+        int index = indx;
+        
+        int counter = argsNumber;
+        while (counter > 0) {
             try {
                 if (stack.isEmpty()) {
                     throw new Exception();
                 }
-                Object p_obj = stack.getItemAtPosition(index - 1);
+                final Object item = stack.getItemAtPosition(index - 1);
                 index--;
                 stack.removeItemAt(index);
 
-                if (p_obj instanceof Value) {
-                    ap_values[i_arg - 1] = (Value) p_obj;
+                if (item instanceof Value) {
+                    values[counter - 1] = (Value) item;
                 } else {
                     throw new Exception();
                 }
@@ -61,14 +63,14 @@ public final class FunctionDefinedByUser extends AbstractFunction {
                 throw new RuntimeException("You have wrong arguments number for \"" + name + "\" function, must be " + argsNumber);
             }
 
-            i_arg--;
+            counter--;
         }
 
-        Value p_value = configurator.getPreprocessorExtension().processUserFunction(name, ap_values);
-        if (p_value == null) {
+        final Value value = configurator.getPreprocessorExtension().processUserFunction(name, values);
+        if (value == null) {
             throw new RuntimeException("User defined function \"" + name + "\" has returned NULL");
         }
-        stack.setItemAtPosition(index, p_value);
+        stack.setItemAtPosition(index, value);
 
     }
 }

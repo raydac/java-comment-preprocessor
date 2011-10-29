@@ -33,19 +33,19 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
             final String stringToBeProcessed = string.trim();
-            Expression p_stack = Expression.prepare(stringToBeProcessed, context);
-            p_stack.eval();
+            final Expression stack = Expression.prepare(stringToBeProcessed, context);
+            stack.eval();
 
-            Value[] ap_results = new Value[p_stack.size()];
-            for (int li = 0; li < p_stack.size(); li++) {
-                ExpressionStackItem p_obj = p_stack.getItemAtPosition(li);
+            final Value[] results = new Value[stack.size()];
+            for (int li = 0; li < stack.size(); li++) {
+                ExpressionStackItem p_obj = stack.getItemAtPosition(li);
                 if (p_obj.getStackItemType() != ExpressionStackItemType.VALUE) {
                     throw new RuntimeException("Wrong argument detected");
                 }
-                ap_results[li] = (Value) p_obj;
+                results[li] = (Value) p_obj;
             }
 
-            if (!context.getPreprocessorExtension().processUserDirective(ap_results, state)) {
+            if (!context.getPreprocessorExtension().processUserDirective(results, state)) {
                 throw new RuntimeException("Extension can't process the action");
             }
         }

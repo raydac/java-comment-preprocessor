@@ -38,6 +38,9 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     @Test
     public abstract void testReference() throws Exception;
 
+    @Test
+    public abstract void testPhase() throws Exception;
+    
     protected void assertReference(final AbstractDirectiveHandler handler) {
         assertNotNull("Handler must not be null", handler);
         final String reference = handler.getReference();

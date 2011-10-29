@@ -44,19 +44,19 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         return false;
     }
     
-    private void processLocalDefinition(final String _str, final PreprocessorContext context) {
-        final String[] splitted = PreprocessorUtils.splitForChar(_str, '=');
+    private void processLocalDefinition(final String string, final PreprocessorContext context) {
+        final String[] splitted = PreprocessorUtils.splitForChar(string, '=');
 
         if (splitted.length != 2) {
             throw new RuntimeException("Can't recognize the expression");
         }
 
-        final Value p_value = Expression.eval(splitted[1].trim(), context);
+        final Value value = Expression.eval(splitted[1].trim(), context);
 
-        if (p_value == null) {
+        if (value == null) {
             throw new RuntimeException("Unsupported expression result");
         }
 
-        context.setGlobalVariable(splitted[0].trim(), p_value);
+        context.setGlobalVariable(splitted[0].trim(), value);
     }
 }

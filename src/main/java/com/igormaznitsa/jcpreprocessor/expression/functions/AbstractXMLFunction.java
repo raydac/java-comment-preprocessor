@@ -13,7 +13,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
 
     protected static Document getXmlDocumentForIndex(final int index) {
         if (index < 0 || index >= xmlDocuments.size()) {
-            throw new IllegalArgumentException("The XML document index is out of bound");
+            throw new IllegalArgumentException("The XML document index is out of bound ["+index+']');
         }
         return xmlDocuments.get(index);
     }

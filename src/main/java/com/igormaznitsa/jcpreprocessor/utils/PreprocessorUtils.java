@@ -1,6 +1,5 @@
 package com.igormaznitsa.jcpreprocessor.utils;
 
-import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -13,8 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -91,29 +88,11 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static void closeChannelSilently(final Channel channel) {
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (IOException ex) {
-            }
-        }
-    }
-
-    public static void closeStreamSilently(final Closeable stream) {
+    public static void closeSilently(final Closeable stream) {
         if (stream != null) {
             try {
                 stream.close();
-            } catch (IOException ex) {
-            }
-        }
-    }
-
-    public static void closeReaderSilently(final Reader reader) {
-        if (reader != null) {
-            try {
-                reader.close();
-            } catch (IOException ex) {
+            } catch (IOException mustBeIgnored) {
             }
         }
     }
@@ -131,11 +110,15 @@ public enum PreprocessorUtils {
             throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
         }
 
+        BufferedReader result = null;
+        
         if (bufferSize <= 0) {
-            return new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            result = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         } else {
-            return new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
+            result = new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
         }
+        
+        return result;
     }
 
     public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
@@ -201,35 +184,34 @@ public enum PreprocessorUtils {
                 size -= written;
             }
         } finally {
-            closeStreamSilently(fileSrcInput);
-            closeStreamSilently(fileOutput);
-            closeChannelSilently(fileDst);
-            closeChannelSilently(fileSrc);
+            closeSilently(fileSrcInput);
+            closeSilently(fileOutput);
+            closeSilently(fileDst);
+            closeSilently(fileSrc);
         }
     }
 
-    public static final String processMacroses(final String processingString, final PreprocessorContext context) {
-        int i_indx;
-
+    public static String processMacroses(final String processingString, final PreprocessorContext context) {
+        int position;
         String result = processingString;
 
         while (true) {
-            i_indx = result.indexOf("/*$");
+            position = result.indexOf("/*$");
 
-            if (i_indx >= 0) {
-                String s_leftpart = result.substring(0, i_indx);
-                int i_begin = i_indx;
-                i_indx = result.indexOf("$*/", i_indx);
-                if (i_indx >= 0) {
-                    String s_strVal = result.substring(i_begin + 3, i_indx);
-                    String s_rightPart = result.substring(i_indx + 3);
+            if (position >= 0) {
+                final String leftPart = result.substring(0, position);
+                final int beginIndex = position;
+                position = result.indexOf("$*/", position);
+                if (position >= 0) {
+                    final String macrosBody = result.substring(beginIndex + 3, position);
+                    final String rightPart = result.substring(position + 3);
 
-                    Value p_val = Expression.eval(s_strVal, context);
-                    if (p_val == null) {
-                        throw new RuntimeException("Wrong macros expression [" + s_strVal + ']');
+                    final Value value = Expression.eval(macrosBody, context);
+                    if (value == null) {
+                        throw new RuntimeException("Wrong macros expression [" + macrosBody + ']');
                     }
 
-                    result = s_leftpart + p_val.toString() + s_rightPart;
+                    result = leftPart + value.toString() + rightPart;
                 } else {
                     break;
                 }
@@ -241,17 +223,19 @@ public enum PreprocessorUtils {
     }
 
     public static String generateStringWithPrecendingSpaces(final int spacesCounter, final String tail) {
+        String result = null;
         if (spacesCounter == 0) {
-            return tail;
-        }
+            result = tail;
+        } else {
+            final int minimalCapacity = spacesCounter + tail.length();
 
-        final int minimalCapacity = spacesCounter + tail.length();
-
-        final StringBuilder result = new StringBuilder(minimalCapacity);
-        for (int li = 0; li < spacesCounter; li++) {
-            result.append(' ');
+            final StringBuilder buffer = new StringBuilder(minimalCapacity);
+            for (int li = 0; li < spacesCounter; li++) {
+                buffer.append(' ');
+            }
+            result = buffer.append(tail).toString();
         }
-        return result.append(tail).toString();
+        return result;
     }
 
     public static PreprocessorExtension getPreprocessorExtension(final PreprocessorContext cfg) {
@@ -282,20 +266,20 @@ public enum PreprocessorUtils {
         final String enc = encoding == null ? "UTF8" : encoding;
 
         final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
-        final List<String> currentFileStringContainer = new ArrayList<String>(1024);
+        final List<String> strContainer = new ArrayList<String>(1024);
         try {
             while (true) {
                 final String nextLine = srcBufferedReader.readLine();
                 if (nextLine == null) {
                     break;
                 }
-                currentFileStringContainer.add(nextLine);
+                strContainer.add(nextLine);
             }
         } finally {
             srcBufferedReader.close();
         }
 
-        return currentFileStringContainer.toArray(new String[currentFileStringContainer.size()]);
+        return strContainer.toArray(new String[strContainer.size()]);
     }
 
     public static String[] splitForChar(final String string, final char delimiter) {

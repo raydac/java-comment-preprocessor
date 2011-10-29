@@ -398,10 +398,10 @@ public class Expression {
                         throw new IllegalStateException("There is not a context to use variables");
                     }
 
-                    final Value p_val = context.findVariableForName(token);
+                    final Value value = context.findVariableForName(token);
 
-                    if (p_val != null) {
-                        expressionStack.push(p_val);
+                    if (value != null) {
+                        expressionStack.push(value);
                     } else {
                         try {
                             expressionStack.push(Value.recognizeOf(token));
@@ -432,9 +432,9 @@ public class Expression {
                 }
                 break;
                 case FUNCTION: {
-                    AbstractFunction p_func = (AbstractFunction) expressionItem;
-                    p_func.execute(context,this, index);
-                    index -= p_func.getArity();
+                    AbstractFunction function = (AbstractFunction) expressionItem;
+                    function.execute(context,this, index);
+                    index -= function.getArity();
                 }
                 break;
                 case OPERATOR: {
