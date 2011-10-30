@@ -3,7 +3,6 @@ package com.igormaznitsa.jcpreprocessor.directives;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
 public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
 
@@ -19,7 +18,7 @@ public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it ends preprocessing of the current file immediately";
     }
 
     @Override

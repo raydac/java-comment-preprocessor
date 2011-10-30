@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
@@ -11,6 +12,12 @@ public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegra
         assertFilePreprocessing("directive_outname.txt", null);
     }
 
+    @Test
+    public void testExecution_wrongExpressionResult() {
+        assertPreprocessorException("\n//#outname", 2);
+        assertPreprocessorException("\n//#outname 882772", 2);
+    }
+    
     @Override
     public void testKeyword() throws Exception {
         assertEquals("outname", HANDLER.getName());

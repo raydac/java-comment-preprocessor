@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import org.junit.Test;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import static org.junit.Assert.*;
 
@@ -12,6 +13,13 @@ public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
         final PreprocessorContext context = assertFilePreprocessing("directive_outdir.txt", null);
     }
 
+    @Test
+    public void testExecution_wrongExpression() {
+        assertPreprocessorException("\n //#outdir", 2);
+        assertPreprocessorException("\n //#outdir ", 2);
+        assertPreprocessorException("\n //#outdir 234324", 2);
+    }
+    
     @Override
     public void testKeyword() throws Exception {
         assertEquals("outdir", HANDLER.getName());

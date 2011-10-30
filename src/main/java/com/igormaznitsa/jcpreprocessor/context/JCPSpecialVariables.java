@@ -11,9 +11,18 @@ public class JCPSpecialVariables implements PreprocessorContext.SpecialVariableP
     public static final String VAR_SRC_FILE_NAME = "jcp.src.name";
     public static final String VAR_SRC_DIR = "jcp.src.dir";
     public static final String VAR_SRC_FULLPATH = "jcp.src.path";
+    public static final String VAR_FILE_EXCLUDED = "jcp.src.excluded";
 
     public String[] getVariableNames() {
-        return new String[]{VAR_DEST_DIR, VAR_DEST_FILE_NAME, VAR_DEST_FULLPATH, VAR_SRC_DIR, VAR_SRC_FILE_NAME, VAR_SRC_FULLPATH};
+        return new String[]{
+            VAR_DEST_DIR, 
+            VAR_DEST_FILE_NAME, 
+            VAR_DEST_FULLPATH, 
+            VAR_SRC_DIR, 
+            VAR_SRC_FILE_NAME, 
+            VAR_SRC_FULLPATH,
+            VAR_FILE_EXCLUDED
+        };
     }
 
     public Value getVariable(final String varName, final PreprocessorContext context, final PreprocessingState state) {
@@ -29,6 +38,8 @@ public class JCPSpecialVariables implements PreprocessorContext.SpecialVariableP
             return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
        } else if (VAR_SRC_FULLPATH.equals(varName)) {
             return Value.valueOf(state.getRootFileInfo().getSourceFile().getAbsolutePath());
+        } else if (VAR_FILE_EXCLUDED.equals(varName)) {
+            return Value.valueOf(state.getRootFileInfo().isExcludedFromPreprocessing());
         } else 
             throw new IllegalStateException("Attemption to get unsupported variable ["+varName+']');
     }
@@ -40,8 +51,12 @@ public class JCPSpecialVariables implements PreprocessorContext.SpecialVariableP
         } else if (VAR_DEST_FILE_NAME.equals(varName)) {
             if (value.getType()!=ValueType.STRING) throw new IllegalArgumentException("Only STRING type allowed");
             state.getRootFileInfo().setDestinationName(value.asString());
-        } else if (VAR_DEST_FULLPATH.equals(varName) || VAR_SRC_DIR.equals(varName) || VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FULLPATH.equals(varName)) {
-           throw new RuntimeException("The variable \'"+varName+"\' can't be set");
+        } else if (VAR_DEST_FULLPATH.equals(varName) 
+                || VAR_SRC_DIR.equals(varName) 
+                || VAR_SRC_FILE_NAME.equals(varName) 
+                || VAR_SRC_FULLPATH.equals(varName)
+                || VAR_FILE_EXCLUDED.equals(varName)) {
+           throw new RuntimeException("The variable \'"+varName+"\' can't be set directly");
        } else 
             throw new IllegalStateException("Attemption to set unsupported variable ["+varName+']');
     }

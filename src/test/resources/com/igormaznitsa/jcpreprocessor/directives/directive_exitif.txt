@@ -1,0 +1,8 @@
+test
+//#exitif false
+expected
+//#exitif true
+unexpected
+---START_ETALON---
+test
+expected

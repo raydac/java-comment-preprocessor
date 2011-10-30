@@ -1,0 +1,5 @@
+test
+//#exit
+unexpected
+---START_ETALON---
+test
