@@ -47,6 +47,6 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
             throw new RuntimeException("Unsupported expression result");
         }
 
-        context.setLocalVariable(splitted[0].trim(), value);
+        context.setLocalVariable(splitted[0].trim().toLowerCase(), value);
     }
 }

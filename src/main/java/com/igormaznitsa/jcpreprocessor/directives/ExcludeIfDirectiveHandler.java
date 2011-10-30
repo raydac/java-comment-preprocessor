@@ -2,10 +2,6 @@ package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
-import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.IOException;
 
 public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 

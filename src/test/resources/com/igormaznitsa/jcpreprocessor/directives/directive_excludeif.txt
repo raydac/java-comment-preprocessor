@@ -1,0 +1,8 @@
+some text
+   test
+//#excludeif true
+//#_if false
+//#excludeif false
+//#_endif
+//#excludeif hello+world
+test

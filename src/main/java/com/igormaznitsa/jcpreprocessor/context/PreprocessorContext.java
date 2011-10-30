@@ -299,12 +299,14 @@ public final class PreprocessorContext {
             return null;
         }
 
-        final SpecialVariableProcessor processor = specialVariableProcessors.get(name);
+        final String nameInLowerCase = name.toLowerCase();
+        
+        final SpecialVariableProcessor processor = specialVariableProcessors.get(nameInLowerCase);
         if (processor != null && state!=null) {
-            return processor.getVariable(name, this, state);
+            return processor.getVariable(nameInLowerCase, this, state);
         }
 
-        final Value val = getLocalVariable(name);
+        final Value val = getLocalVariable(nameInLowerCase);
         if (val != null) {
             return val;
         }

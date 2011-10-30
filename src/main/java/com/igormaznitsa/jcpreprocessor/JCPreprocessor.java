@@ -61,11 +61,11 @@ public class JCPreprocessor {
 
         final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 
-        final List<PreprocessingState.ExcludeIfInfo> excludedIf = processFirstPass(filesToBePreprocessed);
+        final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
         processFileExclusion(excludedIf);
         createDestinationDirectory();
-        processSecondPass(filesToBePreprocessed);
+        preprocessFiles(filesToBePreprocessed);
     }
 
     private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
@@ -90,7 +90,7 @@ public class JCPreprocessor {
         }
     }
 
-    private List<PreprocessingState.ExcludeIfInfo> processFirstPass(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
+    private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
         final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
         for (final FileInfoContainer fileRef : files) {
             if (fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly()) {
@@ -102,7 +102,7 @@ public class JCPreprocessor {
         return result;
     }
 
-    private void processSecondPass(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
+    private void preprocessFiles(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
         for (final FileInfoContainer fileRef : files) {
             if (fileRef.isExcludedFromPreprocessing()) {
                 continue;

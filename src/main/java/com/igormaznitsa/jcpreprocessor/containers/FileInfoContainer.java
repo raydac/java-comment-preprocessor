@@ -130,9 +130,9 @@ public class FileInfoContainer {
         return paramContainer.popAllExcludeIfInfoData();
     }
     
-    public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext configurator) throws IOException, PreprocessorException {
-        configurator.clearLocalVariables();
-        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, configurator.getCharacterEncoding());
+    public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
+        context.clearLocalVariables();
+        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, context.getCharacterEncoding());
         
         String trimmedProcessingString = null;
         try {
@@ -157,11 +157,11 @@ public class FileInfoContainer {
 
                 String stringToBeProcessed = trimmedProcessingString;
                 if (!trimmedProcessingString.startsWith("//$$")) {
-                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, configurator,preprocessingState);
+                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context,preprocessingState);
                 }
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator,false)) {
+                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), context,false)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -213,7 +213,7 @@ public class FileInfoContainer {
                     preprocessingState.peekWhile().getFile(), null, preprocessingState.peekWhile().getNextStringIndex() + 1, null);
         }
 
-        final File outFile = configurator.makeDestinationFile(getDestinationFilePath());
+        final File outFile = context.makeDestinationFile(getDestinationFilePath());
         preprocessingState.saveBuffersToFile(outFile);
         
         return preprocessingState;

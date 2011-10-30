@@ -1,8 +1,9 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import java.net.URI;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState.ExcludeIfInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
-import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
@@ -63,6 +64,16 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     }
 
+    public List<ExcludeIfInfo> executeGlobalPhase(final String fileName) throws Exception {
+        final File file = new File(getClass().getResource(fileName).toURI());
+        
+        final PreprocessorContext context = new PreprocessorContext();
+        final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
+        final PreprocessingState state = new PreprocessingState(reference, null, "UTF8");
+
+        return reference.processGlobalDirectives(context);
+    }
+    
     private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {
         while (true) {
             final String line = reader.readLine();
