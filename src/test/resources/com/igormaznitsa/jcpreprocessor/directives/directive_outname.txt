@@ -1,0 +1,9 @@
+//#outname "expected.java"
+//#if false
+//#outname "unexpected.html"
+//#endif
+/*$jcp.dst.name$*/
+ok
+---START_ETALON---
+expected.java
+ok

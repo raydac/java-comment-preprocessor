@@ -7,7 +7,10 @@ world
            //#local y=10
 and me
 //#local z=x+y
+//#local test.var = z+"."+x+"."+y
+/*$test.var$*/
 ---START_ETALON---
     hello
 world
 and me
+15.5.10

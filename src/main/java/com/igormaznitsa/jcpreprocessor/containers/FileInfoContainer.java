@@ -1,9 +1,11 @@
 package com.igormaznitsa.jcpreprocessor.containers;
 
+import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
+import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.ByteArrayInputStream;
@@ -77,8 +79,8 @@ public class FileInfoContainer {
         }
     }
 
-    public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessorContext configurator) throws PreprocessorException, IOException {
-        final PreprocessingState paramContainer = new PreprocessingState(this, configurator.getCharacterEncoding());
+    public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessorContext context) throws PreprocessorException, IOException {
+        final PreprocessingState paramContainer = new PreprocessingState(this, context.getCharacterEncoding());
 
         String trimmedProcessingString = null;
         try {
@@ -102,7 +104,7 @@ public class FileInfoContainer {
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
                 if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), configurator,true)) {
+                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context,true)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -128,21 +130,21 @@ public class FileInfoContainer {
         return paramContainer.popAllExcludeIfInfoData();
     }
     
-    public PreprocessingState preprocessFile(final PreprocessingState params, final PreprocessorContext configurator) throws IOException, PreprocessorException {
+    public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext configurator) throws IOException, PreprocessorException {
         configurator.clearLocalVariables();
-        final PreprocessingState paramContainer = params != null ? params : new PreprocessingState(this, configurator.getCharacterEncoding());
+        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, configurator.getCharacterEncoding());
         
         String trimmedProcessingString = null;
         try {
             while (true) {
-                String nonTrimmedProcessingString = paramContainer.nextLine();
-                if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
+                String nonTrimmedProcessingString = preprocessingState.nextLine();
+                if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
                     nonTrimmedProcessingString = null;
                 }
 
                 if (nonTrimmedProcessingString == null) {
-                    if (!paramContainer.isOnlyRootOnStack()) {
-                        paramContainer.popTextContainer();
+                    if (!preprocessingState.isOnlyRootOnStack()) {
+                        preprocessingState.popTextContainer();
                         continue;
                     } else {
                         break;
@@ -155,11 +157,11 @@ public class FileInfoContainer {
 
                 String stringToBeProcessed = trimmedProcessingString;
                 if (!trimmedProcessingString.startsWith("//$$")) {
-                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, configurator);
+                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, configurator,preprocessingState);
                 }
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator,false)) {
+                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), configurator,false)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -168,53 +170,53 @@ public class FileInfoContainer {
                     }
                 }
 
-                if (paramContainer.isDirectiveCanBeProcessed() && !paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
+                if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
                     if (stringToBeProcessed.startsWith("//$$")) {
                         // Output the tail of the string to the output stream without comments and macroses
-                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                        paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
+                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
                     } else if (stringToBeProcessed.startsWith("//$")) {
                         // Output the tail of the string to the output stream without comments
-                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                        paramContainer.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
+                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
                     } else {
                         // Just string :)
                         final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
-                        if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
-                            paramContainer.getPrinter().print("//");
-                            paramContainer.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
+                        if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
+                            preprocessingState.getPrinter().print("//");
+                            preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
                         }
 
-                        printSpaces(paramContainer, numberOfSpacesAtTheLineBeginning);
-                        paramContainer.getPrinter().println(stringToBeProcessed);
+                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().println(stringToBeProcessed);
                     }
                 }
 
             }
         } catch (Exception possibleExceptionDuringExpressionEval) {
-            throw new PreprocessorException("Exception during preprocessing [" + possibleExceptionDuringExpressionEval.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
-                    paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekFile().getFile(),
+            throw new PreprocessorException("Exception during preprocessing [" + possibleExceptionDuringExpressionEval.getMessage() + "][" + preprocessingState.getFileIncludeStackAsString() + ']',
+                    preprocessingState.getRootFileInfo().getSourceFile(),
+                    preprocessingState.peekFile().getFile(),
                     trimmedProcessingString,
-                    paramContainer.peekFile().getNextStringIndex(), possibleExceptionDuringExpressionEval);
+                    preprocessingState.peekFile().getNextStringIndex(), possibleExceptionDuringExpressionEval);
         }
 
-        if (!paramContainer.isIfStackEmpty()) {
+        if (!preprocessingState.isIfStackEmpty()) {
             throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction",
-                    paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex() + 1, null);
+                    preprocessingState.getRootFileInfo().getSourceFile(),
+                    preprocessingState.peekIf().getFile(), null, preprocessingState.peekIf().getNextStringIndex() + 1, null);
         }
-        if (!paramContainer.isWhileStackEmpty()) {
+        if (!preprocessingState.isWhileStackEmpty()) {
             throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "when instruction",
-                    paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekWhile().getFile(), null, paramContainer.peekWhile().getNextStringIndex() + 1, null);
+                    preprocessingState.getRootFileInfo().getSourceFile(),
+                    preprocessingState.peekWhile().getFile(), null, preprocessingState.peekWhile().getNextStringIndex() + 1, null);
         }
 
         final File outFile = configurator.makeDestinationFile(getDestinationFilePath());
-        paramContainer.saveBuffersToFile(outFile);
+        preprocessingState.saveBuffersToFile(outFile);
         
-        return paramContainer;
+        return preprocessingState;
     }
 
     private static String processStringForTailRemover(final String str) {
@@ -254,7 +256,7 @@ public class FileInfoContainer {
                     }
                 } else {
                     if (allowedForExecution) {
-                        return handler.execute(restOfString.trim(), state, configurator);
+                        return handler.execute(restOfString, state, configurator);
                     } else {
                         return AfterProcessingBehaviour.PROCESSED;
                     }

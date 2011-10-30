@@ -37,7 +37,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (state.isDirectiveCanBeProcessed()) {
-            final Value condition = Expression.eval(string,context);
+            final Value condition = Expression.eval(string,context,state);
             if (condition == null || condition.getType() != ValueType.BOOLEAN) {
                 throw new RuntimeException(DIRECTIVE_PREFIX+"while needs a boolean expression");
             }

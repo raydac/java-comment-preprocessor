@@ -47,7 +47,7 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (state.isDirectiveCanBeProcessed()){
-            final Value expressionResult = Expression.eval(string,context);
+            final Value expressionResult = Expression.eval(string,context,state);
             if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
                 throw new RuntimeException(DIRECTIVE_PREFIX+"_if needs a boolean expression");
             }

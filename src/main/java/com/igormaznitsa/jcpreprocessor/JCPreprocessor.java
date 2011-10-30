@@ -75,7 +75,7 @@ public class JCPreprocessor {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
             try {
-                final Value val = Expression.eval(condition, context);
+                final Value val = Expression.eval(condition, context, null);
                 
                 if (val == null){
                     throw new PreprocessorException("Wrong expression at "+DIRECTIVE_NAME, file, file, condition, item.getStringIndex()-1, null);
@@ -248,7 +248,7 @@ public class JCPreprocessor {
                     continue;
                 }
 
-                readString = PreprocessorUtils.processMacroses(readString, context);
+                readString = PreprocessorUtils.processMacroses(readString, context,null);
 
                 String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
 
@@ -268,7 +268,7 @@ public class JCPreprocessor {
                 if (varValue.startsWith("@")) {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
-                    evaluatedValue = Expression.eval(varValue, context);
+                    evaluatedValue = Expression.eval(varValue, context, null);
                     if (evaluatedValue == null || evaluatedValue.getType() != ValueType.STRING) {
                         throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
                     }
@@ -277,7 +277,7 @@ public class JCPreprocessor {
                     loadVariablesFromFile(varValue, context);
                 } else {
                     // This is a value
-                    evaluatedValue = Expression.eval(varValue, context);
+                    evaluatedValue = Expression.eval(varValue, context, null);
                     if (evaluatedValue == null) {
                         throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
                     }
@@ -290,7 +290,7 @@ public class JCPreprocessor {
                 if (context.isVerbose()) {
                     context.info("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
                 }
-                context.setGlobalVariable(varName, evaluatedValue);
+                context.setGlobalVariable(varName, evaluatedValue,null);
             }
         } finally {
             if (fileReader != null) {

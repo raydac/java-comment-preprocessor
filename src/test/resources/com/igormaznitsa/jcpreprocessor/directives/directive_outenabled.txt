@@ -1,0 +1,8 @@
+hello world
+//#-
+unexpected text
+//#+
+expected text
+---START_ETALON---
+hello world
+expected text

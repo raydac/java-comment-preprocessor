@@ -25,7 +25,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
-        processLocalDefinition(string, context);
+        processLocalDefinition(string, context ,state);
         return AfterProcessingBehaviour.PROCESSED;
     }
 
@@ -44,19 +44,19 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         return false;
     }
     
-    private void processLocalDefinition(final String string, final PreprocessorContext context) {
+    private void processLocalDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
         final String[] splitted = PreprocessorUtils.splitForChar(string, '=');
 
         if (splitted.length != 2) {
             throw new RuntimeException("Can't recognize the expression");
         }
 
-        final Value value = Expression.eval(splitted[1].trim(), context);
+        final Value value = Expression.eval(splitted[1].trim(), context,state);
 
         if (value == null) {
             throw new RuntimeException("Unsupported expression result");
         }
 
-        context.setGlobalVariable(splitted[0].trim(), value);
+        context.setGlobalVariable(splitted[0].trim(),value,state);
     }
 }

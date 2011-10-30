@@ -1,0 +1,7 @@
+hello world
+//#-
+//#if true
+unexpected text
+//#endif
+---START_ETALON---
+hello world

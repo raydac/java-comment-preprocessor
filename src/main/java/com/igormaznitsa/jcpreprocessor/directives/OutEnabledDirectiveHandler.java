@@ -18,7 +18,7 @@ public class OutEnabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it allows to switch on text output";
     }
 
     @Override

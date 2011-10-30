@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.utils;
 
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -191,7 +192,7 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static String processMacroses(final String processingString, final PreprocessorContext context) {
+    public static String processMacroses(final String processingString, final PreprocessorContext context, final PreprocessingState state) {
         int position;
         String result = processingString;
 
@@ -206,7 +207,7 @@ public enum PreprocessorUtils {
                     final String macrosBody = result.substring(beginIndex + 3, position);
                     final String rightPart = result.substring(position + 3);
 
-                    final Value value = Expression.eval(macrosBody, context);
+                    final Value value = Expression.eval(macrosBody, context, state);
                     if (value == null) {
                         throw new RuntimeException("Wrong macros expression [" + macrosBody + ']');
                     }
@@ -247,7 +248,7 @@ public enum PreprocessorUtils {
     }
 
     public static boolean isCharAllowedInVariableOrFunctionName(final char chr) {
-        return chr == '_' || Character.isLetterOrDigit(chr);
+        return chr == '_' || Character.isLetterOrDigit(chr) || chr == '.';
     }
 
     public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {

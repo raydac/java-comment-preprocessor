@@ -40,7 +40,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     @Test
     public abstract void testPhase() throws Exception;
-    
+
     protected void assertReference(final AbstractDirectiveHandler handler) {
         assertNotNull("Handler must not be null", handler);
         final String reference = handler.getReference();
@@ -64,7 +64,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     }
 
     private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {
-       while (true) {
+        while (true) {
             final String line = reader.readLine();
             if (line == null) {
                 break;
@@ -72,7 +72,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
             accumulator.add(line);
         }
     }
-    
+
     private PreprocessorContext insidePreprocessingAndMatching(final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension) throws Exception {
         if (preprocessingText == null) {
             throw new NullPointerException("Preprocessing text is null");
@@ -89,7 +89,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_file", false);
         final PreprocessingState state = new PreprocessingState(reference, new TextFileDataContainer(new File("fake"), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
 
-        reference.preprocessFile(state,context);
+        reference.preprocessFile(state, context);
 
         final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
         final ByteArrayOutputStream normal = new ByteArrayOutputStream();
@@ -105,17 +105,40 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         readWholeDataFromReader(normalreader, result);
         readWholeDataFromReader(postfixreader, result);
 
-        if (etalonList != null) {
-            assertEquals("Must be equal in their size", etalonList.size(), result.size());
-    
-            int lineIndex = 0;
-            while (true) {
-                if (lineIndex >= etalonList.size() || lineIndex >= result.size()) {
-                    break;
+        try {
+            if (etalonList != null) {
+                if (etalonList.size()!=result.size()){
+                    throw new RuntimeException("Result and etalin size are not equal ["+etalonList.size()+"!="+result.size()+']');
                 }
-                assertEquals("Lines must be equals [" + (lineIndex + 1) + ']', etalonList.get(lineIndex), result.get(lineIndex));
-                lineIndex++;
+   
+                int lineIndex = 0;
+                while (true) {
+                    if (lineIndex >= etalonList.size() || lineIndex >= result.size()) {
+                        break;
+                    }
+                    if (!etalonList.get(lineIndex).equals(result.get(lineIndex))){
+                        throw new RuntimeException("Nonequal lines detected at string "+(lineIndex+1));
+                    }
+                    lineIndex++;
+                }
             }
+        } catch (Exception unexpected) {
+            if (etalonList != null && result != null) {
+                int index = 1;
+                for (final String str : etalonList) {
+                    System.out.print(index++);
+                    System.out.print('\t');
+                    System.out.println(str);
+                }
+                System.out.println("---------------------");
+                index = 1;
+                for (final String str : result) {
+                    System.out.print(index++);
+                    System.out.print('\t');
+                    System.out.println(str);
+                }
+            }
+            throw unexpected;
         }
 
         return context;

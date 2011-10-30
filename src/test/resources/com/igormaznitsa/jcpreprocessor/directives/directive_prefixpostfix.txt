@@ -1,0 +1,25 @@
+//#postfix+
+This string must be in the postfix
+//#postfix-
+This string must be in the normal (1)
+//#prefix+
+This string must be in the prefix
+//#prefix-
+This string must be in the normal (2)
+//#if false
+//#postfix+
+//#endif
+This string must be in the normal (3)
+//#if false
+//#prefix+
+//#endif
+This string must be in the normal (4)
+ok
+---START_ETALON---
+This string must be in the prefix
+This string must be in the normal (1)
+This string must be in the normal (2)
+This string must be in the normal (3)
+This string must be in the normal (4)
+ok
+This string must be in the postfix

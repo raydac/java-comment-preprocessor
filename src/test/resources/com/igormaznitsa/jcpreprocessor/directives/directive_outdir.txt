@@ -1,0 +1,10 @@
+//#local path="a/"
+//#outdir path+"expected"
+//#if false
+//#outdir path+"unexpected"
+//#endif
+/*$jcp.dst.dir$*/
+ok
+---START_ETALON---
+a/expected
+ok

@@ -38,7 +38,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
                 throw new RuntimeException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
             }
             state.pushIf(true);
-            final boolean definitionFlag = configurator.findVariableForName(string) != null;
+            final boolean definitionFlag = configurator.findVariableForName(string,state) != null;
             if (!definitionFlag){
                 state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }

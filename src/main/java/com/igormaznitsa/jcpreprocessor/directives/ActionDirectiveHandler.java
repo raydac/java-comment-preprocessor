@@ -33,7 +33,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
             final String stringToBeProcessed = string.trim();
-            final Expression stack = Expression.prepare(stringToBeProcessed, context);
+            final Expression stack = Expression.prepare(stringToBeProcessed, context, state);
             stack.eval();
 
             final Value[] results = new Value[stack.size()];

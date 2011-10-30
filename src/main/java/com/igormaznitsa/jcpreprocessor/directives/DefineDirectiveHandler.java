@@ -28,7 +28,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
-        if (context.findVariableForName(string)!=null){
+        if (context.findVariableForName(string,state)!=null){
             throw new RuntimeException("variable already defined");
         }
         context.setLocalVariable(string, Value.BOOLEAN_TRUE);

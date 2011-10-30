@@ -19,7 +19,7 @@ public final class Value implements ExpressionStackItem {
     }
 
     private Value(final String val) {
-        value = val;
+        value = val == null ? "null" : val;
         type = ValueType.STRING;
     }
 

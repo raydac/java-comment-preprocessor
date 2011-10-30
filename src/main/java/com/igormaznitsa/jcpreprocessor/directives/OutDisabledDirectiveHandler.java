@@ -18,7 +18,7 @@ public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it allows to switch off text output process";
     }
 
     @Override

@@ -30,6 +30,8 @@ public abstract class AbstractDirectiveHandler {
         new FlushDirectiveHandler(),
         new IncludeDirectiveHandler(),
         new ActionDirectiveHandler(),
+        new PostfixDirectiveHandler(),
+        new PrefixDirectiveHandler(),
         new GlobalDirectiveHandler(),
         new GlobalElseDirectiveHandler(),
         new GlobalEndIfDirectiveHandler(),

@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.expression;
 
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcpreprocessor.expression.operators.AbstractOperator;
@@ -9,7 +9,6 @@ import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorLEFTBRACKET;
 import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorRIGHTBRACKET;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -342,7 +341,7 @@ public class Expression {
         return stringAccumulator.toString();
     }
 
-    public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context) {
+    public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context, final PreprocessingState state) {
         if (stringToBeParsed == null) {
             throw new NullPointerException("String is null");
         }
@@ -398,7 +397,7 @@ public class Expression {
                         throw new IllegalStateException("There is not a context to use variables");
                     }
 
-                    final Value value = context.findVariableForName(token);
+                    final Value value = context.findVariableForName(token,state);
 
                     if (value != null) {
                         expressionStack.push(value);
@@ -452,8 +451,8 @@ public class Expression {
         return delimitersPresented ? (INSIDE_STACK.size() > 1 ? null : (Value) INSIDE_STACK.get(0)) : (Value) INSIDE_STACK.get(0);
     }
 
-    public static Value eval(final String expression, final PreprocessorContext context) {
-        final Expression parsedStack = prepare(expression,context);
+    public static Value eval(final String expression, final PreprocessorContext context, final PreprocessingState state) {
+        final Expression parsedStack = prepare(expression,context,state);
         return parsedStack.eval();
     }
 

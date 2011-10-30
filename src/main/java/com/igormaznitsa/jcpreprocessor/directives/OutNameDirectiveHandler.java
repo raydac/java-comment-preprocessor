@@ -1,6 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -20,7 +21,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it allows to change the destination file name for preprocessed text (it can be read through "+JCPSpecialVariables.VAR_DEST_FILE_NAME+')';
     }
 
     @Override
@@ -30,7 +31,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
     
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
-        final Value dirName = Expression.eval(string, context);
+        final Value dirName = Expression.eval(string, context,state);
 
         if (dirName == null || dirName.getType() != ValueType.STRING) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"outname needs a string expression");

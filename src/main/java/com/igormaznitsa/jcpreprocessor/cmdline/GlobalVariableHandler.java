@@ -13,7 +13,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
     public boolean processArgument(final String argument, final PreprocessorContext configurator) {
         if (argument.toUpperCase().startsWith(ARG_NAME)){
-            configurator.addGlobalVariable(PreprocessorUtils.extractTail(ARG_NAME, argument));
+            configurator.addGlobalVariable(PreprocessorUtils.extractTail(ARG_NAME, argument),null);
             return true;
         } else {
             return false;

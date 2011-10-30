@@ -1,32 +1,39 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author igorm
- */
-public class OutNameDirectiveHandlerTest {
+public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
     
-    public OutNameDirectiveHandlerTest() {
+    private static final OutNameDirectiveHandler HANDLER = new OutNameDirectiveHandler();
+    
+    @Override
+    public void testExecution() throws Exception {
+        assertFilePreprocessing("directive_outname.txt", null);
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @Override
+    public void testKeyword() throws Exception {
+        assertEquals("outname", HANDLER.getName());
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
+    @Override
+    public void testHasExpression() throws Exception {
+        assertTrue(HANDLER.hasExpression());
     }
 
-    @Test
-    public void testSomeMethod() {
+    @Override
+    public void testExecutionCondition() throws Exception {
+        assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
+    }
+
+    @Override
+    public void testReference() throws Exception {
+        assertReference(HANDLER);
+    }
+
+    @Override
+    public void testPhase() throws Exception {
+        assertTrue(HANDLER.isPreprocessingPhaseAllowed());
+        assertFalse(HANDLER.isGlobalPhaseAllowed());
     }
 }
