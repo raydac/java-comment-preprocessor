@@ -14,14 +14,14 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerI
 
     @Test
     public void testPrefix_wrongArgument() {
-        assertPreprocessorException("\n    //#prefix -", 2);
-        assertPreprocessorException("\n //#prefixa", 2);
+        assertPreprocessorException("\n    //#prefix -", 2, null);
+        assertPreprocessorException("\n //#prefixa", 2, null);
     }
     
     @Test
     public void testPostfix_wrongArgument() {
-        assertPreprocessorException("\n   //#postfix -", 2);
-        assertPreprocessorException("\n //#postfix1", 2);
+        assertPreprocessorException("\n   //#postfix -", 2, null);
+        assertPreprocessorException("\n //#postfix1", 2, null);
     }
     
     @Override

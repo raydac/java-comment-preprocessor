@@ -1,26 +1,19 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
-    
-    private static final OutNameDirectiveHandler HANDLER = new OutNameDirectiveHandler();
-    
+public class IfDefinedDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
+
+    private static final IfDefinedDirectiveHandler HANDLER = new IfDefinedDirectiveHandler();
+
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_outname.txt", null);
+        assertFilePreprocessing("directive_ifdefined.txt", null);
     }
 
-    @Test
-    public void testExecution_wrongExpressionResult() {
-        assertPreprocessorException("\n//#outname", 2, null);
-        assertPreprocessorException("\n//#outname 882772", 2, null);
-    }
-    
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("outname", HANDLER.getName());
+        assertEquals("ifdefined", HANDLER.getName());
     }
 
     @Override
@@ -30,7 +23,7 @@ public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegra
 
     @Override
     public void testExecutionCondition() throws Exception {
-        assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
+        assertFalse(HANDLER.executeOnlyWhenExecutionAllowed());
     }
 
     @Override
@@ -40,7 +33,7 @@ public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerIntegra
 
     @Override
     public void testPhase() throws Exception {
-        assertTrue(HANDLER.isPreprocessingPhaseAllowed());
         assertFalse(HANDLER.isGlobalPhaseAllowed());
+        assertTrue(HANDLER.isPreprocessingPhaseAllowed());
     }
 }

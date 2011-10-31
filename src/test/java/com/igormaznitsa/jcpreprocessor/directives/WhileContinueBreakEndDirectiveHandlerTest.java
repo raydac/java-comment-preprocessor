@@ -17,32 +17,32 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
 
     @Test
     public void testWhile_ExceptionWithoutExpression() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#while   \ntest\n  //#end", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#while   \ntest\n  //#end", 6, null);
     }
 
     @Test
     public void testWhile_ExceptionForNonBooleanExpression() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#while 234  \ntest\n  //#end", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#while 234  \ntest\n  //#end", 6, null);
     }
 
     @Test
     public void testWhile_ExceptionForNonClosed() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#while true  \ntest\n", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#while true  \ntest\n", 6, null);
     }
 
     @Test
     public void testBreak_ExceptionWithoutWhile() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#break \ntest\n", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#break \ntest\n", 6, null);
     }
 
     @Test
     public void testContinue_ExceptionWithoutWhile() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#continue \ntest\n", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#continue \ntest\n", 6, null);
     }
 
     @Test
     public void testEnd_ExceptionWithoutWhile() throws Exception {
-        assertPreprocessorException("\n\n\n   \n\n  //#end \ntest\n", 6);
+        assertPreprocessorException("\n\n\n   \n\n  //#end \ntest\n", 6, null);
     }
 
     @Override

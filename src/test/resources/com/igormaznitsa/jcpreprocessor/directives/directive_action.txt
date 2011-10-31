@@ -1,0 +1,9 @@
+test
+//#action 1,2,3+4,5+6,true,"hello"
+end
+//#if false
+//#action unexpected
+//#endif
+---START_ETALON---
+test
+end

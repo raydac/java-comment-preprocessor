@@ -21,7 +21,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it calls an outside processor and give arguments to it";
     }
 
     @Override
@@ -32,20 +32,22 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
-            final String stringToBeProcessed = string.trim();
-            final Expression stack = Expression.prepare(stringToBeProcessed, context, state);
-            stack.eval();
 
-            final Value[] results = new Value[stack.size()];
-            for (int li = 0; li < stack.size(); li++) {
-                ExpressionStackItem p_obj = stack.getItemAtPosition(li);
-                if (p_obj.getStackItemType() != ExpressionStackItemType.VALUE) {
-                    throw new RuntimeException("Wrong argument detected");
+            final Expression stack = Expression.prepare(string.trim(), context, state);
+            
+            final Expression [] args = stack.splitForDelimiters();
+            
+            final Value[] results = new Value[args.length];
+            int index = 0;
+            for (final Expression expr : args) {
+                final Value val = expr.eval();
+                if (val==null) {
+                    throw new RuntimeException("Wrong expression at argument "+(index+1));
                 }
-                results[li] = (Value) p_obj;
+                results[index++] = val;
             }
 
-            if (!context.getPreprocessorExtension().processUserDirective(results, state)) {
+            if (!context.getPreprocessorExtension().processAction(results, state)) {
                 throw new RuntimeException("Extension can't process the action");
             }
         }

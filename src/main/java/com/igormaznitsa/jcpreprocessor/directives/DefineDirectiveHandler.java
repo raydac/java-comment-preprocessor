@@ -50,10 +50,10 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
             throw new IllegalArgumentException("Disallowed variable name [" + name + ']');
         }
 
-        if (context.findVariableForName(string, state) != null) {
-            throw new RuntimeException("variable already defined");
+        if (context.findVariableForName(name, state) != null) {
+            context.warning("Variable \'"+name+"\' already defined");
         }
-        context.setLocalVariable(string, Value.BOOLEAN_TRUE);
+        context.setGlobalVariable(name, Value.BOOLEAN_TRUE,state);
         return AfterProcessingBehaviour.PROCESSED;
     }
 }

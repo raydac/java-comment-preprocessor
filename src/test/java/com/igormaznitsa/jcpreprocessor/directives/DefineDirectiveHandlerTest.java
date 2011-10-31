@@ -15,10 +15,9 @@ public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
 
     @Test
     public void testExecution_wrongCases() {
-        assertPreprocessorException("\n\n//#define \n", 3);
-        assertPreprocessorException("\n\n//#define 1223\n", 3);
-        assertPreprocessorException("\n\n//#define \"test\"\n", 3);
-        assertPreprocessorException("\n\n//#define somevar\n//#define somevar", 4);
+        assertPreprocessorException("\n\n//#define \n", 3, null);
+        assertPreprocessorException("\n\n//#define 1223\n", 3, null);
+        assertPreprocessorException("\n\n//#define \"test\"\n", 3, null);
     }
     
     @Override

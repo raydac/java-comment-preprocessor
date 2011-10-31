@@ -35,9 +35,8 @@ public class Expression {
         }
     }
     private transient final List<ExpressionStackItem> INSIDE_STACK = new ArrayList<ExpressionStackItem>(5);
-
     private final PreprocessorContext context;
-    
+
     private Expression(final PreprocessorContext context) {
         this.context = context;
     }
@@ -189,7 +188,7 @@ public class Expression {
             processingItemIndex += offsetOfIndexForCurrentProcessingItem;
 
             if (bracketCounter != 0) {
-                throw new RuntimeException ("An Unclosed bracket has been detected");
+                throw new RuntimeException("An Unclosed bracket has been detected");
             }
         }
 
@@ -289,7 +288,7 @@ public class Expression {
                             }
                             break;
                             default:
-                                throw new RuntimeException("Unknown special char detected \'\\"+readChar+'\'');
+                                throw new RuntimeException("Unknown special char detected \'\\" + readChar + '\'');
                         }
                         specialCharCounter++;
                         flagSpecialChar = false;
@@ -341,6 +340,31 @@ public class Expression {
         return stringAccumulator.toString();
     }
 
+    public Expression[] splitForDelimiters() {
+        final List<Expression> result = new ArrayList<Expression>();
+
+        Expression newExp = new Expression(context);
+
+        for (final ExpressionStackItem stackItem : INSIDE_STACK) {
+            if (stackItem.getStackItemType() == ExpressionStackItemType.DELIMITER) {
+                if (newExp.isEmpty()) {
+                    throw new RuntimeException("Error expression detected");
+                }
+                result.add(newExp);
+                newExp = new Expression(context);
+            } else {
+                newExp.INSIDE_STACK.add(stackItem);
+            }
+        }
+
+        if (newExp.isEmpty()) {
+            throw new RuntimeException("Error expression detected");
+        }
+        result.add(newExp);
+
+        return result.toArray(new Expression[result.size()]);
+    }
+
     public static Expression prepare(final String stringToBeParsed, final PreprocessorContext context, final PreprocessingState state) {
         if (stringToBeParsed == null) {
             throw new NullPointerException("String is null");
@@ -381,11 +405,11 @@ public class Expression {
                     if (tokenInLowerCase.charAt(0) == '$') {
                         // user defined function
                         if (preprocessorExtension == null) {
-                            throw new RuntimeException("A User function \'"+token+"\'has been detected but a processor is not defined");
+                            throw new RuntimeException("A User function \'" + token + "\'has been detected but a processor is not defined");
                         }
                         final int i_args = preprocessorExtension.getUserFunctionArity(tokenInLowerCase);
                         if (i_args < 0) {
-                            throw new RuntimeException("Unknown user defined function \'"+token+"\' has been detected");
+                            throw new RuntimeException("Unknown user defined function \'" + token + "\' has been detected");
                         }
                         expressionStack.push(new FunctionDefinedByUser(tokenInLowerCase, i_args, context));
                     } else {
@@ -397,7 +421,7 @@ public class Expression {
                         throw new IllegalStateException("There is not a context to use variables");
                     }
 
-                    final Value value = context.findVariableForName(token,state);
+                    final Value value = context.findVariableForName(token, state);
 
                     if (value != null) {
                         expressionStack.push(value);
@@ -405,7 +429,7 @@ public class Expression {
                         try {
                             expressionStack.push(Value.recognizeOf(token));
                         } catch (Exception e) {
-                            throw new RuntimeException("Unsupported value or function detected \'" + token + "\'",e);
+                            throw new RuntimeException("Unsupported value or function detected \'" + token + "\'", e);
                         }
                     }
                 }
@@ -432,12 +456,12 @@ public class Expression {
                 break;
                 case FUNCTION: {
                     AbstractFunction function = (AbstractFunction) expressionItem;
-                    function.execute(context,this, index);
+                    function.execute(context, this, index);
                     index -= function.getArity();
                 }
                 break;
                 case OPERATOR: {
-                    ((AbstractOperator) expressionItem).execute(context,this, index);
+                    ((AbstractOperator) expressionItem).execute(context, this, index);
                     index = 0;
                 }
                 break;
@@ -452,7 +476,7 @@ public class Expression {
     }
 
     public static Value eval(final String expression, final PreprocessorContext context, final PreprocessingState state) {
-        final Expression parsedStack = prepare(expression,context,state);
+        final Expression parsedStack = prepare(expression, context, state);
         return parsedStack.eval();
     }
 

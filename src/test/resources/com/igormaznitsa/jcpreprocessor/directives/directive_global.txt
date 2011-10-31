@@ -1,0 +1,4 @@
+//#global xxx=10
+ttt
+---START_ETALON---
+ttt

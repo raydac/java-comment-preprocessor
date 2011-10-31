@@ -7,6 +7,7 @@ public final class Value implements ExpressionStackItem {
     public static final Value BOOLEAN_TRUE = new Value(Boolean.TRUE);
     public static final Value BOOLEAN_FALSE = new Value(Boolean.FALSE);
     public static final Value INT_ZERO = new Value(Long.valueOf(0));
+    
     private final Object value;
     private final ValueType type;
 
@@ -212,5 +213,28 @@ public final class Value implements ExpressionStackItem {
 
     public int getPriority() {
         return 6;
+    }
+
+    @Override
+    public boolean equals(final Object var){
+        if (var == null){
+            return false;
+        }
+        
+        if (this == var) {
+            return true;
+        }
+    
+        if (var.getClass() == Value.class) {
+            final Value thatValue = (Value) var;
+            
+            return this.type == thatValue.type && this.value.equals(thatValue.value);
+        } 
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value.hashCode();
     }
 }

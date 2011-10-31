@@ -16,24 +16,24 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerInt
 
     @Test
     public void testIf_ExceptionWithoutExpression() throws Exception {
-        assertPreprocessorException("\n\n\n   \n  //#if   \ntest\n  //#endif", 5);
-        assertPreprocessorException("\n\n\n   \n  //#if\ntest\n  //#endif", 5);
+        assertPreprocessorException("\n\n\n   \n  //#if   \ntest\n  //#endif", 5, null);
+        assertPreprocessorException("\n\n\n   \n  //#if\ntest\n  //#endif", 5, null);
     }
 
     @Test
     public void testIf_ExceptionWithoutEndIf() throws Exception {
-        assertPreprocessorException("\n\n\n   \n  //#if true\n\n", 5);
-        assertPreprocessorException("\n\n\n   \n  //#if true\n//#if true\n//#endif\n", 5);
+        assertPreprocessorException("\n\n\n   \n  //#if true\n\n", 5, null);
+        assertPreprocessorException("\n\n\n   \n  //#if true\n//#if true\n//#endif\n", 5, null);
     }
 
     @Test
     public void testElse_ExeptionWithoutIf() throws Exception {
-        assertPreprocessorException("\n\n\n   \n  //#else  \ntest\n  //#endif", 5);
+        assertPreprocessorException("\n\n\n   \n  //#else  \ntest\n  //#endif", 5, null);
     }
 
     @Test
     public void testEndIf_ExceptionWithoutIf() throws Exception {
-        assertPreprocessorException("\n\n\n   \n  //#endif", 5);
+        assertPreprocessorException("\n\n\n   \n  //#endif", 5, null);
     }
 
     @Override

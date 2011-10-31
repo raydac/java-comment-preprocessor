@@ -24,14 +24,14 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
 
     @Test
     public void testExecution_ExceptionOnExpressionAbsence() {
-        assertPreprocessorException("1\n2\n   //#local \n3", 3);
-        assertPreprocessorException("1\n2\n   //#local\n3", 3);
+        assertPreprocessorException("1\n2\n   //#local \n3", 3, null);
+        assertPreprocessorException("1\n2\n   //#local\n3", 3, null);
     }
 
     @Test
     public void testExecution_ExceptionOnWrongExpression() {
-        assertPreprocessorException("1\n2\n   //#local 3\n3", 3);
-        assertPreprocessorException("1\n2\n   //#local a=\n3", 3);
+        assertPreprocessorException("1\n2\n   //#local 3\n3", 3, null);
+        assertPreprocessorException("1\n2\n   //#local a=\n3", 3, null);
     }
 
     @Override

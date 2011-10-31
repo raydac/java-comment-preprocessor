@@ -8,7 +8,7 @@ public interface PreprocessorExtension
     /**
      * Processing of an action
      */
-     public boolean processUserDirective(Value [] parameters, PreprocessingState state);
+     public boolean processAction(Value [] parameters, PreprocessingState state);
 
     /**
      * Processing of an user function

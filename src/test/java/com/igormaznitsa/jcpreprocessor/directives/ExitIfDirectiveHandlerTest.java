@@ -13,10 +13,10 @@ public class ExitIfDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     
     @Test
     public void testExecution_wrongExpression() {
-        assertPreprocessorException("\n\n //#exitif \"test\"", 3);
-        assertPreprocessorException("\n\n //#exitif ", 3);
-        assertPreprocessorException("\n\n //#exitif 111", 3);
-        assertPreprocessorException("\n\n //#exitif", 3);
+        assertPreprocessorException("\n\n //#exitif \"test\"", 3, null);
+        assertPreprocessorException("\n\n //#exitif ", 3, null);
+        assertPreprocessorException("\n\n //#exitif 111", 3, null);
+        assertPreprocessorException("\n\n //#exitif", 3, null);
     }
     
     @Override

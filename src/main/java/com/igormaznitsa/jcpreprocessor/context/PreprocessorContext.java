@@ -79,7 +79,8 @@ public final class PreprocessorContext {
         if (text == null || normalOutStream == null) {
             return;
         }
-
+        
+        normalOutStream.print("INFO: ");
         normalOutStream.println(text);
     }
 
@@ -88,9 +89,19 @@ public final class PreprocessorContext {
             return;
         }
 
+        errorOutStream.print("ERROR: ");
         errorOutStream.println(text);
     }
 
+    public void warning(final String text) {
+        if (text == null || errorOutStream == null) {
+            return;
+        }
+
+        normalOutStream.print("WARNING: ");
+        normalOutStream.println(text);
+    }
+    
     public PreprocessorContext setRemovingComments(final boolean removingComments) {
         this.removingComments = removingComments;
         return this;

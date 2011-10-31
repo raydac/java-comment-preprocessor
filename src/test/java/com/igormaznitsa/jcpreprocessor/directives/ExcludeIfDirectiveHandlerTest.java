@@ -2,6 +2,7 @@ package com.igormaznitsa.jcpreprocessor.directives;
 
 import java.util.List;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState.ExcludeIfInfo;
+import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class ExcludeIfDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest {
@@ -10,7 +11,8 @@ public class ExcludeIfDirectiveHandlerTest extends AbstractDirectiveHandlerInteg
     
     @Override
     public void testExecution() throws Exception {
-        final List<ExcludeIfInfo> list = executeGlobalPhase("directive_excludeif.txt");
+        final List<ExcludeIfInfo> list = new ArrayList<ExcludeIfInfo>();
+        executeGlobalPhase("directive_excludeif.txt",list);
         assertEquals("Must be two //#excludeif ",list.size(), 2);
         final ExcludeIfInfo info1 = list.get(1);
         final ExcludeIfInfo info2 = list.get(0);

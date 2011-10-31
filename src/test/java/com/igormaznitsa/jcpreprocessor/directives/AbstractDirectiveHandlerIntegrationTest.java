@@ -51,9 +51,9 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         assertFalse("Reference must not be too short", reference.length() < 10);
     }
 
-    public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex) {
+    public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension) {
         try {
-            final PreprocessorContext context = preprocessString(preprocessingText, null, null);
+            final PreprocessorContext context = preprocessString(preprocessingText, null, extension);
             fail("Must throw PreprocessorException");
         } catch (PreprocessorException expected) {
             assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
@@ -64,14 +64,19 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     }
 
-    public List<ExcludeIfInfo> executeGlobalPhase(final String fileName) throws Exception {
+    public PreprocessorContext executeGlobalPhase(final String fileName,List<ExcludeIfInfo> excludeIf) throws Exception {
         final File file = new File(getClass().getResource(fileName).toURI());
         
         final PreprocessorContext context = new PreprocessorContext();
         final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
         final PreprocessingState state = new PreprocessingState(reference, null, "UTF8");
 
-        return reference.processGlobalDirectives(context);
+        final List<ExcludeIfInfo> result = reference.processGlobalDirectives(context);
+        
+        if (excludeIf!=null){
+            excludeIf.addAll(result);
+        }
+        return context;
     }
     
     private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {

@@ -1,0 +1,20 @@
+start
+//#ifdefined test
+unexpected
+//#else
+expected1
+//#endif
+//#define test
+//#if true
+    //#ifdefined test
+expected2
+    //#else
+unexpected
+    //#endif
+//#endif
+end
+---START_ETALON---
+start
+expected1
+expected2
+end
