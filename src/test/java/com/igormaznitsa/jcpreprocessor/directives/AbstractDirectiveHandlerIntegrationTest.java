@@ -8,6 +8,7 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
+import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -64,14 +66,41 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     }
 
+    public void assertGlobalPhaseException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension) {
+        try {
+            preprocessStringAtGlobalPhase(preprocessingText,null);
+            fail("Must throw PreprocessorException");
+        }catch(PreprocessorException expected){
+            assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
+        } catch (Exception unExpected) {
+            unExpected.printStackTrace();
+            fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
+        }
+    }
+
+    private PreprocessorContext preprocessStringAtGlobalPhase(final String string, final List<ExcludeIfInfo> excludeInfoList) throws IOException,PreprocessorException {
+        final List<String> parsedText = parseStringForLines(string);
+        final PreprocessorContext context = new PreprocessorContext();
+        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_name", false);
+        final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), 0);
+        final PreprocessingState state = new PreprocessingState(reference, textContainer, string);
+
+        final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
+        
+        if (excludeInfoList!=null){
+            excludeInfoList.addAll(result);
+        }
+        
+        return context;
+    }
+    
+
+    
     public PreprocessorContext executeGlobalPhase(final String fileName,List<ExcludeIfInfo> excludeIf) throws Exception {
         final File file = new File(getClass().getResource(fileName).toURI());
-        
         final PreprocessorContext context = new PreprocessorContext();
         final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
-        final PreprocessingState state = new PreprocessingState(reference, null, "UTF8");
-
-        final List<ExcludeIfInfo> result = reference.processGlobalDirectives(context);
+        final List<ExcludeIfInfo> result = reference.processGlobalDirectives(null,context);
         
         if (excludeIf!=null){
             excludeIf.addAll(result);
@@ -161,15 +190,12 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
     }
 
-    public PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
-        if (text == null) {
-            throw new NullPointerException("Text to be preprocessed is null");
+    private List<String> parseStringForLines(final String text) throws IOException {
+        if (text == null || text.isEmpty())
+        {
+            return Collections.emptyList();
         }
-
-        if (text.isEmpty()) {
-            throw new IllegalArgumentException("Text to be preprocessed is empty");
-        }
-
+        
         final BufferedReader reader = new BufferedReader(new StringReader(text), text.length() * 2);
 
         final List<String> preprocessingPart = new ArrayList<String>(100);
@@ -184,14 +210,14 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
                 preprocessingPart.add(line);
             }
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                }
-            }
+            PreprocessorUtils.closeSilently(reader);
         }
 
+        return preprocessingPart;
+    }
+    
+    private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
+        final List<String> preprocessingPart = parseStringForLines(text);
         return insidePreprocessingAndMatching(preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext);
     }
 

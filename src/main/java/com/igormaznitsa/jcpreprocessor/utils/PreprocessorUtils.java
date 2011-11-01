@@ -283,6 +283,17 @@ public enum PreprocessorUtils {
         return strContainer.toArray(new String[strContainer.size()]);
     }
 
+    public static String[] splitForSetOperator(final String string) {
+        final int index = string.indexOf('=');
+        if (index<0) {
+            return new String[]{string};
+        } else {
+            final String leftPart = string.substring(0,index).trim();
+            final String rightPart = string.substring(index+1).trim();
+            return new String[]{leftPart,rightPart};
+        }
+    }
+    
     public static String[] splitForChar(final String string, final char delimiter) {
         final char[] array = string.toCharArray();
         final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);

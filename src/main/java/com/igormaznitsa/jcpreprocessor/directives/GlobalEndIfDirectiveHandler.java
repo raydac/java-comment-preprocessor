@@ -23,7 +23,7 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it ends the current global //#_if..//#_else..//#_endif construction";
     }
 
     @Override

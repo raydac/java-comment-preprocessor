@@ -18,7 +18,7 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return null;
+        return "it inverts the conditional flag for the current global //#_if..//#_else..//#_endif construction";
     }
 
     @Override

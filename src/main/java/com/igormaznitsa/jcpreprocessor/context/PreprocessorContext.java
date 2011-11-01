@@ -19,11 +19,8 @@ import java.util.Set;
 public final class PreprocessorContext {
 
     public static interface SpecialVariableProcessor {
-
         String[] getVariableNames();
-
         Value getVariable(String varName, PreprocessorContext context, PreprocessingState state);
-
         void setVariable(String varName, Value value, PreprocessorContext context, PreprocessingState state);
     }
     
@@ -217,38 +214,25 @@ public final class PreprocessorContext {
         return this;
     }
 
-    public PreprocessorContext addGlobalVariable(final String valueDescription, final PreprocessingState state) {
-        final String[] pair = PreprocessorUtils.splitForChar(valueDescription, '=');
-        if (pair.length != 2) {
-            throw new IllegalArgumentException("Wrong variable definition format [" + valueDescription + ']');
-        }
-
-        if (globalVarTable.containsKey(pair[0])) {
-            throw new IllegalStateException("Duplicated global variable \'" + pair[0] + '\'');
-        }
-
-        Value calculatedValue = null;
-        try {
-            calculatedValue = Expression.eval(pair[1], this, state);
-            if (calculatedValue == null) {
-                throw new RuntimeException("Error value [" + valueDescription + ']');
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error value for the global variable \'" + pair[0] + "\' [" + e.getMessage() + "]", e);
-        }
-
-        if (isVerbose()) {
-            info("The global variable \'" + pair[0] + "\' has been added");
-        }
-
-        return this;
-    }
-
     public PreprocessorContext setLocalVariable(final String name, final Value value) {
-        if (specialVariableProcessors.containsKey(name) || globalVarTable.containsKey(name)) {
-            throw new RuntimeException("Attemption to set a global variable [" + name + ']');
+        if (name == null) {
+            throw new NullPointerException("Variable name is null");
         }
-        localVarTable.put(name, value);
+
+        if (value == null) {
+            throw new NullPointerException("Value is null");
+        }
+        
+        final String normalized = name.trim().toLowerCase();
+        
+        if (normalized.isEmpty()){
+            throw new IllegalArgumentException("Empty value name");
+        }
+        
+        if (specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
+            throw new RuntimeException("Attemption to set a global variable [" + normalized + ']');
+        }
+        localVarTable.put(normalized, value);
         return this;
     }
 
@@ -256,14 +240,28 @@ public final class PreprocessorContext {
         if (name == null) {
             return null;
         }
-        return localVarTable.get(name);
+        
+        final String normalized = name.trim().toLowerCase();
+        
+        if (normalized.isEmpty()){
+            return null;
+        }
+        
+        return localVarTable.get(normalized);
     }
 
     public boolean containsLocalVariable(final String name) {
         if (name == null) {
             return false;
         }
-        return localVarTable.containsKey(name);
+        
+        final String normalized = name.trim().toLowerCase();
+        
+        if (normalized.isEmpty()){
+            return false;
+        }
+        
+        return localVarTable.containsKey(normalized);
     }
 
     public PreprocessorContext clearLocalVariables() {
@@ -276,22 +274,24 @@ public final class PreprocessorContext {
             throw new NullPointerException("Variable name is null");
         }
 
+        final String normalizedName = name.trim().toLowerCase();
+
+        if (normalizedName.isEmpty()){
+            throw new IllegalArgumentException("Name is empty");
+        }
+        
         if (value == null) {
             throw new NullPointerException("Value is null");
         }
 
-        if (localVarTable.containsKey(name)) {
-            throw new RuntimeException("Attemption to set a global variable for name contained among local variables [" + name + ']');
-        }
-
-        if (specialVariableProcessors.containsKey(name)) {
-            specialVariableProcessors.get(name).setVariable(name, value, this, state);
+        if (specialVariableProcessors.containsKey(normalizedName)) {
+            specialVariableProcessors.get(normalizedName).setVariable(normalizedName, value, this, state);
         } else {
 
-            globalVarTable.put(name, value);
+            globalVarTable.put(normalizedName, value);
 
             if (isVerbose()) {
-                info("A global variable has been set [" + name + '=' + value.toString() + ']');
+                info("A global variable has been set [" + normalizedName + '=' + value.toString() + ']');
             }
         }
         return this;
@@ -302,7 +302,12 @@ public final class PreprocessorContext {
             return false;
         }
 
-        return specialVariableProcessors.containsKey(name) || globalVarTable.containsKey(name);
+        final String normalized = name.trim().toLowerCase();
+        if (normalized.isEmpty()){
+            return false;
+        }
+        
+        return specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized);
     }
 
     public Value findVariableForName(final String name, final PreprocessingState state) {
@@ -310,7 +315,11 @@ public final class PreprocessorContext {
             return null;
         }
 
-        final String nameInLowerCase = name.toLowerCase();
+        final String nameInLowerCase = name.trim().toLowerCase();
+        
+        if (nameInLowerCase.isEmpty()){
+            return null;
+        }
         
         final SpecialVariableProcessor processor = specialVariableProcessors.get(nameInLowerCase);
         if (processor != null && state!=null) {

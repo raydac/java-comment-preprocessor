@@ -1,0 +1,14 @@
+//#if true
+a
+    //#_if 0219384092384091
+b
+    //#_if true
+//#else
+c
+    //#_endif
+d
+    //#_else
+//#endif
+---START_ETALON---
+a
+b

@@ -96,7 +96,7 @@ public class JCPreprocessor {
             if (fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly()) {
                 continue;
             } else {
-                result.addAll(fileRef.processGlobalDirectives(context));
+                result.addAll(fileRef.processGlobalDirectives(null,context));
             }
         }
         return result;

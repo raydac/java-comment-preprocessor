@@ -79,8 +79,8 @@ public class FileInfoContainer {
         }
     }
 
-    public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessorContext context) throws PreprocessorException, IOException {
-        final PreprocessingState paramContainer = new PreprocessingState(this, context.getCharacterEncoding());
+    public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
+        final PreprocessingState paramContainer = state == null ? new PreprocessingState(this, context.getCharacterEncoding()) : state;
 
         String trimmedProcessingString = null;
         try {

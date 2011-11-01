@@ -21,10 +21,20 @@ public class GlobalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     public void testExecution_PreprocessingPhase() throws Exception {
         final PreprocessorContext context = assertFilePreprocessing("directive_global.txt",null);
         assertFalse(context.containsGlobalVariable("xxx"));
-        final Value var = context.findVariableForName("xxx", null);
-        assertNull(var);
+        assertNull(context.findVariableForName("xxx", null));
     }
 
+    @Test
+    public void testExecution_WrongCases() throws Exception {
+        assertGlobalPhaseException("\n\n//#global 23123", 3, null);
+        assertGlobalPhaseException("\n\n//#global", 3, null);
+        assertGlobalPhaseException("\n\n//#global ", 3, null);
+        assertGlobalPhaseException("\n\n//#global hh=", 3, null);
+        assertGlobalPhaseException("\n\n//#global xx==10", 3, null);
+        assertGlobalPhaseException("\n\n//#global =10", 3, null);
+        assertGlobalPhaseException("\n\n//#global ====", 3, null);
+    }
+    
     @Override
     public void testExecutionCondition() throws Exception {
         assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());

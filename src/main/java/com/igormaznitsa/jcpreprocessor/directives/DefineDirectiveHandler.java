@@ -24,7 +24,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it defines a local variable for the name and init it as TRUE, the name must be undefined before";
+        return "it allows to define a global (!) variable during the second pass, the variable will be set to TRUE";
     }
 
     @Override
