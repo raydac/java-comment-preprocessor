@@ -4,6 +4,7 @@ import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
+import com.igormaznitsa.jcpreprocessor.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
@@ -227,6 +228,36 @@ public class FileInfoContainer {
         return str;
     }
 
+    private boolean checkDirectiveArgumentRoughly(final AbstractDirectiveHandler directive, final String rest) {
+        final DirectiveArgumentType argument = directive.getArgumentType();
+        
+        boolean result;
+        final String trimmedRest = rest.trim();
+        
+        switch(argument){
+            case NONE : {
+                result = trimmedRest.isEmpty();
+            }break;
+            case ONOFF : {
+                if (trimmedRest.isEmpty()) {
+                    result = false;
+                } else {
+                    final char firstChar = rest.charAt(0);
+                    result = firstChar == '+' || firstChar == '-';
+                    if (rest.length()>1){
+                        result = result && Character.isSpaceChar(rest.charAt(1));
+                    } 
+                }
+            }break;
+            default:
+            {
+                result = !trimmedRest.isEmpty() && Character.isSpaceChar(rest.charAt(0));
+            }break;
+        }
+        
+        return result;
+    }
+    
     protected AfterProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
         final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
@@ -240,26 +271,14 @@ public class FileInfoContainer {
                 final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
 
                 final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
-                if (handler.hasExpression()) {
-                    if (!restOfString.isEmpty() && Character.isSpaceChar(restOfString.charAt(0))) {
-                        if (allowedForExecution) {
-                            return handler.execute(restOfString.trim(), state, configurator);
-                        } else {
-                            return AfterProcessingBehaviour.PROCESSED;
-                        }
-                    } else {
-                        if (allowedForExecution) {
-                            throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " needs an expression");
-                        } else {
-                            return AfterProcessingBehaviour.PROCESSED;
-                        }
-                    }
-                } else {
+                if (checkDirectiveArgumentRoughly(handler, restOfString)) {
                     if (allowedForExecution) {
-                        return handler.execute(restOfString, state, configurator);
+                        return handler.execute(restOfString.trim(), state, configurator);
                     } else {
                         return AfterProcessingBehaviour.PROCESSED;
                     }
+                } else {
+                    throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");
                 }
             }
         }

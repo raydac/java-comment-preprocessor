@@ -11,20 +11,15 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it allows either to switch on (+) or switch off (-) the mode when all texts are printed into the prefix part";
     }
 
     @Override
-    public String getExpressionType() {
-        return "[+|-]";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.ONOFF;
     }
-    
+
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         if (!string.isEmpty()) {

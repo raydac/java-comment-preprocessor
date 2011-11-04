@@ -13,13 +13,8 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
-    public String getExpressionType() {
-        return "VAR_NAME";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.VARNAME;
     }
 
     @Override

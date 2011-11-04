@@ -15,18 +15,13 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it allows to change the output directory name for the preprocessing file (it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
     }
 
     @Override
-    public String getExpressionType() {
-        return "STRING";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.STRING;
     }
     
     @Override

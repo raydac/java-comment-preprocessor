@@ -15,11 +15,6 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it makes a loop until "+DIRECTIVE_PREFIX+"end if the condition is true";
     }
@@ -30,10 +25,10 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public String getExpressionType() {
-        return "BOOLEAN";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.BOOLEAN;
     }
-    
+
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         if (state.isDirectiveCanBeProcessed()) {

@@ -15,18 +15,13 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "allows to make "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"else.."+DIRECTIVE_PREFIX+"endif construction, needs a boolean expression as the argument";
     }
 
     @Override
-    public String getExpressionType() {
-        return "BOOLEAN";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.BOOLEAN;
     }
     
     @Override

@@ -6,7 +6,6 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.IOException;
 
 public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -16,20 +15,15 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it interrupts the preprocessing if the excpression is true";
     }
 
     @Override
-    public String getExpressionType() {
-        return "BOOLEAN";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.BOOLEAN;
     }
-    
+
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         // To end processing the file processing immediatly if the value is true

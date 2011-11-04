@@ -54,14 +54,6 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(WHILE_HANDLER.hasExpression());
-        assertFalse(BREAK_HANDLER.hasExpression());
-        assertFalse(CONTINUE_HANDLER.hasExpression());
-        assertFalse(END_HANDLER.hasExpression());
-    }
-
-    @Override
     public void testExecutionCondition() throws Exception {
         assertFalse(WHILE_HANDLER.executeOnlyWhenExecutionAllowed());
         assertTrue(BREAK_HANDLER.executeOnlyWhenExecutionAllowed());
@@ -88,5 +80,13 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
         assertTrue(BREAK_HANDLER.isPreprocessingPhaseAllowed());
         assertTrue(CONTINUE_HANDLER.isPreprocessingPhaseAllowed());
         assertTrue(END_HANDLER.isPreprocessingPhaseAllowed());
+    }
+    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.BOOLEAN, WHILE_HANDLER.getArgumentType());
+        assertEquals(DirectiveArgumentType.NONE, BREAK_HANDLER.getArgumentType());
+        assertEquals(DirectiveArgumentType.NONE, CONTINUE_HANDLER.getArgumentType());
+        assertEquals(DirectiveArgumentType.NONE, END_HANDLER.getArgumentType());
     }
 }

@@ -44,13 +44,6 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerInt
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(IF_HANDLER.hasExpression());
-        assertFalse(ELSE_HANDLER.hasExpression());
-        assertFalse(ENDIF_HANDLER.hasExpression());
-    }
-
-    @Override
     public void testExecutionCondition() throws Exception {
         assertFalse(IF_HANDLER.executeOnlyWhenExecutionAllowed());
         assertFalse(ELSE_HANDLER.executeOnlyWhenExecutionAllowed());
@@ -74,5 +67,10 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerInt
         assertFalse(ENDIF_HANDLER.isGlobalPhaseAllowed());
     }
     
-    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.BOOLEAN, IF_HANDLER.getArgumentType());
+        assertEquals(DirectiveArgumentType.NONE, ELSE_HANDLER.getArgumentType());
+        assertEquals(DirectiveArgumentType.NONE, ENDIF_HANDLER.getArgumentType());
+    }
 }

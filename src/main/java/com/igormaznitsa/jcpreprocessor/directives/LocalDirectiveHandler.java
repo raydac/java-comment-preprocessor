@@ -14,11 +14,6 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
         processLocalDefinition(string, context, state);
         return AfterProcessingBehaviour.PROCESSED;
@@ -30,10 +25,10 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public String getExpressionType() {
-        return "VAR_NAME=EXPR";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.SET;
     }
-
+    
     private void processLocalDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 

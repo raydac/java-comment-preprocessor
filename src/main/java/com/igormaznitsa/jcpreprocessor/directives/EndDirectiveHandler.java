@@ -4,18 +4,12 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import java.io.IOException;
 
 public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getName() {
         return "end";
-    }
-
-    @Override
-    public boolean hasExpression() {
-        return false;
     }
 
     @Override

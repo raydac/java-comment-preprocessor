@@ -13,11 +13,6 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it flushes the current text buffer state in the file";
     }

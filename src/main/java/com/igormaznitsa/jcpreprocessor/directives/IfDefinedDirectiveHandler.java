@@ -12,11 +12,6 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it takes a variable name and work like //#if if the variable has been defined in the scope";
     }
@@ -27,8 +22,8 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public String getExpressionType() {
-        return "VAR_NAME";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.VARNAME;
     }
     
     @Override

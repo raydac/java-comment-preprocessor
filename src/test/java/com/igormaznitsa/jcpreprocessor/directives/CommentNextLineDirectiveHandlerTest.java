@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 public class CommentNextLineDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest{
 
-    private static final CommentNextLineDirectiveHandler TEST_HANDLER = new CommentNextLineDirectiveHandler();
+    private static final CommentNextLineDirectiveHandler HANDLER = new CommentNextLineDirectiveHandler();
     
     @Override
     public void testExecution() throws Exception {
@@ -13,28 +13,27 @@ public class CommentNextLineDirectiveHandlerTest extends AbstractDirectiveHandle
 
     @Override
     public void testKeyword() throws Exception {
-        assertEquals("//", TEST_HANDLER.getName());
-    }
-
-    @Override
-    public void testHasExpression() throws Exception {
-        assertFalse(TEST_HANDLER.hasExpression());
+        assertEquals("//", HANDLER.getName());
     }
 
     @Override
     public void testExecutionCondition() throws Exception {
-        assertTrue(TEST_HANDLER.executeOnlyWhenExecutionAllowed());
+        assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
     }
 
     @Override
     public void testReference() throws Exception {
-        assertReference(TEST_HANDLER);
+        assertReference(HANDLER);
     }
 
     @Override
     public void testPhase() throws Exception {
-        assertFalse(TEST_HANDLER.isGlobalPhaseAllowed());
-        assertTrue(TEST_HANDLER.isPreprocessingPhaseAllowed());
+        assertFalse(HANDLER.isGlobalPhaseAllowed());
+        assertTrue(HANDLER.isPreprocessingPhaseAllowed());
     }
     
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.NONE, HANDLER.getArgumentType());
+    }
 }

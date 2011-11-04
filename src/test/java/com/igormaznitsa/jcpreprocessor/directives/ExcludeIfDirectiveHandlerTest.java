@@ -32,11 +32,6 @@ public class ExcludeIfDirectiveHandlerTest extends AbstractDirectiveHandlerInteg
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(HANDLER.hasExpression());
-    }
-
-    @Override
     public void testExecutionCondition() throws Exception {
         assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
     }
@@ -50,5 +45,10 @@ public class ExcludeIfDirectiveHandlerTest extends AbstractDirectiveHandlerInteg
     public void testPhase() throws Exception {
         assertTrue(HANDLER.isGlobalPhaseAllowed());
         assertFalse(HANDLER.isPreprocessingPhaseAllowed());
+    }
+    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.BOOLEAN, HANDLER.getArgumentType());
     }
 }

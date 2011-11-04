@@ -15,18 +15,13 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it allows to change the destination file name for preprocessed text (it can be read through "+JCPSpecialVariables.VAR_DEST_FILE_NAME+')';
     }
 
     @Override
-    public String getExpressionType() {
-        return "STRING";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.STRING;
     }
     
     @Override

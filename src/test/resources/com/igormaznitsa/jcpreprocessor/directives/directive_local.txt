@@ -1,5 +1,5 @@
 //#if false
-//#local
+//#local x=1
 //#endif
     hello
                 //#local x=5

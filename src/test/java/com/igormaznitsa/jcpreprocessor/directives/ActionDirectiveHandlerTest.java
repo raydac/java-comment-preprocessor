@@ -48,12 +48,6 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
 
     @Test
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(HANDLER.hasExpression());
-    }
-
-    @Test
-    @Override
     public void testExecutionCondition() throws Exception {
         assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
     }
@@ -62,6 +56,11 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     @Override
     public void testReference() throws Exception {
         assertReference(HANDLER);
+    }
+
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.MULTIEXPRESSION, HANDLER.getArgumentType());
     }
 
     @Test

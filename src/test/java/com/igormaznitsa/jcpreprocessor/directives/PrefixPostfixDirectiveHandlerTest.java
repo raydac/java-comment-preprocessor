@@ -15,6 +15,7 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerI
     @Test
     public void testPrefix_wrongArgument() {
         assertPreprocessorException("\n    //#prefix -", 2, null);
+        assertPreprocessorException("\n    //#prefix-1", 2, null);
         assertPreprocessorException("\n //#prefixa", 2, null);
     }
     
@@ -22,18 +23,13 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerI
     public void testPostfix_wrongArgument() {
         assertPreprocessorException("\n   //#postfix -", 2, null);
         assertPreprocessorException("\n //#postfix1", 2, null);
+        assertPreprocessorException("\n //#postfix+q", 2, null);
     }
     
     @Override
     public void testKeyword() throws Exception {
         assertEquals("prefix", HANDLER_PREFIX.getName());
         assertEquals("postfix", HANDLER_POSTFIX.getName());
-    }
-
-    @Override
-    public void testHasExpression() throws Exception {
-        assertFalse(HANDLER_PREFIX.hasExpression());
-        assertFalse(HANDLER_POSTFIX.hasExpression());
     }
 
     @Override
@@ -54,5 +50,11 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerI
         assertFalse(HANDLER_POSTFIX.isGlobalPhaseAllowed());
         assertTrue(HANDLER_PREFIX.isPreprocessingPhaseAllowed());
         assertFalse(HANDLER_PREFIX.isGlobalPhaseAllowed());
+    }
+    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.ONOFF, HANDLER_POSTFIX.getArgumentType());
+        assertEquals(DirectiveArgumentType.ONOFF, HANDLER_PREFIX.getArgumentType());
     }
 }

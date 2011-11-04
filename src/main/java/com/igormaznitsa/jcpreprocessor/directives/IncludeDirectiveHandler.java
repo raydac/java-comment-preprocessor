@@ -15,18 +15,13 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
-        return null;
+        return "it allows to include another file body into the current file";
     }
 
     @Override
-    public String getExpressionType() {
-        return "STRING";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.STRING;
     }
     
     @Override

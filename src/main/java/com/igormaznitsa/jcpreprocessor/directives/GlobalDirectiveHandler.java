@@ -14,13 +14,8 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
-    public String getExpressionType() {
-        return "VAL_NAME=EXPR";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.SET;
     }
     
     @Override

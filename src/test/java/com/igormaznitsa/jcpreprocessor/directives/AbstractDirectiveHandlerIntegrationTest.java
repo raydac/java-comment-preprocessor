@@ -1,6 +1,5 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import java.net.URI;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState.ExcludeIfInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
@@ -33,13 +32,13 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     public abstract void testKeyword() throws Exception;
 
     @Test
-    public abstract void testHasExpression() throws Exception;
-
-    @Test
     public abstract void testExecutionCondition() throws Exception;
 
     @Test
     public abstract void testReference() throws Exception;
+
+    @Test
+    public abstract void testArgumentType() throws Exception;
 
     @Test
     public abstract void testPhase() throws Exception;
@@ -93,8 +92,6 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         
         return context;
     }
-    
-
     
     public PreprocessorContext executeGlobalPhase(final String fileName,List<ExcludeIfInfo> excludeIf) throws Exception {
         final File file = new File(getClass().getResource(fileName).toURI());

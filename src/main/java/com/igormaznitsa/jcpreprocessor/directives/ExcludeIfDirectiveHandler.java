@@ -11,11 +11,6 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it excludes the file from the preprocessing list if the expression is true";
     }
@@ -29,12 +24,12 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
     public boolean isPreprocessingPhaseAllowed() {
         return false;
     }
-
-    @Override
-    public String getExpressionType() {
-        return "BOOLEAN";
-    }
     
+    @Override
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.BOOLEAN;
+    }
+
     @Override
     public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context) {
         state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getNextStringIndex()-1);

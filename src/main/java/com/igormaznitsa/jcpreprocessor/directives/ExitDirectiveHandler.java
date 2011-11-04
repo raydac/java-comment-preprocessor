@@ -12,11 +12,6 @@ public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it ends preprocessing of the current file immediately";
     }

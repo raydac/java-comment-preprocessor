@@ -15,18 +15,13 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it starts a global //#_if..//#_else..//#_endif construction";
     }
-
+ 
     @Override
-    public String getExpressionType() {
-        return "BOOLEAN";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.BOOLEAN;
     }
     
     @Override

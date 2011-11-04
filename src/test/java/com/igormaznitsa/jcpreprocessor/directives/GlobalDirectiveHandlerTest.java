@@ -41,11 +41,6 @@ public class GlobalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(HANDLER.hasExpression());
-    }
-
-    @Override
     public void testKeyword() throws Exception {
         assertEquals("global", HANDLER.getName());
     }
@@ -61,4 +56,8 @@ public class GlobalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
         assertReference(HANDLER);
     }
 
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.SET, HANDLER.getArgumentType());
+    }
 }

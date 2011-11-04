@@ -12,11 +12,6 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it makes the next text line commented, only the next line (!)";
     }

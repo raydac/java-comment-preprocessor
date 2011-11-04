@@ -12,15 +12,15 @@ public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it allows to switch off text output process";
     }
 
+    @Override
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.NONE;
+    }
+    
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
         state.getPreprocessingFlags().add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);

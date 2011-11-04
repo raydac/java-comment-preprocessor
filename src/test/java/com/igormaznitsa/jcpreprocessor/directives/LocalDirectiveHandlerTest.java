@@ -40,11 +40,6 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertTrue(HANDLER.hasExpression());
-    }
-
-    @Override
     public void testReference() throws Exception {
         assertReference(HANDLER);
     }
@@ -55,5 +50,8 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrati
         assertTrue(HANDLER.isPreprocessingPhaseAllowed());
     }
     
-    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.SET, HANDLER.getArgumentType());
+    }
 }

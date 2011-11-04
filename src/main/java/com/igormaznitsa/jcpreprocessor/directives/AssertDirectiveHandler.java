@@ -11,13 +11,8 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
-    public String getExpressionType() {
-        return "STRING";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.STRING;
     }
 
     @Override

@@ -15,18 +15,13 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return true;
-    }
-
-    @Override
     public String getReference() {
         return "it calls an outside processor and give arguments to it";
     }
 
     @Override
-    public String getExpressionType() {
-        return "EXPR1,EXPR2...EXPRn";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.MULTIEXPRESSION;
     }
 
     @Override

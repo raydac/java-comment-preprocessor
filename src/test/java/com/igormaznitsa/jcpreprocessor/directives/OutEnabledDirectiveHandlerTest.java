@@ -18,11 +18,6 @@ public class OutEnabledDirectiveHandlerTest extends AbstractDirectiveHandlerInte
     }
 
     @Override
-    public void testHasExpression() throws Exception {
-        assertFalse(HANDLER.hasExpression());
-    }
-
-    @Override
     public void testExecutionCondition() throws Exception {
         assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
     }
@@ -36,5 +31,10 @@ public class OutEnabledDirectiveHandlerTest extends AbstractDirectiveHandlerInte
     public void testPhase() throws Exception {
         assertTrue(HANDLER.isPreprocessingPhaseAllowed());
         assertFalse(HANDLER.isGlobalPhaseAllowed());
+    }
+    
+    @Override
+    public void testArgumentType() throws Exception {
+        assertEquals(DirectiveArgumentType.NONE, HANDLER.getArgumentType());
     }
 }

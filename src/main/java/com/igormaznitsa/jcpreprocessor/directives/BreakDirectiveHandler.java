@@ -12,11 +12,6 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it allows to break the current "+DIRECTIVE_PREFIX+"while..."+DIRECTIVE_PREFIX+"end construction";
     }

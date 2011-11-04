@@ -12,11 +12,6 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "it continues current "+DIRECTIVE_PREFIX+"while iteration";
     }

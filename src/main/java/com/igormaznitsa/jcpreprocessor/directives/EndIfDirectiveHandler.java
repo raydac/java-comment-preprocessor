@@ -12,11 +12,6 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public boolean executeOnlyWhenExecutionAllowed() {
         return false;
     }

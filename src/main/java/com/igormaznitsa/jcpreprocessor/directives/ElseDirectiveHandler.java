@@ -12,11 +12,6 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
-    }
-
-    @Override
     public String getReference() {
         return "a part of a "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"endif structure, it inverts condition flag";
     }

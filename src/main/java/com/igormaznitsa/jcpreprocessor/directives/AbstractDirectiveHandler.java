@@ -49,16 +49,14 @@ public abstract class AbstractDirectiveHandler {
 
     public abstract String getName();
 
-    public abstract boolean hasExpression();
-
     public abstract String getReference();
 
     public String getFullName(){
         return DIRECTIVE_PREFIX+getName();
     }
     
-    public String getExpressionType() {
-        return null;
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.NONE;
     }
     
     public abstract AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context);

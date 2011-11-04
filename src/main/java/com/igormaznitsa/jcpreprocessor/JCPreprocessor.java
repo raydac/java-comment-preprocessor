@@ -199,8 +199,8 @@ public class JCPreprocessor {
         System.exit(0);
     }
 
-    private static PreprocessorContext processCommandString(final PreprocessorContext configurator, final String... args) throws IOException {
-        final PreprocessorContext result = configurator == null ? new PreprocessorContext() : configurator;
+    private static PreprocessorContext processCommandString(final PreprocessorContext context, final String... args) throws IOException {
+        final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
 
         for (final String arg : args) {
             boolean processed = false;

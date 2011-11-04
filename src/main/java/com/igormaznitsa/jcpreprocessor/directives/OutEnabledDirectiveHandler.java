@@ -12,13 +12,13 @@ public class OutEnabledDirectiveHandler  extends AbstractDirectiveHandler {
     }
 
     @Override
-    public boolean hasExpression() {
-        return false;
+    public String getReference() {
+        return "it allows to switch on text output";
     }
 
     @Override
-    public String getReference() {
-        return "it allows to switch on text output";
+    public DirectiveArgumentType getArgumentType() {
+        return DirectiveArgumentType.NONE;
     }
 
     @Override
