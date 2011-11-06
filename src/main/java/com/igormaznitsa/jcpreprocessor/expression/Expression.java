@@ -9,6 +9,7 @@ import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorLEFTBRACKET;
 import com.igormaznitsa.jcpreprocessor.expression.operators.OperatorRIGHTBRACKET;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -403,15 +404,17 @@ public class Expression {
                     expressionStack.push(delimiter);
                 } else if (isFunctionName(tokenInLowerCase)) {
                     if (tokenInLowerCase.charAt(0) == '$') {
+                        final String functionName = PreprocessorUtils.extractTail("$", tokenInLowerCase);
+                        
                         // user defined function
                         if (preprocessorExtension == null) {
-                            throw new RuntimeException("A User function \'" + token + "\'has been detected but a processor is not defined");
+                            throw new RuntimeException("A User function \'" + functionName + "\'has been detected but a processor is not defined");
                         }
-                        final int i_args = preprocessorExtension.getUserFunctionArity(tokenInLowerCase);
-                        if (i_args < 0) {
-                            throw new RuntimeException("Unknown user defined function \'" + token + "\' has been detected");
+                        final int arity = preprocessorExtension.getUserFunctionArity(functionName);
+                        if (arity < 0) {
+                            throw new RuntimeException("Unknown user defined function \'" + functionName + "\' has been detected");
                         }
-                        expressionStack.push(new FunctionDefinedByUser(tokenInLowerCase, i_args, context));
+                        expressionStack.push(new FunctionDefinedByUser(functionName, arity, context));
                     } else {
                         // standard function
                         expressionStack.push(FUNCTIONS.get(tokenInLowerCase));
@@ -439,10 +442,94 @@ public class Expression {
         return expressionStack;
     }
 
+    private Value evalFunction(final AbstractFunction function, final int firstArgumentIndex, final PreprocessorContext context) {
+        final int arity = function.getArity();
+        final Value[] arguments = new Value[arity];
+        final Class[] methodArguments = new Class[arity + 1];
+        methodArguments[0] = PreprocessorContext.class;
+
+        final StringBuilder signature = new StringBuilder("execute");
+
+        for (int i = 1; i <= arity; i++) {
+            methodArguments[i] = Value.class;
+        }
+
+        int index = firstArgumentIndex;
+        for (int i = 0; i < arity; i++) {
+            if (index < 0) {
+                throw new RuntimeException("There is not needed argument for the \'" + function.getName() + "\' function");
+            }
+            final ExpressionStackItem item = INSIDE_STACK.get(index--);
+            if (item instanceof Value) {
+                arguments[i] = (Value) item;
+            } else {
+                throw new RuntimeException("Wrong argument type detected for the \'" + function.getName() + "\' function");
+            }
+        }
+
+        PreprocessorUtils.reverseArray(arguments);
+        
+        final ValueType[][] allowedSignatures = function.getAllowedArgumentTypes();
+        ValueType[] allowed = null;
+        for (final ValueType[] current : allowedSignatures) {
+            boolean allCompatible = true;
+
+            int thatIndex = 0;
+            for (final ValueType type : current) {
+                if (!type.isCompatible(arguments[thatIndex].getType())) {
+                    allCompatible = false;
+                    break;
+                }
+                thatIndex++;
+            }
+
+            if (allCompatible) {
+                allowed = current;
+                for (final ValueType type : allowed) {
+                    signature.append(type.getSignature());
+                }
+                break;
+            }
+        }
+
+        if (allowed == null) {
+            throw new RuntimeException("Unsupported argument set detected for \'" + function.getName() + '\'');
+        }
+
+        if (function instanceof FunctionDefinedByUser) {
+            final FunctionDefinedByUser userFunction = (FunctionDefinedByUser) function;
+            try {
+                return userFunction.execute(context, arguments);
+            }catch(Exception unexpected){
+                throw new RuntimeException(null,unexpected);
+            }
+        } else {
+            try {
+                final Method method = function.getClass().getMethod(signature.toString(), methodArguments);
+
+                final Object[] callArgs = new Object[arity + 1];
+                callArgs[0] = context;
+                System.arraycopy(arguments, 0, callArgs, 1, arity);
+
+                final Value result = (Value) method.invoke(function, (Object[]) callArgs);
+
+                if (!result.getType().isCompatible(function.getResultType())) {
+                    throw new IllegalStateException("Unsupported function result detected [" + result.getType().getSignature() + ']');
+                }
+
+                return result;
+            } catch (NoSuchMethodException unexpected) {
+                throw new RuntimeException("Can't find a function method to process data [" + signature.toString() + ']', unexpected);
+            } catch (Exception unexpected) {
+                throw new RuntimeException("Can't execute a function method to process data [" + signature.toString() + ']', unexpected);
+            }
+        }
+    }
+
     //TODO it ignores DELIMITERS flag during calculation
     private Value calculate(final boolean delimitersPresented, final PreprocessorContext context) {
         int index = 0;
-        while (INSIDE_STACK.size() != 1) {
+        while (INSIDE_STACK.size() > 1 || (INSIDE_STACK.size()==1 && INSIDE_STACK.get(0) instanceof FunctionDefinedByUser)) {
             if (INSIDE_STACK.size() == index) {
                 throw new RuntimeException("Internal expression error detected");
             }
@@ -455,9 +542,17 @@ public class Expression {
                 }
                 break;
                 case FUNCTION: {
-                    AbstractFunction function = (AbstractFunction) expressionItem;
-                    function.execute(context, this, index);
-                    index -= function.getArity();
+                    final AbstractFunction function = (AbstractFunction) expressionItem;
+                    final Value result = evalFunction(function, index - 1, context);
+                    INSIDE_STACK.set(index, result);
+
+                    int arity = function.getArity();
+                    while (arity > 0) {
+                        index--;
+                        INSIDE_STACK.remove(index);
+                        arity--;
+                    }
+                    index++;
                 }
                 break;
                 case OPERATOR: {

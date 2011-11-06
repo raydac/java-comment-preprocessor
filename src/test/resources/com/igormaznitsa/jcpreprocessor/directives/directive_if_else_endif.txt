@@ -1,4 +1,8 @@
 hello
+//#if false
+//#local test = 111
+nonprocessed /*$test$*/
+//#endif
 //#local x=true
 //#local y=false
 //#local z=false

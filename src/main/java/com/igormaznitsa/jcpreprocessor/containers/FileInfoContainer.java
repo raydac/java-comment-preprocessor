@@ -153,13 +153,10 @@ public class FileInfoContainer {
                 }
 
                 trimmedProcessingString = nonTrimmedProcessingString.trim();
-
+                
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
                 String stringToBeProcessed = trimmedProcessingString;
-                if (!trimmedProcessingString.startsWith("//$$")) {
-                    stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context,preprocessingState);
-                }
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
                     switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), context,false)) {
@@ -172,7 +169,13 @@ public class FileInfoContainer {
                 }
 
                 if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
-                    if (stringToBeProcessed.startsWith("//$$")) {
+                    final boolean startsWithTwoDollars = trimmedProcessingString.startsWith("//$$");
+    
+                    if (!startsWithTwoDollars) {
+                        stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context,preprocessingState);
+                    }
+
+                    if (startsWithTwoDollars) {
                         // Output the tail of the string to the output stream without comments and macroses
                         printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
                         preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
@@ -195,12 +198,13 @@ public class FileInfoContainer {
                 }
 
             }
-        } catch (Exception possibleExceptionDuringExpressionEval) {
-            throw new PreprocessorException("Exception during preprocessing [" + possibleExceptionDuringExpressionEval.getMessage() + "][" + preprocessingState.getFileIncludeStackAsString() + ']',
+        } catch (Exception unexpected) {
+            //unexpected.printStackTrace();
+            throw new PreprocessorException("Exception during preprocessing [" + unexpected.getMessage() + "][" + preprocessingState.getFileIncludeStackAsString() + ']',
                     preprocessingState.getRootFileInfo().getSourceFile(),
                     preprocessingState.peekFile().getFile(),
                     trimmedProcessingString,
-                    preprocessingState.peekFile().getNextStringIndex(), possibleExceptionDuringExpressionEval);
+                    preprocessingState.peekFile().getNextStringIndex(), unexpected);
         }
 
         if (!preprocessingState.isIfStackEmpty()) {
@@ -214,9 +218,10 @@ public class FileInfoContainer {
                     preprocessingState.peekWhile().getFile(), null, preprocessingState.peekWhile().getNextStringIndex() + 1, null);
         }
 
-        final File outFile = context.makeDestinationFile(getDestinationFilePath());
-        preprocessingState.saveBuffersToFile(outFile);
-        
+        if (!context.isFileOutputDisabled()){
+            final File outFile = context.makeDestinationFile(getDestinationFilePath());
+            preprocessingState.saveBuffersToFile(outFile);
+        }
         return preprocessingState;
     }
 

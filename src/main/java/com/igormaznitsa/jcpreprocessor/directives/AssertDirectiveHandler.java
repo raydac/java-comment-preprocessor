@@ -2,6 +2,7 @@ package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
 public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -22,7 +23,7 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
-        configurator.info("--> " + string.trim());
+        configurator.info("--> " + PreprocessorUtils.processMacroses(string.trim(), configurator, state));
         return AfterProcessingBehaviour.PROCESSED;
     }
 }

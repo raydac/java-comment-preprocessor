@@ -1,17 +1,17 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import java.io.File;
+import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
 public final class FunctionDefinedByUser extends AbstractFunction {
 
     private final String name;
     private final int argsNumber;
     private final PreprocessorContext configurator;
-
-    public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext cfg) {
+    private final ValueType [][] argTypes;
+    
+    public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
         super();
         if (name == null) {
             throw new NullPointerException("Name is null");
@@ -21,13 +21,20 @@ public final class FunctionDefinedByUser extends AbstractFunction {
             throw new IllegalArgumentException("Argument number is less than zero");
         }
 
-        if (cfg == null) {
-            throw new NullPointerException("Configurator is null");
+        if (context == null) {
+            throw new NullPointerException("Context is null");
         }
 
         this.name = name;
         this.argsNumber = argsNumber;
-        this.configurator = cfg;
+        this.configurator = context;
+        
+        final ValueType [] types = new ValueType[argsNumber];
+        
+        for(int li=0;li<argsNumber;li++){
+            types[li] = ValueType.ANY;
+        }
+        this.argTypes = new ValueType[][]{types};
     }
 
     @Override
@@ -39,38 +46,23 @@ public final class FunctionDefinedByUser extends AbstractFunction {
         return argsNumber;
     }
 
-    public void execute(final PreprocessorContext context, final Expression stack, final int indx) {
-        final Value[] values = new Value[argsNumber];
-
-        int index = indx;
-        
-        int counter = argsNumber;
-        while (counter > 0) {
-            try {
-                if (stack.isEmpty()) {
-                    throw new Exception();
-                }
-                final Object item = stack.getItemAtPosition(index - 1);
-                index--;
-                stack.removeItemAt(index);
-
-                if (item instanceof Value) {
-                    values[counter - 1] = (Value) item;
-                } else {
-                    throw new Exception();
-                }
-            } catch (Exception _ex) {
-                throw new RuntimeException("You have wrong arguments number for \"" + name + "\" function, must be " + argsNumber);
-            }
-
-            counter--;
-        }
-
-        final Value value = configurator.getPreprocessorExtension().processUserFunction(name, values);
-        if (value == null) {
-            throw new RuntimeException("User defined function \"" + name + "\" has returned NULL");
-        }
-        stack.setItemAtPosition(index, value);
-
+    public Value execute(final PreprocessorContext context, final Value [] values) {
+        return context.getPreprocessorExtension().processUserFunction(name, values);
     }
+    
+    @Override
+    public ValueType[][] getAllowedArgumentTypes() {
+        return argTypes;
+    }
+
+    @Override
+    public String getReference() {
+        return "it's a user defined function";
+    }
+
+    @Override
+    public ValueType getResultType() {
+        return ValueType.ANY;
+    }
+    
 }

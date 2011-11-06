@@ -64,28 +64,34 @@ public class JCPreprocessor {
         final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
         processFileExclusion(excludedIf);
-        createDestinationDirectory();
+        if (!context.isFileOutputDisabled()) {
+            createDestinationDirectory();
+        }
         preprocessFiles(filesToBePreprocessed);
     }
 
     private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
-        final String DIRECTIVE_NAME = AbstractDirectiveHandler.DIRECTIVE_PREFIX+(new ExcludeIfDirectiveHandler().getName());
-  
+        final String DIRECTIVE_NAME = AbstractDirectiveHandler.DIRECTIVE_PREFIX + (new ExcludeIfDirectiveHandler().getName());
+
         for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
             try {
                 final Value val = Expression.eval(condition, context, null);
-                
-                if (val == null){
-                    throw new PreprocessorException("Wrong expression at "+DIRECTIVE_NAME, file, file, condition, item.getStringIndex()-1, null);
+
+                if (val == null) {
+                    throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, file, file, condition, item.getStringIndex() - 1, null);
+                }
+
+                if (val.getType() != ValueType.BOOLEAN) {
+                    throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", file, file, condition, item.getStringIndex() - 1, null);
                 }
                 
-                if (val.getType() != ValueType.BOOLEAN) {
-                    throw new PreprocessorException("Expression at "+DIRECTIVE_NAME+" is not a boolean one", file, file, condition, item.getStringIndex()-1, null);
+                if (val.asBoolean().booleanValue()){
+                    item.getFileInfoContainer().setExcluded(true);
                 }
             } catch (Exception ex) {
-                throw new PreprocessorException("Exception at at "+DIRECTIVE_NAME+" is not a boolean one", file, file, condition, item.getStringIndex()-1, ex);
+                throw new PreprocessorException("Exception at at " + DIRECTIVE_NAME + " is not a boolean one", file, file, condition, item.getStringIndex() - 1, ex);
             }
         }
     }
@@ -96,7 +102,7 @@ public class JCPreprocessor {
             if (fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly()) {
                 continue;
             } else {
-                result.addAll(fileRef.processGlobalDirectives(null,context));
+                result.addAll(fileRef.processGlobalDirectives(null, context));
             }
         }
         return result;
@@ -107,10 +113,12 @@ public class JCPreprocessor {
             if (fileRef.isExcludedFromPreprocessing()) {
                 continue;
             } else if (fileRef.isForCopyOnly()) {
-                PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
+                if (!context.isFileOutputDisabled()){
+                    PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
+                }
                 continue;
             } else {
-                fileRef.preprocessFile(null,context);
+                fileRef.preprocessFile(null, context);
             }
         }
     }
@@ -128,10 +136,10 @@ public class JCPreprocessor {
             }
         }
         if (!destinationExistsAndDirectory) {
-            if (!destination.mkdirs()) {
-                throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
+                if (!destination.mkdirs()) {
+                    throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
+                }
             }
-        }
     }
 
     private Collection<FileInfoContainer> findAllFilesToBePreprocessed(final File[] srcDirs) throws IOException {
@@ -248,7 +256,7 @@ public class JCPreprocessor {
                     continue;
                 }
 
-                readString = PreprocessorUtils.processMacroses(readString, context,null);
+                readString = PreprocessorUtils.processMacroses(readString, context, null);
 
                 String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
 
@@ -290,7 +298,7 @@ public class JCPreprocessor {
                 if (context.isVerbose()) {
                     context.info("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
                 }
-                context.setGlobalVariable(varName, evaluatedValue,null);
+                context.setGlobalVariable(varName, evaluatedValue, null);
             }
         } finally {
             if (fileReader != null) {

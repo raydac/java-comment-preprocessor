@@ -1,10 +1,11 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.AbstractExpressionExecutor;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemType;
 
-public abstract class AbstractOperator implements AbstractExpressionExecutor, ExpressionStackItem {
+public abstract class AbstractOperator implements ExpressionStackItem {
 
     public static final AbstractOperator [] ALL_OPERATORS = new AbstractOperator[]{
       new OperatorADD(),  
@@ -30,6 +31,7 @@ public abstract class AbstractOperator implements AbstractExpressionExecutor, Ex
         return ExpressionStackItemType.OPERATOR;
     }
     
+    public abstract void execute(PreprocessorContext context, Expression stack, int index); 
     public abstract boolean isUnary();
     public abstract String getKeyword();
 }

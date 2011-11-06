@@ -21,18 +21,20 @@ import java.util.List;
 public enum PreprocessorUtils {
 
     ;
-    public static String getFileExtension(final File file) {
-        if (file == null) {
-            return null;
-        }
 
-        final String fileName = file.getName();
-        final int lastPointPos = fileName.lastIndexOf('.');
-        if (lastPointPos < 0) {
-            return "";
-        } else {
-            return fileName.substring(lastPointPos + 1);
+    public static String getFileExtension(final File file) {
+        String result = null;
+        if (file != null) {
+
+            final String fileName = file.getName();
+            final int lastPointPos = fileName.lastIndexOf('.');
+            if (lastPointPos < 0) {
+                result = "";
+            } else {
+                result = fileName.substring(lastPointPos + 1);
+            }
         }
+        return result;
     }
 
     public static String[] extractExtensions(final String extensions) {
@@ -63,10 +65,12 @@ public enum PreprocessorUtils {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException("Argument is not a directory");
         }
+
+        boolean result = false;
         if (clearDirectory(directory)) {
-            return directory.delete();
+            result = directory.delete();
         }
-        return false;
+        return result;
     }
 
     public static boolean clearDirectory(final File directory) {
@@ -93,7 +97,7 @@ public enum PreprocessorUtils {
         if (stream != null) {
             try {
                 stream.close();
-            } catch (IOException mustBeIgnored) {
+            } catch (IOException ignored) {
             }
         }
     }
@@ -112,13 +116,13 @@ public enum PreprocessorUtils {
         }
 
         BufferedReader result = null;
-        
+
         if (bufferSize <= 0) {
             result = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         } else {
             result = new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
         }
-        
+
         return result;
     }
 
@@ -285,15 +289,19 @@ public enum PreprocessorUtils {
 
     public static String[] splitForSetOperator(final String string) {
         final int index = string.indexOf('=');
-        if (index<0) {
-            return new String[]{string};
+
+        String[] result = null;
+
+        if (index < 0) {
+            result = new String[]{string};
         } else {
-            final String leftPart = string.substring(0,index).trim();
-            final String rightPart = string.substring(index+1).trim();
-            return new String[]{leftPart,rightPart};
+            final String leftPart = string.substring(0, index).trim();
+            final String rightPart = string.substring(index + 1).trim();
+            result = new String[]{leftPart, rightPart};
         }
+        return result;
     }
-    
+
     public static String[] splitForChar(final String string, final char delimiter) {
         final char[] array = string.toCharArray();
         final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
@@ -317,5 +325,28 @@ public enum PreprocessorUtils {
         }
 
         return tokens.toArray(new String[tokens.size()]);
+    }
+
+    public static final void reverseArray(final Object[] array) {
+        final int arrayLen = array.length;
+
+        if (arrayLen > 1) {
+            if (arrayLen > 2) {
+                int firstIndex = 0;
+                int lastIndex = array.length - 1;
+
+                while (firstIndex != lastIndex) {
+                    final Object temp = array[firstIndex];
+                    array[firstIndex] = array[lastIndex];
+                    array[lastIndex] = temp;
+                    firstIndex++;
+                    lastIndex--;
+                }
+            } else {
+                final Object temp = array[0];
+                array[0] = array[1];
+                array[1] = temp;
+            }
+        }
     }
 }

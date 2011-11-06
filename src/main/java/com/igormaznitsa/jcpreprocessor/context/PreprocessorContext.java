@@ -1,7 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.context;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -31,23 +30,26 @@ public final class PreprocessorContext {
     public static final String DEFAULT_CHARSET = "UTF8";
     
     private boolean verbose = false;
+    private boolean removingComments = false;
+    private boolean clearDestinationDirectoryBefore = true;
+    private boolean fileOutputDisabled = false;
+
     private PrintStream normalOutStream = System.out;
     private PrintStream errorOutStream = System.err;
-    private boolean removingComments = false;
     private String sourceDirectory;
     private String destinationDirectory;
     private File destinationDirectoryFile;
     private File sourceDirectoryFile;
     private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
     private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
-    private boolean clearDestinationDirectoryBefore = true;
     private PreprocessorExtension preprocessorExtension;
     private String characterEncoding = DEFAULT_CHARSET;
     
     private final Map<String, Value> globalVarTable = new HashMap<String, Value>();
     private final Map<String, Value> localVarTable = new HashMap<String, Value>();
     private final Map<String, SpecialVariableProcessor> specialVariableProcessors = new HashMap<String, SpecialVariableProcessor>();
-
+    private final Map<String,Object> sharedResources = new HashMap<String,Object>();
+    
     public PreprocessorContext() {
         normalOutStream = System.out;
         errorOutStream = System.err;
@@ -108,6 +110,14 @@ public final class PreprocessorContext {
         return this.removingComments;
     }
 
+    public void setFileOutputDisabled(final boolean flag){
+        fileOutputDisabled = flag;
+    }
+    
+    public boolean isFileOutputDisabled(){
+        return fileOutputDisabled;
+    }
+    
     public PreprocessorContext setSourceDirectory(final String directory) {
         if (directory == null) {
             throw new NullPointerException("Directory is null");
@@ -119,6 +129,32 @@ public final class PreprocessorContext {
         return this;
     }
 
+    public void setSharedResource(final String name, final Object obj){
+        if (name == null) {
+            throw new NullPointerException("Name is null");
+        }
+        
+        if (obj == null) {
+            throw new NullPointerException("Object is null");
+        }
+        
+        sharedResources.put(name, obj);
+    }
+    
+    public Object getSharedResource(final String name){
+        if (name == null) {
+            throw new NullPointerException("Name is null");
+        }
+        return sharedResources.get(name);
+    }
+    
+    public Object removeSharedResource(final String name){
+        if (name == null) {
+            throw new NullPointerException("Name is null");
+        }
+        return sharedResources.remove(name);
+    }
+    
     public String getSourceDirectory() {
         return sourceDirectory;
     }

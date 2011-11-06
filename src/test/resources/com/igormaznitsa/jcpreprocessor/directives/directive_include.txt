@@ -1,0 +1,8 @@
+start
+//#include "./directive_include2.txt"
+end
+---START_ETALON---
+start
+This text must be included
+and this one too
+end

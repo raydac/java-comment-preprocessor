@@ -14,17 +14,19 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it flushes the current text buffer state in the file";
+        return "it flushes the current text buffer state into the file";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
-        final File outFile = configurator.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
-        try {
-            state.saveBuffersToFile(outFile);
-            state.resetPrinters();
-        } catch (IOException ex) {
-            throw new RuntimeException("IO exception during execution", ex);
+    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+        if (!context.isFileOutputDisabled()) {
+            final File outFile = context.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
+            try {
+                state.saveBuffersToFile(outFile);
+                state.resetPrinters();
+            } catch (IOException ex) {
+                throw new RuntimeException("IO exception during execution", ex);
+            }
         }
         return AfterProcessingBehaviour.PROCESSED;
     }

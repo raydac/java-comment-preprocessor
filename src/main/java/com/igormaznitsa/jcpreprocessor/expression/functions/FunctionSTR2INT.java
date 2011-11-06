@@ -1,50 +1,42 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import java.io.File;
+import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
 public final class FunctionSTR2INT extends AbstractFunction {
 
+    private static final ValueType [][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
+    
     @Override
     public String getName() {
         return "str2int";
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-        if (!stack.isThereOneValueBefore(index)) throw new IllegalStateException("Operation STR2INT needs an operand");
-
-        Value _val0 = (Value)stack.getItemAtPosition(index-1);
-        index--;
-        stack.removeItemAt(index);
-
-        switch (_val0.getType())
-        {
-            case STRING:
-                {
-                    String s_result = (String) _val0.getValue();
-
-                    long l_value = 0;
-
-                    try
-                    {
-                        l_value = Long.parseLong(s_result);
-                    } catch (NumberFormatException e)
-                    {
-                        throw new IllegalArgumentException("I can't convert value ["+s_result+']');
-                    }
-                   stack.setItemAtPosition(index, Value.valueOf(l_value));
-                };break;
-            default :
-                throw new IllegalArgumentException("Function STR2INT processes only the STRING type");
-        }
-
+    public Value executeStr(final PreprocessorContext context, final Value value) {
+        return Value.valueOf(Long.valueOf(Long.parseLong(value.asString())));
     }
     
     @Override
     public int getArity() {
         return 1;
     }
+
+    @Override
+    public ValueType[][] getAllowedArgumentTypes() {
+        return ARG_TYPES;
+    }
+
+    @Override
+    public String getReference() {
+        return "it converts a string into an integer";
+    }
+
+    @Override
+    public ValueType getResultType() {
+        return ValueType.INT;
+    }
+    
+    
     
 }
