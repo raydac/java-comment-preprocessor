@@ -8,7 +8,7 @@ public class CommentNextLineDirectiveHandlerTest extends AbstractDirectiveHandle
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_comment_next_line.txt", null);
+        assertFilePreprocessing("directive_comment_next_line.txt", null, null);
     }
 
     @Override

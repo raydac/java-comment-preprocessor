@@ -17,7 +17,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
         final PreprocessorExtension mockup = mock(PreprocessorExtension.class);
         when(mockup.processAction(any(Value[].class),any(PreprocessingState.class))).thenReturn(Boolean.TRUE);
         
-        assertFilePreprocessing("directive_action.txt", mockup);
+        assertFilePreprocessing("directive_action.txt", mockup, null);
 
         final Value val1 = Value.valueOf(1L);
         final Value val2 = Value.valueOf(2L);

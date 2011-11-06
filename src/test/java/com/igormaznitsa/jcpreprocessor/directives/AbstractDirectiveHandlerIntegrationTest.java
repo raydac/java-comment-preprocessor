@@ -7,6 +7,7 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
+import com.igormaznitsa.jcpreprocessor.logger.PreprocessorLogger;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -120,7 +121,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         }
     }
 
-    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension) throws Exception {
+    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger) throws Exception {
         if (preprocessingText == null) {
             throw new NullPointerException("Preprocessing text is null");
         }
@@ -130,6 +131,9 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         }
 
         final PreprocessorContext context = new PreprocessorContext();
+        if (logger!=null){
+            context.setPreprocessorLogger(logger);
+        }
         context.setFileOutputDisabled(true);
         context.setSourceDirectory(srcfile.getParent());
         
@@ -222,10 +226,10 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     
     private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
         final List<String> preprocessingPart = parseStringForLines(text);
-        return insidePreprocessingAndMatching(new File("/fake/preprocess_from_string.txt"),preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext);
+        return insidePreprocessingAndMatching(new File("/fake/nonexist_file.txt"),preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null);
     }
 
-    public PreprocessorContext assertFilePreprocessing(final String testFileName, final PreprocessorExtension ext) throws Exception {
+    public PreprocessorContext assertFilePreprocessing(final String testFileName, final PreprocessorExtension ext, final PreprocessorLogger logger) throws Exception {
         final File file = new File(getClass().getResource(testFileName).toURI());
         
         if (!file.exists() || !file.isFile()){
@@ -271,6 +275,6 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
             }
         }
 
-        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext);
+        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger);
     }
 }

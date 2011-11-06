@@ -1,0 +1,7 @@
+start
+//#local test=1
+//#assert string /*$test+1$*/ ok
+end
+---START_ETALON---
+start
+end

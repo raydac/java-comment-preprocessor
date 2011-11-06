@@ -5,6 +5,7 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
 import com.igormaznitsa.jcpreprocessor.directives.DirectiveArgumentType;
+import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
@@ -81,19 +82,19 @@ public class FileInfoContainer {
     }
 
     public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
-        final PreprocessingState paramContainer = state == null ? new PreprocessingState(this, context.getCharacterEncoding()) : state;
+        final PreprocessingState preprocessingState = state == null ? new PreprocessingState(this, context.getCharacterEncoding()) : state;
 
         String trimmedProcessingString = null;
         try {
             while (true) {
-                String nonTrimmedProcessingString = paramContainer.nextLine();
-                if (paramContainer.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
+                String nonTrimmedProcessingString = preprocessingState.nextLine();
+                if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
                     nonTrimmedProcessingString = null;
                 }
 
                 if (nonTrimmedProcessingString == null) {
-                    if (!paramContainer.isOnlyRootOnStack()) {
-                        paramContainer.popTextContainer();
+                    if (!preprocessingState.isOnlyRootOnStack()) {
+                        preprocessingState.popTextContainer();
                         continue;
                     } else {
                         break;
@@ -105,7 +106,7 @@ public class FileInfoContainer {
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
                 if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(paramContainer, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context,true)) {
+                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context,true)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -114,21 +115,17 @@ public class FileInfoContainer {
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new PreprocessorException("Exception during preprocessing [" + e.getMessage() + "][" + paramContainer.getFileIncludeStackAsString() + ']',
-                    paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekFile().getFile(),
-                    trimmedProcessingString,
-                    paramContainer.peekFile().getNextStringIndex(), e);
+        } catch (Exception unexpected) {
+            throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
         }
 
-        if (!paramContainer.isIfStackEmpty()) {
-            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction",
-                    paramContainer.getRootFileInfo().getSourceFile(),
-                    paramContainer.peekIf().getFile(), null, paramContainer.peekIf().getNextStringIndex() + 1, null);
+        if (!preprocessingState.isIfStackEmpty()) {
+           final TextFileDataContainer lastIf = preprocessingState.peekIf();
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
+                    "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
         }
         
-        return paramContainer.popAllExcludeIfInfoData();
+        return preprocessingState.popAllExcludeIfInfoData();
     }
     
     public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
@@ -198,24 +195,19 @@ public class FileInfoContainer {
                 }
 
             }
-        } catch (Exception unexpected) {
-            //unexpected.printStackTrace();
-            throw new PreprocessorException("Exception during preprocessing [" + unexpected.getMessage() + "][" + preprocessingState.getFileIncludeStackAsString() + ']',
-                    preprocessingState.getRootFileInfo().getSourceFile(),
-                    preprocessingState.peekFile().getFile(),
-                    trimmedProcessingString,
-                    preprocessingState.peekFile().getNextStringIndex(), unexpected);
+        } catch (RuntimeException unexpected) {
+            throw state.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
         }
 
         if (!preprocessingState.isIfStackEmpty()) {
-            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction",
-                    preprocessingState.getRootFileInfo().getSourceFile(),
-                    preprocessingState.peekIf().getFile(), null, preprocessingState.peekIf().getNextStringIndex() + 1, null);
+            final TextFileDataContainer lastIf = preprocessingState.peekIf();
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
+                    "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
         }
         if (!preprocessingState.isWhileStackEmpty()) {
-            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "when instruction",
-                    preprocessingState.getRootFileInfo().getSourceFile(),
-                    preprocessingState.peekWhile().getFile(), null, preprocessingState.peekWhile().getNextStringIndex() + 1, null);
+            final TextFileDataContainer lastWhile = preprocessingState.peekWhile();
+            throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
+                    "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
         }
 
         if (!context.isFileOutputDisabled()){

@@ -9,7 +9,7 @@ public class IncludeDirectiveHandlerTest extends AbstractDirectiveHandlerIntegra
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_include.txt", null);
+        assertFilePreprocessing("directive_include.txt", null, null);
     }
 
     @Test

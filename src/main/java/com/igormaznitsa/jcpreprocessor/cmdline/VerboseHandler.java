@@ -11,12 +11,14 @@ public class VerboseHandler implements CommandLineHandler {
     }
 
     public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+        boolean result = false;
+        
         if (ARG_NAME.equalsIgnoreCase(argument)){
             configurator.setVerbose(true);
-            return true;
-        } else {
-            return false;
+            result = true;
         }
+        
+        return result;
     }
 
     public String getKeyName() {

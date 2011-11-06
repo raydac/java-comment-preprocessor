@@ -3,6 +3,7 @@ package com.igormaznitsa.jcpreprocessor.directives;
 public enum DirectiveArgumentType {
     NONE(""),
     STRING("STRING"),
+    TAIL("TAIL"),
     BOOLEAN("BOOLEAN"),
     VARNAME("VAR"),
     EXPRESSTION("EXPR"),

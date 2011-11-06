@@ -3,11 +3,12 @@ package com.igormaznitsa.jcpreprocessor.context;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
+import com.igormaznitsa.jcpreprocessor.logger.PreprocessorLogger;
+import com.igormaznitsa.jcpreprocessor.logger.SystemOutLogger;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public final class PreprocessorContext {
+public class PreprocessorContext {
 
     public static interface SpecialVariableProcessor {
         String[] getVariableNames();
@@ -34,8 +35,6 @@ public final class PreprocessorContext {
     private boolean clearDestinationDirectoryBefore = true;
     private boolean fileOutputDisabled = false;
 
-    private PrintStream normalOutStream = System.out;
-    private PrintStream errorOutStream = System.err;
     private String sourceDirectory;
     private String destinationDirectory;
     private File destinationDirectoryFile;
@@ -50,14 +49,17 @@ public final class PreprocessorContext {
     private final Map<String, SpecialVariableProcessor> specialVariableProcessors = new HashMap<String, SpecialVariableProcessor>();
     private final Map<String,Object> sharedResources = new HashMap<String,Object>();
     
+    private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
+    
     public PreprocessorContext() {
-        normalOutStream = System.out;
-        errorOutStream = System.err;
         setSourceDirectory(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
-
         registerSpecialVariableProcessor(new JCPSpecialVariables());
     }
 
+    public void setPreprocessorLogger(final PreprocessorLogger logger){
+        preprocessorLogger = logger;
+    }
+    
     private void registerSpecialVariableProcessor(final SpecialVariableProcessor processor) {
         if (processor == null) {
             throw new NullPointerException("Processor is null");
@@ -75,30 +77,26 @@ public final class PreprocessorContext {
     }
 
     public void info(final String text) {
-        if (text == null || normalOutStream == null) {
+        
+        if (text == null || preprocessorLogger == null) {
             return;
         }
         
-        normalOutStream.print("INFO: ");
-        normalOutStream.println(text);
+        preprocessorLogger.info(text);
     }
 
     public void error(final String text) {
-        if (text == null || errorOutStream == null) {
+        if (text == null || preprocessorLogger == null) {
             return;
         }
-
-        errorOutStream.print("ERROR: ");
-        errorOutStream.println(text);
+        preprocessorLogger.error(text);
     }
 
     public void warning(final String text) {
-        if (text == null || errorOutStream == null) {
+        if (text == null || preprocessorLogger == null) {
             return;
         }
-
-        normalOutStream.print("WARNING: ");
-        normalOutStream.println(text);
+        preprocessorLogger.warning(text);
     }
     
     public PreprocessorContext setRemovingComments(final boolean removingComments) {
@@ -238,16 +236,6 @@ public final class PreprocessorContext {
 
     public boolean doesClearDestinationDirBefore() {
         return this.clearDestinationDirectoryBefore;
-    }
-
-    public PreprocessorContext setNormalOutStream(final PrintStream stream) {
-        normalOutStream = stream;
-        return this;
-    }
-
-    public PreprocessorContext setErrorOutStream(final PrintStream stream) {
-        errorOutStream = stream;
-        return this;
     }
 
     public PreprocessorContext setLocalVariable(final String name, final Value value) {
@@ -398,14 +386,6 @@ public final class PreprocessorContext {
 
     public String getCharacterEncoding() {
         return characterEncoding;
-    }
-
-    public PrintStream getInfoPrintStream() {
-        return normalOutStream;
-    }
-
-    public PrintStream getErrorPrintStream() {
-        return errorOutStream;
     }
 
     public File makeDestinationFile(final String file) {

@@ -13,7 +13,7 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public DirectiveArgumentType getArgumentType() {
-        return DirectiveArgumentType.STRING;
+        return DirectiveArgumentType.TAIL;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
-        configurator.info("--> " + PreprocessorUtils.processMacroses(string.trim(), configurator, state));
+        configurator.info(PreprocessorUtils.processMacroses(string.trim(), configurator, state));
         return AfterProcessingBehaviour.PROCESSED;
     }
 }

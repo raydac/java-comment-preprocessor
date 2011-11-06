@@ -1,7 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import org.junit.Test;
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import static org.junit.Assert.*;
 
 public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrationTest{
@@ -10,7 +9,7 @@ public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     
     @Override
     public void testExecution() throws Exception {
-        final PreprocessorContext context = assertFilePreprocessing("directive_outdir.txt", null);
+        assertFilePreprocessing("directive_outdir.txt", null, null);
     }
 
     @Test

@@ -9,7 +9,7 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerI
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_prefixpostfix.txt", null);
+        assertFilePreprocessing("directive_prefixpostfix.txt", null, null);
     }
 
     @Test

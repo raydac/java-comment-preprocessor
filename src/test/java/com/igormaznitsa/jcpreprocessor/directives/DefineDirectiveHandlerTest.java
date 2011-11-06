@@ -1,6 +1,5 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -10,7 +9,7 @@ public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     
     @Override
     public void testExecution() throws Exception {
-        final PreprocessorContext context = assertFilePreprocessing("directive_define.txt", null);
+        assertFilePreprocessing("directive_define.txt", null, null);
     }
 
     @Test

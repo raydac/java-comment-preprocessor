@@ -4,62 +4,65 @@ import java.io.File;
 
 public class PreprocessorException extends Exception {
     private static final long serialVersionUID = 2857499664112391862L;
-
-    private final File rootProcessingFile;
-    private final File processingFile;
     private final String processingString;
-    private final int stringIndex;
 
-    public PreprocessorException(final String message, 
-            final File rootProcessingFile, 
-            final File processingFile, 
-            final String processingString, 
-            final int processingStringIndex, 
-            final Throwable cause) {
+    private final FilePositionInfo [] callStack;
+    
+    public PreprocessorException(final String message, final String processinText, final FilePositionInfo [] callStack, final Throwable cause) {
         super(message, cause);
-        this.rootProcessingFile = rootProcessingFile;
-        this.processingFile = processingFile;
-        this.processingString = processingString;
-        this.stringIndex = processingStringIndex;
+        
+        this.processingString = processinText;
+        this.callStack = callStack;
     }
 
     public File getRootFile() {
-        return rootProcessingFile;
+        if (callStack.length==0)
+            return null;
+        else
+            return callStack[callStack.length-1].getFile();
     }
 
     public File getProcessingFile() {
-        return processingFile;
+        if (callStack.length==0)
+            return null;
+        else 
+        return callStack[0].getFile();
     }
 
     public int getStringIndex() {
-        return stringIndex;
+        if (callStack.length ==0){
+            return -1;
+        } else {
+            return callStack[0].getStringIndex()+1;
+        }
     }
 
     public String getProcessingString() {
         return processingString;
     }
 
-    private static String getFilePath(final File file) {
-        if (file == null) {
-            return "null";
-        } else {
-            return file.getAbsolutePath();
-        }
-    }
-
     private static String fieldText(final String name, final String text) {
         return '[' + name + '=' + text + ']';
     }
 
+    private String makeCallStackAsString(){
+        final StringBuilder result = new StringBuilder();
+        for(int i=0;i<callStack.length;i++){
+            if (i>0){
+                result.append("<-");
+            }
+            result.append(callStack[i].toString());
+        }
+        return result.toString();
+    }
+    
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
         result.append(getMessage());
-        result.append(fieldText("root", getFilePath(rootProcessingFile)));
-        result.append(fieldText("processing", getFilePath(processingFile)));
-        result.append(fieldText("str", Integer.toString(stringIndex)));
-        result.append(fieldText("txt", processingString));
+        result.append(processingString);
+        result.append('[').append(makeCallStackAsString()).append(']');
 
         return result.toString();
     }

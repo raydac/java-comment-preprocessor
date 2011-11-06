@@ -1,5 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.containers;
 
+import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.utils.ResetablePrinter;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.BufferedWriter;
@@ -354,5 +356,15 @@ public final class PreprocessingState {
             } catch (IOException ex) {
             }
         }
+    }
+    
+    public PreprocessorException makeException(final String message, final String text, final Throwable cause) {
+        final FilePositionInfo [] stack = new FilePositionInfo[fileStack.size()];
+        for(int i=0;i<fileStack.size();i++){
+            final TextFileDataContainer fileContainer = fileStack.get(i);
+            stack[i] = new FilePositionInfo(fileContainer.getFile(),fileContainer.getNextStringIndex()-1);
+        }
+        
+        return new PreprocessorException(message, text, stack, cause);
     }
 }

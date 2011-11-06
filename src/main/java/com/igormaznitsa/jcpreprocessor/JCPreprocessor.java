@@ -17,6 +17,7 @@ import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.ExcludeIfDirectiveHandler;
+import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -76,22 +77,18 @@ public class JCPreprocessor {
         for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
-            try {
-                final Value val = Expression.eval(condition, context, null);
+            final Value val = Expression.eval(condition, context, null);
 
-                if (val == null) {
-                    throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, file, file, condition, item.getStringIndex() - 1, null);
-                }
+            if (val == null) {
+                throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, null);
+            }
 
-                if (val.getType() != ValueType.BOOLEAN) {
-                    throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", file, file, condition, item.getStringIndex() - 1, null);
-                }
-                
-                if (val.asBoolean().booleanValue()){
-                    item.getFileInfoContainer().setExcluded(true);
-                }
-            } catch (Exception ex) {
-                throw new PreprocessorException("Exception at at " + DIRECTIVE_NAME + " is not a boolean one", file, file, condition, item.getStringIndex() - 1, ex);
+            if (val.getType() != ValueType.BOOLEAN) {
+                throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, null);
+            }
+
+            if (val.asBoolean().booleanValue()) {
+                item.getFileInfoContainer().setExcluded(true);
             }
         }
     }
@@ -113,7 +110,7 @@ public class JCPreprocessor {
             if (fileRef.isExcludedFromPreprocessing()) {
                 continue;
             } else if (fileRef.isForCopyOnly()) {
-                if (!context.isFileOutputDisabled()){
+                if (!context.isFileOutputDisabled()) {
                     PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
                 }
                 continue;
@@ -136,10 +133,10 @@ public class JCPreprocessor {
             }
         }
         if (!destinationExistsAndDirectory) {
-                if (!destination.mkdirs()) {
-                    throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
-                }
+            if (!destination.mkdirs()) {
+                throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
             }
+        }
     }
 
     private Collection<FileInfoContainer> findAllFilesToBePreprocessed(final File[] srcDirs) throws IOException {
@@ -199,8 +196,9 @@ public class JCPreprocessor {
 
         try {
             preprocessor.execute();
-        } catch (Exception ex) {
-            cfg.error(ex.toString());
+        } catch (Exception unexpected) {
+            cfg.error(unexpected.toString());
+            unexpected.printStackTrace();
             System.exit(1);
         }
 
