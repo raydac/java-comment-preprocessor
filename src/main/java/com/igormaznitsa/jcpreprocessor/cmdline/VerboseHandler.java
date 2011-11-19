@@ -7,7 +7,7 @@ public class VerboseHandler implements CommandLineHandler {
     private static final String ARG_NAME = "/V";
     
     public String getDescription() {
-        return "make the preprocessor to out additional info about its operations";
+        return "switch on the verbose level";
     }
 
     public boolean processArgument(final String argument, final PreprocessorContext configurator) {

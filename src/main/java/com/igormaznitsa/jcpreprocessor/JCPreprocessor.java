@@ -77,10 +77,13 @@ public class JCPreprocessor {
         for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
-            final Value val = Expression.eval(condition, context, null);
-
-            if (val == null) {
-                throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, null);
+            
+            Value val = null;
+            
+            try {
+             val = Expression.evalExpression(condition, context, null);
+            }catch(IllegalArgumentException ex) {
+                throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, ex);
             }
 
             if (val.getType() != ValueType.BOOLEAN) {
@@ -274,17 +277,23 @@ public class JCPreprocessor {
                 if (varValue.startsWith("@")) {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
-                    evaluatedValue = Expression.eval(varValue, context, null);
-                    if (evaluatedValue == null || evaluatedValue.getType() != ValueType.STRING) {
+                    try {
+                    evaluatedValue = Expression.evalExpression(varValue, context, null);
+                    if (evaluatedValue.getType() != ValueType.STRING) {
                         throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
                     }
+                    }catch(IllegalArgumentException ex){
+                         throw new IOException("You have wrong expression format in " + cfgFile.getPath() + " at line:" + strCounter);
+                    }
+
                     varValue = (String) evaluatedValue.getValue();
 
                     loadVariablesFromFile(varValue, context);
                 } else {
                     // This is a value
-                    evaluatedValue = Expression.eval(varValue, context, null);
-                    if (evaluatedValue == null) {
+                    try {
+                    evaluatedValue = Expression.evalExpression(varValue, context, null);
+                    }catch(IllegalArgumentException ex){
                         throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
                     }
                 }

@@ -1,16 +1,18 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.File;
 
 public final class OperatorOR extends AbstractOperator {
 
     @Override
-    public boolean isUnary() {
-        return false;
+    public int getArity() {
+        return 2;
+    }
+
+    @Override
+    public String getReference() {
+        return "fake reference";
     }
 
     @Override
@@ -18,41 +20,15 @@ public final class OperatorOR extends AbstractOperator {
         return "||";
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-        if (!stack.areThereTwoValuesBefore(index)) {
-            throw new IllegalArgumentException("Operation \'||\' needs two operands");
-        }
-
-        Value _val0 = (Value) stack.getItemAtPosition(index - 2);
-        Value _val1 = (Value) stack.getItemAtPosition(index - 1);
-
-        index -= 2;
-        stack.removeItemAt(index);
-        stack.removeItemAt(index);
-
-        if (_val0.getType() != _val1.getType()) {
-            throw new RuntimeException("Different value types detected");
-        }
-
-        switch (_val0.getType()) {
-            case BOOLEAN: {
-                Boolean result = ((Boolean) _val0.getValue()).booleanValue() || ((Boolean) _val1.getValue()).booleanValue();
-                stack.setItemAtPosition(index, Value.valueOf(result));
-            }
-
-            break;
-            case INT: {
-                Long result = ((Long) _val0.getValue()).longValue() | ((Long) _val1.getValue()).longValue();
-                stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(result)));
-            }
-            break;
-            default:
-                throw new IllegalArgumentException("Operation || processes only the BOOLEAN or the INTEGER types");
-        }
-
+    public Value executeIntInt(final Value arg1, final Value arg2) {
+        return Value.valueOf(Long.valueOf(arg1.asLong().longValue() | arg2.asLong().longValue()));
+    }
+    
+    public Value executeBoolBool(final Value arg1, final Value arg2) {
+        return Value.valueOf(Boolean.valueOf(arg1.asBoolean().booleanValue() || arg2.asBoolean().booleanValue()));
     }
 
-    public int getPriority() {
-        return 0;
+     public ExpressionStackItemPriority getPriority() {
+        return ExpressionStackItemPriority.LOGICAL;
     }
 }

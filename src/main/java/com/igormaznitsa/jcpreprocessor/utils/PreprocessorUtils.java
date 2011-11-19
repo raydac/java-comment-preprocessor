@@ -211,10 +211,7 @@ public enum PreprocessorUtils {
                     final String macrosBody = result.substring(beginIndex + 3, position);
                     final String rightPart = result.substring(position + 3);
 
-                    final Value value = Expression.eval(macrosBody, context, state);
-                    if (value == null) {
-                        throw new RuntimeException("Wrong macros expression [" + macrosBody + ']');
-                    }
+                    final Value value = Expression.evalExpression(macrosBody, context,state);
 
                     result = leftPart + value.toString() + rightPart;
                 } else {

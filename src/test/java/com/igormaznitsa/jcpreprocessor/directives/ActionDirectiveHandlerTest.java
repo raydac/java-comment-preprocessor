@@ -24,7 +24,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
         final Value val3 = Value.valueOf(7L);
         final Value val4 = Value.valueOf(11L);
         final Value val5 = Value.valueOf(Boolean.TRUE);
-        final Value val6 = Value.valueOf("hello");
+        final Value val6 = Value.valueOf("hello,");
         
         verify(mockup).processAction(eq(new Value[]{val1,val2,val3,val4,val5,val6}), any(PreprocessingState.class));
     }

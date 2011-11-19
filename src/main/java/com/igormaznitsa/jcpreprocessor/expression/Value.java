@@ -6,7 +6,12 @@ public final class Value implements ExpressionStackItem {
 
     public static final Value BOOLEAN_TRUE = new Value(Boolean.TRUE);
     public static final Value BOOLEAN_FALSE = new Value(Boolean.FALSE);
-    public static final Value INT_ZERO = new Value(Long.valueOf(0));
+    
+    public static final Value INT_ZERO = new Value(Long.valueOf(0L));
+    public static final Value INT_ONE = new Value(Long.valueOf(1L));
+    public static final Value INT_TWO = new Value(Long.valueOf(2L));
+    public static final Value INT_THREE = new Value(Long.valueOf(3L));
+    public static final Value INT_FOUR = new Value(Long.valueOf(4L));
     
     private final Object value;
     private final ValueType type;
@@ -186,22 +191,23 @@ public final class Value implements ExpressionStackItem {
         return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
     }
 
+    @Override
     public String toString() {
         switch (type) {
             case BOOLEAN: {
-                return "" + ((Boolean) value).booleanValue();
+                return asBoolean().toString();
             }
             case INT: {
-                return "" + ((Long) value).longValue();
+                return asLong().toString();
             }
             case UNKNOWN: {
-                return "";
+                return "<UNKNOWN>";
             }
             case FLOAT: {
-                return "" + ((Float) value).floatValue();
+                return asFloat().toString();
             }
             case STRING: {
-                return "" + (String) value;
+                return asString();
             }
         }
         return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
@@ -211,8 +217,8 @@ public final class Value implements ExpressionStackItem {
         return ExpressionStackItemType.VALUE;
     }
 
-    public int getPriority() {
-        return 6;
+    public ExpressionStackItemPriority getPriority() {
+        return ExpressionStackItemPriority.VALUE;
     }
 
     @Override
@@ -237,4 +243,5 @@ public final class Value implements ExpressionStackItem {
     public int hashCode() {
         return this.value.hashCode();
     }
-}
+    
+ }

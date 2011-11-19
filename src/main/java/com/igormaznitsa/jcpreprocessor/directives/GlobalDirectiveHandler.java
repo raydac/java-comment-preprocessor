@@ -47,7 +47,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         final String name = splitted[0].trim();
-        final Value value = Expression.eval(splitted[1].trim(), context,state);
+        final Value value = Expression.evalExpression(splitted[1].trim(), context,state);
 
         if (value == null) {
             throw new RuntimeException("Unsupported expression result");

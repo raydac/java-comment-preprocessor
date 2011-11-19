@@ -26,7 +26,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     
     @Override
     public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context) {
-        final Value includedFilePath = Expression.eval(string, context,state);
+        final Value includedFilePath = Expression.evalExpression(string, context,state);
 
         if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");

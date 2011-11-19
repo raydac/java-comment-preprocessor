@@ -27,7 +27,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
         // To end processing the file processing immediatly if the value is true
-        final Value condition = Expression.eval(string,context,state);
+        final Value condition = Expression.evalExpression(string,context,state);
         if (condition == null || condition.getType() != ValueType.BOOLEAN) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"exitif needs a boolean condition");
         }

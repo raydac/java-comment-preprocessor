@@ -1,16 +1,18 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.File;
 
 public final class OperatorMOD extends AbstractOperator {
 
     @Override
-    public boolean isUnary() {
-        return false;
+    public int getArity() {
+        return 2;
+    }
+
+    @Override
+    public String getReference() {
+        return "fake reference";
     }
 
     @Override
@@ -18,67 +20,23 @@ public final class OperatorMOD extends AbstractOperator {
         return "%";
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-        if (!stack.areThereTwoValuesBefore(index)) throw new IllegalStateException("Operation \'%\' needs two operands");
-
-        Value _val0 = (Value) stack.getItemAtPosition(index - 2);
-        Value _val1 = (Value) stack.getItemAtPosition(index - 1);
-
-        index = index - 2;
-        stack.removeItemAt(index);
-        stack.removeItemAt(index);
-
-        if (_val0 == null || _val1 == null) throw new IllegalStateException("Operation \'%\' needs two operands");
-        if (_val0.getType() == ValueType.STRING || _val1.getType() == ValueType.STRING)
-        {
-            throw new IllegalArgumentException("You can't use \"%\" operation with the STRING type");
-        }
-        else
-        {
-            switch (_val0.getType())
-            {
-                case BOOLEAN:
-                    {
-                        throw new IllegalArgumentException("Operation \"%\" doesn't work with the BOOLEAN type and any other exclude STRING");
-                    }
-
-                case FLOAT:
-                    {
-                        float f_result;
-                        if (_val0.getType() == _val1.getType())
-                        {
-                            f_result = ((Float) _val0.getValue()).floatValue() % ((Float) _val1.getValue()).floatValue();
-                        }
-                        else
-                        {
-                            f_result = ((Float) _val0.getValue()).floatValue() % ((Long) _val1.getValue()).longValue();
-                        }
-                        stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
-                    }
-                    ;
-                    break;
-
-                case INT:
-                    {
-                        if (_val0.getType() == _val1.getType())
-                        {
-                            long i_result = ((Long) _val0.getValue()).longValue() % ((Long) _val1.getValue()).longValue();
-                            stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
-                        }
-                        else
-                        {
-                            float f_result = ((Long) _val0.getValue()).longValue() % ((Float) _val1.getValue()).floatValue();
-                            stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
-                        }
-                    }
-                    ;
-                    break;
-            }
-        }
-   }
-
-    public int getPriority() {
-        return 3;
+    public Value executeIntInt(final Value arg1, final Value arg2) {
+        return Value.valueOf(Long.valueOf(arg1.asLong().longValue() % arg2.asLong().longValue()));
     }
     
+    public Value executeIntFloat(final Value arg1, final Value arg2) {
+        return Value.valueOf(Float.valueOf(arg1.asLong().floatValue() % arg2.asFloat().floatValue()));
+    }
+    
+    public Value executeFloatInt(final Value arg1, final Value arg2) {
+         return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() % arg2.asLong().floatValue()));
+    }
+    
+    public Value executeFloatFloat(final Value arg1, final Value arg2) {
+        return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() % arg2.asFloat().floatValue()));
+    }
+
+    public ExpressionStackItemPriority getPriority() {
+        return ExpressionStackItemPriority.ARITHMETIC_MUL_DIV_MOD;
+    }
 }

@@ -26,7 +26,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
     
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
-        final Value dirName = Expression.eval(string, context,state);
+        final Value dirName = Expression.evalExpression(string, context,state);
 
         if (dirName == null || dirName.getType() != ValueType.STRING) {
             throw new RuntimeException(DIRECTIVE_PREFIX+"outname needs a string expression");

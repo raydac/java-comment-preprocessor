@@ -37,7 +37,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         final String name = splitted[0];
-        final Value value = Expression.eval(splitted[1], context, state);
+        final Value value = Expression.evalExpression(splitted[1], context, state);
 
         if (value == null) {
             throw new RuntimeException("Expression can't be calculated");

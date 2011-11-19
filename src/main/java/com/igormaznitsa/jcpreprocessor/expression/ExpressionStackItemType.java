@@ -4,5 +4,5 @@ public enum ExpressionStackItemType {
     FUNCTION,
     OPERATOR,
     VALUE,
-    DELIMITER
+    VARIABLE;
 }

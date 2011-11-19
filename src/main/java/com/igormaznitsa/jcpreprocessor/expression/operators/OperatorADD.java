@@ -1,16 +1,18 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.expression.ValueType;
-import java.io.File;
 
 public final class OperatorADD extends AbstractOperator {
 
     @Override
-    public boolean isUnary() {
-        return false;
+    public int getArity() {
+        return 2;
+    }
+
+    @Override
+    public String getReference() {
+        return "it allows to add two operands of compatible types";
     }
 
     @Override
@@ -18,125 +20,33 @@ public final class OperatorADD extends AbstractOperator {
         return "+";
     }
 
-    public void execute(PreprocessorContext context, Expression stack, int index) {
-        if (!stack.areThereTwoValuesBefore(index)) throw new IllegalStateException("Operation \'+\' needs two operands");
-
-        Value _val0 = (Value) stack.getItemAtPosition(index - 2);
-        Value _val1 = (Value) stack.getItemAtPosition(index - 1);
-
-        index -= 2;
-        stack.removeItemAt(index);
-        stack.removeItemAt(index);
-
-        if (_val0.getType() == ValueType.STRING || _val1.getType() == ValueType.STRING)
-        {
-            String s_val0 = "", s_val1 = "";
-            if (_val0.getType() != ValueType.STRING)
-            {
-                switch (_val0.getType())
-                {
-                    case BOOLEAN:
-                        {
-                            s_val0 = "" + ((Boolean) _val0.getValue()).booleanValue();
-                        }
-                        ;
-                        break;
-                    case INT:
-                        {
-                            s_val0 = "" + ((Long) _val0.getValue()).longValue();
-                        }
-                        ;
-                        break;
-                    case FLOAT:
-                        {
-                            s_val0 = "" + ((Float) _val0.getValue()).floatValue();
-                        }
-                        ;
-                        break;
-                }
-            }
-            else
-            {
-                s_val0 = (String) _val0.getValue();
-            }
-
-            if (_val1.getType() != ValueType.STRING)
-            {
-                switch (_val1.getType())
-                {
-                    case BOOLEAN:
-                        {
-                            s_val1 = "" + ((Boolean) _val1.getValue()).booleanValue();
-                        }
-                        ;
-                        break;
-                    case INT:
-                        {
-                            s_val1 = "" + ((Long) _val1.getValue()).longValue();
-                        }
-                        ;
-                        break;
-                    case FLOAT:
-                        {
-                            s_val1 = "" + ((Float) _val1.getValue()).floatValue();
-                        }
-                        ;
-                        break;
-                }
-            }
-            else
-            {
-                s_val1 = (String) _val1.getValue();
-            }
-
-            s_val0 = s_val0.concat(s_val1);
-            stack.setItemAtPosition(index, Value.valueOf(s_val0));
-        }
-        else
-        {
-            switch (_val0.getType())
-            {
-                case BOOLEAN:
-                    {
-                        throw new IllegalArgumentException("Operation \"+\" doesn't work with the BOOLEAN type and any other exclude STRING");
-                    }
-
-                case FLOAT:
-                    {
-                        float f_result;
-                        if (_val0.getType() == _val1.getType())
-                        {
-                            f_result = ((Float) _val0.getValue()).floatValue() + ((Float) _val1.getValue()).floatValue();
-                        }
-                        else
-                        {
-                            f_result = ((Float) _val0.getValue()).floatValue() + ((Long) _val1.getValue()).longValue();
-                        }
-                        stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
-                    }
-                    ;
-                    break;
-                case INT:
-                    {
-                        if (_val0.getType() == _val1.getType())
-                        {
-                            long i_result = ((Long) _val0.getValue()).longValue() + ((Long) _val1.getValue()).longValue();
-                            stack.setItemAtPosition(index, Value.valueOf(Long.valueOf(i_result)));
-                        }
-                        else
-                        {
-                            float f_result = ((Long) _val0.getValue()).longValue() + ((Float) _val1.getValue()).floatValue();
-                            stack.setItemAtPosition(index, Value.valueOf(Float.valueOf(f_result)));
-                        }
-                    }
-                    ;
-                    break;
-            }
-        }
+    public Value executeIntInt(final Value arg1, final Value arg2) {
+        return Value.valueOf(Long.valueOf(arg1.asLong().longValue()+arg2.asLong().longValue()));
     }
+    
+    public Value executeFloatFloat(final Value arg1, final Value arg2) {
+        return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue()+arg2.asFloat().floatValue()));
+    }
+    
+    public Value executeIntFloat(final Value arg1, final Value arg2) {
+        return Value.valueOf(Float.valueOf(arg1.asLong().floatValue()+arg2.asFloat().floatValue()));
+    }
+    
+    public Value executeFloatInt(final Value arg1, final Value arg2) {
+        return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue()+arg2.asLong().floatValue()));
+    }
+    
+    public Value executeStrAny(final Value arg1, final Value arg2) {
+        return Value.valueOf(arg1.asString()+arg2.toString());
+    }
+    
+    public Value executeAnyStr(final Value arg1, final Value arg2) {
+        return Value.valueOf(arg1.toString()+arg2.asString());
+    }
+    
 
-    public int getPriority() {
-        return 2;
+    public ExpressionStackItemPriority getPriority() {
+        return ExpressionStackItemPriority.ARITHMETIC_ADD_SUB;
     }
     
 }

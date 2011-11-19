@@ -106,7 +106,7 @@ public class FileInfoContainer {
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
                 if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context,true)) {
+                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context, true)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -120,18 +120,18 @@ public class FileInfoContainer {
         }
 
         if (!preprocessingState.isIfStackEmpty()) {
-           final TextFileDataContainer lastIf = preprocessingState.peekIf();
+            final TextFileDataContainer lastIf = preprocessingState.peekIf();
             throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
                     "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
         }
-        
+
         return preprocessingState.popAllExcludeIfInfoData();
     }
-    
+
     public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
         context.clearLocalVariables();
         final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, context.getCharacterEncoding());
-        
+
         String trimmedProcessingString = null;
         try {
             while (true) {
@@ -150,13 +150,13 @@ public class FileInfoContainer {
                 }
 
                 trimmedProcessingString = nonTrimmedProcessingString.trim();
-                
+
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
                 String stringToBeProcessed = trimmedProcessingString;
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), context,false)) {
+                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), context, false)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
                             continue;
@@ -167,9 +167,9 @@ public class FileInfoContainer {
 
                 if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
                     final boolean startsWithTwoDollars = trimmedProcessingString.startsWith("//$$");
-    
+
                     if (!startsWithTwoDollars) {
-                        stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context,preprocessingState);
+                        stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context, preprocessingState);
                     }
 
                     if (startsWithTwoDollars) {
@@ -181,7 +181,7 @@ public class FileInfoContainer {
                         printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
                         preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
                     } else {
-                        // Just string :)
+                        // Just string
                         final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
                         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
@@ -196,7 +196,7 @@ public class FileInfoContainer {
 
             }
         } catch (RuntimeException unexpected) {
-            throw state.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
+                throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
         }
 
         if (!preprocessingState.isIfStackEmpty()) {
@@ -210,7 +210,7 @@ public class FileInfoContainer {
                     "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
         }
 
-        if (!context.isFileOutputDisabled()){
+        if (!context.isFileOutputDisabled()) {
             final File outFile = context.makeDestinationFile(getDestinationFilePath());
             preprocessingState.saveBuffersToFile(outFile);
         }
@@ -227,34 +227,36 @@ public class FileInfoContainer {
 
     private boolean checkDirectiveArgumentRoughly(final AbstractDirectiveHandler directive, final String rest) {
         final DirectiveArgumentType argument = directive.getArgumentType();
-        
+
         boolean result;
         final String trimmedRest = rest.trim();
-        
-        switch(argument){
-            case NONE : {
+
+        switch (argument) {
+            case NONE: {
                 result = trimmedRest.isEmpty();
-            }break;
-            case ONOFF : {
+            }
+            break;
+            case ONOFF: {
                 if (trimmedRest.isEmpty()) {
                     result = false;
                 } else {
                     final char firstChar = rest.charAt(0);
                     result = firstChar == '+' || firstChar == '-';
-                    if (rest.length()>1){
+                    if (rest.length() > 1) {
                         result = result && Character.isSpaceChar(rest.charAt(1));
-                    } 
+                    }
                 }
-            }break;
-            default:
-            {
+            }
+            break;
+            default: {
                 result = !trimmedRest.isEmpty() && Character.isSpaceChar(rest.charAt(0));
-            }break;
+            }
+            break;
         }
-        
+
         return result;
     }
-    
+
     protected AfterProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
         final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
@@ -264,7 +266,7 @@ public class FileInfoContainer {
                 if ((firstPass && !handler.isGlobalPhaseAllowed()) || (!firstPass && !handler.isPreprocessingPhaseAllowed())) {
                     return AfterProcessingBehaviour.READ_NEXT_LINE;
                 }
-                
+
                 final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
 
                 final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);

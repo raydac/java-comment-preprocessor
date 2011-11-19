@@ -35,7 +35,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
                         throw new IllegalArgumentException("Duplicated global definition detected [" + value + ']');
                     }
 
-                    final Value resultVal = Expression.eval(expression, context, null);
+                    final Value resultVal = Expression.evalExpression(expression, context, null);
                     context.setGlobalVariable(value, resultVal, null);
                     result = true;
                 }
