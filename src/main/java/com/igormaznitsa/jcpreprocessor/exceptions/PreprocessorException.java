@@ -60,9 +60,8 @@ public class PreprocessorException extends Exception {
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
-        result.append(getMessage());
-        result.append(processingString);
-        result.append('[').append(makeCallStackAsString()).append(']');
+        result.append(getMessage()).append(' ').append(processingString).
+        append(' ').append('[').append(makeCallStackAsString()).append(']');
 
         return result.toString();
     }

@@ -180,6 +180,62 @@ public class ExpressionParserTest {
     }
 
     @Test
+    public void testParsing_deepIncludingBrackets() throws Exception {
+        final ExpressionParser parser = ExpressionParser.getInstance();
+        final ExpressionTree tree = parser.parse("((((((1+2))))))", null);
+    
+        final ExpressionTreeElement root = tree.getRoot();
+        
+        assertEquals("Root must be ADD",AbstractOperator.findForClass(OperatorADD.class),root.getItem());
+        assertEquals("Left must be 1",Value.INT_ONE,root.getElementAt(0).getItem());
+        assertEquals("Left must be 2",Value.INT_TWO,root.getElementAt(1).getItem());
+    }
+
+    @Test
+    public void testParsing_insideFunctionCall() throws Exception {
+        final ExpressionParser parser = ExpressionParser.getInstance();
+        final ExpressionTree tree = parser.parse("xml_elementAt(xml_elementAt(1,2),3)", null);
+        
+        final AbstractFunction xmlElementAt = AbstractFunction.findForName("xml_elementat");
+        assertNotNull(xmlElementAt);
+        
+        final ExpressionTreeElement root = tree.getRoot();
+        assertEquals("Must be xml_elementAt", xmlElementAt, root.getItem());
+
+        final ExpressionTreeElement left = root.getElementAt(0);
+        final ExpressionTreeElement right = root.getElementAt(1);
+        
+        assertEquals("Must be 3", Value.INT_THREE, right.getItem());
+        assertEquals("Must be xml_elementAt", xmlElementAt, left.getItem());
+        assertEquals("Must be 1", Value.INT_ONE, left.getElementAt(0).getItem());
+        assertEquals("Must be 2", Value.INT_TWO, left.getElementAt(1).getItem());
+    }
+    
+    @Test
+    public void testParsing_notEasyBrackets() throws Exception {
+        final ExpressionParser parser = ExpressionParser.getInstance();
+        final ExpressionTree tree = parser.parse("(1+2*(3-4))", null);
+    
+        final OperatorADD ADD = AbstractOperator.findForClass(OperatorADD.class);
+        final OperatorSUB SUB = AbstractOperator.findForClass(OperatorSUB.class);
+        final OperatorMUL MUL = AbstractOperator.findForClass(OperatorMUL.class);
+        
+        final ExpressionTreeElement root = tree.getRoot();
+        
+        assertEquals("Root must be ADD",ADD,root.getItem());
+        assertEquals("Left must be 1", Value.INT_ONE, root.getElementAt(0).getItem());
+
+        final ExpressionTreeElement right = root.getElementAt(1);
+        assertEquals("Right must be MUL", MUL, right.getItem());
+        assertEquals("Right-left must be 2", Value.INT_TWO, right.getElementAt(0).getItem());
+        
+        final ExpressionTreeElement rightRight = right.getElementAt(1);
+        assertEquals("Right-right must be SUB", SUB, rightRight.getItem());
+        assertEquals("Right-right-left must be 3", Value.INT_THREE, rightRight.getElementAt(0).getItem());
+        assertEquals("Right-right-right must be 4", Value.INT_FOUR, rightRight.getElementAt(1).getItem());
+    }
+
+    @Test
     public void testParsing_emptyBrakes() throws Exception {
         final ExpressionParser parser = ExpressionParser.getInstance();
         final ExpressionTree tree = parser.parse("()", null);

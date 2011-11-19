@@ -196,7 +196,8 @@ public class FileInfoContainer {
 
             }
         } catch (RuntimeException unexpected) {
-                throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
+            final String message = unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
+            throw preprocessingState.makeException(message, trimmedProcessingString, unexpected);
         }
 
         if (!preprocessingState.isIfStackEmpty()) {
