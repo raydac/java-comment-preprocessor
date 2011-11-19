@@ -79,14 +79,14 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         }
     }
 
-    private PreprocessorContext preprocessStringAtGlobalPhase(final String string, final List<ExcludeIfInfo> excludeInfoList) throws IOException,PreprocessorException {
-        final List<String> parsedText = parseStringForLines(string);
+    private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException,PreprocessorException {
+        final List<String> parsedText = parseStringForLines(encoding);
         final PreprocessorContext context = new PreprocessorContext();
         context.setFileOutputDisabled(true);
 
         final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_name", false);
         final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), 0);
-        final PreprocessingState state = new PreprocessingState(reference, textContainer, string);
+        final PreprocessingState state = new PreprocessingState(reference, textContainer, "UTF8", "UTF8");
 
         final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
         
@@ -140,7 +140,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         context.setPreprocessorExtension(extension);
 
         final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
-        final PreprocessingState state = new PreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8");
+        final PreprocessingState state = new PreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8", "UTF8");
 
         reference.preprocessFile(state, context);
 

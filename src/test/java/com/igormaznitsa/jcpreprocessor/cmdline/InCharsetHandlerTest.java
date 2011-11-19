@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import static org.junit.Assert.*;
 
-public class CharsetHandlerTest extends AbstractCommandLineHandlerTest {
+public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
 
-    private static final CharsetHandler HANDLER = new CharsetHandler();
+    private static final InCharsetHandler HANDLER = new InCharsetHandler();
 
     @Override
     public void testExecution() throws Exception {
@@ -17,12 +17,12 @@ public class CharsetHandlerTest extends AbstractCommandLineHandlerTest {
         assertFalse(HANDLER.processArgument("/T:", mock));
         assertFalse(HANDLER.processArgument("/t", mock));
         assertTrue(HANDLER.processArgument("/t:HELLOWORLD", mock));
-        Mockito.verify(mock).setCharacterEncoding("HELLOWORLD");
+        Mockito.verify(mock).setInCharacterEncoding("HELLOWORLD");
 
         Mockito.reset(mock);
         
         assertTrue(HANDLER.processArgument("/T:NEW", mock));
-        Mockito.verify(mock).setCharacterEncoding("NEW");
+        Mockito.verify(mock).setInCharacterEncoding("NEW");
     }
 
     @Override

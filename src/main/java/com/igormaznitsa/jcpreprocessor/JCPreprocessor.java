@@ -2,12 +2,13 @@ package com.igormaznitsa.jcpreprocessor;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.cmdline.CommandLineHandler;
-import com.igormaznitsa.jcpreprocessor.cmdline.CharsetHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.InCharsetHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.ClearDstDirectoryHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.DestinationDirectoryHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.ExcludedFileExtensionsHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.HelpHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.FileExtensionsHandler;
+import com.igormaznitsa.jcpreprocessor.cmdline.OutCharsetHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.RemoveCommentsHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.SourceDirectoryHandler;
 import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
@@ -36,7 +37,8 @@ public class JCPreprocessor {
     private static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
         new HelpHandler(),
         new VerboseHandler(),
-        new CharsetHandler(),
+        new InCharsetHandler(),
+        new OutCharsetHandler(),
         new ClearDstDirectoryHandler(),
         new SourceDirectoryHandler(),
         new DestinationDirectoryHandler(),
@@ -240,7 +242,7 @@ public class JCPreprocessor {
             throw new IOException("I can't find the file " + cfgFile.getPath());
         }
 
-        final BufferedReader fileReader = PreprocessorUtils.makeFileReader(cfgFile, context.getCharacterEncoding(), -1);
+        final BufferedReader fileReader = PreprocessorUtils.makeFileReader(cfgFile, context.getInCharacterEncoding(), -1);
         try {
             int strCounter = 0;
 

@@ -1,13 +1,11 @@
 package com.igormaznitsa.jcpreprocessor.containers;
 
-import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
 import com.igormaznitsa.jcpreprocessor.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.ByteArrayInputStream;
@@ -82,7 +80,7 @@ public class FileInfoContainer {
     }
 
     public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
-        final PreprocessingState preprocessingState = state == null ? new PreprocessingState(this, context.getCharacterEncoding()) : state;
+        final PreprocessingState preprocessingState = state == null ? new PreprocessingState(this, context.getInCharacterEncoding(), context.getOutCharacterEncoding()) : state;
 
         String trimmedProcessingString = null;
         try {
@@ -130,7 +128,7 @@ public class FileInfoContainer {
 
     public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
         context.clearLocalVariables();
-        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, context.getCharacterEncoding());
+        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, context.getInCharacterEncoding(), context.getOutCharacterEncoding());
 
         String trimmedProcessingString = null;
         try {
@@ -314,7 +312,7 @@ public class FileInfoContainer {
             throw new IOException("Can't delete the file " + file.getAbsolutePath());
         }
 
-        final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), cfg.getCharacterEncoding());
+        final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), cfg.getInCharacterEncoding());
 
         final FileWriter writer = new FileWriter(file, false);
         try {

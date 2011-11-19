@@ -20,7 +20,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
-        processLocalDefinition(string, context ,state);
+        processDefinition(string, context ,state);
         return AfterProcessingBehaviour.PROCESSED;
     }
 
@@ -39,7 +39,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         return false;
     }
     
-    private void processLocalDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    private void processDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
         if (splitted.length != 2) {
@@ -48,10 +48,6 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
         final String name = splitted[0].trim();
         final Value value = Expression.evalExpression(splitted[1].trim(), context,state);
-
-        if (value == null) {
-            throw new RuntimeException("Unsupported expression result");
-        }
 
         context.setGlobalVariable(name,value,state);
 

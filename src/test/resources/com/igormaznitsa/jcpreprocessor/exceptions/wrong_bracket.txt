@@ -1,0 +1,20 @@
+//#local test=10
+
+//#while test>0
+
+    //#local test=test-1
+
+
+//#end
+
+//#if false
+//#local hello = (1+2)/45*334)
+
+
+//#endif
+
+
+//#local hello = (
+
+
+test

@@ -42,7 +42,8 @@ public class PreprocessorContext {
     private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
     private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
     private PreprocessorExtension preprocessorExtension;
-    private String characterEncoding = DEFAULT_CHARSET;
+    private String inCharacterEncoding = DEFAULT_CHARSET;
+    private String outCharacterEncoding = DEFAULT_CHARSET;
     
     private final Map<String, Value> globalVarTable = new HashMap<String, Value>();
     private final Map<String, Value> localVarTable = new HashMap<String, Value>();
@@ -376,16 +377,28 @@ public class PreprocessorContext {
         return preprocessorExtension;
     }
 
-    public PreprocessorContext setCharacterEncoding(final String characterEncoding) {
+    public PreprocessorContext setInCharacterEncoding(final String characterEncoding) {
         if (!Charset.isSupported(characterEncoding)) {
             throw new IllegalArgumentException("Unsupported character encoding [" + characterEncoding + ']');
         }
-        this.characterEncoding = characterEncoding;
+        this.inCharacterEncoding = characterEncoding;
         return this;
     }
 
-    public String getCharacterEncoding() {
-        return characterEncoding;
+    public PreprocessorContext setOutCharacterEncoding(final String characterEncoding) {
+        if (!Charset.isSupported(characterEncoding)) {
+            throw new IllegalArgumentException("Unsupported character encoding [" + characterEncoding + ']');
+        }
+        this.outCharacterEncoding = characterEncoding;
+        return this;
+    }
+
+    public String getInCharacterEncoding() {
+        return inCharacterEncoding;
+    }
+
+    public String getOutCharacterEncoding() {
+        return outCharacterEncoding;
     }
 
     public File makeDestinationFile(final String file) {

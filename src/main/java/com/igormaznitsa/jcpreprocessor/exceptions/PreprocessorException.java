@@ -12,7 +12,7 @@ public class PreprocessorException extends Exception {
         super(message, cause);
         
         this.processingString = processinText;
-        this.callStack = callStack;
+        this.callStack = callStack == null ? new FilePositionInfo[0] : callStack.clone();
     }
 
     public File getRootFile() {
@@ -54,6 +54,10 @@ public class PreprocessorException extends Exception {
             result.append(callStack[i].toString());
         }
         return result.toString();
+    }
+    
+    public FilePositionInfo [] getFileStack(){
+        return callStack.clone();
     }
     
     @Override

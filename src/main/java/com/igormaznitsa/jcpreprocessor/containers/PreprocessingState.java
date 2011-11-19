@@ -49,7 +49,8 @@ public final class PreprocessingState {
         POSTFIX
     }
     
-    private final String globalCharacterEncoding;
+    private final String globalInCharacterEncoding;
+    private final String globalOutCharacterEncoding;
     
     private final TextFileDataContainer rootReference;
     private final FileInfoContainer rootFileInfo;
@@ -68,31 +69,39 @@ public final class PreprocessingState {
     private TextFileDataContainer activeIf;
     private TextFileDataContainer activeWhile;
     
-    public PreprocessingState(final FileInfoContainer rootFile, final String encoding) throws IOException {
+    public PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
         if (rootFile == null){
             throw new NullPointerException("The root file is null");
         }
         
-        if (encoding == null) {
-            throw new NullPointerException("Encoding is null");
+        if (inEncoding == null) {
+            throw new NullPointerException("InEncoding is null");
         }
         
-        this.globalCharacterEncoding = encoding;
+        if (outEncoding == null) {
+            throw new NullPointerException("OutEncoding is null");
+        }
+        
+        this.globalInCharacterEncoding = inEncoding;
+        this.globalOutCharacterEncoding = outEncoding;
+        
         this.rootFileInfo = rootFile;
         init();
         rootReference = openFile(rootFile.getSourceFile());
     }
 
-    public PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String encoding) throws IOException {
+    public PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) throws IOException {
         if (rootFile == null){
             throw new NullPointerException("The root file is null");
         }
         
-        if (encoding == null) {
-            throw new NullPointerException("Encoding is null");
+        if (inEncoding == null) {
+            throw new NullPointerException("InEncoding is null");
         }
         
-        this.globalCharacterEncoding = encoding;
+        this.globalInCharacterEncoding = inEncoding;
+        this.globalOutCharacterEncoding = outEncoding;
+        
         this.rootFileInfo = rootFile;
         init();
         rootReference = rootContainer;
@@ -139,7 +148,7 @@ public final class PreprocessingState {
     }
 
     public TextFileDataContainer openFile(final File file) throws IOException {
-        final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalCharacterEncoding);
+        final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding);
         final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, 0);
         fileStack.push(newContainer);
         return newContainer;
@@ -310,9 +319,9 @@ public final class PreprocessingState {
     }
 
     public void saveBuffersToStreams(final OutputStream prefix, final OutputStream normal, final OutputStream postfix) throws IOException {
-        prefixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalCharacterEncoding)));
-        normalPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalCharacterEncoding)));
-        postfixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalCharacterEncoding)));
+        prefixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+        normalPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+        postfixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
     }
 
     public String getFileIncludeStackAsString(){

@@ -3,7 +3,7 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
-public class CharsetHandler implements CommandLineHandler {
+public class InCharsetHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/T:";
 
@@ -12,7 +12,7 @@ public class CharsetHandler implements CommandLineHandler {
     }
 
     public String getDescription() {
-        return "set the charset for processing text files, default value is " + PreprocessorContext.DEFAULT_CHARSET;
+        return "set the input charset for processing text files, default value is " + PreprocessorContext.DEFAULT_CHARSET;
     }
 
     public boolean processArgument(final String argument, final PreprocessorContext configurator) {
@@ -24,7 +24,7 @@ public class CharsetHandler implements CommandLineHandler {
                 final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
 
                 if (!value.isEmpty()) {
-                    configurator.setCharacterEncoding(value);
+                    configurator.setInCharacterEncoding(value);
                     result = true;
                 }
             }
