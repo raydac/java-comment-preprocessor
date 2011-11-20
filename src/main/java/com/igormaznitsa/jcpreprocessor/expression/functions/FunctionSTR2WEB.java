@@ -23,6 +23,11 @@ import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The class implements the str2web function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionSTR2WEB extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -102,7 +107,7 @@ public final class FunctionSTR2WEB extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it escapes a string to make it as a html compatible one";
+        return "it escapes a string to make it compatibles with the html format";
     }
 
     @Override

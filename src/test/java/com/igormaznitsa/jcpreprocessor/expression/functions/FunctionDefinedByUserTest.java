@@ -22,7 +22,7 @@ public class FunctionDefinedByUserTest {
         when(mock.processUserFunction(eq("test"), any(Value[].class))).thenReturn(testResult);
         when(mock.getUserFunctionArity(eq("test"))).thenReturn(Integer.valueOf(5));
         
-        assertEquals(testResult,Expression.evalExpression("$test(1,2,3,4,5+6)", context, null));
+        assertEquals(testResult,Expression.evalExpression("$test(1,2,3,4,5+6)+$test2(\"hello\"+\")", context, null));
         
         verify(mock).processUserFunction(eq("test"), AdditionalMatchers.aryEq(new Value[]{
             Value.valueOf(Long.valueOf(1L)),

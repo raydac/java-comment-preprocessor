@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the NOT operator handler 
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class OperatorNOT extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public class OperatorNOT extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake reference";
+        return "it makes NOT operation over an operand, bitwise NOT over a numeric operand and logical NOT over a boolean one";
     }
 
     @Override

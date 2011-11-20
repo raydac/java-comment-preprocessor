@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the GREATEQU operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorGREATEQU extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorGREATEQU extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake description";
+        return "Indicates whether the value of the left operand is greater than or equal to the value of the right operand";
     }
 
     

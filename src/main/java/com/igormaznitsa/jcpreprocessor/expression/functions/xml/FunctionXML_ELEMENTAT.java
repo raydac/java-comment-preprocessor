@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * The class implements the xml_elementat function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_ELEMENTAT extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.INT}};
@@ -45,13 +50,13 @@ public final class FunctionXML_ELEMENTAT extends AbstractFunction {
 
             container = (NodeContainer) context.getSharedResource(listIdStr);
             if (container == null) {
-                throw new RuntimeException("Can't find any active node list for the id \'" + listIdStr + '\'');
+                throw new IllegalArgumentException("Can't find any active node list for the id \'" + listIdStr + '\'');
             }
 
             final NodeList list = container.getNodeList();
             final Element element = (Element) list.item(indexAsInt);
             if (element == null) {
-                throw new RuntimeException("Index is not valud [" + indexAsInt + ']');
+                throw new IllegalArgumentException("Index is not valud [" + indexAsInt + ']');
             }
 
             container = new NodeContainer(UID_COUNTER.getAndIncrement(), element);
@@ -74,7 +79,7 @@ public final class FunctionXML_ELEMENTAT extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the element id of an element at the list position";
+        return "it reads an element at some position from an element list and return its id";
     }
 
     @Override

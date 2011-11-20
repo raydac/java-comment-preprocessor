@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the SUB operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorSUB extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorSUB extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake reference";
+        return "It yields the difference of its operands";
     }
 
     @Override

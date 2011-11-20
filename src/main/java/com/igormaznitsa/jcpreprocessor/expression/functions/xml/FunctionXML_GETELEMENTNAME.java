@@ -22,6 +22,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 
+/**
+ * The class implements the xml_getelementname function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -36,7 +41,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
         
         final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
         if (container == null) {
-            throw new RuntimeException("Can't find any active element for the id \'"+elementIdStr+'\'');
+            throw new IllegalArgumentException("Can't find any active element for the \'"+elementIdStr+"\' id");
         }
         
         return Value.valueOf(container.getNode().getNodeName());
@@ -54,7 +59,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the node name of the element";
+        return "it returns the element node name";
     }
 
     @Override

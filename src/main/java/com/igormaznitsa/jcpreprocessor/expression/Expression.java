@@ -27,14 +27,73 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * The main class to calculate expressions
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class Expression {
 
+    /**
+     * Precreated array for speed up operations
+     */
     private static final Class[] OPERATOR_SIGNATURE_1 = new Class[]{Value.class};
+
+    /**
+     * Precreated array for speed up operations
+     */
     private static final Class[] OPERATOR_SIGNATURE_2 = new Class[]{Value.class, Value.class};
+    
+    /**
+     * The variable contains the preprocessor context for the expression, it can be null
+     */
     private final PreprocessorContext context;
+    
+    /**
+     *  The variable contains the expression tree
+     */
     private final ExpressionTree expressionTree;
 
+    /**
+     * Evaluate the expression
+     * @return the result as a Value object, it can't be null
+     */
+    public Value eval() {
+        return this.eval(null);
+    }
+
+    /**
+     * Evaluate expression
+     * @param expression the expression as a String, must not be null
+     * @param context a preprocessor context to be used for expression operations, it can be null
+     * @param state a preprocessor state, it can be null
+     * @return the result as a Value object, it can't be null
+     */
+    public static Value evalExpression(final String expression, final PreprocessorContext context, final PreprocessingState state) {
+        try {
+            final ExpressionTree tree = ExpressionParser.getInstance().parse(expression, context);
+            return evalTree(tree, context, state);
+        } catch (IOException unexpected) {
+            throw new IllegalArgumentException("Wrong expression format detected [" + expression + ']');
+        }
+    }
+
+    /**
+     * Evaluate an expression tree
+     * @param tree an expression tree, it must not be null
+     * @param context a preprocessor context to be used for expression operations, it can be null
+     * @param state a preprocessor state, it can be null
+     * @return the result as a Value object, it can't be null
+     */
+    public static Value evalTree(final ExpressionTree tree, final PreprocessorContext context, final PreprocessingState state) {
+        final Expression exp = new Expression(context, tree);
+        return exp.eval(state);
+    }
+
     private Expression(final PreprocessorContext context, final ExpressionTree tree) {
+        if (tree == null) {
+            throw new NullPointerException("The expression tree is null");
+        }
         this.context = context;
         this.expressionTree = tree;
     }
@@ -47,7 +106,7 @@ public class Expression {
         final Class[] methodArguments = new Class[arity + 1];
         methodArguments[0] = PreprocessorContext.class;
 
-        final StringBuilder signature = new StringBuilder("execute");
+        final StringBuilder signature = new StringBuilder(AbstractFunction.EXECUTION_PREFIX);
 
         for (int i = 1; i <= arity; i++) {
             methodArguments[i] = Value.class;
@@ -207,20 +266,6 @@ public class Expression {
         }
     }
 
-    public static Value evalExpression(final String expression, final PreprocessorContext context, final PreprocessingState state) {
-        try {
-            final ExpressionTree tree = ExpressionParser.getInstance().parse(expression, context);
-            return evalTree(tree, context, state);
-        } catch (IOException unexpected) {
-            throw new IllegalArgumentException("Wrong expression format detected [" + expression + ']');
-        }
-    }
-
-    public static Value evalTree(ExpressionTree tree, final PreprocessorContext context, final PreprocessingState state) {
-        final Expression exp = new Expression(context, tree);
-        return exp.eval(state);
-    }
-
     private ExpressionTreeElement calculateTreeElement(final ExpressionTreeElement element, final PreprocessingState state) {
         ExpressionTreeElement treeElement = element;
 
@@ -267,7 +312,4 @@ public class Expression {
         }
     }
 
-    public Value eval() {
-        return this.eval(null);
-    }
 }

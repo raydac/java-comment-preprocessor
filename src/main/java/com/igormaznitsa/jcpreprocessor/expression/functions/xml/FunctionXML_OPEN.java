@@ -28,6 +28,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/**
+ * The class implements the xml_open function handler
+ * 
+ * @author Igor Maznits (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_OPEN extends AbstractFunction {
 
     public static final String RES_XML_DOC_PREFIX = "xml_doc_";
@@ -51,7 +56,7 @@ public final class FunctionXML_OPEN extends AbstractFunction {
             try {
                 file = context.getSourceFile(name);
             } catch (IOException unexpected) {
-                throw new RuntimeException("Can't get source file \'" + name + '\'', unexpected);
+                throw new IllegalArgumentException("Can't find source file \'" + name + '\'', unexpected);
             }
 
             final Document document = openFileAndParse(file);
@@ -65,15 +70,17 @@ public final class FunctionXML_OPEN extends AbstractFunction {
     private Document openFileAndParse(final File file) {
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         docBuilderFactory.setIgnoringComments(true);
+        docBuilderFactory.setCoalescing(true);
+        docBuilderFactory.setValidating(false);
 
         try {
             return docBuilderFactory.newDocumentBuilder().parse(file);
         } catch (ParserConfigurationException unexpected) {
-            throw new RuntimeException("XML parser configuration exception", unexpected);
+            throw new IllegalStateException("XML parser configuration exception", unexpected);
         } catch (SAXException unexpected) {
-            throw new RuntimeException("Exception during XML parsing", unexpected);
+            throw new IllegalStateException("Exception during XML parsing", unexpected);
         } catch (IOException unexpected) {
-            throw new RuntimeException("Can't read file", unexpected);
+            throw new IllegalArgumentException("Can't read XML file", unexpected);
         }
     }
 

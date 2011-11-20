@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the round function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionROUND extends AbstractFunction {
 
     private static final ValueType [][] SIGNATURES = new ValueType[][]{{ValueType.FLOAT},{ValueType.INT}};

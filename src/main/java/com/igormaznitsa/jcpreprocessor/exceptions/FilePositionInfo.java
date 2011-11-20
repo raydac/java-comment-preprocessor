@@ -19,8 +19,20 @@ package com.igormaznitsa.jcpreprocessor.exceptions;
 
 import java.io.File;
 
+/**
+ * The class implements a file data storage where an exception can store a snapshot of the current preprocessing file data
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class FilePositionInfo {
+    /**
+     * The preprocessing file
+     */
     private final File file;
+    
+    /**
+     * The current string index in the file
+     */
     private final int stringIndex;
     
     public FilePositionInfo(final File file, final int stringIndex){
@@ -39,6 +51,7 @@ public class FilePositionInfo {
         return this.stringIndex;
     }
     
+    @Override
     public String toString() {
         final String filePath = this.file.getAbsolutePath();
         return filePath+':'+Integer.toString(stringIndex);

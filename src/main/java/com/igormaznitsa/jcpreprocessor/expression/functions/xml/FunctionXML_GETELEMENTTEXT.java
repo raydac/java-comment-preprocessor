@@ -23,6 +23,11 @@ import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import org.w3c.dom.Element;
 
+/**
+ * The class implements the xml_getelementtext function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -37,7 +42,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
         
         final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
         if (container == null) {
-            throw new RuntimeException("Can't find opened xml element for the id \'"+elementIdStr+'\'');
+            throw new IllegalArgumentException("Can't find opened xml element for the \'"+elementIdStr+"\' id");
         }
     
         final Element element = (Element)container.getNode();
@@ -46,7 +51,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
 
     @Override
     public int getArity() {
-        return 1 ;
+        return 1;
     }
 
     @Override
@@ -56,7 +61,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns text from an element including text of all its children";
+        return "it returns the text from an element including text of all its children";
     }
 
     @Override

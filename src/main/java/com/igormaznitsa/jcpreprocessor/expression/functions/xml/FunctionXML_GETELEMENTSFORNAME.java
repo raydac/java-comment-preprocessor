@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * The class implements the xml_getelementsforname function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING,ValueType.STRING}};
@@ -45,7 +50,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
         if (container == null) {
             container = (NodeContainer) context.getSharedResource(elementIdStr);
             if (container == null) {
-                throw new RuntimeException("Can't find any element for the id \'" + elementIdStr + '\'');
+                throw new IllegalArgumentException("Can't find any element for the \'" + elementIdStr + "\' id");
             }
             final Element element = (Element) container.getNode();
             final NodeList list = element.getElementsByTagName(nameStr);
@@ -68,7 +73,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it finds children for a name in the element and return the list id";
+        return "it makes a node list from element children with the name and return the list id";
     }
 
     @Override

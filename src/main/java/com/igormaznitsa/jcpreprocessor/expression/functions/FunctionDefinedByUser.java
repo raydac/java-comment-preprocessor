@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the user defined function handler (a function which name begins with $)
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionDefinedByUser extends AbstractFunction {
 
     private final String name;

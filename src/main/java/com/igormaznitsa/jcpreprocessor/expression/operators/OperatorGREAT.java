@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the GREAT operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorGREAT extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorGREAT extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake description";
+        return "Indicates whether the value of the left operand is greater than the value of the right operand";
     }
 
     @Override

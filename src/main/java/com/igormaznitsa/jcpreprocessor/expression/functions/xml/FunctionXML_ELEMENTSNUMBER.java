@@ -23,6 +23,11 @@ import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import org.w3c.dom.NodeList;
 
+/**
+ * The class implements the xml_elementsnumber function
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -37,11 +42,10 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
         
         final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
         if (container == null) {
-            throw new RuntimeException("Can't find any active element for the id  \'"+elementIdStr+'\'');
+            throw new IllegalArgumentException("Can't find any active element for the \'"+elementIdStr+"\' id");
         }
         
         final NodeList list = (NodeList)container.getNodeList();
-        
         return Value.valueOf(Long.valueOf(list.getLength()));
     }
 
@@ -57,7 +61,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the length of a element list";
+        return "it returns the length of an element list";
     }
 
     @Override

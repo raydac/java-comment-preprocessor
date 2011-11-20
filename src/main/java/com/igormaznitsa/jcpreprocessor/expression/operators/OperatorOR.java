@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the OR operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorOR extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorOR extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake reference";
+        return "It makes OR operation over two operands, bitwise OR over numeric operands and logical OR over boolean ones";
     }
 
     @Override

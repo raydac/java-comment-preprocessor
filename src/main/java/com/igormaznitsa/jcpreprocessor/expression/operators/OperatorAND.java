@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the AND operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorAND extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorAND extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "it makes AND operation over two operands";
+        return "It makes AND operation over two operands, bitwise AND over numeric operands and logical AND over boolean ones";
     }
 
 

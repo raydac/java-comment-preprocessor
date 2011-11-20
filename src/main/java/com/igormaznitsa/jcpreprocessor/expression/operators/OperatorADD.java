@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the ADD operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorADD extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorADD extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "it allows to add two operands of compatible types";
+        return "It yields the sum of its operands";
     }
 
     @Override

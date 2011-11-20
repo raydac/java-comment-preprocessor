@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * The class implements the xml_getroot function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionXML_GETROOT extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -43,7 +48,7 @@ public final class FunctionXML_GETROOT extends AbstractFunction {
         if (nodeContainer == null) {
             nodeContainer = (NodeContainer) context.getSharedResource(docIdStr);
             if (nodeContainer == null) {
-                throw new RuntimeException("Can't find an xml document for the id \'" + docIdStr + '\'');
+                throw new IllegalArgumentException("Can't find any opened xml document for the \'" + docIdStr + "\' id");
             }
 
             final Document doc = (Document) nodeContainer.getNode();
@@ -68,7 +73,7 @@ public final class FunctionXML_GETROOT extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the root element of a xml document";
+        return "it returns the root element of an opened xml document";
     }
 
     @Override

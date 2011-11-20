@@ -19,6 +19,10 @@ package com.igormaznitsa.jcpreprocessor.exceptions;
 
 import java.io.File;
 
+/**
+ * The exception allows to save some useful data about preprocessing files like the current include stack and the error string index
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class PreprocessorException extends Exception {
     private static final long serialVersionUID = 2857499664112391862L;
     private final String processingString;

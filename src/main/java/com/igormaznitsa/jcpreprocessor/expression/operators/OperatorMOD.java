@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the MOD operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorMOD extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorMOD extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "fake reference";
+        return "It yields the remainder from the division of the left operand by the right operand";
     }
 
     @Override

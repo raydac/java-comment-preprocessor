@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.operators;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
+/**
+ * The class implements the DIV operator handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class OperatorDIV extends AbstractOperator {
 
     @Override
@@ -29,7 +34,7 @@ public final class OperatorDIV extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "it makes division of two operands";
+        return "It yields the algebraic quotient of its operands";
     }
 
     @Override

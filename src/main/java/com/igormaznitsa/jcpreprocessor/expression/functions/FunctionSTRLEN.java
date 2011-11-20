@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the strlen function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionSTRLEN extends AbstractFunction {
 
     private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -46,7 +51,7 @@ public final class FunctionSTRLEN extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the string length as character number";
+        return "it returns number of characters in a string";
     }
 
     @Override

@@ -18,10 +18,14 @@
 package com.igormaznitsa.jcpreprocessor.expression.functions;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
-import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the abs function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionABS extends AbstractFunction {
 
     private static final ValueType [][] ARGUMENT_TYPES = new ValueType[][]{{ValueType.INT},{ValueType.FLOAT}};
@@ -51,7 +55,7 @@ public final class FunctionABS extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns the absolute value of an argument";
+        return "it returns the absolute value of either an integer or a float argument";
     }
 
     @Override

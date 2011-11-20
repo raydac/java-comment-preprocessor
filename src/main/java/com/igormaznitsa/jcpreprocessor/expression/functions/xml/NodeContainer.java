@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.expression.functions.xml;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * It's a special auxiliary class to save XML node data in a preprocessor storage
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznnitsa.com)
+ */
 public class NodeContainer {
     private final Node node;
     private final NodeList nodeList;

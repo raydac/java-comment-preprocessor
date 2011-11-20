@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the str2int function handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class FunctionSTR2INT extends AbstractFunction {
 
     private static final ValueType [][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
@@ -31,7 +36,7 @@ public final class FunctionSTR2INT extends AbstractFunction {
     }
 
     public Value executeStr(final PreprocessorContext context, final Value value) {
-        return Value.valueOf(Long.valueOf(Long.parseLong(value.asString())));
+        return Value.valueOf(Long.valueOf(Long.parseLong(value.asString().trim())));
     }
     
     @Override
@@ -46,7 +51,7 @@ public final class FunctionSTR2INT extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it converts a string into an integer";
+        return "it converts a string containing a number into an integer";
     }
 
     @Override
