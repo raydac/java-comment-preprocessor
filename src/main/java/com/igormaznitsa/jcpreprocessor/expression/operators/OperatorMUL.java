@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public final class OperatorMUL extends AbstractOperator {
@@ -52,7 +52,7 @@ public final class OperatorMUL extends AbstractOperator {
         return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() * arg2.asFloat().floatValue()));
     }
 
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.ARITHMETIC_MUL_DIV_MOD;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.ARITHMETIC_MUL_DIV_MOD;
     }
 }

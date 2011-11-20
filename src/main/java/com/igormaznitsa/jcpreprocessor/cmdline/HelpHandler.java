@@ -19,19 +19,24 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The handler processes a help command from the command string
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class HelpHandler implements CommandLineHandler {
 
     private static final String[] ARG_NAMES = new String[]{"/H", "/?", "-H", "-?"};
 
     public String getDescription() {
-        return "print help about commands";
+        return "to print information about allowed preprocessor commands";
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
-        if (argument != null && !argument.isEmpty()) {
+        if (key != null && !key.isEmpty()) {
             
-            final String argUpperCase = argument.trim().toUpperCase();
+            final String argUpperCase = key.trim().toUpperCase();
             
             for (final String str : ARG_NAMES) {
                 if (str.equals(argUpperCase)) {

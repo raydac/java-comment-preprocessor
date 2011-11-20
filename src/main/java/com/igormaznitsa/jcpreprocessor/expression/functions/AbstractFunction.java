@@ -25,13 +25,13 @@ import com.igormaznitsa.jcpreprocessor.expression.functions.xml.FunctionXML_ELEM
 import com.igormaznitsa.jcpreprocessor.expression.functions.xml.FunctionXML_OPEN;
 import com.igormaznitsa.jcpreprocessor.expression.functions.xml.FunctionXML_GETROOT;
 import com.igormaznitsa.jcpreprocessor.expression.functions.xml.FunctionXML_GETELEMENTNAME;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemType;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemType;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class AbstractFunction implements ExpressionStackItem {
+public abstract class AbstractFunction implements ExpressionItem {
     private static final AbstractFunction [] ALL_FUNCTIONS = new AbstractFunction[]{
       new FunctionABS(),  
       new FunctionROUND(),  
@@ -78,12 +78,12 @@ public abstract class AbstractFunction implements ExpressionStackItem {
     public abstract ValueType[][] getAllowedArgumentTypes();
     public abstract ValueType getResultType();
     
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.FUNCTION;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.FUNCTION;
     }
 
-    public ExpressionStackItemType getStackItemType() {
-        return ExpressionStackItemType.FUNCTION;
+    public ExpressionItemType getExpressionItemType() {
+        return ExpressionItemType.FUNCTION;
     }
     
     @Override

@@ -17,6 +17,11 @@
  */
 package com.igormaznitsa.jcpreprocessor.logger;
 
+/**
+ * An Easy logger which just output log messages into the system output streams
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class SystemOutLogger implements PreprocessorLogger {
 
     public SystemOutLogger(){

@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public final class OperatorNOTEQU extends AbstractOperator {
@@ -61,8 +61,8 @@ public final class OperatorNOTEQU extends AbstractOperator {
          return Value.valueOf(Boolean.valueOf(arg1.asBoolean().booleanValue() != arg2.asBoolean().booleanValue()));
     }
 
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.COMPARISON;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.COMPARISON;
     }
     
 }

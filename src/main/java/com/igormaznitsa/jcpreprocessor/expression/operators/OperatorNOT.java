@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public class OperatorNOT extends AbstractOperator {
@@ -45,7 +45,7 @@ public class OperatorNOT extends AbstractOperator {
         return Value.valueOf(Boolean.valueOf(!arg1.asBoolean().booleanValue()));
     }
 
-     public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.FUNCTION;
+     public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.FUNCTION;
     }
 }

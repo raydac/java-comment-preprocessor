@@ -20,22 +20,27 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The handler processing the key to set the source directory
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class SourceDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/I:";
 
     public String getDescription() {
-        return "set the source root directory to be preprocessed, default is " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY;
+        return "set the root source directory for preprocessing files (default is " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY+')';
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
-        if (argument != null && !argument.isEmpty()) {
-            if (argument.toUpperCase().startsWith(ARG_NAME)) {
-                final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
+        if (key != null && !key.isEmpty()) {
+            if (key.toUpperCase().startsWith(ARG_NAME)) {
+                final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 if (!tail.isEmpty()) {
-                    configurator.setSourceDirectory(PreprocessorUtils.extractTail(ARG_NAME, argument));
+                    context.setSourceDirectory(PreprocessorUtils.extractTail(ARG_NAME, key));
                     result = true;
                 }
             }

@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public class OperatorXOR extends AbstractOperator {
@@ -45,8 +45,8 @@ public class OperatorXOR extends AbstractOperator {
         return Value.valueOf(Boolean.valueOf(arg1.asBoolean().booleanValue() ^ arg2.asBoolean().booleanValue()));
     }
 
-     public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.LOGICAL;
+     public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.LOGICAL;
     }
     
 }

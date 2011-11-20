@@ -21,7 +21,7 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionParser;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionTree;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionTreeElement;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -81,7 +81,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
         while (true) {
             final ExpressionTree tree = new ExpressionTree();
-            final ExpressionStackItem delimiter = parser.readExpression(reader, tree, context, false, true);
+            final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);
 
             if (delimiter != null && ExpressionParser.SpecialItem.COMMA != delimiter) {
                 throw new IllegalArgumentException("Wrong format of an argument detected");

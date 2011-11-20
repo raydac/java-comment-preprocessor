@@ -12,15 +12,15 @@ public class FileExtensionsHandlerTest extends AbstractCommandLineHandlerTest {
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
     
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/f:", mock));
-        assertFalse(HANDLER.processArgument("/f", mock));
-        assertFalse(HANDLER.processArgument("/F:", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/f:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/f", mock));
+        assertFalse(HANDLER.processCommandLineKey("/F:", mock));
 
         verify(mock,never()).setExcludedFileExtensions(anyString());
         
-        assertTrue(HANDLER.processArgument("/f:rrr,Ggg,bBb", mock));
+        assertTrue(HANDLER.processCommandLineKey("/f:rrr,Ggg,bBb", mock));
         verify(mock).setProcessingFileExtensions("rrr,Ggg,bBb");
     }
 

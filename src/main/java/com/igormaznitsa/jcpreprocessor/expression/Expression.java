@@ -54,13 +54,13 @@ public class Expression {
         }
 
         for (int i = 0; i < arity; i++) {
-            final ExpressionTreeElement item = calculateTreeElement(functionElement.getElementAt(i), state);
+            final ExpressionTreeElement item = calculateTreeElement(functionElement.getChildForIndex(i), state);
 
             if (item == null) {
                 throw new IllegalStateException("There is not needed argument for the \'" + function.getName() + "\' function");
             }
 
-            final ExpressionStackItem itemValue = item.getItem();
+            final ExpressionItem itemValue = item.getItem();
 
             if (itemValue instanceof Value) {
                 arguments[i] = (Value) itemValue;
@@ -139,14 +139,14 @@ public class Expression {
         final StringBuilder signatureAnyRight = new StringBuilder(AbstractOperator.EXECUTION_PREFIX);
 
         for (int i = 0; i < arity; i++) {
-            final ExpressionTreeElement arg = operatorElement.getElementAt(i);
+            final ExpressionTreeElement arg = operatorElement.getChildForIndex(i);
             if (arg == null) {
                 throw new IllegalStateException("There is not needed argument for the operator [" + operator.getKeyword() + ']');
             }
 
             final ExpressionTreeElement currentElement = calculateTreeElement(arg, state);
 
-            final ExpressionStackItem item = currentElement.getItem();
+            final ExpressionItem item = currentElement.getItem();
 
             if (item instanceof Value) {
                 arguments[i] = (Value) item;
@@ -224,7 +224,7 @@ public class Expression {
     private ExpressionTreeElement calculateTreeElement(final ExpressionTreeElement element, final PreprocessingState state) {
         ExpressionTreeElement treeElement = element;
 
-        switch (element.getItem().getStackItemType()) {
+        switch (element.getItem().getExpressionItemType()) {
             case VARIABLE: {
                 if (context == null) {
                     throw new NullPointerException("Variable can't be used without context [" + element.getItem().toString() + ']');
@@ -254,7 +254,7 @@ public class Expression {
 
     private Value eval(final PreprocessingState state) {
         final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
-        final ExpressionStackItem resultItem = result.getItem();
+        final ExpressionItem resultItem = result.getItem();
         if (resultItem instanceof Value) {
             return (Value) resultItem;
         } else {

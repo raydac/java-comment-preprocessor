@@ -20,23 +20,28 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The handler for the output directory command line key
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class DestinationDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/O:";
 
     public String getDescription() {
-        return "set the destination directory, default is " + PreprocessorContext.DEFAULT_DEST_DIRECTORY;
+        return "set the destination directory (default is " + PreprocessorContext.DEFAULT_DEST_DIRECTORY+')';
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
-        if (argument != null && !argument.isEmpty()) {
+        if (key != null && !key.isEmpty()) {
 
-            if (argument.toUpperCase().startsWith(ARG_NAME)) {
-                final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
+            if (key.toUpperCase().startsWith(ARG_NAME)) {
+                final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 if (!name.isEmpty()) {
-                    configurator.setDestinationDirectory(PreprocessorUtils.extractTail(ARG_NAME, argument));
+                    context.setDestinationDirectory(PreprocessorUtils.extractTail(ARG_NAME, key));
                     result = true;
                 }
             }

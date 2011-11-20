@@ -11,17 +11,17 @@ public class OutCharsetHandlerTest extends AbstractCommandLineHandlerTest {
     @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = Mockito.mock(PreprocessorContext.class);
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("/o:UUU", mock));
-        assertFalse(HANDLER.processArgument("/TT:", mock));
-        assertFalse(HANDLER.processArgument("/tT", mock));
-        assertTrue(HANDLER.processArgument("/tt:HELLOWORLD", mock));
-        Mockito.verify(mock).setInCharacterEncoding("HELLOWORLD");
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("/o:UUU", mock));
+        assertFalse(HANDLER.processCommandLineKey("/TT:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/tT", mock));
+        assertTrue(HANDLER.processCommandLineKey("/tt:HELLOWORLD", mock));
+        Mockito.verify(mock).setOutCharacterEncoding("HELLOWORLD");
 
         Mockito.reset(mock);
         
-        assertTrue(HANDLER.processArgument("/TT:NEW", mock));
-        Mockito.verify(mock).setInCharacterEncoding("NEW");
+        assertTrue(HANDLER.processCommandLineKey("/TT:NEW", mock));
+        Mockito.verify(mock).setOutCharacterEncoding("NEW");
     }
 
     @Override

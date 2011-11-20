@@ -22,40 +22,43 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The handler for global variables, it adds met global variables into the inside storage
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class GlobalVariableHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/P:";
 
     public String getDescription() {
-        return "set a global variable, for instance /P:DEBUG=true";
+        return "set a global variable, for instance /P:DEBUG=true (use $ instead \" char)";
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext context) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
-        if (argument != null && !argument.isEmpty()) {
-            if (argument.toUpperCase().startsWith(ARG_NAME)) {
+        if (key != null && !key.isEmpty() && key.toUpperCase().startsWith(ARG_NAME)) {
 
-                final String nameAndExpression = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
+            final String nameAndExpression = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-                if (!nameAndExpression.isEmpty()) {
+            if (!nameAndExpression.isEmpty()) {
 
-                    final String[] splitted = PreprocessorUtils.splitForSetOperator(nameAndExpression);
-                    if (splitted.length != 2) {
-                        throw new RuntimeException("Wrong expression at a " + ARG_NAME + " directive [" + nameAndExpression + ']');
-                    }
-
-                    final String value = splitted[0];
-                    final String expression = splitted[1];
-
-                    if (context.containsGlobalVariable(value)) {
-                        throw new IllegalArgumentException("Duplicated global definition detected [" + value + ']');
-                    }
-
-                    final Value resultVal = Expression.evalExpression(expression, context, null);
-                    context.setGlobalVariable(value, resultVal, null);
-                    result = true;
+                final String[] splitted = PreprocessorUtils.splitForSetOperator(nameAndExpression);
+                if (splitted.length != 2) {
+                    throw new IllegalArgumentException("Wrong expression at a " + ARG_NAME + " directive [" + nameAndExpression + ']');
                 }
+
+                final String value = splitted[0];
+                final String expression = splitted[1];
+
+                if (context.containsGlobalVariable(value)) {
+                    throw new IllegalArgumentException("Duplicated global definition detected [" + value + ']');
+                }
+
+                final Value resultVal = Expression.evalExpression(expression, context, null);
+                context.setGlobalVariable(value, resultVal, null);
+                result = true;
             }
         }
         return result;

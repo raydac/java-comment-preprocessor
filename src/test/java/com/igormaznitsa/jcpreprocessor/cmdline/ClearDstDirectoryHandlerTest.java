@@ -12,16 +12,16 @@ public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
     
-        assertFalse(HANDLER.processArgument("/c:", mock));
-        assertFalse(HANDLER.processArgument("/CC", mock));
-        assertFalse(HANDLER.processArgument("/C ", mock));
+        assertFalse(HANDLER.processCommandLineKey("/c:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/CC", mock));
+        assertFalse(HANDLER.processCommandLineKey("/C ", mock));
         verify(mock,never()).setClearDestinationDirBefore(anyBoolean());
     
-        assertTrue(HANDLER.processArgument("/C", mock));
+        assertTrue(HANDLER.processCommandLineKey("/C", mock));
         verify(mock).setClearDestinationDirBefore(true);
         reset(mock);
         
-        assertTrue(HANDLER.processArgument("/c", mock));
+        assertTrue(HANDLER.processCommandLineKey("/c", mock));
         verify(mock).setClearDestinationDirBefore(true);
         reset(mock);
     }

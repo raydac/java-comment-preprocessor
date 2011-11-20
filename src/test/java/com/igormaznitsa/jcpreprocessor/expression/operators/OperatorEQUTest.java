@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import static org.junit.Assert.*;
 
@@ -51,7 +51,7 @@ public class OperatorEQUTest extends AbstractOperatorTest {
 
     @Override
     public void testPriority() {
-        assertEquals(ExpressionStackItemPriority.COMPARISON, HANDLER.getPriority());
+        assertEquals(ExpressionItemPriority.COMPARISON, HANDLER.getExpressionItemPriority());
     }
     
 }

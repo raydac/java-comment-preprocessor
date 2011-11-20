@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public final class OperatorLESSEQU extends AbstractOperator {
@@ -57,7 +57,7 @@ public final class OperatorLESSEQU extends AbstractOperator {
         return Value.valueOf(Boolean.valueOf(arg1.asString().compareTo(arg2.asString()) <= 0));
     }
     
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.COMPARISON;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.COMPARISON;
     }
 }

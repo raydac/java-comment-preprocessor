@@ -17,8 +17,26 @@
  */
 package com.igormaznitsa.jcpreprocessor.logger;
 
+/**
+ * The interface describes a logger to be used by a preprocessor during its work
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public interface PreprocessorLogger {
-    void error(String text);
-    void info(String text);
-    void warning(String text);
+    /**
+     * Log an error message
+     * @param message the text to be output into the error log
+     */
+    void error(String message);
+
+    /**
+     * Log an information message
+     * @param message the text to be output into the information log
+     */
+    void info(String message);
+    
+    /**
+     * Log a warning message
+     * @param message the text to be output into the warning log
+     */
+    void warning(String message);
 }

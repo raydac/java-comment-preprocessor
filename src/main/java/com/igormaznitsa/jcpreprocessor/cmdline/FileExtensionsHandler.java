@@ -20,24 +20,29 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The handler for the preprocessing file extension list (with comma)
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class FileExtensionsHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/F:";
 
     public String getDescription() {
-        return "set case sensetive file extensions which will be preprocessed, default is [" + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ']';
+        return "set (case insensitive) preprocessing file extension list (with comma), default is [" + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ']';
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
-        if (argument != null && !argument.isEmpty()) {
+        if (key != null && !key.isEmpty()) {
 
-            if (argument.toUpperCase().startsWith(ARG_NAME)) {
-                final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
+            if (key.toUpperCase().startsWith(ARG_NAME)) {
+                final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 
                 if (!extensions.isEmpty()) {
-                    configurator.setProcessingFileExtensions(extensions);
+                    context.setProcessingFileExtensions(extensions);
                     result = true;
                 }
             }

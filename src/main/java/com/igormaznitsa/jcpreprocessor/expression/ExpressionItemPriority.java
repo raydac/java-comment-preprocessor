@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
-public enum ExpressionStackItemPriority {
+public enum ExpressionItemPriority {
     LOGICAL(0),
     COMPARISON(1),
     ARITHMETIC_ADD_SUB(2),
@@ -31,7 +31,7 @@ public enum ExpressionStackItemPriority {
         return priority;
     }
     
-    private ExpressionStackItemPriority(final int priority) {
+    private ExpressionItemPriority(final int priority) {
         this.priority = priority;
     }
 }

@@ -13,16 +13,16 @@ public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
     @Override
     public void testExecution() throws Exception {
         final PreprocessorContext context = Mockito.mock(PreprocessorContext.class);
-        assertFalse(HANDLER.processArgument(null, context));
-        assertFalse(HANDLER.processArgument("", context));
-        assertFalse(HANDLER.processArgument("/HH", context));
-        assertFalse(HANDLER.processArgument("/??", context));
-        assertFalse(HANDLER.processArgument("-??", context));
+        assertFalse(HANDLER.processCommandLineKey(null, context));
+        assertFalse(HANDLER.processCommandLineKey("", context));
+        assertFalse(HANDLER.processCommandLineKey("/HH", context));
+        assertFalse(HANDLER.processCommandLineKey("/??", context));
+        assertFalse(HANDLER.processCommandLineKey("-??", context));
         
-        assertTrue(HANDLER.processArgument("/?", context));
-        assertTrue(HANDLER.processArgument("/h", context));
-        assertTrue(HANDLER.processArgument("-H", context));
-        assertTrue(HANDLER.processArgument("-?", context));
+        assertTrue(HANDLER.processCommandLineKey("/?", context));
+        assertTrue(HANDLER.processCommandLineKey("/h", context));
+        assertTrue(HANDLER.processCommandLineKey("-H", context));
+        assertTrue(HANDLER.processCommandLineKey("-?", context));
     }
 
     @Override

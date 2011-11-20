@@ -233,7 +233,7 @@ public class JCPreprocessor {
         for (final String arg : args) {
             boolean processed = false;
             for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
-                if (processor.processArgument(arg, result)) {
+                if (processor.processCommandLineKey(arg, result)) {
                     processed = true;
                     if (processor instanceof HelpHandler) {
                         help();

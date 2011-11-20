@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * To set the input text character encoding
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class InCharsetHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/T:";
@@ -29,19 +34,19 @@ public class InCharsetHandler implements CommandLineHandler {
     }
 
     public String getDescription() {
-        return "set the input charset for processing text files, default value is " + PreprocessorContext.DEFAULT_CHARSET;
+        return "set the input encoding for text files (default is " + PreprocessorContext.DEFAULT_CHARSET+')';
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
 
         boolean result = false;
 
-        if (argument != null) {
-            if (argument.toUpperCase().startsWith(ARG_NAME)) {
-                final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, argument);
+        if (key != null) {
+            if (key.toUpperCase().startsWith(ARG_NAME)) {
+                final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
                 if (!value.isEmpty()) {
-                    configurator.setInCharacterEncoding(value);
+                    context.setInCharacterEncoding(value);
                     result = true;
                 }
             }

@@ -17,24 +17,50 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
-public final class Variable implements ExpressionStackItem {
-
-    private final String name;
+/**
+ * The class describes an expression variable
+ * 
+ * @author Igor Mznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public final class Variable implements ExpressionItem {
+    /**
+     * The variable contains the expression variable name
+     */
+    private final String variableName;
     
-    public Variable(final String name) {
-        this.name = name;
+    /**
+     * The constructor
+     * @param varName the variable name, it must not be null
+     */
+    public Variable(final String varName) {
+        if (varName == null) {
+            throw new NullPointerException("Var name is null");
+        }
+        this.variableName = varName;
     }
     
+    /**
+     * Get the variable name
+     * @return the name saved by the object
+     */
     public String getName() {
-        return this.name;
+        return this.variableName;
     }
     
-    public ExpressionStackItemType getStackItemType() {
-        return ExpressionStackItemType.VARIABLE;
+    /**
+     * Get the expression item type
+     * @return it returns only ExpressionItemType.VARIABLE
+     */
+    public ExpressionItemType getExpressionItemType() {
+        return ExpressionItemType.VARIABLE;
     }
 
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.VALUE;
+    /**
+     * Get the expression item priority
+     * @return it returns only ExpressionItemPriority.VALUE
+     */
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.VALUE;
     }
     
 }

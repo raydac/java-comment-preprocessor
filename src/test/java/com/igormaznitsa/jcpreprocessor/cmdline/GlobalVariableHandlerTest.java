@@ -13,13 +13,13 @@ public class GlobalVariableHandlerTest extends AbstractCommandLineHandlerTest {
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/p", mock));
-        assertFalse(HANDLER.processArgument("/pp:", mock));
-        assertFalse(HANDLER.processArgument("/P:", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/p", mock));
+        assertFalse(HANDLER.processCommandLineKey("/pp:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/P:", mock));
         
-        assertTrue(HANDLER.processArgument("/P:hello=0", mock));
+        assertTrue(HANDLER.processCommandLineKey("/P:hello=0", mock));
     
         verify(mock).setGlobalVariable("hello", Value.INT_ZERO, null);
     }

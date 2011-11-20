@@ -19,6 +19,11 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The handler to process the key signals that the preprocessor must clear the destination directory before preprocessing
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ClearDstDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/C";
@@ -27,13 +32,13 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
         return "the destination directory will be cleared before processing";
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
-        if (ARG_NAME.equalsIgnoreCase(argument)){
-            configurator.setClearDestinationDirBefore(true);
-            return true;
-        } else {
-            return false;
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+        boolean result = false;
+        if (ARG_NAME.equalsIgnoreCase(key)){
+            context.setClearDestinationDirBefore(true);
+            result = true;
         }
+        return result;
     }
 
     public String getKeyName() {

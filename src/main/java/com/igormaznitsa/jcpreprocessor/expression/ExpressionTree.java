@@ -17,23 +17,46 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
+/**
+ * The class describes an object contains an expression tree
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ExpressionTree {
     
     private ExpressionTreeElement last;
     
+    /**
+     * Allows to check that the tree is empty
+     * @return true if the tree is empty one else false
+     */
     public boolean isEmpty() {
         return last == null;
     }
     
-    public void addItem(final ExpressionStackItem item) {
+    /**
+     * Add new expression item into tree
+     * @param item an item to be added, must not be null
+     */
+    public void addItem(final ExpressionItem item) {
+        if (item == null){
+            throw new NullPointerException("Item is null");
+        }
         if (last == null) {
             last = new ExpressionTreeElement(item);
         } else {
-            last = last.addElement(new ExpressionTreeElement(item));
+            last = last.addTreeElement(new ExpressionTreeElement(item));
         }
     }
 
+    /**
+     * Add whole tree as a tree element, also it sets the maximum priority to the new element 
+     * @param tree a tree to be added as an item, must not be null
+     */
     public void addTree(final ExpressionTree tree) {
+        if (tree == null) {
+            throw new NullPointerException("Tree is null");
+        }
         if (last == null){
             final ExpressionTreeElement thatTreeRoot = tree.getRoot();
             if (thatTreeRoot!=null){
@@ -45,6 +68,10 @@ public class ExpressionTree {
         }
     }
 
+    /**
+     * Get the root of the tree
+     * @return the root of the tree or null if the tree is empty
+     */
     public ExpressionTreeElement getRoot() {
         if (last == null) {
             return null;
@@ -61,6 +88,9 @@ public class ExpressionTree {
         }
     }
 
+    /**
+     * It can be called after the tree has been formed to optimize inside structures
+     */
     public void postProcess() {
         final ExpressionTreeElement root = getRoot();
         if (root != null){

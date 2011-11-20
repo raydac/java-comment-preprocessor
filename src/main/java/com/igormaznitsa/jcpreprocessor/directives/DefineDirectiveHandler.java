@@ -19,8 +19,16 @@ package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemType;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionParser;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionTree;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionTreeElement;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
+import com.igormaznitsa.jcpreprocessor.expression.ValueType;
+import com.igormaznitsa.jcpreprocessor.expression.Variable;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
+import java.io.IOException;
 
 public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
@@ -41,29 +49,27 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
-        final String name = string.trim().toLowerCase();
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException("Variable name is empty");
-        }
+        String name = null;
 
-        boolean hasWrongChar = false;
-
-        if (!Character.isLetter(name.charAt(0))) {
-            hasWrongChar = true;
-        } else {
-            for (final char chr : name.toCharArray()) {
-                if (!PreprocessorUtils.isCharAllowedInVariableOrFunctionName(chr)) {
-                    hasWrongChar = true;
-                    break;
-                }
+        try {
+            final ExpressionTree tree = ExpressionParser.getInstance().parse(string, context);
+            if (tree.isEmpty()){
+                throw new IllegalArgumentException("There is not any variable");
             }
+            
+            final ExpressionTreeElement root = tree.getRoot();
+            ExpressionItem item = root.getItem();
+            if (item.getExpressionItemType() != ExpressionItemType.VARIABLE){
+                throw new IllegalArgumentException("You must use a variable as the argument");
+            }
+            
+            name = ((Variable)item).getName().toLowerCase();
+        }catch(IOException ex){
+            throw new RuntimeException("Can't parse the variable name ["+string+']',ex);
         }
-        if (hasWrongChar) {
-            throw new IllegalArgumentException("Disallowed variable name [" + name + ']');
-        }
-
+        
         if (context.findVariableForName(name, state) != null) {
-            context.warning("Variable \'"+name+"\' already defined");
+            context.warning("Variable \'"+name+"\' is already defined");
         }
         context.setGlobalVariable(name, Value.BOOLEAN_TRUE,state);
         return AfterProcessingBehaviour.PROCESSED;

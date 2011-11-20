@@ -17,10 +17,10 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItem;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemType;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemType;
 
-public abstract class AbstractOperator implements ExpressionStackItem {
+public abstract class AbstractOperator implements ExpressionItem {
 
     public static final String EXECUTION_PREFIX = "execute";
     
@@ -51,8 +51,8 @@ public abstract class AbstractOperator implements ExpressionStackItem {
         return null;
     } 
     
-    public ExpressionStackItemType getStackItemType() {
-        return ExpressionStackItemType.OPERATOR;
+    public ExpressionItemType getExpressionItemType() {
+        return ExpressionItemType.OPERATOR;
     }
     
     public abstract int getArity();

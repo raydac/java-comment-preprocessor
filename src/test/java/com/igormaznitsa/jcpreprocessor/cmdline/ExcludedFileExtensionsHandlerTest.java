@@ -12,15 +12,15 @@ public class ExcludedFileExtensionsHandlerTest extends AbstractCommandLineHandle
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
     
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/ef:", mock));
-        assertFalse(HANDLER.processArgument("/ef", mock));
-        assertFalse(HANDLER.processArgument("/EF:", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/ef:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/ef", mock));
+        assertFalse(HANDLER.processCommandLineKey("/EF:", mock));
 
         verify(mock,never()).setExcludedFileExtensions(anyString());
         
-        assertTrue(HANDLER.processArgument("/ef:rrr,Ggg,bBb", mock));
+        assertTrue(HANDLER.processCommandLineKey("/ef:rrr,Ggg,bBb", mock));
         verify(mock).setExcludedFileExtensions("rrr,Ggg,bBb");
     }
 

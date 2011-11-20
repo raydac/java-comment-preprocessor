@@ -21,7 +21,6 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -257,18 +256,6 @@ public enum PreprocessorUtils {
         return result;
     }
 
-    public static PreprocessorExtension getPreprocessorExtension(final PreprocessorContext cfg) {
-        return cfg == null ? null : cfg.getPreprocessorExtension();
-    }
-
-    public static boolean isCharAllowedAtHexNumber(final char chr) {
-        return (chr >= 'a' && chr <= 'f') || (chr >= 'A' && chr <= 'F') || (chr >= '0' && chr <= '9');
-    }
-
-    public static boolean isCharAllowedInVariableOrFunctionName(final char chr) {
-        return chr == '_' || Character.isLetterOrDigit(chr) || chr == '.';
-    }
-
     public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
         if (file == null) {
             throw new NullPointerException("File is null");
@@ -339,28 +326,5 @@ public enum PreprocessorUtils {
         }
 
         return tokens.toArray(new String[tokens.size()]);
-    }
-
-    public static final void reverseArray(final Object[] array) {
-        final int arrayLen = array.length;
-
-        if (arrayLen > 1) {
-            if (arrayLen > 2) {
-                int firstIndex = 0;
-                int lastIndex = array.length - 1;
-
-                while (firstIndex != lastIndex) {
-                    final Object temp = array[firstIndex];
-                    array[firstIndex] = array[lastIndex];
-                    array[lastIndex] = temp;
-                    firstIndex++;
-                    lastIndex--;
-                }
-            } else {
-                final Object temp = array[0];
-                array[0] = array[1];
-                array[1] = temp;
-            }
-        }
     }
 }

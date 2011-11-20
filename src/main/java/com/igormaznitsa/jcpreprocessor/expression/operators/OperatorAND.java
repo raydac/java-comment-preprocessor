@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public final class OperatorAND extends AbstractOperator {
@@ -47,8 +47,8 @@ public final class OperatorAND extends AbstractOperator {
     }
     
 
-     public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.LOGICAL;
+     public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.LOGICAL;
     }
    
 }

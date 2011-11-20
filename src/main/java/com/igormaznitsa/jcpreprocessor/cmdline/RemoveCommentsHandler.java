@@ -19,15 +19,20 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The handler processing the flag to clear all sources in the destination directory from inside comments
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class RemoveCommentsHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/R";
     
     public String getDescription() {
-        return "after preprocessing the new file will be completely cleared of comments in Java-C style";
+        return "to clear sources from commentaries (in Java-C style) after preprocessing";
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String argument, final PreprocessorContext configurator) {
         boolean result = false;
         
         if (ARG_NAME.equalsIgnoreCase(argument)){

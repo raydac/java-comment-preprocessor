@@ -19,7 +19,13 @@ package com.igormaznitsa.jcpreprocessor.expression;
 
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
-public final class Value implements ExpressionStackItem {
+/**
+ * The class describes an expression value i.e. an atomic constant expression item like string or number
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * @see ValueType
+ */
+public final class Value implements ExpressionItem {
 
     public static final Value BOOLEAN_TRUE = new Value(Boolean.TRUE);
     public static final Value BOOLEAN_FALSE = new Value(Boolean.FALSE);
@@ -29,6 +35,7 @@ public final class Value implements ExpressionStackItem {
     public static final Value INT_TWO = new Value(Long.valueOf(2L));
     public static final Value INT_THREE = new Value(Long.valueOf(3L));
     public static final Value INT_FOUR = new Value(Long.valueOf(4L));
+    public static final Value INT_FIVE = new Value(Long.valueOf(5L));
     
     private final Object value;
     private final ValueType type;
@@ -230,12 +237,12 @@ public final class Value implements ExpressionStackItem {
         return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
     }
 
-    public ExpressionStackItemType getStackItemType() {
-        return ExpressionStackItemType.VALUE;
+    public ExpressionItemType getExpressionItemType() {
+        return ExpressionItemType.VALUE;
     }
 
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.VALUE;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.VALUE;
     }
 
     @Override

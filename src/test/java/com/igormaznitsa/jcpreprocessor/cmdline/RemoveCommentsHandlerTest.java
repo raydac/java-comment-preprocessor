@@ -12,13 +12,13 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/r:", mock));
-        assertFalse(HANDLER.processArgument("/R:", mock));
-        assertFalse(HANDLER.processArgument("/RR", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/r:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/R:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/RR", mock));
         
-        assertTrue(HANDLER.processArgument("/r", mock));
+        assertTrue(HANDLER.processCommandLineKey("/r", mock));
         verify(mock).setRemovingComments(true);
     }
 

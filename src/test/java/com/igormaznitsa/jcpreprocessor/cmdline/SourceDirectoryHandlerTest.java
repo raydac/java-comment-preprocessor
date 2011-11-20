@@ -12,13 +12,13 @@ public class SourceDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/i:", mock));
-        assertFalse(HANDLER.processArgument("/I:", mock));
-        assertFalse(HANDLER.processArgument("/II", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/i:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/I:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/II", mock));
         
-        assertTrue(HANDLER.processArgument("/i:testdir", mock));
+        assertTrue(HANDLER.processCommandLineKey("/i:testdir", mock));
         verify(mock).setSourceDirectory("testdir");
     }
 

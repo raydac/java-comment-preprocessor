@@ -19,6 +19,11 @@ package com.igormaznitsa.jcpreprocessor.cmdline;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The handler processing the flag that the preprocessor to be verbose in its messages and information
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class VerboseHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/V";
@@ -27,11 +32,11 @@ public class VerboseHandler implements CommandLineHandler {
         return "switch on the verbose level";
     }
 
-    public boolean processArgument(final String argument, final PreprocessorContext configurator) {
+    public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
         
-        if (ARG_NAME.equalsIgnoreCase(argument)){
-            configurator.setVerbose(true);
+        if (ARG_NAME.equalsIgnoreCase(key)){
+            context.setVerbose(true);
             result = true;
         }
         

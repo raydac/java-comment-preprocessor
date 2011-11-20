@@ -12,12 +12,12 @@ public class VerboseHandlerTest extends AbstractCommandLineHandlerTest {
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("", mock));
-        assertFalse(HANDLER.processArgument("/v:", mock));
-        assertFalse(HANDLER.processArgument("/VV", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("", mock));
+        assertFalse(HANDLER.processCommandLineKey("/v:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/VV", mock));
         
-        assertTrue(HANDLER.processArgument("/v", mock));
+        assertTrue(HANDLER.processCommandLineKey("/v", mock));
         verify(mock).setVerbose(true);
     }
 

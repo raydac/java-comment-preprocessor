@@ -17,9 +17,17 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
+/**
+ * The enumeration contains all allowed types for expression values and their signatures
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public enum ValueType {
     ANY("Any"), STRING("Str"), BOOLEAN("Bool"), INT("Int"), FLOAT("Float"), UNKNOWN("Unknown");
     
+    /**
+     * The signature for the type it will be used in method calls
+     */
     private final String signature;
     
     public String getSignature(){
@@ -30,6 +38,11 @@ public enum ValueType {
         this.signature = signature;
     }
     
+    /**
+     * To check that the type is compatible with another one
+     * @param type the type to be checked, must not be null
+     * @return true if the type is compatible else false
+     */
     public boolean isCompatible(final ValueType type){
         if (this == type) {
             return true;

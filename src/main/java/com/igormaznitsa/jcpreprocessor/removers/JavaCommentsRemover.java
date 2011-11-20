@@ -21,12 +21,25 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+/**
+ * A remover allows to cut off all Java like comments from a reader and write the result into a writer
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class JavaCommentsRemover {
 
     private final Reader srcReader;
     private final Writer dstWriter;
 
     public JavaCommentsRemover(final Reader src, final Writer dst) {
+        if (src == null){
+            throw new NullPointerException("The reader is null");
+        }
+        
+        if (dst == null){
+            throw new NullPointerException("The writer is null");
+        }
+        
         this.srcReader = src;
         this.dstWriter = dst;
     }

@@ -33,8 +33,8 @@ public class ExpressionParserTest {
         final ExpressionTreeElement root = tree.getRoot();
         
         assertEquals("Root must be SUB", SUB, root.getItem());
-        assertEquals("Left must be -1", Value.valueOf(Long.valueOf(-1L)), root.getElementAt(0).getItem());
-        assertEquals("Right must be 2", Value.INT_TWO, root.getElementAt(1).getItem());
+        assertEquals("Left must be -1", Value.valueOf(Long.valueOf(-1L)), root.getChildForIndex(0).getItem());
+        assertEquals("Right must be 2", Value.INT_TWO, root.getChildForIndex(1).getItem());
     }
     
     @Test
@@ -100,7 +100,7 @@ public class ExpressionParserTest {
         
         final PushbackReader reader = new PushbackReader(new StringReader("xml_getattribute(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
         
-        final ExpressionStackItem [] items = new ExpressionStackItem[]{
+        final ExpressionItem [] items = new ExpressionItem[]{
             AbstractFunction.findForClass(FunctionXML_GETATTRIBUTE.class),
             ExpressionParser.SpecialItem.BRACKET_OPENING,
             Value.valueOf(Float. valueOf(1.3f)),
@@ -123,7 +123,7 @@ public class ExpressionParserTest {
         };
         
         int index = 0;
-        for(final ExpressionStackItem item : items){
+        for(final ExpressionItem item : items){
             assertEquals("Position "+index+" must be equals",item, ExpressionParser.getInstance().nextItem(reader, null));
             index++;
         }
@@ -155,12 +155,12 @@ public class ExpressionParserTest {
         
         final ExpressionTreeElement root = tree.getRoot();
         assertEquals("Root is DIV", AbstractOperator.findForClass(OperatorDIV.class), root.getItem());
-        assertEquals("Right is 8", Value.valueOf(Long.valueOf(8L)), root.getElementAt(1).getItem());
+        assertEquals("Right is 8", Value.valueOf(Long.valueOf(8L)), root.getChildForIndex(1).getItem());
 
-        final ExpressionTreeElement left = root.getElementAt(0);
+        final ExpressionTreeElement left = root.getChildForIndex(0);
         assertEquals("Left is MUL", AbstractOperator.findForClass(OperatorMUL.class), left.getItem());
-        assertEquals("Left-left is 3", Value.INT_THREE, left.getElementAt(0).getItem());
-        assertEquals("Left-right is 4", Value.INT_FOUR, left.getElementAt(1).getItem());
+        assertEquals("Left-left is 3", Value.INT_THREE, left.getChildForIndex(0).getItem());
+        assertEquals("Left-right is 4", Value.INT_FOUR, left.getChildForIndex(1).getItem());
     }
     
     @Test
@@ -172,8 +172,8 @@ public class ExpressionParserTest {
         
         assertEquals("Root must be MUL",AbstractOperator.findForClass(OperatorMUL.class),root.getItem());
         
-        final ExpressionTreeElement left = root.getElementAt(0);
-        final ExpressionTreeElement right = root.getElementAt(1);
+        final ExpressionTreeElement left = root.getChildForIndex(0);
+        final ExpressionTreeElement right = root.getChildForIndex(1);
         
         assertEquals("Left must be ADD",AbstractOperator.findForClass(OperatorADD.class),left.getItem());
         assertEquals("Right must be Function",AbstractFunction.findForClass(FunctionXML_GETATTRIBUTE.class),right.getItem());
@@ -187,8 +187,8 @@ public class ExpressionParserTest {
         final ExpressionTreeElement root = tree.getRoot();
         
         assertEquals("Root must be ADD",AbstractOperator.findForClass(OperatorADD.class),root.getItem());
-        assertEquals("Left must be 1",Value.INT_ONE,root.getElementAt(0).getItem());
-        assertEquals("Left must be 2",Value.INT_TWO,root.getElementAt(1).getItem());
+        assertEquals("Left must be 1",Value.INT_ONE,root.getChildForIndex(0).getItem());
+        assertEquals("Left must be 2",Value.INT_TWO,root.getChildForIndex(1).getItem());
     }
 
     @Test
@@ -202,13 +202,13 @@ public class ExpressionParserTest {
         final ExpressionTreeElement root = tree.getRoot();
         assertEquals("Must be xml_elementAt", xmlElementAt, root.getItem());
 
-        final ExpressionTreeElement left = root.getElementAt(0);
-        final ExpressionTreeElement right = root.getElementAt(1);
+        final ExpressionTreeElement left = root.getChildForIndex(0);
+        final ExpressionTreeElement right = root.getChildForIndex(1);
         
         assertEquals("Must be 3", Value.INT_THREE, right.getItem());
         assertEquals("Must be xml_elementAt", xmlElementAt, left.getItem());
-        assertEquals("Must be 1", Value.INT_ONE, left.getElementAt(0).getItem());
-        assertEquals("Must be 2", Value.INT_TWO, left.getElementAt(1).getItem());
+        assertEquals("Must be 1", Value.INT_ONE, left.getChildForIndex(0).getItem());
+        assertEquals("Must be 2", Value.INT_TWO, left.getChildForIndex(1).getItem());
     }
     
     @Test
@@ -223,16 +223,16 @@ public class ExpressionParserTest {
         final ExpressionTreeElement root = tree.getRoot();
         
         assertEquals("Root must be ADD",ADD,root.getItem());
-        assertEquals("Left must be 1", Value.INT_ONE, root.getElementAt(0).getItem());
+        assertEquals("Left must be 1", Value.INT_ONE, root.getChildForIndex(0).getItem());
 
-        final ExpressionTreeElement right = root.getElementAt(1);
+        final ExpressionTreeElement right = root.getChildForIndex(1);
         assertEquals("Right must be MUL", MUL, right.getItem());
-        assertEquals("Right-left must be 2", Value.INT_TWO, right.getElementAt(0).getItem());
+        assertEquals("Right-left must be 2", Value.INT_TWO, right.getChildForIndex(0).getItem());
         
-        final ExpressionTreeElement rightRight = right.getElementAt(1);
+        final ExpressionTreeElement rightRight = right.getChildForIndex(1);
         assertEquals("Right-right must be SUB", SUB, rightRight.getItem());
-        assertEquals("Right-right-left must be 3", Value.INT_THREE, rightRight.getElementAt(0).getItem());
-        assertEquals("Right-right-right must be 4", Value.INT_FOUR, rightRight.getElementAt(1).getItem());
+        assertEquals("Right-right-left must be 3", Value.INT_THREE, rightRight.getChildForIndex(0).getItem());
+        assertEquals("Right-right-right must be 4", Value.INT_FOUR, rightRight.getChildForIndex(1).getItem());
     }
 
     @Test

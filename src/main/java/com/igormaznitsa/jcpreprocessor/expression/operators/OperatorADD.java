@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression.operators;
 
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionStackItemPriority;
+import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 public final class OperatorADD extends AbstractOperator {
@@ -62,8 +62,8 @@ public final class OperatorADD extends AbstractOperator {
     }
     
 
-    public ExpressionStackItemPriority getPriority() {
-        return ExpressionStackItemPriority.ARITHMETIC_ADD_SUB;
+    public ExpressionItemPriority getExpressionItemPriority() {
+        return ExpressionItemPriority.ARITHMETIC_ADD_SUB;
     }
     
 }

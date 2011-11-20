@@ -17,9 +17,20 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
-public enum ExpressionStackItemType {
-    FUNCTION,
-    OPERATOR,
-    VALUE,
-    VARIABLE;
+/**
+ * The interface describes an object which can be used during expression calculations
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public interface ExpressionItem {
+    /**
+     * Get the type of the item
+     * @return the item type, must not be null
+     */
+    ExpressionItemType getExpressionItemType();
+    /**
+     * Get the priority of the item
+     * @return the item priority, must not be null
+     */
+    ExpressionItemPriority getExpressionItemPriority();
 }

@@ -17,7 +17,9 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
-public interface ExpressionStackItem {
-    ExpressionStackItemType getStackItemType();
-    ExpressionStackItemPriority getPriority();
+public enum ExpressionItemType {
+    FUNCTION,
+    OPERATOR,
+    VALUE,
+    VARIABLE;
 }

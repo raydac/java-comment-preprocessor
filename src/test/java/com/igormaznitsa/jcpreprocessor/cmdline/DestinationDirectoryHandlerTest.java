@@ -11,10 +11,10 @@ public class DestinationDirectoryHandlerTest extends AbstractCommandLineHandlerT
     @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
-        assertFalse(HANDLER.processArgument(null, mock));
-        assertFalse(HANDLER.processArgument("/s:", mock));
-        assertFalse(HANDLER.processArgument("/O:", mock));
-        assertTrue(HANDLER.processArgument("/O:test", mock));
+        assertFalse(HANDLER.processCommandLineKey(null, mock));
+        assertFalse(HANDLER.processCommandLineKey("/s:", mock));
+        assertFalse(HANDLER.processCommandLineKey("/O:", mock));
+        assertTrue(HANDLER.processCommandLineKey("/O:test", mock));
         verify(mock).setDestinationDirectory("test");
     }
 
