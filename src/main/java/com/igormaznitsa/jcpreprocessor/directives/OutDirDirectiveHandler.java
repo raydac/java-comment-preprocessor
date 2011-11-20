@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the //#outdir directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -33,7 +38,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to change the output directory name for the preprocessing file (it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
+        return "it allows to change the output directory for the preprocessing file (also it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
     }
 
     @Override
@@ -42,13 +47,13 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         final Value name = Expression.evalExpression(string, context, state);
 
         if (name == null || name.getType() != ValueType.STRING) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"outdir needs a string expression");
+            throw new IllegalArgumentException(DIRECTIVE_PREFIX+"outdir needs a string expression");
         }
         state.getRootFileInfo().setDestinationDir((String) name.getValue());
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

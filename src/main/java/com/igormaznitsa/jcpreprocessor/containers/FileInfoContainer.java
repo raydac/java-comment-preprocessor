@@ -19,27 +19,52 @@ package com.igormaznitsa.jcpreprocessor.containers;
 
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
-import com.igormaznitsa.jcpreprocessor.directives.AfterProcessingBehaviour;
+import com.igormaznitsa.jcpreprocessor.directives.AfterDirectiveProcessingBehaviour;
 import com.igormaznitsa.jcpreprocessor.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.List;
 
+/**
+ * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class FileInfoContainer {
-
+    /**
+     * The source file for the sontainer
+     */
     private final File sourceFile;
+    
+    /**
+     * The flag shows that the file should be just copied into the destination place without any preprocessing
+     */
     private final boolean forCopyOnly;
+    
+    /**
+     * The flag shows that the file has been excluded from preprocessing and it will not be preprocessed and copied
+     */
     private boolean excludedFromPreprocessing;
+    
+    /**
+     * The destination directory for the file
+     */
     private String destinationDir;
+    
+    /**
+     * The destination name for the file
+     */
     private String destinationName;
 
     public File getSourceFile() {
@@ -62,8 +87,16 @@ public class FileInfoContainer {
         return destinationName;
     }
 
-    public FileInfoContainer(final File srcFile, final String dstFileName, final boolean copingOnly) {
-        forCopyOnly = copingOnly;
+    public FileInfoContainer(final File srcFile, final String dstFileName, final boolean copyOnly) {
+        if (srcFile == null){
+            throw new NullPointerException("The source file is null");
+        }
+        
+        if (dstFileName == null){
+            throw new NullPointerException("The destination file name is null");
+        }
+        
+        forCopyOnly = copyOnly;
         excludedFromPreprocessing = false;
         sourceFile = srcFile;
 
@@ -87,11 +120,11 @@ public class FileInfoContainer {
 
     @Override
     public String toString() {
-        return sourceFile.getAbsolutePath();
+        return "FileInfoContainer: file="+sourceFile.getAbsolutePath()+" toDir="+destinationDir+" toName="+destinationName;
     }
 
     private void printSpaces(final PreprocessingState paramContainer, final int number) throws IOException {
-        for (int li = 0; li < number; li++) {
+        for (int i = 0; i < number; i++) {
             paramContainer.getPrinter().print(" ");
         }
     }
@@ -273,14 +306,14 @@ public class FileInfoContainer {
         return result;
     }
 
-    protected AfterProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
+    protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
         final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
         for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
             final String name = handler.getName();
             if (trimmedString.startsWith(name)) {
                 if ((firstPass && !handler.isGlobalPhaseAllowed()) || (!firstPass && !handler.isPreprocessingPhaseAllowed())) {
-                    return AfterProcessingBehaviour.READ_NEXT_LINE;
+                    return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
                 }
 
                 final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
@@ -288,67 +321,48 @@ public class FileInfoContainer {
                 final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
                 if (checkDirectiveArgumentRoughly(handler, restOfString)) {
                     if (allowedForExecution) {
-                        return handler.execute(restOfString.trim(), state, configurator);
+                        return handler.execute(restOfString.trim(), configurator, state);
                     } else {
-                        return AfterProcessingBehaviour.PROCESSED;
+                        return AfterDirectiveProcessingBehaviour.PROCESSED;
                     }
                 } else {
                     throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");
                 }
             }
         }
-        throw new RuntimeException("Unknown preprocessor directive [" + trimmedString + ']');
+        throw new RuntimeException("Unknown preprocessor directive detected [" + trimmedString + ']');
     }
 
-    private final void removeCommentsFromFile(final File file, final PreprocessorContext cfg) throws IOException {
-        int len = (int) file.length();
-        int pos = 0;
-        final byte[] memoryFile = new byte[len];
-        FileInputStream inStream = new FileInputStream(file);
-        try {
-            while (len > 0) {
-                final int read = inStream.read(memoryFile, pos, len);
-                if (read < 0) {
-                    break;
-                }
-                pos += read;
-                len -= read;
-            }
+    private final void removeCommentsFromFile(final File processingFile, final PreprocessorContext context) throws IOException {
+        final byte [] memoryFile = PreprocessorUtils.readFileAsByteArray(processingFile);
 
-            if (len > 0) {
-                throw new IOException("Wrong read length");
-            }
-        } finally {
-            try {
-                inStream.close();
-            } catch (IOException ex) {
-            }
+        if (!processingFile.delete()) {
+            throw new IOException("Can't delete the source file " + processingFile.getAbsolutePath());
         }
 
-        if (!file.delete()) {
-            throw new IOException("Can't delete the file " + file.getAbsolutePath());
-        }
+        final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), context.getInCharacterEncoding());
 
-        final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), cfg.getInCharacterEncoding());
-
-        final FileWriter writer = new FileWriter(file, false);
+        final Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(processingFile, false),16384), context.getOutCharacterEncoding());
         try {
             new JavaCommentsRemover(reader, writer).process();
             writer.flush();
         } finally {
-            try {
-                writer.close();
-            } catch (IOException ex) {
-            }
+            PreprocessorUtils.closeSilently(writer);
         }
     }
 
-    public void setDestinationDir(final String stringToBeProcessed) {
-        destinationDir = stringToBeProcessed;
+    public void setDestinationDir(final String destDir) {
+        if (destDir == null){
+            throw new NullPointerException("String is null");
+        }
+        destinationDir = destDir;
     }
 
-    public void setDestinationName(String stringToBeProcessed) {
-        destinationName = stringToBeProcessed;
+    public void setDestinationName(final String destName) {
+        if (destName == null) {
+            throw new NullPointerException("String is null");
+        }
+        destinationName = destName;
     }
 
     public void setExcluded(final boolean flag) {

@@ -19,6 +19,11 @@ package com.igormaznitsa.jcpreprocessor.containers;
 
 import java.io.File;
 
+/**
+ * The class contains text data of a file and the string position index for the file 
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class TextFileDataContainer {
 
     private final String[] text;

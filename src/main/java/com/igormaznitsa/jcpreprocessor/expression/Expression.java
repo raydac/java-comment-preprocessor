@@ -255,6 +255,11 @@ public class Expression {
     private Value eval(final PreprocessingState state) {
         final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
         final ExpressionItem resultItem = result.getItem();
+        
+        if (resultItem == null) {
+            throw new IllegalStateException("Expression doesn't have result");
+        }
+        
         if (resultItem instanceof Value) {
             return (Value) resultItem;
         } else {

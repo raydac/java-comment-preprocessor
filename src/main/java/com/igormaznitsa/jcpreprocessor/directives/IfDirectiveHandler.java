@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the //#if directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class IfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -47,11 +52,11 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isDirectiveCanBeProcessed()){
             final Value expressionResult = Expression.evalExpression(string,context,state);
             if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
-                throw new RuntimeException(DIRECTIVE_PREFIX+"if needs a boolean expression");
+                throw new IllegalArgumentException(DIRECTIVE_PREFIX+"if needs a boolean expression as the argument");
             }
             state.pushIf(true);
             if (!expressionResult.asBoolean().booleanValue()){
@@ -61,6 +66,6 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
             state.pushIf(false);
         }
  
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

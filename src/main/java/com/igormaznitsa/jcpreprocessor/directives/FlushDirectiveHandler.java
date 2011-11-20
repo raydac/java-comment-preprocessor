@@ -22,6 +22,11 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The class implements the //#flush directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -31,11 +36,11 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it flushes the current text buffer state into the file";
+        return "it flushes the current accumulated text buffer content into the file";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (!context.isFileOutputDisabled()) {
             final File outFile = context.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
             try {
@@ -45,6 +50,6 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
                 throw new RuntimeException("IO exception during execution", ex);
             }
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

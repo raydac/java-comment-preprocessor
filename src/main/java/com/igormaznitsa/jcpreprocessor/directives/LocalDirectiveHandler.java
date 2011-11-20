@@ -23,6 +23,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The class implements the //#local directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -31,14 +36,14 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state){
         processLocalDefinition(string, context, state);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
     @Override
     public String getReference() {
-        return "allows to define or change a local variable, it needs an expression";
+        return "it allows to define new one or change an existing local variable";
     }
 
     @Override
@@ -50,15 +55,11 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
         if (splitted.length != 2) {
-            throw new RuntimeException("Can't recognize an expression");
+            throw new IllegalArgumentException("Can't recognize any expression");
         }
 
         final String name = splitted[0];
         final Value value = Expression.evalExpression(splitted[1], context, state);
-
-        if (value == null) {
-            throw new RuntimeException("Expression can't be calculated");
-        }
 
         context.setLocalVariable(name, value);
     }

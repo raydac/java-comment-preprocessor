@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the //#exitif directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -33,7 +38,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it interrupts the preprocessing if the excpression is true";
+        return "it interrupts preprocessing of the current file if the expression result is true";
     }
 
     @Override
@@ -42,17 +47,19 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
+        AfterDirectiveProcessingBehaviour result = AfterDirectiveProcessingBehaviour.PROCESSED;
+        
         // To end processing the file processing immediatly if the value is true
         final Value condition = Expression.evalExpression(string,context,state);
         if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"exitif needs a boolean condition");
+            throw new IllegalArgumentException(DIRECTIVE_PREFIX+"exitif needs a boolean condition");
         }
         if (((Boolean) condition.getValue()).booleanValue()) {
             state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
-            return AfterProcessingBehaviour.READ_NEXT_LINE;
+            result = AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return result;
     }
 
  }

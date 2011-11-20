@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
+/**
+ * The class implements the //#while directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -33,7 +38,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it makes a loop until "+DIRECTIVE_PREFIX+"end if the condition is true";
+        return "it makes a loop until "+DIRECTIVE_PREFIX+"end if its condition result is true";
     }
 
     @Override
@@ -47,11 +52,11 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isDirectiveCanBeProcessed()) {
             final Value condition = Expression.evalExpression(string,context,state);
             if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-                throw new RuntimeException(DIRECTIVE_PREFIX+"while needs a boolean expression");
+                throw new IllegalArgumentException(DIRECTIVE_PREFIX+"while needs a boolean expression");
             }
 
             state.pushWhile(true);
@@ -63,6 +68,6 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
            state.pushWhile(false);
         }
         
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

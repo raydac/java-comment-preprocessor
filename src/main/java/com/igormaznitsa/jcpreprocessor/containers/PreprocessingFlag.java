@@ -17,6 +17,11 @@
  */
 package com.igormaznitsa.jcpreprocessor.containers;
 
+/**
+ * The enumeration contains flags describe inside special preprocessor states
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public enum PreprocessingFlag {
 
     /**

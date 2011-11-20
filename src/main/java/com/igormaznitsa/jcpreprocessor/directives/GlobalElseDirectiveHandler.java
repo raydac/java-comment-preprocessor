@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#_else directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -44,9 +48,9 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
         if (state.isIfStackEmpty()) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"_else without "+DIRECTIVE_PREFIX+"_if detected");
+            throw new IllegalStateException(DIRECTIVE_PREFIX+"_else without "+DIRECTIVE_PREFIX+"_if detected");
         }
 
         if (state.isAtActiveIf()) {
@@ -56,7 +60,7 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
                 state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
     
     @Override

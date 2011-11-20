@@ -17,17 +17,22 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-public enum AfterProcessingBehaviour {
+/**
+ * The enumeration contains flags after directive processing behavior
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public enum AfterDirectiveProcessingBehaviour {
     /**
-     * Processed
+     * Notify preprocessor that a directive has been processed successfully
      */
     PROCESSED,
     /**
-     * Processed and need to read the next line immediately
+     * Notify preprocessor that a directive has been processed and need to read the next line immediately
      */
     READ_NEXT_LINE,
     /**
-     * The directive has not been processed
+     * Notify preprocessor that the directive has not been processed
      */
     NOT_PROCESSED
 }

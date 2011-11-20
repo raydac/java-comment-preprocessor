@@ -23,7 +23,6 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionParser;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionTree;
-import com.igormaznitsa.jcpreprocessor.expression.ExpressionTreeElement;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.IOException;
 import java.io.PushbackReader;
@@ -31,6 +30,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class implements the //#action directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -40,7 +44,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it calls an outside processor and give arguments to it";
+        return "it calls a preprocessor extension and pass directive arguments to it (arguments separated by comma)";
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (context.getPreprocessorExtension() != null) {
             final Expression stack = null;
 
@@ -70,7 +74,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
                 throw new IllegalArgumentException("Wrong string detected [" + string + ']', ex);
             }
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
     private List<ExpressionTree> parseString(final String str, final PreprocessorContext context) throws IOException {

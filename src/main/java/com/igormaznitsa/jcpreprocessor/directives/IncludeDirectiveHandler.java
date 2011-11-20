@@ -24,6 +24,11 @@ import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import java.io.IOException;
 
+/**
+ * The class implements the //#include directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -33,7 +38,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to include another file body into the current file";
+        return "it allows to include another file body into the current preprocessing file";
     }
 
     @Override
@@ -42,11 +47,11 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context, PreprocessingState state) {
         final Value includedFilePath = Expression.evalExpression(string, context,state);
 
         if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");
+            throw new IllegalArgumentException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");
         }
 
         try {
@@ -54,6 +59,6 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
         }catch(IOException ex){
             throw new RuntimeException("Can't open a file to include ["+includedFilePath.asString()+']',ex);
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

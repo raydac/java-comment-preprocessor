@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#break directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class BreakDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -34,12 +39,12 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException(getFullName()+" without "+DIRECTIVE_PREFIX+"while detected");
+            throw new IllegalStateException(getFullName()+" without "+DIRECTIVE_PREFIX+"while detected");
         }
 
         state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

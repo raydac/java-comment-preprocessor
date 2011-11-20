@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#endif directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -39,9 +43,9 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context,final PreprocessingState state) {
         if (state.isIfStackEmpty()) {
-            throw new RuntimeException(getFullName()+" without "+DIRECTIVE_PREFIX+"if detected");
+            throw new IllegalStateException(getFullName()+" without "+DIRECTIVE_PREFIX+"if detected");
         }
 
         if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {
@@ -50,6 +54,6 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
         
         state.popIf();
         
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

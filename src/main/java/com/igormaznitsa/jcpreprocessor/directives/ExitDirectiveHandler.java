@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#exit directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
@@ -30,12 +34,12 @@ public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it ends preprocessing of the current file immediately";
+        return "it ends the preprocessing of the current file immediately";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
-        return AfterProcessingBehaviour.READ_NEXT_LINE;
+        return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
     }
 }

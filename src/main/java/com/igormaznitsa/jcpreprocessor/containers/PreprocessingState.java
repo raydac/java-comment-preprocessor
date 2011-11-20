@@ -21,19 +21,25 @@ import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.utils.ResetablePrinter;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The class describes a preprocessor state also it contains inside buffers and save data on disk
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class PreprocessingState {
 
     public static class ExcludeIfInfo{
@@ -165,6 +171,10 @@ public final class PreprocessingState {
     }
 
     public TextFileDataContainer openFile(final File file) throws IOException {
+        if (file == null) {
+            throw new NullPointerException("The file is null");
+        }
+        
         final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding);
         final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, 0);
         fileStack.push(newContainer);
@@ -240,7 +250,7 @@ public final class PreprocessingState {
         return this;
     }
 
-    public void popAllIfUntil(final TextFileDataContainer container) {
+    public void popAllIFUntilContainerWithFile(final TextFileDataContainer container) {
         final File file = container.getFile();
         final int stringIndex = container.getNextStringIndex();
         while(!ifStack.isEmpty()){
@@ -308,7 +318,7 @@ public final class PreprocessingState {
         setPrinter(PrinterType.NORMAL);
     }
 
-    public void setPrinter(PrinterType type) {
+    public void setPrinter(final PrinterType type) {
         if (type == null) {
             throw new NullPointerException("Type is null");
         }
@@ -323,7 +333,7 @@ public final class PreprocessingState {
                 currentPrinter = prefixPrinter;
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported type detected");
+                throw new IllegalArgumentException("Unsupported type detected ["+type.name()+']');
         }
     }
 
@@ -340,21 +350,6 @@ public final class PreprocessingState {
         normalPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
         postfixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
     }
-
-    public String getFileIncludeStackAsString(){
-        final StringBuilder result = new StringBuilder();
-        
-        final Iterator<TextFileDataContainer> reverse = fileStack.descendingIterator();
-        while(reverse.hasNext()){
-            final TextFileDataContainer container = reverse.next();
-            if (result.length()>0){
-                result.append("->");
-            }
-            result.append(container.getFile().getAbsolutePath());
-        }
-        
-        return result.toString();
-    }
     
     public void saveBuffersToFile(final File outFile) throws IOException {
         final File path = outFile.getParentFile();
@@ -363,7 +358,7 @@ public final class PreprocessingState {
                 throw new IOException("Can't make directory [" + path.getAbsolutePath() + ']');
         }
 
-        final BufferedWriter writer = new BufferedWriter(new FileWriter(outFile,true));
+        final Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile,false),16384), globalOutCharacterEncoding);
         try {
             if (!prefixPrinter.isEmpty()) {
                 prefixPrinter.write(writer);
@@ -377,10 +372,7 @@ public final class PreprocessingState {
                 postfixPrinter.write(writer);
             }
         } finally {
-            try {
-                writer.close();
-            } catch (IOException ex) {
-            }
+            PreprocessorUtils.closeSilently(writer);
         }
     }
     

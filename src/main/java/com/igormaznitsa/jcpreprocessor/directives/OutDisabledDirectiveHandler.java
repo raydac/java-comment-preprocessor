@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#- directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
@@ -30,7 +35,7 @@ public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to switch off text output process";
+        return "it allows to switch off the text output, text after the directive will not be placed into inside buffers";
     }
 
     @Override
@@ -39,9 +44,9 @@ public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
         state.getPreprocessingFlags().add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
     
     

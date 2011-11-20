@@ -17,6 +17,11 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
+/**
+ * The enumeration contains possible argument types are being used by directives
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public enum DirectiveArgumentType {
     NONE(""),
     STRING("STRING"),

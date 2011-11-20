@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.directives;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#prefix[+|-] directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -29,7 +34,7 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows either to switch on (+) or switch off (-) the mode when all texts are printed into the prefix part";
+        return "it allows either to switch on (+) or switch off (-) the mode when all texts are printed into the prefix buffer";
     }
 
     @Override
@@ -38,7 +43,7 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
         if (!string.isEmpty()) {
             switch (string.charAt(0)) {
                 case '+': {
@@ -52,7 +57,7 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
                 default:
                     throw new IllegalArgumentException("Unsupported parameter");
             }
-            return AfterProcessingBehaviour.PROCESSED;
+            return AfterDirectiveProcessingBehaviour.PROCESSED;
         }
         throw new RuntimeException(DIRECTIVE_PREFIX+"prefix needs a parameter");
     }

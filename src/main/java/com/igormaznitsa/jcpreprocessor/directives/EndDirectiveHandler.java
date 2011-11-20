@@ -22,6 +22,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#end directive
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -35,9 +40,9 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException(DIRECTIVE_PREFIX+"end without "+DIRECTIVE_PREFIX+"while detected");
+            throw new IllegalStateException(DIRECTIVE_PREFIX+"end without "+DIRECTIVE_PREFIX+"while detected");
         }
 
         if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
@@ -50,7 +55,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
         } else {
             state.popWhile();
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
     @Override

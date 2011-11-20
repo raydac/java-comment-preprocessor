@@ -20,6 +20,11 @@ package com.igormaznitsa.jcpreprocessor.directives;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#excludeif directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -29,7 +34,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it excludes the file from the preprocessing list if the expression is true";
+        return "it will make the current file excluded (during the global phase) from the preprocessing list if the expression is true";
     }
 
     @Override
@@ -48,8 +53,8 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(String string, PreprocessingState state, PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getNextStringIndex()-1);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

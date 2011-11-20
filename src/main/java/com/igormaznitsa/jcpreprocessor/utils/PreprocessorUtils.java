@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -256,7 +257,7 @@ public enum PreprocessorUtils {
         return result;
     }
 
-    public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
+    private static void checkFile(final File file) throws IOException {
         if (file == null) {
             throw new NullPointerException("File is null");
         }
@@ -268,7 +269,11 @@ public enum PreprocessorUtils {
         if (!file.isFile()) {
             throw new IllegalArgumentException("File can't be read because it's not a normal file");
         }
-
+    }
+    
+    public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
+        checkFile(file);
+        
         final String enc = encoding == null ? "UTF8" : encoding;
 
         final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
@@ -286,6 +291,29 @@ public enum PreprocessorUtils {
         }
 
         return strContainer.toArray(new String[strContainer.size()]);
+    }
+
+    public static byte[] readFileAsByteArray(final File file) throws IOException {
+        checkFile(file);
+        
+        int len = (int)file.length();
+        
+        final ByteBuffer buffer = ByteBuffer.allocate(len);
+        final FileChannel inChannel = new FileInputStream(file).getChannel();
+        
+        try {
+            while(len>0){
+               final int  read = inChannel.read(buffer);
+               if (read<0){
+                   throw new IOException("Can't read whole file ["+file.getAbsolutePath()+'\'');
+               }
+               len -= read;
+            }
+        }finally{
+            closeSilently(inChannel);
+        }
+        
+        return buffer.array();
     }
 
     public static String[] splitForSetOperator(final String string) {
@@ -327,4 +355,13 @@ public enum PreprocessorUtils {
 
         return tokens.toArray(new String[tokens.size()]);
     }
+
+    public static String normalizeVariableName(final String name) {
+        if (name == null){
+            return null;
+        }
+        
+        return name.trim().toLowerCase();
+    }
+
 }

@@ -219,7 +219,7 @@ public class JCPreprocessor {
         try {
             preprocessor.execute();
         } catch (Exception unexpected) {
-            cfg.error(unexpected.toString());
+            cfg.logError(unexpected.toString());
             unexpected.printStackTrace();
             System.exit(1);
         }
@@ -322,7 +322,7 @@ public class JCPreprocessor {
                 }
 
                 if (context.isVerbose()) {
-                    context.info("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
+                    context.logInfo("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
                 }
                 context.setGlobalVariable(varName, evaluatedValue, null);
             }

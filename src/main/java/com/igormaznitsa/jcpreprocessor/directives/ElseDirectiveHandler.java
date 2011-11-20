@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#else directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ElseDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -30,13 +35,13 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "a part of a "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"endif structure, it inverts condition flag";
+        return "a part of a "+DIRECTIVE_PREFIX+"if.."+DIRECTIVE_PREFIX+"endif structure, it inverts the condition flag";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isIfStackEmpty()) {
-            throw new RuntimeException(getFullName()+" without "+DIRECTIVE_PREFIX+"if detected");
+            throw new IllegalStateException(getFullName()+" without "+DIRECTIVE_PREFIX+"if detected");
         }
 
         if (state.isAtActiveIf()) {
@@ -46,7 +51,7 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
                 state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
         }
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
     
     @Override

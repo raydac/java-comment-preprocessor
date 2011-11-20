@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#continue directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -34,15 +38,15 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
         if (state.isWhileStackEmpty()) {
-            throw new RuntimeException(getFullName()+" without "+DIRECTIVE_PREFIX+"while detected");
+            throw new IllegalStateException(getFullName()+" without "+DIRECTIVE_PREFIX+"while detected");
         }
         
         final TextFileDataContainer whileContainer = state.peekWhile();
-        state.popAllIfUntil(whileContainer);
+        state.popAllIFUntilContainerWithFile(whileContainer);
         state.popWhile();
         state.goToString(whileContainer.getNextStringIndex());
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

@@ -33,13 +33,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class PreprocessorContext {
-
-    public static interface SpecialVariableProcessor {
-        String[] getVariableNames();
-        Value getVariable(String varName, PreprocessorContext context, PreprocessingState state);
-        void setVariable(String varName, Value value, PreprocessorContext context, PreprocessingState state);
-    }
     
     public static final String DEFAULT_SOURCE_DIRECTORY = "." + File.separatorChar;
     public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
@@ -94,7 +92,7 @@ public class PreprocessorContext {
         }
     }
 
-    public void info(final String text) {
+    public void logInfo(final String text) {
         
         if (text == null || preprocessorLogger == null) {
             return;
@@ -103,14 +101,14 @@ public class PreprocessorContext {
         preprocessorLogger.info(text);
     }
 
-    public void error(final String text) {
+    public void logError(final String text) {
         if (text == null || preprocessorLogger == null) {
             return;
         }
         preprocessorLogger.error(text);
     }
 
-    public void warning(final String text) {
+    public void logWarning(final String text) {
         if (text == null || preprocessorLogger == null) {
             return;
         }
@@ -223,7 +221,7 @@ public class PreprocessorContext {
     }
 
     public final boolean isFileAllowedToBeProcessed(final File file) {
-        if (file == null || file.isDirectory()) {
+        if (file == null || !file.exists() || file.isDirectory()) {
             return false;
         }
 
@@ -231,7 +229,7 @@ public class PreprocessorContext {
     }
 
     public final boolean isFileExcludedFromProcess(final File file) {
-        if (file == null || file.isDirectory()) {
+        if (file == null || !file.exists() || file.isDirectory()) {
             return false;
         }
 
@@ -265,14 +263,14 @@ public class PreprocessorContext {
             throw new NullPointerException("Value is null");
         }
         
-        final String normalized = name.trim().toLowerCase();
+        final String normalized = PreprocessorUtils.normalizeVariableName(name);
         
         if (normalized.isEmpty()){
-            throw new IllegalArgumentException("Empty value name");
+            throw new IllegalArgumentException("Empty variable name");
         }
         
         if (specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
-            throw new RuntimeException("Attemption to set a global variable [" + normalized + ']');
+            throw new IllegalArgumentException("Attemption to set a global variable or a special variable as a local one [" + normalized + ']');
         }
         localVarTable.put(normalized, value);
         return this;
@@ -283,7 +281,7 @@ public class PreprocessorContext {
             return null;
         }
         
-        final String normalized = name.trim().toLowerCase();
+        final String normalized = PreprocessorUtils.normalizeVariableName(name);
         
         if (normalized.isEmpty()){
             return null;
@@ -297,7 +295,7 @@ public class PreprocessorContext {
             return false;
         }
         
-        final String normalized = name.trim().toLowerCase();
+        final String normalized = PreprocessorUtils.normalizeVariableName(name);
         
         if (normalized.isEmpty()){
             return false;
@@ -316,7 +314,7 @@ public class PreprocessorContext {
             throw new NullPointerException("Variable name is null");
         }
 
-        final String normalizedName = name.trim().toLowerCase();
+        final String normalizedName = PreprocessorUtils.normalizeVariableName(name);
 
         if (normalizedName.isEmpty()){
             throw new IllegalArgumentException("Name is empty");
@@ -333,7 +331,7 @@ public class PreprocessorContext {
             globalVarTable.put(normalizedName, value);
 
             if (isVerbose()) {
-                info("A global variable has been set [" + normalizedName + '=' + value.toString() + ']');
+                logInfo("A global variable has been set [" + normalizedName + '=' + value.toString() + ']');
             }
         }
         return this;
@@ -344,7 +342,7 @@ public class PreprocessorContext {
             return false;
         }
 
-        final String normalized = name.trim().toLowerCase();
+        final String normalized = PreprocessorUtils.normalizeVariableName(name);
         if (normalized.isEmpty()){
             return false;
         }
@@ -357,18 +355,18 @@ public class PreprocessorContext {
             return null;
         }
 
-        final String nameInLowerCase = name.trim().toLowerCase();
+        final String normalized = PreprocessorUtils.normalizeVariableName(name);
         
-        if (nameInLowerCase.isEmpty()){
+        if (normalized.isEmpty()){
             return null;
         }
         
-        final SpecialVariableProcessor processor = specialVariableProcessors.get(nameInLowerCase);
+        final SpecialVariableProcessor processor = specialVariableProcessors.get(normalized);
         if (processor != null && state!=null) {
-            return processor.getVariable(nameInLowerCase, this, state);
+            return processor.getVariable(normalized, this, state);
         }
 
-        final Value val = getLocalVariable(nameInLowerCase);
+        final Value val = getLocalVariable(normalized);
         if (val != null) {
             return val;
         }

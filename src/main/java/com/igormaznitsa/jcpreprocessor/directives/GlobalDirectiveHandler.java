@@ -23,6 +23,10 @@ import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The class implements the //#global directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -36,14 +40,14 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context){
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state){
         processDefinition(string, context ,state);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
     @Override
     public String getReference() {
-        return "it allows to set a global variable value";
+        return "it allows to set a value for global variable during the first pass (the global phase)";
     }
 
     @Override
@@ -60,7 +64,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
         if (splitted.length != 2) {
-            throw new RuntimeException("Can't recognize the expression");
+            throw new IllegalArgumentException("Can't recognize an expression ["+string+']');
         }
 
         final String name = splitted[0].trim();
@@ -68,10 +72,8 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
         context.setGlobalVariable(name,value,state);
 
-        if (context.isVerbose()){
-            if (context.containsGlobalVariable(name)){
-                context.warning("Global value has been changed ["+name+'='+value+']');
-            }
+        if (context.isVerbose() && context.containsGlobalVariable(name)){
+                context.logWarning("Global value has been changed ["+name+'='+value+']');
         }
         
     }

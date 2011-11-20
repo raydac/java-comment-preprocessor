@@ -21,7 +21,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
-public class JCPSpecialVariables implements PreprocessorContext.SpecialVariableProcessor{
+/**
+ * The class implements the special variable processor interface and allows to get access to inside JCP variables
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public class JCPSpecialVariables implements SpecialVariableProcessor{
     public static final String VAR_DEST_DIR = "jcp.dst.dir";
     public static final String VAR_DEST_FILE_NAME = "jcp.dst.name";
     public static final String VAR_DEST_FULLPATH = "jcp.dst.path";
@@ -68,7 +72,7 @@ public class JCPSpecialVariables implements PreprocessorContext.SpecialVariableP
                 || VAR_SRC_DIR.equals(varName) 
                 || VAR_SRC_FILE_NAME.equals(varName) 
                 || VAR_SRC_FULLPATH.equals(varName)) {
-           throw new RuntimeException("The variable \'"+varName+"\' can't be set directly");
+           throw new IllegalArgumentException("The variable \'"+varName+"\' can't be set directly");
        } else 
             throw new IllegalStateException("Attemption to set unsupported variable ["+varName+']');
     }

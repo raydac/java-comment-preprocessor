@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#ifdefined directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -30,7 +34,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it takes a variable name and work like //#if if the variable has been defined in the scope";
+        return "it works similar //#if but needs only a variable name to check that it has been defined";
     }
 
     @Override
@@ -44,13 +48,13 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         if (state.isDirectiveCanBeProcessed()){
             if (string.isEmpty()) {
-                throw new RuntimeException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
+                throw new IllegalArgumentException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
             }
             state.pushIf(true);
-            final boolean definitionFlag = configurator.findVariableForName(string,state) != null;
+            final boolean definitionFlag = context.findVariableForName(string,state) != null;
             if (!definitionFlag){
                 state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
@@ -58,6 +62,6 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
             state.pushIf(false);
         }
  
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

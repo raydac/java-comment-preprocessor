@@ -21,6 +21,11 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
+/**
+ * The class implements //#assert directive handler 
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -35,12 +40,12 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it prints an info at the console, use macroses to print variables";
+        return "it asserts some info to the console, it supports macroses";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
-        configurator.info(PreprocessorUtils.processMacroses(string.trim(), configurator, state));
-        return AfterProcessingBehaviour.PROCESSED;
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
+        configurator.logInfo(PreprocessorUtils.processMacroses(string.trim(), configurator, state));
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

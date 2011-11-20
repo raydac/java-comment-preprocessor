@@ -21,6 +21,10 @@ import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
+/**
+ * The class implements the //#// directive handler
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -34,9 +38,9 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext configurator) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
          state.getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
-         return AfterProcessingBehaviour.PROCESSED;
+         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
  
     

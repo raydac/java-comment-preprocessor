@@ -25,11 +25,14 @@ import com.igormaznitsa.jcpreprocessor.expression.ExpressionParser;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionTree;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionTreeElement;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
-import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.expression.Variable;
-import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.IOException;
 
+/**
+ * The class implements the //#define directive handler
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
@@ -44,11 +47,11 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to define a global (!) variable during the second pass, the variable will be set to TRUE";
+        return "it allows to define a global (!) variable during the second pass (non-global), the variable will be set to the TRUE value";
     }
 
     @Override
-    public AfterProcessingBehaviour execute(final String string, final PreprocessingState state, final PreprocessorContext context) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
         String name = null;
 
         try {
@@ -58,20 +61,21 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
             }
             
             final ExpressionTreeElement root = tree.getRoot();
-            ExpressionItem item = root.getItem();
+            final ExpressionItem item = root.getItem();
             if (item.getExpressionItemType() != ExpressionItemType.VARIABLE){
                 throw new IllegalArgumentException("You must use a variable as the argument");
             }
             
-            name = ((Variable)item).getName().toLowerCase();
+            name = ((Variable)item).getName();
         }catch(IOException ex){
-            throw new RuntimeException("Can't parse the variable name ["+string+']',ex);
+            throw new IllegalArgumentException("Can't parse the variable name ["+string+']',ex);
         }
         
         if (context.findVariableForName(name, state) != null) {
-            context.warning("Variable \'"+name+"\' is already defined");
+            context.logWarning("Variable \'"+name+"\' was already defined");
         }
+        
         context.setGlobalVariable(name, Value.BOOLEAN_TRUE,state);
-        return AfterProcessingBehaviour.PROCESSED;
+        return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }
