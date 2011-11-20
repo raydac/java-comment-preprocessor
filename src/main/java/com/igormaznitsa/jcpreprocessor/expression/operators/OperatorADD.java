@@ -34,7 +34,7 @@ public final class OperatorADD extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It yields the sum of its operands";
+        return "yields the sum of its operands";
     }
 
     @Override

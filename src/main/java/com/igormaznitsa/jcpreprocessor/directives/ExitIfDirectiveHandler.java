@@ -38,7 +38,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it interrupts preprocessing of the current file if the expression result is true";
+        return "interrupts preprocessing of the current file if the expression result is true";
     }
 
     @Override

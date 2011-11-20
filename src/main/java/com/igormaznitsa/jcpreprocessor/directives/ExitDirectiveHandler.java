@@ -34,7 +34,7 @@ public class ExitDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it ends the preprocessing of the current file immediately";
+        return "ends the preprocessing of the current file immediately";
     }
 
     @Override

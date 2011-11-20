@@ -38,7 +38,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to include another file body into the current preprocessing file";
+        return "allows to include another file body into the current preprocessing file";
     }
 
     @Override

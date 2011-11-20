@@ -34,7 +34,7 @@ public final class OperatorOR extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It makes OR operation over two operands, bitwise OR over numeric operands and logical OR over boolean ones";
+        return "makes OR operation over two operands, bitwise OR over numeric operands and logical OR over boolean ones";
     }
 
     @Override

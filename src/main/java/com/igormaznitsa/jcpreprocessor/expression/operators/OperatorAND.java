@@ -34,7 +34,7 @@ public final class OperatorAND extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It makes AND operation over two operands, bitwise AND over numeric operands and logical AND over boolean ones";
+        return "makes AND operation over two operands, bitwise AND over numeric operands and logical AND over boolean ones";
     }
 
 

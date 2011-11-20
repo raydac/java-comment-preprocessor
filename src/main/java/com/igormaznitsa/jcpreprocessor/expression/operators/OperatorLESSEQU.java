@@ -34,7 +34,7 @@ public final class OperatorLESSEQU extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "Indicates whether the value of the left operand is less than or equal to the value of the right operand";
+        return "indicates whether the value of the left operand is less than or equal to the value of the right operand";
     }
 
     @Override

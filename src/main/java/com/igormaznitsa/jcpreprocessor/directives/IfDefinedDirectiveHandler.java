@@ -34,7 +34,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it works similar //#if but needs only a variable name to check that it has been defined";
+        return "works similar //#if but needs only a variable name to check that it has been defined";
     }
 
     @Override

@@ -34,7 +34,7 @@ public final class OperatorLESS extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "Indicates whether the value of the left operand is less than the value of the right operand";
+        return "indicates whether the value of the left operand is less than the value of the right operand";
     }
 
     @Override

@@ -48,12 +48,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class JCPreprocessor {
+public final class JCPreprocessor {
 
     private final PreprocessorContext context;
-    private static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
+    public static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
         new HelpHandler(),
-        new VerboseHandler(),
         new InCharsetHandler(),
         new OutCharsetHandler(),
         new ClearDstDirectoryHandler(),
@@ -203,6 +202,8 @@ public class JCPreprocessor {
     }
 
     public static final void main(final String... args) {
+        printHeader();
+        
         final String[] processedCommandStringArgs = PreprocessorUtils.replaceChar(args, '$', '\"');
 
         PreprocessorContext cfg = null;
@@ -336,16 +337,16 @@ public class JCPreprocessor {
         }
     }
 
-    private static void help() {
+    private static void printHeader() {
         System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
         System.out.println(InfoHelper.getCopyright());
+    }
+    
+    private static void help() {
         System.out.println();
 
-        System.out.println("Command line arguments");
-        System.out.println("---------------------------");
-
-        for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
-            System.out.println(processor.getKeyName() + "\t\t" + processor.getDescription());
+        for(final String str : InfoHelper.makeTextForHelpInfo()){
+            System.out.println(str);
         }
     }
 }

@@ -38,7 +38,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it makes a loop until "+DIRECTIVE_PREFIX+"end if its condition result is true";
+        return "makes a loop until "+DIRECTIVE_PREFIX+"end if its condition result is true";
     }
 
     @Override

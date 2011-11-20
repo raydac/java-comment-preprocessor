@@ -38,7 +38,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to change the output directory for the preprocessing file (also it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
+        return "allows to change the output directory for the preprocessing file (also it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
     }
 
     @Override

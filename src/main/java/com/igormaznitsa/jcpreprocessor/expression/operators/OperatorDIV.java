@@ -34,7 +34,7 @@ public final class OperatorDIV extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It yields the algebraic quotient of its operands";
+        return "yields the algebraic quotient of its operands";
     }
 
     @Override

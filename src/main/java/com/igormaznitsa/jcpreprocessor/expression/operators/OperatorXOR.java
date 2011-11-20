@@ -34,7 +34,7 @@ public class OperatorXOR extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It makes XOR operation over two operands, bitwise XOR over numeric operands and logical XOR over boolean ones";
+        return "makes XOR operation over two operands, bitwise XOR over numeric operands and logical XOR over boolean ones";
     }
 
     @Override

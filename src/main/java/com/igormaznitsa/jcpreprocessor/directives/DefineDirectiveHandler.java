@@ -47,7 +47,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to define a global (!) variable during the second pass (non-global), the variable will be set to the TRUE value";
+        return "allows to define a global (!) variable during the second pass (non-global), the variable will be set to the TRUE value";
     }
 
     @Override

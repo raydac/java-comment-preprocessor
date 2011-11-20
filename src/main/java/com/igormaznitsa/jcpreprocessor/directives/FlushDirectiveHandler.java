@@ -36,7 +36,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it flushes the current accumulated text buffer content into the file";
+        return "flushes the current accumulated text buffer content into the file";
     }
 
     @Override

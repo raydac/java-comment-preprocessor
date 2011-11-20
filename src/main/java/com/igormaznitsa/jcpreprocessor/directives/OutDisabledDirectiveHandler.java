@@ -35,7 +35,7 @@ public class OutDisabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to switch off the text output, text after the directive will not be placed into inside buffers";
+        return "allows to switch off the text output, text after the directive will not be placed into inside buffers";
     }
 
     @Override

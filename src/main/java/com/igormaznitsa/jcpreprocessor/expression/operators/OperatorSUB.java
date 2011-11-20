@@ -34,7 +34,7 @@ public final class OperatorSUB extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It yields the difference of its operands";
+        return "yields the difference of its operands";
     }
 
     @Override

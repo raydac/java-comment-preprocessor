@@ -8,12 +8,52 @@
     <version>5.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>JCPreprocessor</name>
-    <url>http://maven.apache.org</url>
+    <name>Java Comment Preprocessor</name>
+    <description>A Hand-written multi-pass java preprocessor processing directives placed into commented strings</description>
+    <url>http://java-comment-preprocessor.googlecode.com/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <issueManagement>
+        <system>code.google.com</system>
+        <url>http://code.google.com/p/java-comment-preprocessor/issues/list</url>
+    </issueManagement>
+    <inceptionYear>2011</inceptionYear>
+    <developers>
+        <developer>
+            <id>raydac</id>
+            <name>Igor Maznitsa</name>
+            <email>igor.maznitsa@igormaznitsa.com</email>
+            <url>http://www.igormaznitsa.com</url>
+            <timezone>+4</timezone>
+            <roles>
+                <role>Owner</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+    <scm>
+        <connection>https://java-comment-preprocessor.googlecode.com/hg/</connection>
+        <developerConnection>https://java-comment-preprocessor.googlecode.com/hg/</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://java-comment-preprocessor.googlecode.com/</url>
+    </scm>
+    <organization>
+        <name>Igor Maznitsa</name>
+        <url>http://www.igormaznitsa.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GNU LGPL v3</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
@@ -44,5 +84,17 @@
             </plugin>
         </plugins>
     </reporting>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

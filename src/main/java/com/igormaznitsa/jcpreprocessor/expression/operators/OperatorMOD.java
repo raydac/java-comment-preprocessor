@@ -34,7 +34,7 @@ public final class OperatorMOD extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It yields the remainder from the division of the left operand by the right operand";
+        return "yields the remainder from the division of the left operand by the right operand";
     }
 
     @Override

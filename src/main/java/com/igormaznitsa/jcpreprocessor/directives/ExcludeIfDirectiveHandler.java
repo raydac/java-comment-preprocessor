@@ -34,7 +34,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it will make the current file excluded (during the global phase) from the preprocessing list if the expression is true";
+        return "makes the current file excluded (during the global phase) from the preprocessing list if the expression is true";
     }
 
     @Override

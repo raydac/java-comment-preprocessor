@@ -34,7 +34,7 @@ public final class OperatorGREAT extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "Indicates whether the value of the left operand is greater than the value of the right operand";
+        return "indicates whether the value of the left operand is greater than the value of the right operand";
     }
 
     @Override

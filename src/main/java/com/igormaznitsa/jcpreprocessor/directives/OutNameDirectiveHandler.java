@@ -38,7 +38,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to change the result file name for the current file (it can be read through "+JCPSpecialVariables.VAR_DEST_FILE_NAME+')';
+        return "allows to change the result file name for the current file (it can be read through "+JCPSpecialVariables.VAR_DEST_FILE_NAME+')';
     }
 
     @Override

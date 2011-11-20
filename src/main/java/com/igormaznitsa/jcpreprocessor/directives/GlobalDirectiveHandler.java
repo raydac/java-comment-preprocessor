@@ -47,7 +47,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to set a value for global variable during the first pass (the global phase)";
+        return "allows to set a value for global variable during the first pass (the global phase)";
     }
 
     @Override

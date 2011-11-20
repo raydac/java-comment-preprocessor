@@ -45,7 +45,7 @@ public abstract class AbstractFunction implements ExpressionItem {
     /**
      * Inside array contains all functions supported by the preprocessor
      */
-    private static final AbstractFunction [] ALL_FUNCTIONS = new AbstractFunction[]{
+    public static final AbstractFunction [] ALL_FUNCTIONS = new AbstractFunction[]{
       new FunctionABS(),  
       new FunctionROUND(),  
       new FunctionSTR2INT(),  

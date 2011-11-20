@@ -34,7 +34,7 @@ public class OperatorNOT extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "it makes NOT operation over an operand, bitwise NOT over a numeric operand and logical NOT over a boolean one";
+        return "makes NOT operation over an operand, bitwise NOT over a numeric operand and logical NOT over a boolean one";
     }
 
     @Override

@@ -43,7 +43,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to define new one or change an existing local variable";
+        return "allows to define new one or change an existing local variable";
     }
 
     @Override

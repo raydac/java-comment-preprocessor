@@ -36,21 +36,21 @@ public abstract class AbstractOperator implements ExpressionItem {
      *  The array contains all operators allowed by the preprocessor
      */
     public static final AbstractOperator [] ALL_OPERATORS = new AbstractOperator[]{
-      new OperatorADD(),  
-      new OperatorAND(),  
-      new OperatorDIV(),  
       new OperatorEQU(),  
       new OperatorGREAT(),  
       new OperatorGREATEQU(),  
       new OperatorLESS(),  
       new OperatorLESSEQU(),  
-      new OperatorMOD(),  
-      new OperatorMUL(),  
-      new OperatorNOT(),  
       new OperatorNOTEQU(),  
-      new OperatorOR(),  
+      new OperatorADD(),  
       new OperatorSUB(),  
-      new OperatorXOR()
+      new OperatorMUL(),  
+      new OperatorDIV(),  
+      new OperatorMOD(),  
+      new OperatorNOT(),  
+      new OperatorAND(),  
+      new OperatorOR(),  
+      new OperatorXOR(),
     };
     
     /**

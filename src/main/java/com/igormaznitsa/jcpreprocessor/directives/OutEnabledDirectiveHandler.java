@@ -35,7 +35,7 @@ public class OutEnabledDirectiveHandler  extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows to switch on the text output, if the //#- has been met before";
+        return "allows to switch on the text output, if the //#- has been met before";
     }
 
     @Override

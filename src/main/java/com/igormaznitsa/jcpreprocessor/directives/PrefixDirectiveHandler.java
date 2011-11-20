@@ -34,7 +34,7 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "it allows either to switch on (+) or switch off (-) the mode when all texts are printed into the prefix buffer";
+        return "allows either to switch on (+) or switch off (-) the mode when all texts are printed into the prefix buffer";
     }
 
     @Override

@@ -34,7 +34,7 @@ public final class OperatorMUL extends AbstractOperator {
 
     @Override
     public String getReference() {
-        return "It yields the product of its operands";
+        return "yields the product of its operands";
     }
 
     @Override
