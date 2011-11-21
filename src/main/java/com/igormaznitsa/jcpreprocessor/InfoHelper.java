@@ -19,24 +19,25 @@ package com.igormaznitsa.jcpreprocessor;
 
 import com.igormaznitsa.jcpreprocessor.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
+import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.operators.AbstractOperator;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class InfoHelper {
+public final class InfoHelper {
 
     public static final String DELIMITER = "-------------------------------------------------";
 
-    public static final String getVersion() {
+    public static String getVersion() {
         return "v5.00";
     }
 
-    public static final String getCopyright() {
+    public static String getCopyright() {
         return "(C) 2003-2011 All Copyright by Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
     }
 
-    public static final String getProductName() {
+    public static String getProductName() {
         return "Java Comment Preprocessor";
     }
 
@@ -47,13 +48,13 @@ public abstract class InfoHelper {
         result.add("");
 
         result.add("Command line directives\n------------");
-        result.add(makeColumns("@file_path","to download variable list from the file"));
+        result.add(makeColumns("@file_path","to download variable list from the file",14));
         for (final CommandLineHandler handler : JCPreprocessor.COMMAND_LINE_PROCESSORS) {
             result.add(makeCommandLineKeyReference(handler));
         }
         result.add(DELIMITER);
 
-        result.add("Directives\n------------");
+        result.add("Preprocessor directives\n------------");
         for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
             result.add(makeDirectiveReference(handler));
         }
@@ -64,7 +65,11 @@ public abstract class InfoHelper {
             result.add(makeOperatorReference(handler));
         }
         result.add(DELIMITER);
-
+        result.add("Functions\n------------");
+        for (final AbstractFunction handler : AbstractFunction.ALL_FUNCTIONS) {
+            result.add(makeFunctionReference(handler));
+        }
+        result.add(DELIMITER);
         result.add("Data types\n------------");
         result.add("BOOLEAN: true,false");
         result.add("INTEGER: 2374,0x56FE (signed 64 bit)");
@@ -77,29 +82,49 @@ public abstract class InfoHelper {
     private static String makeCommandLineKeyReference(final CommandLineHandler handler) {
         final String key = handler.getKeyName();
         final String descr = handler.getDescription();
-        return makeColumns(key, descr);
+        return makeColumns(key, descr,14);
     }
 
     private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
         final String directiveName = directive.getFullName();
         final String descr = directive.getReference();
-        return makeColumns(directiveName, descr);
+        return makeColumns(directiveName, descr, 14);
     }
 
     private static String makeOperatorReference(final AbstractOperator operator) {
         final String operatorName = operator.getKeyword();
         final String descr = operator.getReference();
-        return makeColumns(operatorName, descr);
+        return makeColumns(operatorName, descr, 14);
     }
 
     private static String makeFunctionReference(final AbstractFunction func) {
         final String funcName = func.getName();
         final String descr = func.getReference();
-        return makeColumns(funcName, descr);
+        
+        final StringBuilder variants = new StringBuilder("  [");
+        final String result = func.getResultType().getSignature().toUpperCase();
+        
+        int variantIndex = 0;
+        for(ValueType [] signature : func.getAllowedArgumentTypes()){
+            if (variantIndex>0) {
+                variants.append(" | ");
+            }
+            variants.append(result).append(' ').append(funcName).append(" (");
+            for(int i=0;i<signature.length;i++){
+                if (i>0){
+                    variants.append(',');
+                }
+                variants.append(signature[i].getSignature().toUpperCase());
+            }
+            variants.append(')');
+            variantIndex++;
+        }
+        variants.append(']');
+        return makeColumns(funcName, descr,24)+variants.toString();
     }
 
-    private static String makeColumns(final String name, final String reference) {
-        final int spaces = 14 - name.length();
+    private static String makeColumns(final String name, final String reference, final int firstColumnWidth) {
+        final int spaces = firstColumnWidth - name.length();
         final StringBuilder result = new StringBuilder(name);
         for (int i = 0; i < spaces; i++) {
             result.append(' ');

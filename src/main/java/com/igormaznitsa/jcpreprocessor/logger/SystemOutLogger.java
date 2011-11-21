@@ -24,10 +24,7 @@ package com.igormaznitsa.jcpreprocessor.logger;
  */
 public class SystemOutLogger implements PreprocessorLogger {
 
-    public SystemOutLogger(){
-        
-    }
-    
+    @Override
     public void error(final String text) {
         if (text != null) {
             final String out = "[ERROR]--> " + text;
@@ -35,6 +32,7 @@ public class SystemOutLogger implements PreprocessorLogger {
         }
     }
 
+    @Override
     public void info(final String text) {
         if (text != null) {
             final String out = "[INFO]--> " + text;
@@ -42,6 +40,7 @@ public class SystemOutLogger implements PreprocessorLogger {
         }
     }
 
+    @Override
     public void warning(final String text) {
         if (text != null) {
             final String out = "[WARNING]--> " + text;

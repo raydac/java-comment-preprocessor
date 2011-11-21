@@ -31,10 +31,12 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/P:";
 
+    @Override
     public String getDescription() {
         return "set a global variable, for instance /P:DEBUG=true (use $ instead \" char)";
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
@@ -64,6 +66,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

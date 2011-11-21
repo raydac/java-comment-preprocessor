@@ -134,7 +134,7 @@ public final class Value implements ExpressionItem {
         }
     }
 
-    public static final Object getValue(final String value, final ValueType type) {
+    public static Object getValue(final String value, final ValueType type) {
         try {
             switch (type) {
                 case STRING: {
@@ -164,7 +164,7 @@ public final class Value implements ExpressionItem {
         }
     }
 
-    public static final ValueType recognizeType(final String value) {
+    public static ValueType recognizeType(final String value) {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) // Boolean
         {
             return ValueType.BOOLEAN;

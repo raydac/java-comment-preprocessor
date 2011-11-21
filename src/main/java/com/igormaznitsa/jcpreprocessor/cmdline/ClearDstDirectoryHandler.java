@@ -28,10 +28,12 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/C";
     
+    @Override
     public String getDescription() {
         return "the destination directory will be cleared before processing";
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
         if (ARG_NAME.equalsIgnoreCase(key)){
@@ -41,6 +43,7 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
        return ARG_NAME;
     }

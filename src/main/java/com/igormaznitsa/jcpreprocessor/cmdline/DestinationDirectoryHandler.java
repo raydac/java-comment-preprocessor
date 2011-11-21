@@ -29,10 +29,12 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/O:";
 
+    @Override
     public String getDescription() {
         return "set the destination directory (default is " + PreprocessorContext.DEFAULT_DEST_DIRECTORY+')';
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
@@ -49,6 +51,7 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

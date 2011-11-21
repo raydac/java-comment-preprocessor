@@ -29,10 +29,12 @@ public class SourceDirectoryHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/I:";
 
+    @Override
     public String getDescription() {
         return "set the root source directory for preprocessing files (default is " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY+')';
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
@@ -49,6 +51,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

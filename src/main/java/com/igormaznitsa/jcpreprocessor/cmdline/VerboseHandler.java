@@ -28,10 +28,12 @@ public class VerboseHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/V";
     
+    @Override
     public String getDescription() {
         return "switch on the verbose level";
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
         
@@ -43,6 +45,7 @@ public class VerboseHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

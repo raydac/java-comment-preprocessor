@@ -29,10 +29,12 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/EF:";
 
+    @Override
     public String getDescription() {
-        return "set (case insensitive) file extensions to be excluded from preprocessing, they will not be processed and moved to the destination directory, default is [" + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ']';
+        return "set (case insensitive) file extensions to be excluded from preprocessing, they will not be processed and moved to the destination directory (default is " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ')';
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
@@ -48,6 +50,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

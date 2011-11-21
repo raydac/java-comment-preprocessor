@@ -29,14 +29,17 @@ public class OutCharsetHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/TT:";
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }
 
+    @Override
     public String getDescription() {
         return "set the output encoding for text files (default is " + PreprocessorContext.DEFAULT_CHARSET+')';
     }
 
+    @Override
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
 
         boolean result = false;

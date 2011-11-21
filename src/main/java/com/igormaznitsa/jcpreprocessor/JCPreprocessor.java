@@ -48,10 +48,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The main class implements the Java Comment Preprocessor, it has the main method and can be started from a command string
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public final class JCPreprocessor {
 
     private final PreprocessorContext context;
-    public static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
+    static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
         new HelpHandler(),
         new InCharsetHandler(),
         new OutCharsetHandler(),
@@ -95,12 +100,12 @@ public final class JCPreprocessor {
         for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
             final String condition = item.getCondition();
             final File file = item.getFileInfoContainer().getSourceFile();
-            
+
             Value val = null;
-            
+
             try {
-             val = Expression.evalExpression(condition, context, null);
-            }catch(IllegalArgumentException ex) {
+                val = Expression.evalExpression(condition, context, null);
+            } catch (IllegalArgumentException ex) {
                 throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, ex);
             }
 
@@ -141,7 +146,7 @@ public final class JCPreprocessor {
         }
     }
 
-    private final void createDestinationDirectory() throws IOException {
+    private void createDestinationDirectory() throws IOException {
         final File destination = context.getDestinationDirectoryAsFile();
 
         final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
@@ -201,9 +206,9 @@ public final class JCPreprocessor {
         return result;
     }
 
-    public static final void main(final String... args) {
+    public static void main(final String... args) {
         printHeader();
-        
+
         final String[] processedCommandStringArgs = PreprocessorUtils.replaceChar(args, '$', '\"');
 
         PreprocessorContext cfg = null;
@@ -257,7 +262,7 @@ public final class JCPreprocessor {
         final File cfgFile = new File(fileName);
 
         if (!cfgFile.exists() || cfgFile.isDirectory()) {
-            throw new IOException("I can't find the file " + cfgFile.getPath());
+            throw new IOException("I can't find the file " + cfgFile.getAbsolutePath());
         }
 
         final BufferedReader fileReader = PreprocessorUtils.makeFileReader(cfgFile, context.getInCharacterEncoding(), -1);
@@ -273,37 +278,36 @@ public final class JCPreprocessor {
 
                 readString = readString.trim();
 
-                if (readString.length() == 0 || readString.startsWith("#")) {
+                if (readString.isEmpty() || readString.charAt(0) == '#') {
                     continue;
                 }
 
                 readString = PreprocessorUtils.processMacroses(readString, context, null);
 
-                String[] parsedValue = PreprocessorUtils.splitForChar(readString, '=');
+                final String[] splitedExpression = PreprocessorUtils.splitForChar(readString, '=');
 
                 String varName = null;
                 String varValue = null;
 
-                int i_equindx = readString.indexOf('=');
-                if (parsedValue.length != 2) {
-                    throw new IOException("Wrong global parameter format [" + readString + "] detected in  " + cfgFile.getPath() + " at the line:" + strCounter);
+                if (splitedExpression.length != 2) {
+                    throw new IOException("Wrong global parameter format [" + readString + "] detected in  " + cfgFile.getAbsolutePath() + " at the line:" + strCounter);
                 }
 
-                varName = parsedValue[0];
-                varValue = parsedValue[1];
+                varName = splitedExpression[0];
+                varValue = splitedExpression[1];
 
                 Value evaluatedValue = null;
                 varValue = varValue.trim();
-                if (varValue.startsWith("@")) {
+                if (!varValue.isEmpty() && varValue.charAt(0) == '@') {
                     // This is a file
                     varValue = PreprocessorUtils.extractTail("@", varValue);
                     try {
-                    evaluatedValue = Expression.evalExpression(varValue, context, null);
-                    if (evaluatedValue.getType() != ValueType.STRING) {
-                        throw new IOException("You have not a string value in " + cfgFile.getPath() + " at line:" + strCounter);
-                    }
-                    }catch(IllegalArgumentException ex){
-                         throw new IOException("You have wrong expression format in " + cfgFile.getPath() + " at line:" + strCounter);
+                        evaluatedValue = Expression.evalExpression(varValue, context, null);
+                        if (evaluatedValue.getType() != ValueType.STRING) {
+                            throw new IOException("You have not a string value in " + cfgFile.getAbsolutePath() + " at the line:" + strCounter);
+                        }
+                    } catch (IllegalArgumentException ex) {
+                        throw new IOException("You have wrong expression format in " + cfgFile.getAbsolutePath() + " at the line:" + strCounter, ex);
                     }
 
                     varValue = (String) evaluatedValue.getValue();
@@ -312,9 +316,9 @@ public final class JCPreprocessor {
                 } else {
                     // This is a value
                     try {
-                    evaluatedValue = Expression.evalExpression(varValue, context, null);
-                    }catch(IllegalArgumentException ex){
-                        throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter);
+                        evaluatedValue = Expression.evalExpression(varValue, context, null);
+                    } catch (IllegalArgumentException ex) {
+                        throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter, ex);
                     }
                 }
 
@@ -328,12 +332,7 @@ public final class JCPreprocessor {
                 context.setGlobalVariable(varName, evaluatedValue, null);
             }
         } finally {
-            if (fileReader != null) {
-                try {
-                    fileReader.close();
-                } catch (IOException ex) {
-                }
-            }
+            PreprocessorUtils.closeSilently(fileReader);
         }
     }
 
@@ -341,11 +340,11 @@ public final class JCPreprocessor {
         System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
         System.out.println(InfoHelper.getCopyright());
     }
-    
+
     private static void help() {
         System.out.println();
 
-        for(final String str : InfoHelper.makeTextForHelpInfo()){
+        for (final String str : InfoHelper.makeTextForHelpInfo()) {
             System.out.println(str);
         }
     }

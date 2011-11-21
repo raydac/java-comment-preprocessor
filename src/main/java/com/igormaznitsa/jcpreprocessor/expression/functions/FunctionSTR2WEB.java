@@ -107,7 +107,7 @@ public final class FunctionSTR2WEB extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it escapes a string to make it compatibles with the html format";
+        return "it escapes a string to make it compatible with the html format";
     }
 
     @Override

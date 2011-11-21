@@ -28,10 +28,12 @@ public class RemoveCommentsHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/R";
     
+    @Override
     public String getDescription() {
         return "to clear sources from commentaries (in Java-C style) after preprocessing";
     }
 
+    @Override
     public boolean processCommandLineKey(final String argument, final PreprocessorContext configurator) {
         boolean result = false;
         
@@ -43,6 +45,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
         return result;
     }
 
+    @Override
     public String getKeyName() {
         return ARG_NAME;
     }

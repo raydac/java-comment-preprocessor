@@ -30,7 +30,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
     private static final String ARG_NAME = "/F:";
 
     public String getDescription() {
-        return "set (case insensitive) preprocessing file extension list (with comma), default is [" + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ']';
+        return "set (case insensitive) preprocessing file extension list (with comma) (default is " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ')';
     }
 
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {

@@ -22,26 +22,28 @@ import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 
 /**
- * The class implements the STRLEN function handler
+ * The class implements the ISSUBSTR function handler
  * 
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionSTRLEN extends AbstractFunction {
+public final class FunctionISSUBSTR extends AbstractFunction {
 
-    private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
+    private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
     
     @Override
     public String getName() {
-        return "strlen";
+        return "issubstr";
     }
 
-    public Value executeStr(final PreprocessorContext context, final Value value) {
-        return Value.valueOf(Long.valueOf(value.asString().length()));
+    public Value executeStrStr(final PreprocessorContext context, final Value subStrValue, final Value strValue) {
+        final String str = strValue.asString().toLowerCase();
+        final String subStr = subStrValue.asString().toLowerCase();
+        return Value.valueOf(Boolean.valueOf(str.indexOf(subStr)>=0));
     }
 
     @Override
     public int getArity() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -51,12 +53,12 @@ public final class FunctionSTRLEN extends AbstractFunction {
 
     @Override
     public String getReference() {
-        return "it returns number of characters in a string";
+        return "it returns TRUE if a string is a substring for another string (case insensitive)";
     }
 
     @Override
     public ValueType getResultType() {
-        return ValueType.INT;
+        return ValueType.BOOLEAN;
     }
     
     
