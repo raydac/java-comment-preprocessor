@@ -51,7 +51,7 @@ public class PreprocessorException extends Exception {
     }
 
     public int getStringIndex() {
-        if (callStack.length ==0){
+        if (callStack.length == 0){
             return -1;
         } else {
             return callStack[0].getStringIndex()+1;

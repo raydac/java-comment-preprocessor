@@ -19,6 +19,8 @@ package com.igormaznitsa.jcpreprocessor.utils;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
+import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.io.BufferedReader;
@@ -35,6 +37,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * It is an auxiliary class contains some useful methods
+ * 
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public enum PreprocessorUtils {
 
     ;
@@ -186,7 +193,7 @@ public enum PreprocessorUtils {
         }
 
         if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
-            throw new IOException("Can't make directory [" + dest.getParentFile().getCanonicalPath() + ']');
+            throw new IOException("Can't make directory [" + getFilePath(dest.getParentFile()) + ']');
         }
 
 
@@ -263,7 +270,7 @@ public enum PreprocessorUtils {
         }
 
         if (!file.exists()) {
-            throw new FileNotFoundException("File " + file.getAbsolutePath() + " doesn't exist");
+            throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
         }
 
         if (!file.isFile()) {
@@ -305,7 +312,7 @@ public enum PreprocessorUtils {
             while(len>0){
                final int  read = inChannel.read(buffer);
                if (read<0){
-                   throw new IOException("Can't read whole file ["+file.getAbsolutePath()+'\'');
+                   throw new IOException("Can't read whole file ["+getFilePath(file)+'\'');
                }
                len -= read;
             }
@@ -363,5 +370,22 @@ public enum PreprocessorUtils {
         
         return name.trim().toLowerCase();
     }
+    
+    public static String getFilePath(final File file){
+        String result = "";
+        if (file != null){
+            try {
+                result = file.getCanonicalPath();
+            }catch(IOException ex){
+                result = file.getAbsolutePath();
+            }
+        } 
+        return result;
+    }
+
+    public static void throwPreprocessorException(final String msg,final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
+        throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
+    }
+    
 
 }

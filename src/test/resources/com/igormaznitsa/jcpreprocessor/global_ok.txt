@@ -1,0 +1,18 @@
+# this is a comment
+#@
+    #@@@@@
+#@@@
+
+
+
+
+
+
+/T:ISO-8859-1
+
+    globalVar1="hello world"
+#tttest
+
+globalVar2=1*2+1
+
+

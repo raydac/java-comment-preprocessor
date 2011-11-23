@@ -58,15 +58,19 @@ public final class TextFileDataContainer {
         this.nextStringIndex = index; 
     }
     
+    public int getLastReadStringIndex() {
+        return nextStringIndex-1;
+    }
+    
     public int getNextStringIndex() {
         return nextStringIndex;
     }
 
-    public TextFileDataContainer(final TextFileDataContainer item, final int nextStringIndex){
-        this(item.file,item.text,nextStringIndex);
+    public TextFileDataContainer(final TextFileDataContainer item, final int stringIndex){
+        this(item.file,item.text,stringIndex);
     }
     
-    public TextFileDataContainer(final File currentFile, final String[] text, final int nextStringIndex) {
+    public TextFileDataContainer(final File currentFile, final String[] text, final int stringIndex) {
         if (currentFile == null) {
             throw new NullPointerException("File is null");
         }
@@ -77,7 +81,7 @@ public final class TextFileDataContainer {
         
         this.file = currentFile;
         this.text = text;
-        setNextStringIndex(nextStringIndex);
+        setNextStringIndex(stringIndex);
     }
 
     @Override

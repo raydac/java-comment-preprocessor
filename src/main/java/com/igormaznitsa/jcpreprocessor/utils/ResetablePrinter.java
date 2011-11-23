@@ -21,6 +21,10 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * The class implements a resetable char printer
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
 public class ResetablePrinter {
     private final CharArrayWriter outStream;
     
@@ -32,7 +36,7 @@ public class ResetablePrinter {
         return outStream.size() == 0;
     }
     
-    public void write(final Writer writer) throws IOException {
+    public void writeBufferTo(final Writer writer) throws IOException {
         outStream.flush();
         writer.write(outStream.toCharArray());
         writer.flush();

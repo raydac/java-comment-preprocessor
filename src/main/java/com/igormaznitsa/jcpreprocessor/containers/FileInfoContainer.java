@@ -120,7 +120,7 @@ public class FileInfoContainer {
 
     @Override
     public String toString() {
-        return "FileInfoContainer: file="+sourceFile.getAbsolutePath()+" toDir="+destinationDir+" toName="+destinationName;
+        return "FileInfoContainer: file="+PreprocessorUtils.getFilePath(sourceFile)+" toDir="+destinationDir+" toName="+destinationName;
     }
 
     private void printSpaces(final PreprocessingState paramContainer, final int number) throws IOException {
@@ -337,7 +337,7 @@ public class FileInfoContainer {
         final byte [] memoryFile = PreprocessorUtils.readFileAsByteArray(processingFile);
 
         if (!processingFile.delete()) {
-            throw new IOException("Can't delete the source file " + processingFile.getAbsolutePath());
+            throw new IOException("Can't delete the source file " + PreprocessorUtils.getFilePath(processingFile));
         }
 
         final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), context.getInCharacterEncoding());

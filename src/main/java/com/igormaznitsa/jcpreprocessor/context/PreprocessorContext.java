@@ -27,14 +27,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
+ * 
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class PreprocessorContext {
@@ -67,9 +70,12 @@ public class PreprocessorContext {
     
     private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
     
+    private final List<File> globalVarDefiningFiles = new ArrayList<File>(); 
+    
     public PreprocessorContext() {
         setSourceDirectory(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
-        registerSpecialVariableProcessor(new JCPSpecialVariables());
+        registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
+        registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     }
 
     public void setPreprocessorLogger(final PreprocessorLogger logger){
@@ -184,7 +190,7 @@ public class PreprocessorContext {
         for (final String dirName : splitted) {
             final File dir = new File(dirName);
             if (!dir.exists() || !dir.isDirectory()) {
-                throw new IOException("Can't find source directory [" + dir.getAbsolutePath() + ']');
+                throw new IOException("Can't find source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
             }
             result[index++] = dir;
         }
@@ -371,7 +377,7 @@ public class PreprocessorContext {
             return val;
         }
 
-        return globalVarTable.get(name);
+        return globalVarTable.get(normalized);
     }
 
     public PreprocessorContext setVerbose(final boolean flag) {
@@ -446,8 +452,19 @@ public class PreprocessorContext {
         }
 
         if (!result.isFile() || !result.exists()) {
-            throw new FileNotFoundException("File " + result.getAbsolutePath() + " is not found");
+            throw new FileNotFoundException("File " + PreprocessorUtils.getFilePath(result) + " is not found");
         }
         return result;
+    }
+
+    public void addGlobalVarDefiningFile(final File file) {
+        if (file == null) {
+            throw new NullPointerException("File is null");
+        }
+        globalVarDefiningFiles.add(file);
+    }
+    
+    public File[] getGLobalVarDefiningFiles(){
+        return globalVarDefiningFiles.toArray(new File[globalVarDefiningFiles.size()]);
     }
 }

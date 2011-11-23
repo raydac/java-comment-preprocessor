@@ -18,7 +18,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
-import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
+import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -38,7 +38,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "allows to change the result file name for the current file (it can be read through "+JCPSpecialVariables.VAR_DEST_FILE_NAME+')';
+        return "allows to change the result file name for the current file (it can be read through "+JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME+')';
     }
 
     @Override

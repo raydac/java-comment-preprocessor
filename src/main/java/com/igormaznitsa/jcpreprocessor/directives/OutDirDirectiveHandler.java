@@ -18,7 +18,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
-import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariables;
+import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -38,7 +38,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public String getReference() {
-        return "allows to change the output directory for the preprocessing file (also it can be read through "+JCPSpecialVariables.VAR_DEST_DIR+')';
+        return "allows to change the output directory for the preprocessing file (also it can be read through "+JCPSpecialVariableProcessor.VAR_DEST_DIR+')';
     }
 
     @Override

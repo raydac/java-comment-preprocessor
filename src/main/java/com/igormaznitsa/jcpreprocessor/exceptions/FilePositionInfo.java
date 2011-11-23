@@ -17,6 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.exceptions;
 
+import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.File;
 
 /**
@@ -53,7 +54,7 @@ public class FilePositionInfo {
     
     @Override
     public String toString() {
-        final String filePath = this.file.getAbsolutePath();
-        return filePath+':'+Integer.toString(stringIndex);
+        final String filePath = PreprocessorUtils.getFilePath(this.file);
+        return filePath+':'+Integer.toString(stringIndex+1);
     }
 }

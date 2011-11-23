@@ -56,7 +56,7 @@ import java.util.Set;
 public final class JCPreprocessor {
 
     private final PreprocessorContext context;
-    static final CommandLineHandler[] COMMAND_LINE_PROCESSORS = new CommandLineHandler[]{
+    static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[]{
         new HelpHandler(),
         new InCharsetHandler(),
         new OutCharsetHandler(),
@@ -81,6 +81,8 @@ public final class JCPreprocessor {
     }
 
     public void execute() throws PreprocessorException, IOException {
+        processGlobalVarDefiningFiles();
+
         final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
 
         final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
@@ -106,11 +108,11 @@ public final class JCPreprocessor {
             try {
                 val = Expression.evalExpression(condition, context, null);
             } catch (IllegalArgumentException ex) {
-                throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, ex);
+                throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, ex);
             }
 
             if (val.getType() != ValueType.BOOLEAN) {
-                throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex() - 1)}, null);
+                throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, null);
             }
 
             if (val.asBoolean().booleanValue()) {
@@ -154,13 +156,13 @@ public final class JCPreprocessor {
         if (context.doesClearDestinationDirBefore()) {
             if (destinationExistsAndDirectory) {
                 if (!PreprocessorUtils.clearDirectory(destination)) {
-                    throw new IOException("I can't clear the destination directory [" + destination.getAbsolutePath() + ']');
+                    throw new IOException("I can't clear the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
                 }
             }
         }
         if (!destinationExistsAndDirectory) {
             if (!destination.mkdirs()) {
-                throw new IOException("I can't make the destination directory [" + destination.getAbsolutePath() + ']');
+                throw new IOException("I can't make the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
             }
         }
     }
@@ -211,21 +213,21 @@ public final class JCPreprocessor {
 
         final String[] processedCommandStringArgs = PreprocessorUtils.replaceChar(args, '$', '\"');
 
-        PreprocessorContext cfg = null;
+        PreprocessorContext preprocessorContext = null;
 
         try {
-            cfg = processCommandString(null, processedCommandStringArgs);
+            preprocessorContext = processCommandString(null, processedCommandStringArgs);
         } catch (IOException ex) {
             System.err.println("Error during command string processing [" + ex.getMessage() + ']');
             System.exit(1);
         }
 
-        final JCPreprocessor preprocessor = new JCPreprocessor(cfg);
+        final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
 
         try {
             preprocessor.execute();
         } catch (Exception unexpected) {
-            cfg.logError(unexpected.toString());
+            preprocessorContext.logError(unexpected.toString());
             unexpected.printStackTrace();
             System.exit(1);
         }
@@ -238,7 +240,7 @@ public final class JCPreprocessor {
 
         for (final String arg : args) {
             boolean processed = false;
-            for (final CommandLineHandler processor : COMMAND_LINE_PROCESSORS) {
+            for (final CommandLineHandler processor : COMMAND_LINE_HANDLERS) {
                 if (processor.processCommandLineKey(arg, result)) {
                     processed = true;
                     if (processor instanceof HelpHandler) {
@@ -258,81 +260,64 @@ public final class JCPreprocessor {
         return result;
     }
 
-    private static void loadVariablesFromFile(final String fileName, final PreprocessorContext context) throws IOException {
-        final File cfgFile = new File(fileName);
+    void processGlobalVarDefiningFiles() throws IOException, PreprocessorException {
 
-        if (!cfgFile.exists() || cfgFile.isDirectory()) {
-            throw new IOException("I can't find the file " + cfgFile.getAbsolutePath());
-        }
+        for (final File file : context.getGLobalVarDefiningFiles()) {
+            final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8");
 
-        final BufferedReader fileReader = PreprocessorUtils.makeFileReader(cfgFile, context.getInCharacterEncoding(), -1);
-        try {
-            int strCounter = 0;
+            int readStringIndex = -1;
+            for (final String curString : wholeFile) {
+                final String trimmed = curString.trim();
+                readStringIndex++;
 
-            while (true) {
-                String readString = fileReader.readLine();
-                if (readString == null) {
-                    break;
-                }
-                strCounter++;
-
-                readString = readString.trim();
-
-                if (readString.isEmpty() || readString.charAt(0) == '#') {
+                if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
                     continue;
-                }
-
-                readString = PreprocessorUtils.processMacroses(readString, context, null);
-
-                final String[] splitedExpression = PreprocessorUtils.splitForChar(readString, '=');
-
-                String varName = null;
-                String varValue = null;
-
-                if (splitedExpression.length != 2) {
-                    throw new IOException("Wrong global parameter format [" + readString + "] detected in  " + cfgFile.getAbsolutePath() + " at the line:" + strCounter);
-                }
-
-                varName = splitedExpression[0];
-                varValue = splitedExpression[1];
-
-                Value evaluatedValue = null;
-                varValue = varValue.trim();
-                if (!varValue.isEmpty() && varValue.charAt(0) == '@') {
-                    // This is a file
-                    varValue = PreprocessorUtils.extractTail("@", varValue);
+                } else if (trimmed.charAt(0) == '@') {
+                    PreprocessorUtils.throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);
+                } else if (trimmed.charAt(0) == '/') {
+                    // a command line argument
+                    boolean processed = false;
                     try {
-                        evaluatedValue = Expression.evalExpression(varValue, context, null);
-                        if (evaluatedValue.getType() != ValueType.STRING) {
-                            throw new IOException("You have not a string value in " + cfgFile.getAbsolutePath() + " at the line:" + strCounter);
+                        for (CommandLineHandler handler : COMMAND_LINE_HANDLERS) {
+                            if (handler.processCommandLineKey(trimmed, context)) {
+                                if (context.isVerbose()) {
+                                    context.logInfo("Processed key \'" + trimmed + "\' at " + file.getName() + ':' + (readStringIndex+1));
+                                }
+                                processed = true;
+                                break;
+                            }
                         }
-                    } catch (IllegalArgumentException ex) {
-                        throw new IOException("You have wrong expression format in " + cfgFile.getAbsolutePath() + " at the line:" + strCounter, ex);
+                    } catch (Exception unexpected) {
+                        PreprocessorUtils.throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
                     }
 
-                    varValue = (String) evaluatedValue.getValue();
-
-                    loadVariablesFromFile(varValue, context);
+                    if (!processed) {
+                        PreprocessorUtils.throwPreprocessorException("Unsupported or disallowed directive", trimmed, file, readStringIndex, null);
+                    }
                 } else {
-                    // This is a value
+                    // a global variable
+                    final String[] splitted = PreprocessorUtils.splitForSetOperator(trimmed);
+                    if (splitted.length != 2) {
+                        PreprocessorUtils.throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
+                    }
+                    final String name = splitted[0].trim().toLowerCase();
+                    final String expression = splitted[1].trim();
+                    if (name.isEmpty()) {
+                        PreprocessorUtils.throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);
+                    }
+
                     try {
-                        evaluatedValue = Expression.evalExpression(varValue, context, null);
-                    } catch (IllegalArgumentException ex) {
-                        throw new IOException("Wrong value definition [" + readString + "] in " + cfgFile.getAbsolutePath() + " at " + strCounter, ex);
+                        final Value result = Expression.evalExpression(expression, context, null);
+                        context.setGlobalVariable(name, result, null);
+
+                        if (context.isVerbose()) {
+                            context.logInfo("Added global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex+1) + ')');
+                        }
+                    } catch (Exception unexpected) {
+                        PreprocessorUtils.throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
                     }
                 }
-
-                if (context.containsGlobalVariable(varName)) {
-                    throw new IOException("Duplicated global variable name [" + varName + "] in " + cfgFile.getPath() + " at line:" + strCounter);
-                }
-
-                if (context.isVerbose()) {
-                    context.logInfo("A global variable has been added [" + varName + "=" + evaluatedValue.toString() + "] from " + cfgFile.getPath() + " file at line:" + strCounter);
-                }
-                context.setGlobalVariable(varName, evaluatedValue, null);
             }
-        } finally {
-            PreprocessorUtils.closeSilently(fileReader);
         }
     }
 

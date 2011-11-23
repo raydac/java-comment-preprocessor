@@ -49,7 +49,7 @@ public final class InfoHelper {
 
         result.add("Command line directives\n------------");
         result.add(makeColumns("@file_path","to download variable list from the file",14));
-        for (final CommandLineHandler handler : JCPreprocessor.COMMAND_LINE_PROCESSORS) {
+        for (final CommandLineHandler handler : JCPreprocessor.COMMAND_LINE_HANDLERS) {
             result.add(makeCommandLineKeyReference(handler));
         }
         result.add(DELIMITER);

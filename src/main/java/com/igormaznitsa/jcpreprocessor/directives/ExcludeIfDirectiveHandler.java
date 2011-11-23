@@ -54,7 +54,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
     @Override
     public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
-        state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getNextStringIndex()-1);
+        state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getLastReadStringIndex());
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

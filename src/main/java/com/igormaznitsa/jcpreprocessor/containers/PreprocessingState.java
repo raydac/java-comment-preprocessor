@@ -201,9 +201,9 @@ public final class PreprocessingState {
         return fileStack.size() == 1;
     }
 
-    private TextFileDataContainer cloneFileOnTop(final boolean decreaseStringIndex) {
+    private TextFileDataContainer cloneTopTextDataContainer(final boolean useLastReadStringIndex) {
         final TextFileDataContainer topElement = fileStack.peek();
-        return new TextFileDataContainer(topElement, decreaseStringIndex ? (topElement.getNextStringIndex()-1) : topElement.getNextStringIndex());
+        return new TextFileDataContainer(topElement, useLastReadStringIndex ? topElement.getLastReadStringIndex() : topElement.getNextStringIndex());
     }
 
     public PreprocessingState popWhile() {
@@ -220,7 +220,7 @@ public final class PreprocessingState {
     }
 
     public PreprocessingState pushWhile(final boolean makeActive) {
-        final TextFileDataContainer whileRef = cloneFileOnTop(true);
+        final TextFileDataContainer whileRef = cloneTopTextDataContainer(true);
         whileStack.push(whileRef);
         if (makeActive){
             activeWhile = whileRef;
@@ -242,7 +242,7 @@ public final class PreprocessingState {
     }
 
     public PreprocessingState pushIf(final boolean makeActive) {
-        final TextFileDataContainer ifRef = cloneFileOnTop(true);
+        final TextFileDataContainer ifRef = cloneTopTextDataContainer(true);
         ifStack.push(ifRef);
         if (makeActive) {
             activeIf = ifRef;
@@ -346,30 +346,30 @@ public final class PreprocessingState {
     }
 
     public void saveBuffersToStreams(final OutputStream prefix, final OutputStream normal, final OutputStream postfix) throws IOException {
-        prefixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
-        normalPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
-        postfixPrinter.write(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+        prefixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+        normalPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+        postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
     }
     
     public void saveBuffersToFile(final File outFile) throws IOException {
         final File path = outFile.getParentFile();
         
         if (path != null && !path.exists() && !path.mkdirs()) {
-                throw new IOException("Can't make directory [" + path.getAbsolutePath() + ']');
+                throw new IOException("Can't make directory [" + PreprocessorUtils.getFilePath(path) + ']');
         }
 
         final Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile,false),16384), globalOutCharacterEncoding);
         try {
             if (!prefixPrinter.isEmpty()) {
-                prefixPrinter.write(writer);
+                prefixPrinter.writeBufferTo(writer);
             }
 
             if (!normalPrinter.isEmpty()) {
-                normalPrinter.write(writer);
+                normalPrinter.writeBufferTo(writer);
             }
 
             if (!postfixPrinter.isEmpty()) {
-                postfixPrinter.write(writer);
+                postfixPrinter.writeBufferTo(writer);
             }
         } finally {
             PreprocessorUtils.closeSilently(writer);
@@ -380,7 +380,7 @@ public final class PreprocessingState {
         final FilePositionInfo [] stack = new FilePositionInfo[fileStack.size()];
         for(int i=0;i<fileStack.size();i++){
             final TextFileDataContainer fileContainer = fileStack.get(i);
-            stack[i] = new FilePositionInfo(fileContainer.getFile(),fileContainer.getNextStringIndex()-1);
+            stack[i] = new FilePositionInfo(fileContainer.getFile(),fileContainer.getLastReadStringIndex());
         }
         
         return new PreprocessorException(message, text, stack, cause);

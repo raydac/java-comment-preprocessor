@@ -298,6 +298,9 @@ public class Expression {
     }
 
     private Value eval(final PreprocessingState state) {
+        if (expressionTree.isEmpty()){
+            throw new IllegalArgumentException("The expression is empty");
+        }
         final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
         final ExpressionItem resultItem = result.getItem();
         
