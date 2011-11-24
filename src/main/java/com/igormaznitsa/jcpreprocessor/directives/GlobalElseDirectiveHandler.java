@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
@@ -48,7 +48,8 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final PreprocessingState state = context.getPreprocessingState();
         if (state.isIfStackEmpty()) {
             throw new IllegalStateException(DIRECTIVE_PREFIX+"_else without "+DIRECTIVE_PREFIX+"_if detected");
         }

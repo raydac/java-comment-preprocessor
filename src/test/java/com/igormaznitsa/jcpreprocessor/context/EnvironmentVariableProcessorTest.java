@@ -27,6 +27,6 @@ public class EnvironmentVariableProcessorTest {
 
     @Test(expected=UnsupportedOperationException.class)
     public void testWriteVariable(){
-        new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, null, null);
+        new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, null);
     }
 }

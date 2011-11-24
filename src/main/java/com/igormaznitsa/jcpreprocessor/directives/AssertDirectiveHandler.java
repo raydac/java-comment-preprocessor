@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 
@@ -44,8 +44,8 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
-        configurator.logInfo(PreprocessorUtils.processMacroses(string.trim(), configurator, state));
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

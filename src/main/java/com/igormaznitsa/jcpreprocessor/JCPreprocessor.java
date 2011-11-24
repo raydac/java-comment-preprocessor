@@ -32,7 +32,7 @@ import com.igormaznitsa.jcpreprocessor.cmdline.VerboseHandler;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.ExcludeIfDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
@@ -106,7 +106,7 @@ public final class JCPreprocessor {
             Value val = null;
 
             try {
-                val = Expression.evalExpression(condition, context, null);
+                val = Expression.evalExpression(condition, context);
             } catch (IllegalArgumentException ex) {
                 throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, ex);
             }
@@ -307,8 +307,8 @@ public final class JCPreprocessor {
                     }
 
                     try {
-                        final Value result = Expression.evalExpression(expression, context, null);
-                        context.setGlobalVariable(name, result, null);
+                        final Value result = Expression.evalExpression(expression, context);
+                        context.setGlobalVariable(name, result);
 
                         if (context.isVerbose()) {
                             context.logInfo("Added global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex+1) + ')');

@@ -16,7 +16,6 @@
  * Boston, MA 02111-1307  USA
  */package com.igormaznitsa.jcpreprocessor.context;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 /**
@@ -45,8 +44,7 @@ public interface SpecialVariableProcessor {
      * @param varName the variable name, must not be null
      * @param value the value to be set to the variable, must not be null
      * @param context the preprocessor context, it can be null
-     * @param state the preprocessor state, it can be null
      */
-    void setVariable(String varName, Value value, PreprocessorContext context, PreprocessingState state);
+    void setVariable(String varName, Value value, PreprocessorContext context);
     
 }

@@ -15,7 +15,7 @@ public class GlobalIfElseEndifTest extends AbstractDirectiveHandlerIntegrationTe
         final PreprocessorContext context = executeGlobalPhase("directive_globalifelseendif.txt", null);
         assertTrue(context.containsGlobalVariable("expected"));
         assertFalse(context.containsGlobalVariable("unexpected"));
-        assertEquals(Boolean.TRUE, context.findVariableForName("expected", null).asBoolean());
+        assertEquals(Boolean.TRUE, context.findVariableForName("expected").asBoolean());
     }
 
     @Test

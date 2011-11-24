@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.utils;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
@@ -220,7 +220,7 @@ public enum PreprocessorUtils {
         }
     }
 
-    public static String processMacroses(final String processingString, final PreprocessorContext context, final PreprocessingState state) {
+    public static String processMacroses(final String processingString, final PreprocessorContext context) {
         int position;
         String result = processingString;
 
@@ -235,7 +235,7 @@ public enum PreprocessorUtils {
                     final String macrosBody = result.substring(beginIndex + 3, position);
                     final String rightPart = result.substring(position + 3);
 
-                    final Value value = Expression.evalExpression(macrosBody, context,state);
+                    final Value value = Expression.evalExpression(macrosBody, context);
 
                     result = leftPart + value.toString() + rightPart;
                 } else {

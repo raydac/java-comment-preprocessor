@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
@@ -47,13 +47,13 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
-        final Value name = Expression.evalExpression(string, context, state);
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final Value name = Expression.evalExpression(string, context);
 
         if (name == null || name.getType() != ValueType.STRING) {
             throw new IllegalArgumentException(DIRECTIVE_PREFIX+"outdir needs a string expression");
         }
-        state.getRootFileInfo().setDestinationDir((String) name.getValue());
+        context.getPreprocessingState().getRootFileInfo().setDestinationDir((String) name.getValue());
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

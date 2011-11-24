@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItem;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionItemType;
@@ -51,7 +51,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
         String name = null;
 
         try {
@@ -71,11 +71,11 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
             throw new IllegalArgumentException("Can't parse the variable name ["+string+']',ex);
         }
         
-        if (context.findVariableForName(name, state) != null) {
+        if (context.findVariableForName(name) != null) {
             context.logWarning("Variable \'"+name+"\' was already defined");
         }
         
-        context.setGlobalVariable(name, Value.BOOLEAN_TRUE,state);
+        context.setGlobalVariable(name, Value.BOOLEAN_TRUE);
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 }

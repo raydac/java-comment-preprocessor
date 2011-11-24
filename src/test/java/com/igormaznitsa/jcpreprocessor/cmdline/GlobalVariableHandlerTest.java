@@ -21,7 +21,7 @@ public class GlobalVariableHandlerTest extends AbstractCommandLineHandlerTest {
         
         assertTrue(HANDLER.processCommandLineKey("/P:hello=0", mock));
     
-        verify(mock).setGlobalVariable("hello", Value.INT_ZERO, null);
+        verify(mock).setGlobalVariable("hello", Value.INT_ZERO);
     }
 
     @Override

@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 /**
@@ -109,10 +109,9 @@ public abstract class AbstractDirectiveHandler {
      * Execute directive
      * @param string the tail string from the string where the directive has been met, must not be null but can be empty one
      * @param context the preprocessor context, it can be null
-     * @param state the preprocessor state, it can't be null
      * @return the needed preprocessor behavior, must not be null
      */
-    public abstract AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context, PreprocessingState state);
+    public abstract AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context);
 
     /**
      * Shows that the directive can be executed only when the preprocessing n active state i.e. if it is in active block //#if..//#endif of //#while

@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -47,17 +47,18 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context, PreprocessingState state) {
-        final Value includedFilePath = Expression.evalExpression(string, context,state);
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final PreprocessingState state = context.getPreprocessingState();
+        final Value includingFilePath = Expression.evalExpression(string, context);
 
-        if (includedFilePath == null || includedFilePath.getType() != ValueType.STRING) {
+        if (includingFilePath == null || includingFilePath.getType() != ValueType.STRING) {
             throw new IllegalArgumentException(DIRECTIVE_PREFIX+"include needs a string expression as a file path");
         }
 
         try {
-            state.openFile(context.getSourceFile(includedFilePath.asString()));
+            state.openFile(context.getSourceFile(includingFilePath.asString()));
         }catch(IOException ex){
-            throw new RuntimeException("Can't open a file to include ["+includedFilePath.asString()+']',ex);
+            throw new IllegalArgumentException("Can't open a file to include ["+includingFilePath.asString()+']',ex);
         }
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }

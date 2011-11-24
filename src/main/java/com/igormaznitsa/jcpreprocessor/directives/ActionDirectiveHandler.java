@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.ExpressionParser;
@@ -53,7 +53,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
             final Expression stack = null;
 
@@ -63,11 +63,11 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
                 final Value[] results = new Value[args.size()];
                 int index = 0;
                 for (final ExpressionTree expr : args) {
-                    final Value val = Expression.evalTree(expr,context,state);
+                    final Value val = Expression.evalTree(expr,context);
                     results[index++] = val;
                 }
 
-                if (!context.getPreprocessorExtension().processAction(results, state)) {
+                if (!context.getPreprocessorExtension().processAction(context,results)) {
                     throw new RuntimeException("Extension can't process the action");
                 }
             } catch (IOException ex) {

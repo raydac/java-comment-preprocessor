@@ -19,6 +19,6 @@ public class JCPSpecialVariableProcessorTest {
     
     @Test(expected=UnsupportedOperationException.class)
     public void testWriteDisallowed() {
-        new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE, null, null);
+        new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE, null);
     }
 }

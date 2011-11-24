@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
 /**
@@ -43,7 +43,8 @@ public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final PreprocessingState state = context.getPreprocessingState();
         if (!string.isEmpty()) {
             switch (string.charAt(0)) {
                 case '+': {
@@ -59,6 +60,6 @@ public class PostfixDirectiveHandler  extends AbstractDirectiveHandler  {
             }
             return AfterDirectiveProcessingBehaviour.PROCESSED;
         }
-        throw new RuntimeException(DIRECTIVE_PREFIX+"prefix needs a parameter");
+        throw new IllegalArgumentException(DIRECTIVE_PREFIX+"prefix needs a parameter");
     }
 }

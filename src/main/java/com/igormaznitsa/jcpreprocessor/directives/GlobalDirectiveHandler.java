@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -40,8 +40,8 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state){
-        processDefinition(string, context ,state);
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context){
+        processDefinition(string, context);
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
@@ -60,7 +60,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         return false;
     }
     
-    private void processDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    private void processDefinition(final String string, final PreprocessorContext context) {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
         if (splitted.length != 2) {
@@ -68,9 +68,9 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         final String name = splitted[0].trim();
-        final Value value = Expression.evalExpression(splitted[1].trim(), context,state);
+        final Value value = Expression.evalExpression(splitted[1].trim(), context);
 
-        context.setGlobalVariable(name,value,state);
+        context.setGlobalVariable(name,value);
 
         if (context.isVerbose() && context.containsGlobalVariable(name)){
                 context.logWarning("Global value has been changed ["+name+'='+value+']');

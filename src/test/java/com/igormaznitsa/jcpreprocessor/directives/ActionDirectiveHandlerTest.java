@@ -1,7 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import org.mockito.Mockito;
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
     @Override
     public void testExecution() throws Exception {
         final PreprocessorExtension mockup = mock(PreprocessorExtension.class);
-        when(mockup.processAction(any(Value[].class),any(PreprocessingState.class))).thenReturn(Boolean.TRUE);
+        when(mockup.processAction(any(PreprocessorContext.class),any(Value[].class))).thenReturn(Boolean.TRUE);
         
         assertFilePreprocessing("directive_action.txt", mockup, null);
 
@@ -26,7 +27,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerIntegrat
         final Value val5 = Value.valueOf(Boolean.TRUE);
         final Value val6 = Value.valueOf("hello,");
         
-        verify(mockup).processAction(eq(new Value[]{val1,val2,val3,val4,val5,val6}), any(PreprocessingState.class));
+        verify(mockup).processAction(any(PreprocessorContext.class),eq(new Value[]{val1,val2,val3,val4,val5,val6}));
     }
 
     @Test

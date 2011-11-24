@@ -18,7 +18,6 @@
 package com.igormaznitsa.jcpreprocessor.context;
 
 import com.igormaznitsa.jcpreprocessor.InfoHelper;
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
@@ -72,7 +71,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor{
     }
 
     @Override
-    public void setVariable(final String varName, final Value value, final PreprocessorContext context, final PreprocessingState state) {
+    public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
+        final PreprocessingState state = context == null ? null : context.getPreprocessingState();
         if (VAR_DEST_DIR.equals(varName)){
             if (value.getType()!=ValueType.STRING) throw new IllegalArgumentException("Only STRING type allowed");
             state.getRootFileInfo().setDestinationDir(value.asString());

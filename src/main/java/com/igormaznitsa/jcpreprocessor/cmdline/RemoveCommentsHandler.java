@@ -38,7 +38,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
         boolean result = false;
         
         if (ARG_NAME.equalsIgnoreCase(argument)){
-            configurator.setRemovingComments(true);
+            configurator.setRemoveComments(true);
             result = true;
         }
         

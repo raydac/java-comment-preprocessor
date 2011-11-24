@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
@@ -36,8 +36,8 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state){
-        processLocalDefinition(string, context, state);
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context){
+        processLocalDefinition(string, context);
         return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
 
@@ -51,7 +51,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
         return DirectiveArgumentType.SET;
     }
     
-    private void processLocalDefinition(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    private void processLocalDefinition(final String string, final PreprocessorContext context) {
         final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
         if (splitted.length != 2) {
@@ -59,7 +59,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         final String name = splitted[0];
-        final Value value = Expression.evalExpression(splitted[1], context, state);
+        final Value value = Expression.evalExpression(splitted[1], context);
 
         context.setLocalVariable(name, value);
     }

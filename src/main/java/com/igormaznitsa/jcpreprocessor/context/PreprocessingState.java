@@ -15,8 +15,11 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307  USA
  */
-package com.igormaznitsa.jcpreprocessor.containers;
+package com.igormaznitsa.jcpreprocessor.context;
 
+import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
+import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
+import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.utils.ResetablePrinter;
@@ -92,7 +95,7 @@ public final class PreprocessingState {
     private TextFileDataContainer activeIf;
     private TextFileDataContainer activeWhile;
     
-    public PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
+    PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
         if (rootFile == null){
             throw new NullPointerException("The root file is null");
         }
@@ -113,7 +116,7 @@ public final class PreprocessingState {
         rootReference = openFile(rootFile.getSourceFile());
     }
 
-    public PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) throws IOException {
+    PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) throws IOException {
         if (rootFile == null){
             throw new NullPointerException("The root file is null");
         }

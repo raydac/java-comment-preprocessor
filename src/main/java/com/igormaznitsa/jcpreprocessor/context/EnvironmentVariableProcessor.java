@@ -17,7 +17,6 @@
  */
 package com.igormaznitsa.jcpreprocessor.context;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
     }
 
     @Override
-    public void setVariable(final String varName, final Value value, final PreprocessorContext context, final PreprocessingState state) {
+    public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
         throw new UnsupportedOperationException("Attemption to change an environment variable ["+varName+']');
     }
 }

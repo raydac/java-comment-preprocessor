@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
@@ -52,9 +52,11 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     }
 
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final PreprocessingState state = context.getPreprocessingState();
+        
         if (state.isDirectiveCanBeProcessed()) {
-            final Value condition = Expression.evalExpression(string,context,state);
+            final Value condition = Expression.evalExpression(string,context);
             if (condition == null || condition.getType() != ValueType.BOOLEAN) {
                 throw new IllegalArgumentException(DIRECTIVE_PREFIX+"while needs a boolean expression");
             }

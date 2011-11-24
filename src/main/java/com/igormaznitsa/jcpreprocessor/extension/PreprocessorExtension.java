@@ -17,7 +17,8 @@
  */
 package com.igormaznitsa.jcpreprocessor.extension;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 
 /**
@@ -29,11 +30,11 @@ public interface PreprocessorExtension
 {
     /**
      * To process an action (it will be called if the preprocessor is met //#action directive)
+     * @param context  the current preprocessor context, must not be null
      * @param parameters the parameters of the action directive, must not be null
-     * @param state the preprocessing state of the preprocessor, must not be null
      * @return true if the action has been processed successfully or false, if it is false then exception will be thrown and preprocessing will be stopped
      */
-    public boolean processAction(Value [] parameters, PreprocessingState state);
+    public boolean processAction(PreprocessorContext context, Value [] parameters);
 
     /**
      * Call to process a user function (the function starts with $)

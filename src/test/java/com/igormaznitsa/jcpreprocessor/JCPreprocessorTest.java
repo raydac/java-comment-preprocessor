@@ -30,8 +30,8 @@ public final class JCPreprocessorTest {
         final JCPreprocessor preprocessor = new JCPreprocessor(context);
         preprocessor.processGlobalVarDefiningFiles();
         
-        assertEquals("Must have the variable", "hello world",context.findVariableForName("globalVar1", null).asString());
-        assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2", null));
+        assertEquals("Must have the variable", "hello world",context.findVariableForName("globalVar1").asString());
+        assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2"));
         assertEquals("Character input encoding must be changed", "ISO-8859-1", context.getInCharacterEncoding());
     }
 

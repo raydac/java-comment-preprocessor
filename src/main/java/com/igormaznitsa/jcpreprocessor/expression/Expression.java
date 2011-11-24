@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.expression;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcpreprocessor.expression.functions.FunctionDefinedByUser;
@@ -66,13 +66,12 @@ public class Expression {
      * Evaluate expression
      * @param expression the expression as a String, must not be null
      * @param context a preprocessor context to be used for expression operations, it can be null
-     * @param state a preprocessor state, it can be null
      * @return the result as a Value object, it can't be null
      */
-    public static Value evalExpression(final String expression, final PreprocessorContext context, final PreprocessingState state) {
+    public static Value evalExpression(final String expression, final PreprocessorContext context) {
         try {
             final ExpressionTree tree = ExpressionParser.getInstance().parse(expression, context);
-            return evalTree(tree, context, state);
+            return evalTree(tree, context);
         } catch (IOException unexpected) {
             throw new IllegalArgumentException("Wrong expression format detected [" + expression + ']');
         }
@@ -82,12 +81,11 @@ public class Expression {
      * Evaluate an expression tree
      * @param tree an expression tree, it must not be null
      * @param context a preprocessor context to be used for expression operations, it can be null
-     * @param state a preprocessor state, it can be null
      * @return the result as a Value object, it can't be null
      */
-    public static Value evalTree(final ExpressionTree tree, final PreprocessorContext context, final PreprocessingState state) {
+    public static Value evalTree(final ExpressionTree tree, final PreprocessorContext context) {
         final Expression exp = new Expression(context, tree);
-        return exp.eval(state);
+        return exp.eval(context == null ? null : context.getPreprocessingState());
     }
 
     private Expression(final PreprocessorContext context, final ExpressionTree tree) {
@@ -277,7 +275,7 @@ public class Expression {
 
                 final Variable var = (Variable) element.getItem();
                 final String name = var.getName();
-                final Value value = context.findVariableForName(name, state);
+                final Value value = context.findVariableForName(name);
                 if (value == null) {
                     throw new RuntimeException("Unknown variable [" + name + ']');
                 } else {

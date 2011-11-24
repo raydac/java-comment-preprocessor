@@ -17,6 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.containers;
 
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcpreprocessor.directives.AfterDirectiveProcessingBehaviour;
@@ -130,7 +131,7 @@ public class FileInfoContainer {
     }
 
     public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
-        final PreprocessingState preprocessingState = state == null ? new PreprocessingState(this, context.getInCharacterEncoding(), context.getOutCharacterEncoding()) : state;
+        final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this) : state;
 
         String trimmedProcessingString = null;
         try {
@@ -178,7 +179,7 @@ public class FileInfoContainer {
 
     public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
         context.clearLocalVariables();
-        final PreprocessingState preprocessingState = state != null ? state : new PreprocessingState(this, context.getInCharacterEncoding(), context.getOutCharacterEncoding());
+        final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
         String trimmedProcessingString = null;
         try {
@@ -217,7 +218,7 @@ public class FileInfoContainer {
                     final boolean startsWithTwoDollars = trimmedProcessingString.startsWith("//$$");
 
                     if (!startsWithTwoDollars) {
-                        stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context, preprocessingState);
+                        stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context);
                     }
 
                     if (startsWithTwoDollars) {
@@ -321,7 +322,7 @@ public class FileInfoContainer {
                 final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
                 if (checkDirectiveArgumentRoughly(handler, restOfString)) {
                     if (allowedForExecution) {
-                        return handler.execute(restOfString.trim(), configurator, state);
+                        return handler.execute(restOfString.trim(), configurator);
                     } else {
                         return AfterDirectiveProcessingBehaviour.PROCESSED;
                     }

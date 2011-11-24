@@ -31,7 +31,7 @@ public abstract class AbstractOperatorTest {
     
     public PreprocessorContext assertExecution(final Value expectedResult, final String expression) throws Exception {
         final PreprocessorContext context = new PreprocessorContext();
-        assertEquals("The expression result must be equals to the expected one", expectedResult, Expression.evalExpression(expression, context, null));
+        assertEquals("The expression result must be equals to the expected one", expectedResult, Expression.evalExpression(expression, context));
         return context;
     }
     

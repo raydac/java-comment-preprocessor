@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
@@ -38,8 +38,8 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext configurator, final PreprocessingState state) {
-         state.getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+         context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
          return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
  

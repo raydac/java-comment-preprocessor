@@ -54,7 +54,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
             if (stringRest.charAt(0) == '@') {
                 stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
 
-                final Value resultValue = Expression.evalExpression(stringRest, context, null);
+                final Value resultValue = Expression.evalExpression(stringRest, context);
 
                 if (resultValue != null && resultValue.getType() == ValueType.STRING) {
                     final String fileName = resultValue.asString();

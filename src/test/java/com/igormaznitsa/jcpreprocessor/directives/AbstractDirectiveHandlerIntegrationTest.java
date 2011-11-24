@@ -1,8 +1,8 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState.ExcludeIfInfo;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState.ExcludeIfInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
@@ -86,7 +86,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
 
         final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_name", false);
         final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), 0);
-        final PreprocessingState state = new PreprocessingState(reference, textContainer, "UTF8", "UTF8");
+        final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
         final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
         
@@ -140,7 +140,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         context.setPreprocessorExtension(extension);
 
         final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
-        final PreprocessingState state = new PreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0), "UTF8", "UTF8");
+        final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0));
 
         reference.preprocessFile(state, context);
 

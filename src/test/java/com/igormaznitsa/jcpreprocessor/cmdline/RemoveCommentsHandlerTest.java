@@ -19,7 +19,7 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
         assertFalse(HANDLER.processCommandLineKey("/RR", mock));
         
         assertTrue(HANDLER.processCommandLineKey("/r", mock));
-        verify(mock).setRemovingComments(true);
+        verify(mock).setRemoveComments(true);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import java.util.List;
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState.ExcludeIfInfo;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState.ExcludeIfInfo;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
 

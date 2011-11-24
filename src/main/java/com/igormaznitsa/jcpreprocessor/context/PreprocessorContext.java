@@ -17,7 +17,8 @@
  */
 package com.igormaznitsa.jcpreprocessor.context;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.containers.FileInfoContainer;
+import com.igormaznitsa.jcpreprocessor.containers.TextFileDataContainer;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;
 import com.igormaznitsa.jcpreprocessor.logger.PreprocessorLogger;
@@ -49,7 +50,7 @@ public class PreprocessorContext {
     public static final String DEFAULT_CHARSET = "UTF8";
     
     private boolean verbose = false;
-    private boolean removingComments = false;
+    private boolean removeComments = false;
     private boolean clearDestinationDirectoryBefore = true;
     private boolean fileOutputDisabled = false;
 
@@ -72,6 +73,8 @@ public class PreprocessorContext {
     
     private final List<File> globalVarDefiningFiles = new ArrayList<File>(); 
     
+    private PreprocessingState currentState;
+    
     public PreprocessorContext() {
         setSourceDirectory(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
         registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
@@ -82,7 +85,7 @@ public class PreprocessorContext {
         preprocessorLogger = logger;
     }
     
-    private void registerSpecialVariableProcessor(final SpecialVariableProcessor processor) {
+    public void registerSpecialVariableProcessor(final SpecialVariableProcessor processor) {
         if (processor == null) {
             throw new NullPointerException("Processor is null");
         }
@@ -121,13 +124,13 @@ public class PreprocessorContext {
         preprocessorLogger.warning(text);
     }
     
-    public PreprocessorContext setRemovingComments(final boolean removingComments) {
-        this.removingComments = removingComments;
+    public PreprocessorContext setRemoveComments(final boolean removingComments) {
+        this.removeComments = removingComments;
         return this;
     }
 
-    public boolean isRemovingComments() {
-        return this.removingComments;
+    public boolean isRemoveComments() {
+        return this.removeComments;
     }
 
     public void setFileOutputDisabled(final boolean flag){
@@ -315,7 +318,7 @@ public class PreprocessorContext {
         return this;
     }
 
-    public PreprocessorContext setGlobalVariable(final String name, final Value value, final PreprocessingState state) {
+    public PreprocessorContext setGlobalVariable(final String name, final Value value) {
         if (name == null) {
             throw new NullPointerException("Variable name is null");
         }
@@ -331,7 +334,7 @@ public class PreprocessorContext {
         }
 
         if (specialVariableProcessors.containsKey(normalizedName)) {
-            specialVariableProcessors.get(normalizedName).setVariable(normalizedName, value, this, state);
+            specialVariableProcessors.get(normalizedName).setVariable(normalizedName, value, this);
         } else {
 
             globalVarTable.put(normalizedName, value);
@@ -356,7 +359,7 @@ public class PreprocessorContext {
         return specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized);
     }
 
-    public Value findVariableForName(final String name, final PreprocessingState state) {
+    public Value findVariableForName(final String name) {
         if (name == null) {
             return null;
         }
@@ -368,8 +371,9 @@ public class PreprocessorContext {
         }
         
         final SpecialVariableProcessor processor = specialVariableProcessors.get(normalized);
-        if (processor != null && state!=null) {
-            return processor.getVariable(normalized, this, state);
+        
+        if (processor != null && currentState!=null) {
+            return processor.getVariable(normalized, this, currentState);
         }
 
         final Value val = getLocalVariable(normalized);
@@ -445,10 +449,15 @@ public class PreprocessorContext {
 
         File result = null;
 
-        if (file.charAt(0) == '.') {
-            result = new File(getSourceDirectoryAsFile(), file);
+        String parentDir = null;
+        if (currentState!=null && currentState.peekFile()!=null){
+            parentDir = currentState.peekFile().getFile().getParent();
+        }
+        
+        if (file.charAt(0) == '.' && parentDir != null) {
+            result = new File(parentDir, file);
         } else {
-            result = new File(file);
+            result = new File(getSourceDirectoryAsFile(), file);
         }
 
         if (!result.isFile() || !result.exists()) {
@@ -466,5 +475,19 @@ public class PreprocessorContext {
     
     public File[] getGLobalVarDefiningFiles(){
         return globalVarDefiningFiles.toArray(new File[globalVarDefiningFiles.size()]);
+    }
+    
+    public PreprocessingState produceNewPreprocessingState(final FileInfoContainer rootFile) throws IOException {
+        this.currentState = new PreprocessingState(rootFile, getInCharacterEncoding(), getOutCharacterEncoding());
+        return this.currentState;
+    }
+
+    public PreprocessingState produceNewPreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer) throws IOException {
+        this.currentState = new PreprocessingState(rootFile, rootContainer, getInCharacterEncoding(), getOutCharacterEncoding());
+        return this.currentState;
+    }
+    
+    public PreprocessingState getPreprocessingState() {
+        return this.currentState;
     }
 }

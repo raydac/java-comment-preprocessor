@@ -53,14 +53,14 @@ public abstract class AbstractFunctionTest {
 
     protected void assertFunction(final String expression, final Value expected) throws IOException {
         final PreprocessorContext context = new PreprocessorContext();
-        final Value result = Expression.evalExpression(expression, context, null);
+        final Value result = Expression.evalExpression(expression, context);
         assertEquals("Must be equals", expected, result);
     }
 
     protected void assertFunctionException(final String expression) throws IOException {
         final PreprocessorContext context = new PreprocessorContext();
         try {
-            Expression.evalExpression(expression, context, null);
+            Expression.evalExpression(expression, context);
             fail("Must throw RuntimeException [" + expression + ']');
         } catch (RuntimeException ex) {
         }

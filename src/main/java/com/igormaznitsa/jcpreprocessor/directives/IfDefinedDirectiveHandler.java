@@ -17,7 +17,7 @@
  */
 package com.igormaznitsa.jcpreprocessor.directives;
 
-import com.igormaznitsa.jcpreprocessor.containers.PreprocessingState;
+import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.containers.PreprocessingFlag;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 
@@ -48,13 +48,14 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     }
     
     @Override
-    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context, final PreprocessingState state) {
+    public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+        final PreprocessingState state = context.getPreprocessingState();
         if (state.isDirectiveCanBeProcessed()){
             if (string.isEmpty()) {
                 throw new IllegalArgumentException(DIRECTIVE_PREFIX+"ifdefined needs a variable");
             }
             state.pushIf(true);
-            final boolean definitionFlag = context.findVariableForName(string,state) != null;
+            final boolean definitionFlag = context.findVariableForName(string) != null;
             if (!definitionFlag){
                 state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
             }
