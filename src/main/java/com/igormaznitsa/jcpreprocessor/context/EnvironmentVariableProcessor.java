@@ -52,7 +52,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
     }
 
     @Override
-    public Value getVariable(final String varName, final PreprocessorContext context, final PreprocessingState state) {
+    public Value getVariable(final String varName, final PreprocessorContext context) {
         final Value result = environmentVars.get(varName);
         if (result == null) {
             throw new IllegalArgumentException("Request for an unknown environment variable \'"+varName+'\'');

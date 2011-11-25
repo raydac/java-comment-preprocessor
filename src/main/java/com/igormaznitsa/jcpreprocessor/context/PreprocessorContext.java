@@ -373,7 +373,7 @@ public class PreprocessorContext {
         final SpecialVariableProcessor processor = specialVariableProcessors.get(normalized);
         
         if (processor != null && currentState!=null) {
-            return processor.getVariable(normalized, this, currentState);
+            return processor.getVariable(normalized, this);
         }
 
         final Value val = getLocalVariable(normalized);

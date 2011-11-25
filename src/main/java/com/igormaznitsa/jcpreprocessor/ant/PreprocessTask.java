@@ -21,6 +21,7 @@ import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.context.SpecialVariableProcessor;
+import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.logger.PreprocessorLogger;
 import java.io.File;
@@ -40,6 +41,11 @@ import org.apache.tools.ant.Task;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
+    /**
+     * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
+     * 
+     * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+     */
     public class CfgFile {
         private File file;
         
@@ -52,6 +58,12 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         }
     }
     
+    /**
+     * Inside class describes a "global" item, it describes a global variable which will be added into the preprocessor context
+     * It has attributes "name" and "value", be careful in the value attribute usage because you have to use "&quot;" instead of \" symbol inside string values
+     * 
+     * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+     */
     public class Global {
         private String name;
         private String value;
@@ -82,49 +94,89 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private String processingExtensions = null;
     private boolean disableOut = false;
     private boolean verbose = false;
-    private boolean clearDestinationDirectory = false;
+    private boolean clearDstFlag = false;
     private boolean removeComments = false;
 
     private Map<String, Value> antVariables;
     private List<Global> globalVariables = new ArrayList<Global> ();
     private List<CfgFile> configFiles = new ArrayList<CfgFile>();
     
+    /**
+     * Set the "source" attribute, it allows to define the source directory to be preprocessed
+     * @param src a directory to be used as the source one, must not be null
+     */
     public void setSource(final File src) {
         sourceDirectory = src;
     }
     
+    /**
+     * Set the "destination" attribute, it allows to define the destination directory where the preprocessed files will be placed in
+     * @param dst a directory to be used as the destination one, must not be null
+     */
     public void setDestination(final File dst) {
         destinationDirectory = dst;
     }
     
+    /**
+     * Set the "inCharset" attribute, it allows to define the text encoding for the reading text files
+     * @param charSet the character set to be used to decode read texts, must not be null
+     */
     public void setInCharset(final String charSet) {
         inCharSet = charSet;
     }
 
+    /**
+     * Set the "outCharset" attribute, it allows to define the text encoding for the writing text files
+     * @param charSet the character set to be used to encode written texts, must not be null
+     */
     public void setOutCharset(final String charSet) {
         outCharSet = charSet;
     }
 
-    public void setExcluded(final String excluded) {
-        excludedExtensions = excluded;
+    /**
+     * Set the "excluded" attribute, it defines the excluded file extensions which will be ignored by the preprocessor in its work (also those files will not be copied)
+     * @param ext the list of ignored file extensions, must not be null
+     */
+    public void setExcluded(final String ext) {
+        excludedExtensions = ext;
     }
     
-    public void setProcessing(final String processing) {
-        processingExtensions = processing;
+    /**
+     * Set the "extensions" attribute, it defines the file extensions to be processed 
+     * @param ext the list of file extensions which should be preprocessed, must not be null
+     */
+    public void setExtensions(final String ext) {
+        processingExtensions = ext;
     }
     
-    public void setClearDestination(final boolean flag) {
-        clearDestinationDirectory = flag;
+    /**
+     * Set the "clear" attribute, it is a boolean attribute allows to make the preprocessor to clear the destination directory before its work
+     * @param flag true if the destination directory must be cleared before preprocessing, otherwise false
+     */
+    public void setClear(final boolean flag) {
+        clearDstFlag = flag;
     }
     
+    /**
+     * Set the "removeComments" attribute, it is a boolean attribute allows to make the preprocessor to remove all Java-like comments from the result files
+     * @param flag true if the result file must be cleared from comments, otherwise false
+     */
     public void setRemoveComments(final boolean flag) {
         removeComments = flag;
     }
     
+    /**
+     * Set the "verbose" attribute, it is a boolean attribute allows to set the verbose level of preprocessor messages
+     * @param flag true if the verbose level must be set, otherwise false
+     */
     public void setVerbose(final boolean flag) {
         verbose = flag;
     }
 
+    /**
+     * Set the "disableOut" attribute, it is a boolean attribute allows to disable any output operations into the destination directory
+     * @param flag true if the output operations must be disabled, otherwise false
+     */
     public void setDisableOut(final boolean flag) {
         disableOut = flag;
     }
@@ -161,12 +213,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         }
     }
     
-    private PreprocessorContext generatePreprocessorContext() {
+    PreprocessorContext generatePreprocessorContext() {
+        fillAntVariables();
+        
         final PreprocessorContext context = new PreprocessorContext();
         context.setPreprocessorLogger(this);
         context.registerSpecialVariableProcessor(this);
         
-        context.setClearDestinationDirBefore(clearDestinationDirectory);
+        context.setClearDestinationDirBefore(clearDstFlag);
         
         if (destinationDirectory != null){
             context.setDestinationDirectory(destinationDirectory.getAbsolutePath());
@@ -205,17 +259,32 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         return context;
     }
     
+    final String extractMessageFromException(final Throwable exception){
+        String result = exception.getMessage();
+        
+        Throwable thr = exception;
+        
+        while(thr!=null){
+            if (thr instanceof PreprocessorException || thr instanceof IllegalArgumentException || thr instanceof IllegalStateException) {
+                result = thr.getMessage() != null ? thr.getMessage() : result;
+                break;
+            } 
+            thr = thr.getCause();
+            result = thr.getMessage() != null ? thr.getMessage() : result;
+        }
+        
+        return result == null ? "" : result;
+    }
+    
     @Override
     public void execute() throws BuildException {
-        fillAntVariables();
-
         PreprocessorContext context = null;
         JCPreprocessor preprocessor = null;
         
         try {
             context = generatePreprocessorContext();
         }catch(Exception unexpected){
-            throw new BuildException("Unexpected exception during the procecessing context forming", unexpected);
+            throw new BuildException(extractMessageFromException(unexpected), unexpected);
         }
         
         preprocessor = new JCPreprocessor(context);
@@ -223,7 +292,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         try {
             preprocessor.execute();
         } catch (Exception unexpected) {
-            throw new BuildException("Unexpected exception during preprocessing", unexpected);
+            throw new BuildException(extractMessageFromException(unexpected), unexpected);
         }
     }
 
@@ -278,7 +347,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     @Override
-    public Value getVariable(final String varName, final PreprocessorContext context, final PreprocessingState state) {
+    public Value getVariable(final String varName, final PreprocessorContext context) {
         if (antVariables == null) {
             throw new IllegalStateException("Non-initialized ant property map detected");
         }
@@ -292,6 +361,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     @Override
     public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
-        throw new UnsupportedOperationException("Attemption to change an Ant property \'"+varName+'\'');
+        throw new UnsupportedOperationException("An Attempt to change an ANT property \'"+varName+"\'. All ANT properties allowed only to be read!");
     }
 }

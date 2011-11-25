@@ -9,12 +9,12 @@ public class JCPSpecialVariableProcessorTest {
     
     @Test
     public void testReadVariable(){
-        assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", null, null).asString());
+        assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", null).asString());
     }
     
     @Test(expected=IllegalArgumentException.class)
     public void testReadUnknownVariable(){
-        new JCPSpecialVariableProcessor().getVariable("jcp.version2", null, null);
+        new JCPSpecialVariableProcessor().getVariable("jcp.version2", null);
     }
     
     @Test(expected=UnsupportedOperationException.class)

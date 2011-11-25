@@ -16,13 +16,13 @@ public class EnvironmentVariableProcessorTest {
         
         final EnvironmentVariableProcessor test = new EnvironmentVariableProcessor();
         
-        assertEquals("Must be equals", javaVersion, test.getVariable("env.java.version", null, null).asString());
-        assertEquals("Must be equals", osName, test.getVariable("env.os.name", null, null).asString());
+        assertEquals("Must be equals", javaVersion, test.getVariable("env.java.version", null).asString());
+        assertEquals("Must be equals", osName, test.getVariable("env.os.name", null).asString());
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testReadUnknownVariable(){
-        new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", null, null);
+        new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", null);
     }
 
     @Test(expected=UnsupportedOperationException.class)

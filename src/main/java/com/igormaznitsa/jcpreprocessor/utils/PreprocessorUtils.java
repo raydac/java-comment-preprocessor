@@ -248,22 +248,6 @@ public enum PreprocessorUtils {
         return result;
     }
 
-    public static String generateStringWithPrecendingSpaces(final int spacesCounter, final String tail) {
-        String result = null;
-        if (spacesCounter == 0) {
-            result = tail;
-        } else {
-            final int minimalCapacity = spacesCounter + tail.length();
-
-            final StringBuilder buffer = new StringBuilder(minimalCapacity);
-            for (int li = 0; li < spacesCounter; li++) {
-                buffer.append(' ');
-            }
-            result = buffer.append(tail).toString();
-        }
-        return result;
-    }
-
     private static void checkFile(final File file) throws IOException {
         if (file == null) {
             throw new NullPointerException("File is null");

@@ -176,7 +176,7 @@ public class Expression {
 
                 return new ExpressionTreeElement(result);
             } catch (NoSuchMethodException unexpected) {
-                throw new RuntimeException("Can't find a function method to process data [" + signature.toString() + ']', unexpected);
+                throw new UnsupportedOperationException("Can't find a function method to process data [" + signature.toString() + ']', unexpected);
             } catch (Exception unexpected) {
                 throw new RuntimeException("Can't execute a function method to process data [" + signature.toString() + ']', unexpected);
             }

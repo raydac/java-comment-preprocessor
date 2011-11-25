@@ -51,7 +51,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor{
     }
 
     @Override
-    public Value getVariable(final String varName, final PreprocessorContext context, final PreprocessingState state) {
+    public Value getVariable(final String varName, final PreprocessorContext context) {
+        final PreprocessingState state = context == null ? null : context.getPreprocessingState();
         if (VAR_DEST_DIR.equals(varName)){
             return Value.valueOf(state.getRootFileInfo().getDestinationDir());
         } else if (VAR_DEST_FILE_NAME.equals(varName)) {

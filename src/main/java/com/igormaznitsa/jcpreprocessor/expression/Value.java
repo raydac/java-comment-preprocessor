@@ -115,23 +115,27 @@ public final class Value implements ExpressionItem {
     public static Value recognizeOf(final String str) {
         final ValueType type = recognizeType(str);
 
+        Value result = null;
+        
         switch (type) {
             case BOOLEAN: {
-                return "true".equalsIgnoreCase(str) ? BOOLEAN_TRUE : BOOLEAN_FALSE;
-            }
+                result = "true".equalsIgnoreCase(str) ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+            }break;
             case INT: {
-                return new Value((Long) getValue(str, ValueType.INT));
-            }
+                result = new Value((Long) getValue(str, ValueType.INT));
+            }break;
             case FLOAT: {
-                return new Value((Float) getValue(str, ValueType.FLOAT));
-            }
+                result = new Value((Float) getValue(str, ValueType.FLOAT));
+            }break;
             case STRING: {
-                return new Value((String) getValue(str, ValueType.STRING));
-            }
+                result = new Value((String) getValue(str, ValueType.STRING));
+            }break;
             default: {
-                throw new RuntimeException("Unsupported object type");
+                throw new IllegalArgumentException("Unknown value ["+str+']');
             }
         }
+        
+        return result;
     }
 
     public static Object getValue(final String value, final ValueType type) {

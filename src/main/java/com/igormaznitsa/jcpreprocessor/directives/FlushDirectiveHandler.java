@@ -48,7 +48,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
                 state.saveBuffersToFile(outFile);
                 state.resetPrinters();
             } catch (IOException ex) {
-                throw new RuntimeException("IO exception during execution", ex);
+                throw new IllegalStateException("Can't flush buffers", ex);
             }
         }
         return AfterDirectiveProcessingBehaviour.PROCESSED;

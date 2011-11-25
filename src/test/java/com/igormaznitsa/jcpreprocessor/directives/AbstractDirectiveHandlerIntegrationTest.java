@@ -161,7 +161,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         try {
             if (etalonList != null) {
                 if (etalonList.size()!=result.size()){
-                    throw new RuntimeException("Result and etalin size are not equal ["+etalonList.size()+"!="+result.size()+']');
+                    throw new RuntimeException("Result and etalon size are not equal ["+etalonList.size()+"!="+result.size()+']');
                 }
    
                 int lineIndex = 0;
@@ -170,7 +170,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
                         break;
                     }
                     if (!etalonList.get(lineIndex).equals(result.get(lineIndex))){
-                        throw new RuntimeException("Nonequal lines detected at string "+(lineIndex+1));
+                        throw new RuntimeException("Non-equal lines detected at string "+(lineIndex+1));
                     }
                     lineIndex++;
                 }

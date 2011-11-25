@@ -34,10 +34,9 @@ public interface SpecialVariableProcessor {
      * Get the value for the variable
      * @param varName the variable name, must not be null
      * @param context the preprocessor context, it can be null
-     * @param state the preprocessor state, it can be null
      * @return the value, it must not return null because it will notified preprocessor that it supports the variable
      */
-    Value getVariable(String varName, PreprocessorContext context, PreprocessingState state);
+    Value getVariable(String varName, PreprocessorContext context);
 
     /**
      * Set a value to the variable

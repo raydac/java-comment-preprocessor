@@ -244,7 +244,7 @@ public class FileInfoContainer {
                 }
 
             }
-        } catch (RuntimeException unexpected) {
+        } catch (Exception unexpected) {
             final String message = unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
             throw preprocessingState.makeException(message, trimmedProcessingString, unexpected);
         }
@@ -327,11 +327,11 @@ public class FileInfoContainer {
                         return AfterDirectiveProcessingBehaviour.PROCESSED;
                     }
                 } else {
-                    throw new RuntimeException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");
+                    throw new IllegalArgumentException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");
                 }
             }
         }
-        throw new RuntimeException("Unknown preprocessor directive detected [" + trimmedString + ']');
+        throw new IllegalArgumentException("Unknown preprocessor directive detected [" + trimmedString + ']');
     }
 
     private final void removeCommentsFromFile(final File processingFile, final PreprocessorContext context) throws IOException {
