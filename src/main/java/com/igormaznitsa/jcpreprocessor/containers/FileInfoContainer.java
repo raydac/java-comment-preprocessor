@@ -44,7 +44,7 @@ import java.util.List;
  */
 public class FileInfoContainer {
     /**
-     * The source file for the sontainer
+     * The source file for the container
      */
     private final File sourceFile;
     
@@ -124,12 +124,6 @@ public class FileInfoContainer {
         return "FileInfoContainer: file="+PreprocessorUtils.getFilePath(sourceFile)+" toDir="+destinationDir+" toName="+destinationName;
     }
 
-    private void printSpaces(final PreprocessingState paramContainer, final int number) throws IOException {
-        for (int i = 0; i < number; i++) {
-            paramContainer.getPrinter().print(" ");
-        }
-    }
-
     public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
         final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this) : state;
 
@@ -202,6 +196,11 @@ public class FileInfoContainer {
 
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
+                String stringPrefix = "";
+                if (numberOfSpacesAtTheLineBeginning>0){
+                    stringPrefix = nonTrimmedProcessingString.substring(0, numberOfSpacesAtTheLineBeginning);
+                }
+                
                 String stringToBeProcessed = trimmedProcessingString;
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
@@ -223,11 +222,11 @@ public class FileInfoContainer {
 
                     if (startsWithTwoDollars) {
                         // Output the tail of the string to the output stream without comments and macroses
-                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().print(stringPrefix);
                         preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
                     } else if (stringToBeProcessed.startsWith("//$")) {
                         // Output the tail of the string to the output stream without comments
-                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().print(stringPrefix);
                         preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
                     } else {
                         // Just string
@@ -238,7 +237,7 @@ public class FileInfoContainer {
                             preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
                         }
 
-                        printSpaces(preprocessingState, numberOfSpacesAtTheLineBeginning);
+                        preprocessingState.getPrinter().print(stringPrefix);
                         preprocessingState.getPrinter().println(stringToBeProcessed);
                     }
                 }
@@ -262,7 +261,7 @@ public class FileInfoContainer {
 
         if (!context.isFileOutputDisabled()) {
             final File outFile = context.makeDestinationFile(getDestinationFilePath());
-            preprocessingState.saveBuffersToFile(outFile);
+            preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
         }
         return preprocessingState;
     }
@@ -332,24 +331,6 @@ public class FileInfoContainer {
             }
         }
         throw new IllegalArgumentException("Unknown preprocessor directive detected [" + trimmedString + ']');
-    }
-
-    private final void removeCommentsFromFile(final File processingFile, final PreprocessorContext context) throws IOException {
-        final byte [] memoryFile = PreprocessorUtils.readFileAsByteArray(processingFile);
-
-        if (!processingFile.delete()) {
-            throw new IOException("Can't delete the source file " + PreprocessorUtils.getFilePath(processingFile));
-        }
-
-        final Reader reader = new InputStreamReader(new ByteArrayInputStream(memoryFile), context.getInCharacterEncoding());
-
-        final Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(processingFile, false),16384), context.getOutCharacterEncoding());
-        try {
-            new JavaCommentsRemover(reader, writer).process();
-            writer.flush();
-        } finally {
-            PreprocessorUtils.closeSilently(writer);
-        }
     }
 
     public void setDestinationDir(final String destDir) {

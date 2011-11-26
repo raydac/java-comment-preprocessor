@@ -42,6 +42,10 @@ public class ResetablePrinter {
         writer.flush();
     }
     
+    public int getSize() {
+        return outStream.size();
+    }
+    
     public void reset() {
         outStream.reset();
     }

@@ -45,7 +45,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
         if (!context.isFileOutputDisabled()) {
             final File outFile = context.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
             try {
-                state.saveBuffersToFile(outFile);
+                state.saveBuffersToFile(outFile, context.isRemoveComments());
                 state.resetPrinters();
             } catch (IOException ex) {
                 throw new IllegalStateException("Can't flush buffers", ex);

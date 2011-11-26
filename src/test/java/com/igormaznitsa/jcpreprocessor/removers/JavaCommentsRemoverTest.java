@@ -32,4 +32,17 @@ public class JavaCommentsRemoverTest {
         
         assertEquals("Must be the same", DST, writer.toString());
     }
+
+    @Test
+    public void testTabulation() throws Exception {
+        final String SRC = "\thello world();//test";
+        final String DST = "\thello world();";
+        
+        final StringReader reader = new StringReader(SRC);
+        final StringWriter writer = new StringWriter(256);
+        
+        new JavaCommentsRemover(reader, writer).process();
+        
+        assertEquals("Must be the same", DST, writer.toString());
+    }
 }

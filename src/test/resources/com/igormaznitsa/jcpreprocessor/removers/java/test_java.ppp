@@ -1,0 +1,25 @@
+//#outname "w_o_comments.ttt"
+/**
+ * Test file to check the remove comment preprocessor feature
+ * ////////////////////////////////////////////////
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public class test {
+    /*
+        Some test method
+    */
+    public static void main(String ... args) {
+        // print each argument
+	for(String a : args) {
+	  // to console
+	  System.out.println("Arg: "+a);
+	}
+        // ok, the loop is completed
+        System.out.println("//Hello /*World*/"); // It's some test commented call
+        /*It's a*/int a = /*It's the first arg*/5+/*It's the second one*/10;//Ha ha ha ha ha ha ha ha
+        System.out.println("What a terrible comments/**aaaaa*/");// test
+        /*
+            float pi = 3.14f; // it's the most secret part of code, remove it after reading
+        */
+    }
+}
