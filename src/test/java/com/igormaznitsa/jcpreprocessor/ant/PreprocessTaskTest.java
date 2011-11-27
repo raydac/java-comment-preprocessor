@@ -130,7 +130,7 @@ public class PreprocessTaskTest {
         final PreprocessTask.CfgFile cfgFile2 = antTask.createCfgFile();
         cfgFile2.setFile(file2);
         
-        final File [] cfgFiles = antTask.generatePreprocessorContext().getGLobalVarDefiningFiles();
+        final File [] cfgFiles = antTask.generatePreprocessorContext().getConfigFiles();
         assertEquals("Must be 2",2,cfgFiles.length);
         assertEquals("Must be equals",file1.getCanonicalFile(), cfgFiles[0].getCanonicalFile());
         assertEquals("Must be equals",file2.getCanonicalFile(), cfgFiles[1].getCanonicalFile());

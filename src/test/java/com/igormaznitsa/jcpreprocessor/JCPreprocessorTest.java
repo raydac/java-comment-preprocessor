@@ -14,10 +14,10 @@ public final class JCPreprocessorTest {
     
     private final void assertGVDFPreprocessorException(final String file, final int stringIndex) throws Exception {
         final PreprocessorContext context = new PreprocessorContext();
-        context.addGlobalVarDefiningFile(new File(this.getClass().getResource(file).toURI()));
+        context.addConfigFile(new File(this.getClass().getResource(file).toURI()));
         final JCPreprocessor preprocessor = new JCPreprocessor(context);
         try {
-            preprocessor.processGlobalVarDefiningFiles();
+            preprocessor.processCfgFiles();
             fail("Must throw a PreprocessorException");
         }catch(PreprocessorException expected){
             if (stringIndex!=expected.getStringIndex()){
@@ -29,9 +29,9 @@ public final class JCPreprocessorTest {
     @Test
     public void testProcessGlobalVarDefiningFiles() throws Exception {
         final PreprocessorContext context = new PreprocessorContext();
-        context.addGlobalVarDefiningFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
+        context.addConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
         final JCPreprocessor preprocessor = new JCPreprocessor(context);
-        preprocessor.processGlobalVarDefiningFiles();
+        preprocessor.processCfgFiles();
         
         assertEquals("Must have the variable", "hello world",context.findVariableForName("globalVar1").asString());
         assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2"));

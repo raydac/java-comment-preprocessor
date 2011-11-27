@@ -81,7 +81,7 @@ public final class JCPreprocessor {
     }
 
     public void execute() throws PreprocessorException, IOException {
-        processGlobalVarDefiningFiles();
+        processCfgFiles();
 
         final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
 
@@ -260,9 +260,9 @@ public final class JCPreprocessor {
         return result;
     }
 
-    void processGlobalVarDefiningFiles() throws IOException, PreprocessorException {
+    void processCfgFiles() throws IOException, PreprocessorException {
 
-        for (final File file : context.getGLobalVarDefiningFiles()) {
+        for (final File file : context.getConfigFiles()) {
             final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8");
 
             int readStringIndex = -1;

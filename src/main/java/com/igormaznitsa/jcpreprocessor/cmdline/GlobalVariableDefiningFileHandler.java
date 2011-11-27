@@ -69,7 +69,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
             }
 
             if (file.exists() && file.isFile()) {
-                context.addGlobalVarDefiningFile(file);
+                context.addConfigFile(file);
                 if (context.isVerbose()) {
                     context.logInfo("A Global variable defining file has been added [" + PreprocessorUtils.getFilePath(file) + "] for the expression \'" + stringRest + '\'');
                 }

@@ -18,7 +18,6 @@
 package com.igormaznitsa.jcpreprocessor.ant;
 
 import com.igormaznitsa.jcpreprocessor.JCPreprocessor;
-import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
@@ -196,7 +195,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private void fillCfgFiles(final PreprocessorContext context){
         for(final CfgFile f : configFiles){
             if (f.getFile() != null){
-                context.addGlobalVarDefiningFile(f.getFile());
+                context.addConfigFile(f.getFile());
             } else {
                 throw new IllegalArgumentException("One of config files doesn't contain the file attribute");
             }

@@ -20,10 +20,10 @@ public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHa
         
         HANDLER.processCommandLineKey(param, context);
     
-        final File[] globalVarFiles = context.getGLobalVarDefiningFiles();
+        final File[] configFiles = context.getConfigFiles();
         
-        assertEquals("File must be added", 1, globalVarFiles.length);
-        assertEquals("File must be equals", testFile, globalVarFiles[0]);
+        assertEquals("File must be added", 1, configFiles.length);
+        assertEquals("File must be equals", testFile, configFiles[0]);
     }
     
     @Test
@@ -38,7 +38,7 @@ public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHa
         
         HANDLER.processCommandLineKey(param, context);
     
-        final File[] globalVarFiles = context.getGLobalVarDefiningFiles();
+        final File[] globalVarFiles = context.getConfigFiles();
         
         assertEquals("File must be added", 1, globalVarFiles.length);
         assertEquals("File must be equals", testFile, globalVarFiles[0]);

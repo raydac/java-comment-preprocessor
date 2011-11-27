@@ -71,7 +71,7 @@ public class PreprocessorContext {
     
     private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
     
-    private final List<File> globalVarDefiningFiles = new ArrayList<File>(); 
+    private final List<File> configFiles = new ArrayList<File>(); 
     
     private PreprocessingState currentState;
     
@@ -466,15 +466,15 @@ public class PreprocessorContext {
         return result;
     }
 
-    public void addGlobalVarDefiningFile(final File file) {
+    public void addConfigFile(final File file) {
         if (file == null) {
             throw new NullPointerException("File is null");
         }
-        globalVarDefiningFiles.add(file);
+        configFiles.add(file);
     }
     
-    public File[] getGLobalVarDefiningFiles(){
-        return globalVarDefiningFiles.toArray(new File[globalVarDefiningFiles.size()]);
+    public File[] getConfigFiles(){
+        return configFiles.toArray(new File[configFiles.size()]);
     }
     
     public PreprocessingState produceNewPreprocessingState(final FileInfoContainer rootFile) throws IOException {
