@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
+import org.junit.BeforeClass;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessingState.ExcludeIfInfo;
 import com.igormaznitsa.jcpreprocessor.exceptions.PreprocessorException;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
@@ -27,6 +28,13 @@ import static org.junit.Assert.*;
 
 public abstract class AbstractDirectiveHandlerIntegrationTest {
 
+    protected static File THIS_CLASS_FILE;
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        THIS_CLASS_FILE = new File(AbstractDirectiveHandler.class.getResource("AbstractDirectiveHandlerIntegrationTest.class").toURI());
+    }
+    
     @Test
     public abstract void testExecution() throws Exception;
 
@@ -84,7 +92,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
         final PreprocessorContext context = new PreprocessorContext();
         context.setFileOutputDisabled(true);
 
-        final FileInfoContainer reference = new FileInfoContainer(new File("fake"), "fake_name", false);
+        final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
         final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), 0);
         final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
@@ -226,7 +234,7 @@ public abstract class AbstractDirectiveHandlerIntegrationTest {
     
     private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
         final List<String> preprocessingPart = parseStringForLines(text);
-        return insidePreprocessingAndMatching(new File("/fake/nonexist_file.txt"),preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null);
+        return insidePreprocessingAndMatching(THIS_CLASS_FILE,preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null);
     }
 
     public PreprocessorContext assertFilePreprocessing(final String testFileName, final PreprocessorExtension ext, final PreprocessorLogger logger) throws Exception {

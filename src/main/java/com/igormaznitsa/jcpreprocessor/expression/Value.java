@@ -112,6 +112,32 @@ public final class Value implements ExpressionItem {
         return (Boolean) value;
     }
 
+    public static Value recognizeRawString(final String str) {
+        if (str == null) {
+            throw new NullPointerException("Parameter is null");
+        }
+        
+        if (str.equals("true")){
+            return Value.BOOLEAN_TRUE;
+        }
+        
+        if (str.equals("false")){
+            return Value.BOOLEAN_FALSE;
+        }
+        
+        try {
+            return new Value(Long.valueOf(Long.parseLong(str)));
+        }catch(NumberFormatException ex){
+        }
+
+        try {
+            return new Value(Float.valueOf(Float.parseFloat(str)));
+        }catch(NumberFormatException ex){
+        }
+        
+        return new Value(str);
+    }
+    
     public static Value recognizeOf(final String str) {
         final ValueType type = recognizeType(str);
 

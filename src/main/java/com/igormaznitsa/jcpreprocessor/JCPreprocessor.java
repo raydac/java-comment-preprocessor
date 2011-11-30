@@ -83,7 +83,7 @@ public final class JCPreprocessor {
     public void execute() throws PreprocessorException, IOException {
         processCfgFiles();
 
-        final File[] srcDirs = context.getParsedSourceDirectoryAsFiles();
+        final File[] srcDirs = context.getSourceDirectoryAsFiles();
 
         final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
 

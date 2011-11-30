@@ -57,7 +57,7 @@ public class PreprocessorContext {
     private String sourceDirectory;
     private String destinationDirectory;
     private File destinationDirectoryFile;
-    private File sourceDirectoryFile;
+    private File [] sourceDirectoryFiles;
     private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
     private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
     private PreprocessorExtension preprocessorExtension;
@@ -147,7 +147,7 @@ public class PreprocessorContext {
         }
 
         this.sourceDirectory = directory;
-        this.sourceDirectoryFile = new File(sourceDirectory);
+        this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
 
         return this;
     }
@@ -182,18 +182,18 @@ public class PreprocessorContext {
         return sourceDirectory;
     }
 
-    public File getSourceDirectoryAsFile() {
-        return sourceDirectoryFile;
+    public File [] getSourceDirectoryAsFiles() {
+        return sourceDirectoryFiles;
     }
 
-    public File[] getParsedSourceDirectoryAsFiles() throws IOException {
+    private File[] getParsedSourceDirectoryAsFiles() {
         final String[] splitted = PreprocessorUtils.splitForChar(sourceDirectory, ';');
         final File[] result = new File[splitted.length];
         int index = 0;
         for (final String dirName : splitted) {
             final File dir = new File(dirName);
             if (!dir.exists() || !dir.isDirectory()) {
-                throw new IOException("Can't find source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
+                throw new IllegalArgumentException("Can't find source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
             }
             result[index++] = dir;
         }
@@ -457,10 +457,24 @@ public class PreprocessorContext {
         if (file.charAt(0) == '.' && parentDir != null) {
             result = new File(parentDir, file);
         } else {
-            result = new File(getSourceDirectoryAsFile(), file);
+            final List<File> findFiles = new ArrayList<File>();
+            for(final File root : getSourceDirectoryAsFiles()){
+                final File variant = new File(root,file);
+                if (variant.exists() && variant.isFile()){
+                    findFiles.add(variant);
+                }
+            }
+            
+            if (findFiles.size() == 1){
+                result = findFiles.get(0);
+            } else if (findFiles.size() == 0){
+                result = null;
+            } else {
+                throw new IllegalStateException("Found a few variants for \'"+file+"\' in different source roots");
+            }
         }
 
-        if (!result.isFile() || !result.exists()) {
+        if (result == null || !result.isFile() || !result.exists()) {
             throw new FileNotFoundException("File " + PreprocessorUtils.getFilePath(result) + " is not found");
         }
         return result;

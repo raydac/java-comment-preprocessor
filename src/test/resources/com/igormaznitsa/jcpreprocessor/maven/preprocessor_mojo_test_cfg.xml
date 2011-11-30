@@ -21,7 +21,7 @@
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>JCPreprocessor</artifactId>
                 <configuration>
-                    <source>source_dir</source>
+                    <source>/</source>
                     <destination>destination_dir</destination>
                     <excluded>xml,html</excluded>
                     <processing>java,txt</processing>
@@ -41,7 +41,7 @@
                         </property>    
                         <property>
                             <name>globalvar2</name>
-                            <value>"hello world"</value>
+                            <value>hello world</value>
                         </property>    
                     </globalvars>
                 </configuration>

@@ -1,7 +1,6 @@
 package com.igormaznitsa.jcpreprocessor.directives;
 
 import org.mockito.Mockito;
-import com.igormaznitsa.jcpreprocessor.context.PreprocessingState;
 import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.extension.PreprocessorExtension;

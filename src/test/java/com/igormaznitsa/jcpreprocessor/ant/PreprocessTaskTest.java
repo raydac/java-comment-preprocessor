@@ -9,11 +9,15 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import org.apache.tools.ant.Project;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 public class PreprocessTaskTest {
+    
+    static File THIS_DIRECTORY;
+    
     final static Project projectMock = mock(Project.class);
     static {
         when(projectMock.getBaseDir()).thenReturn(new File("base/dir"));
@@ -22,24 +26,30 @@ public class PreprocessTaskTest {
 
     PreprocessTask antTask;
     
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        THIS_DIRECTORY = new File(PreprocessTaskTest.class.getResource("./").toURI()); 
+    }
+    
     @Before
     public void beforeTest(){
         antTask = new PreprocessTask();
         antTask.setProject(projectMock);
+        antTask.setSource(THIS_DIRECTORY);
     }
     
     @Test
     public void testSetSource() throws Exception {
-        final File someFile = new File("hello/world");
-        antTask.setSource(someFile);
-        assertEquals("Files must be equal",someFile.getCanonicalFile(),antTask.generatePreprocessorContext().getSourceDirectoryAsFile());
+        final File [] sourceDirs = antTask.generatePreprocessorContext().getSourceDirectoryAsFiles();
+        assertEquals("There must be only root",1,sourceDirs.length);
+        
+        assertEquals("File must be equal the original",THIS_DIRECTORY,sourceDirs[0]);
     }
 
     @Test
     public void testSetDestination() throws Exception {
-        final File someFile = new File("hello/world");
-        antTask.setDestination(someFile);
-        assertEquals("Files must be equal",someFile.getCanonicalFile(),antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
+        antTask.setDestination(THIS_DIRECTORY);
+        assertEquals("Files must be equal",THIS_DIRECTORY.getCanonicalFile(),antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
     }
     
     @Test

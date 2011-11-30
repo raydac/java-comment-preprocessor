@@ -205,7 +205,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private void fillGlobalVars(final PreprocessorContext context){
         for(final Global g : globalVariables){
             if (g.getName()!=null && g.getValue()!=null){
-                context.setGlobalVariable(g.getName(), Value.recognizeOf(g.getValue()));
+                context.setGlobalVariable(g.getName(), Value.recognizeRawString(g.getValue()));
             } else {
                 throw new IllegalArgumentException("Wrong definition of a global variable, may be there is not a needed attribute");
             }
