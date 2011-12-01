@@ -22,6 +22,7 @@ import com.igormaznitsa.jcpreprocessor.context.PreprocessorContext;
 import com.igormaznitsa.jcpreprocessor.expression.Expression;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -56,7 +57,11 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         try {
-            state.openFile(context.getSourceFile(includingFilePath.asString()));
+            final File includingFile = context.getSourceFile(includingFilePath.asString());
+            if (context.isVerbose()){
+                context.logInfo("Open file to include ["+includingFile.getCanonicalPath()+']');
+            }
+            state.openFile(includingFile);
         }catch(IOException ex){
             throw new IllegalArgumentException("Can't open a file to include ["+includingFilePath.asString()+']',ex);
         }

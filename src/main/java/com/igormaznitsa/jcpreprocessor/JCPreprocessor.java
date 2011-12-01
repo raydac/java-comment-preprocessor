@@ -39,7 +39,6 @@ import com.igormaznitsa.jcpreprocessor.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcpreprocessor.expression.Value;
 import com.igormaznitsa.jcpreprocessor.expression.ValueType;
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

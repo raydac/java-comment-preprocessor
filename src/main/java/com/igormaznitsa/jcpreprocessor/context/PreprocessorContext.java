@@ -230,7 +230,7 @@ public class PreprocessorContext {
     }
 
     public final boolean isFileAllowedToBeProcessed(final File file) {
-        if (file == null || !file.exists() || file.isDirectory()) {
+        if (file == null || !file.exists() || file.isDirectory() || file.length()==0) {
             return false;
         }
 
@@ -492,6 +492,9 @@ public class PreprocessorContext {
     }
     
     public PreprocessingState produceNewPreprocessingState(final FileInfoContainer rootFile) throws IOException {
+        if (verbose){
+            logInfo("Open file to preprocess ["+rootFile.getSourceFile().getCanonicalPath()+']');
+        }
         this.currentState = new PreprocessingState(rootFile, getInCharacterEncoding(), getOutCharacterEncoding());
         return this.currentState;
     }

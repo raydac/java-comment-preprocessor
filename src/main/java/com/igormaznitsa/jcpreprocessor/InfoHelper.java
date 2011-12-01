@@ -59,7 +59,11 @@ public final class InfoHelper {
             result.add(makeDirectiveReference(handler));
         }
         result.add(DELIMITER);
-
+        result.add("Special string directives\n------------");
+        result.add(makeSpecialDirectiveReference("//$", "it processes macroses inside the string rest and plac the string result without the comment prefix into the output stream"));
+        result.add(makeSpecialDirectiveReference("//$$", "it works like //$ but it doesn't process macroses inside the string"));
+        result.add(makeSpecialDirectiveReference("/*-*/", "it gets rid of the string tail after the directive (the directive will be removed too)"));
+        
         result.add("Operators\n------------");
         for (final AbstractOperator handler : AbstractOperator.ALL_OPERATORS) {
             result.add(makeOperatorReference(handler));
@@ -91,6 +95,10 @@ public final class InfoHelper {
         return makeColumns(directiveName, descr, 14);
     }
 
+    private static String makeSpecialDirectiveReference(final String name, final String reference) {
+        return makeColumns(name, reference, 14);
+    }
+    
     private static String makeOperatorReference(final AbstractOperator operator) {
         final String operatorName = operator.getKeyword();
         final String descr = operator.getReference();
