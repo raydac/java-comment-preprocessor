@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.naming.Context;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -62,175 +61,189 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
      * @parameter name="source"
      * @readonly
      */
-    private String _source;
+    private String source;
     /**
      * Destination directory
      * 
      * @parameter name="destination" default-value="${project.build.directory}/generated-sources/preprocessed"
      * @readonly
      */
-    private File _destination;
+    private File destination;
     /**
      * Input text character encoding
      * 
-     * @parameter name="inencoding" default-value="${project.build.sourceEncoding}"
+     * @parameter name="inEncoding" default-value="${project.build.sourceEncoding}"
      * @readonly
      */
-    private String _inencoding;
+    private String inEncoding;
     /**
      * Output text character encoding
      * 
-     * @parameter name="outencoding" default-value="${project.build.sourceEncoding}"
+     * @parameter name="outEncoding" default-value="${project.build.sourceEncoding}"
      * @readonly
      */
-    private String _outencoding;
+    private String outEncoding;
     /**
      * List of excluded extensions from preprocessing
      * 
      * @parameter name="excluded"
      * @readonly
      */
-    private String _excluded;
+    private String excluded;
     /**
      * List of extensions to be preprocessed
      * 
      * @parameter name="processing"
      * @readonly
      */
-    private String _processing;
+    private String processing;
     /**
      * Disable any output file operations
      * 
-     * @parameter name="disableout" default-value="false"
+     * @parameter name="disableOut" default-value="false"
      * @readonly
      */
-    private boolean _disableout;
+    private boolean disableOut;
     /**
      * Make verbose message output for inside processes
      * 
      * @parameter name="verbose" default-value="false"
      * @readonly
      */
-    private boolean _verbose;
+    private boolean verbose;
     /**
      * Clear the destination directory before preprocessing if it is existing
      * 
      * @parameter name="clear" default-value="false"
      * @readonly
      */
-    private boolean _clearDestination;
+    private boolean clearDestination;
+    /**
+     * Flag to disable overriding of the source root directory by preprocessed directory
+     * 
+     * @parameter name="keepSrcRoot" default-value="false" 
+     */
+    private boolean keepSrcRoot;
     /**
      * Remove all Java like commentaries from the resulting files
      * 
-     * @parameter name="removecomments" default-value="false"
+     * @parameter name="removeComments" default-value="false"
      * @readonly
      */
-    private boolean _removecomments;
+    private boolean removeComments;
     /**
      * Global variables
      * 
-     * @parameter name="globalvars"
+     * @parameter name="globalVars"
      * @readonly
      */
-    private Properties _globalvars;
+    private Properties globalVars;
     /**
      * Configuration files
      * 
-     * @parameter name="cfgfiles"
+     * @parameter name="cfgFiles"
      * @readonly
      */
-    private File[] _cfgfiles;
+    private File[] cfgFiles;
     /**
      * The variable contains the processed variable map
      */
     private Map<String, Value> _variableMap;
 
-    public void setGlobalvars(final Properties vars) {
-        this._globalvars = vars;
+    public void setKeepSrcRoot(final boolean flag){
+        this.keepSrcRoot = flag;
+    }
+    
+    public boolean getKeepSrcRoot(){
+        return this.keepSrcRoot;
+    }
+    
+    public void setGlobalVars(final Properties vars) {
+        this.globalVars = vars;
     }
 
-    public Properties getGlobalvars() {
-        return this._globalvars;
+    public Properties getGlobalVars() {
+        return this.globalVars;
     }
 
-    public void setCfgfiles(final File[] files) {
-        this._cfgfiles = files;
+    public void setCfgFiles(final File[] files) {
+        this.cfgFiles = files;
     }
 
-    public File[] getCfgfiles() {
-        return this._cfgfiles;
+    public File[] getCfgFiles() {
+        return this.cfgFiles;
     }
 
     public void setSource(final String source) {
-        this._source = source;
+        this.source = source;
     }
 
     public String getSource() {
-        return this._source;
+        return this.source;
     }
 
     public void setDestination(final File destination) {
-        this._destination = destination;
+        this.destination = destination;
     }
 
     public File getDestination() {
-        return this._destination;
+        return this.destination;
     }
 
-    public void setInencoding(final String incharset) {
-        this._inencoding = incharset;
+    public void setInEncoding(final String value) {
+        this.inEncoding = value;
     }
 
-    public String getInencoding() {
-        return this._inencoding;
+    public String getInEncoding() {
+        return this.inEncoding;
     }
 
-    public void setOutencoding(final String outcharset) {
-        this._outencoding = outcharset;
+    public void setOutEncoding(final String value) {
+        this.outEncoding = value;
     }
 
-    public String getOutencoding() {
-        return this._outencoding;
+    public String getOutEncoding() {
+        return this.outEncoding;
     }
 
     public void setExcluded(final String excluded) {
-        this._excluded = excluded;
+        this.excluded = excluded;
     }
 
     public String getExcluded() {
-        return this._excluded;
+        return this.excluded;
     }
 
     public void setProcessing(final String processing) {
-        this._processing = processing;
+        this.processing = processing;
     }
 
     public String getProcessing() {
-        return this._processing;
+        return this.processing;
     }
 
-    public void setDisableout(final boolean disableout) {
-        this._disableout = disableout;
+    public void setDisableOut(final boolean value) {
+        this.disableOut = value;
     }
 
-    public boolean getDisableout() {
-        return this._disableout;
+    public boolean getDisableOut() {
+        return this.disableOut;
     }
 
     public void setVerbose(final boolean verbose) {
-        this._verbose = verbose;
+        this.verbose = verbose;
     }
 
     public boolean getVerbose() {
-        return this._verbose;
+        return this.verbose;
     }
 
-    public void setRemovecomments(final boolean value) {
-        this._removecomments = value;
+    public void setRemoveComments(final boolean value) {
+        this.removeComments = value;
     }
 
-    public boolean getRemovecomments() {
-        return this._removecomments;
+    public boolean getRemoveComments() {
+        return this.removeComments;
     }
 
     private void fillVariableMap() throws Exception {
@@ -263,8 +276,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     private String makeSourceRootList() {
         String result = null;
-        if (_source != null) {
-            result = _source;
+        if (source != null) {
+            result = source;
         } else if (project != null) {
             final StringBuilder accum = new StringBuilder();
             for (final String srcRoot : project.getCompileSourceRoots()) {
@@ -315,32 +328,32 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
         context.setSourceDirectory(makeSourceRootList());
 
-        context.setDestinationDirectory(_destination.getCanonicalPath());
+        context.setDestinationDirectory(destination.getCanonicalPath());
 
-        if (_inencoding != null) {
-            context.setInCharacterEncoding(_inencoding);
+        if (inEncoding != null) {
+            context.setInCharacterEncoding(inEncoding);
         }
-        if (_outencoding != null) {
-            context.setOutCharacterEncoding(_outencoding);
+        if (outEncoding != null) {
+            context.setOutCharacterEncoding(outEncoding);
         }
-        if (_excluded != null) {
-            context.setExcludedFileExtensions(_excluded);
+        if (excluded != null) {
+            context.setExcludedFileExtensions(excluded);
         }
-        if (_processing != null) {
-            context.setProcessingFileExtensions(_processing);
+        if (processing != null) {
+            context.setProcessingFileExtensions(processing);
         }
 
         info("Preprocessing sources folder : " + context.getSourceDirectory());
         info("Preprocessing destination folder : " + context.getDestinationDirectory());
 
-        context.setClearDestinationDirBefore(_clearDestination);
-        context.setRemoveComments(_removecomments);
-        context.setVerbose(_verbose);
-        context.setFileOutputDisabled(_disableout);
+        context.setClearDestinationDirBefore(clearDestination);
+        context.setRemoveComments(removeComments);
+        context.setVerbose(verbose);
+        context.setFileOutputDisabled(disableOut);
 
         // process cfg files
-        if (_cfgfiles != null && _cfgfiles.length != 0) {
-            for (final File file : _cfgfiles) {
+        if (cfgFiles != null && cfgFiles.length != 0) {
+            for (final File file : cfgFiles) {
                 if (file == null) {
                     throw new NullPointerException("A NULL in place of a config file detected");
                 }
@@ -350,9 +363,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         }
 
         // process global vars
-        if (_globalvars != null && !_globalvars.isEmpty()) {
-            for (final String key : _globalvars.stringPropertyNames()) {
-                final String value = _globalvars.getProperty(key);
+        if (globalVars != null && !globalVars.isEmpty()) {
+            for (final String key : globalVars.stringPropertyNames()) {
+                final String value = globalVars.getProperty(key);
                 if (value == null) {
                     throw new NullPointerException("Can't find defined value for '" + key + "' global variable");
                 }
@@ -384,7 +397,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         try {
             final JCPreprocessor preprocessor = new JCPreprocessor(context);
             preprocessor.execute();
-            addPreprocessedAsSourceRoot(context);
+            if (!getKeepSrcRoot()){
+                addPreprocessedAsSourceRoot(context);
+            }
         } catch (Exception ex) {
             throw new MojoFailureException("Exception during preprocessing or preparation", ex);
         }

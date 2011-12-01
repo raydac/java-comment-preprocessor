@@ -230,7 +230,7 @@ public class FileInfoContainer {
                         }
 
                         preprocessingState.getPrinter().print(stringPrefix);
-                        preprocessingState.getPrinter().println(stringToBeProcessed);
+                        preprocessingState.getPrinter().println(strToOut);
                     }
                 }
 

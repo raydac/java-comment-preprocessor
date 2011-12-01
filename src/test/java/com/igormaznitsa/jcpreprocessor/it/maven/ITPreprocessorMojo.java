@@ -1,4 +1,4 @@
-package com.igormaznitsa.jcpreprocessor.it;
+package com.igormaznitsa.jcpreprocessor.it.maven;
 
 import com.igormaznitsa.jcpreprocessor.utils.PreprocessorUtils;
 import java.io.DataInputStream;
@@ -19,7 +19,7 @@ public class ITPreprocessorMojo {
     public static void setUpBeforeClass() throws Exception {
         assertNotNull("The test desires the ${maven.home} system property", System.getProperty("maven.home"));
 
-        final String jarFile = System.getProperty("project.build.directory") + File.separatorChar + System.getProperty("project.build.finalName") + ".jar";
+        final String jarFile = System.getProperty("plugin.jar");
         final String pomFile = System.getProperty("project.pom");
 
         final File testDir = ResourceExtractor.simpleExtractResources(ITPreprocessorMojo.class, "dummy_maven_project");

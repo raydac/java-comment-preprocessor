@@ -25,16 +25,17 @@
                     <destination>destination_dir</destination>
                     <excluded>xml,html</excluded>
                     <processing>java,txt</processing>
-                    <inencoding>UTF-16</inencoding>
-                    <outencoding>UTF-32</outencoding>
-                    <removecomments>true</removecomments>
-                    <disableout>true</disableout>
+                    <inEncoding>UTF-16</inEncoding>
+                    <outEncoding>UTF-32</outEncoding>
+                    <keepSrcRoot>true</keepSrcRoot>
+                    <removeComments>true</removeComments>
+                    <disableOut>true</disableOut>
                     <verbose>true</verbose>
-                    <cfgfiles>
+                    <cfgFiles>
                         <file>test1.cfg</file>
                         <file>test2.cfg</file>
-                    </cfgfiles>    
-                    <globalvars>
+                    </cfgFiles>    
+                    <globalVars>
                         <property>
                             <name>globalvar1</name>
                             <value>3</value>
@@ -43,7 +44,7 @@
                             <name>globalvar2</name>
                             <value>hello world</value>
                         </property>    
-                    </globalvars>
+                    </globalVars>
                 </configuration>
                 <executions>
                     <execution>

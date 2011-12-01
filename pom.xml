@@ -141,16 +141,13 @@
                 <configuration>
                     <systemProperties>
                         <property>
+                            <!-- Unfortunately there is not any legal way to get the maven home -->
                             <name>maven.home</name>
                             <value>${user.home}/Programs/apache-maven-3.0.3</value>
                         </property>
                         <property>
-                            <name>project.build.directory</name>
-                            <value>${project.build.directory}</value>
-                        </property>
-                        <property>
-                            <name>project.build.finalName</name>
-                            <value>${project.build.finalName}</value>
+                            <name>plugin.jar</name>
+                            <value>${project.build.directory}/${project.build.finalName}.jar</value>
                         </property>
                         <property>
                             <name>project.pom</name>
