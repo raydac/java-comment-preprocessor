@@ -5,3 +5,7 @@ The first version of the JCPreprocessor was developed by Igor Maznitsa in 2002 a
  - A Standalone application called through command line
 
 The preprocessor is an open source project and its home page is http://code.google.com/p/java-comment-preprocessor/ where you can find new versions and wiki. Since 2011 the preprocessor is developed and distributed under GNU LGPL v3 license.
+
+You can install the plugin into the local maven repository with the install:install-file goal:
+
+    mvn install:install-file -Dfile=./jcp-5.0.jar -DpomFile=./pom.xml

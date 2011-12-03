@@ -19,16 +19,12 @@ package com.igormaznitsa.jcp.maven;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -45,7 +41,7 @@ import org.apache.maven.project.MavenProject;
  * 
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger, SpecialVariableProcessor {
+public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger {
 
     /**
      * The project to be preprocessed.
@@ -145,10 +141,6 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
      * @readonly
      */
     private File[] cfgFiles;
-    /**
-     * The variable contains the processed variable map
-     */
-    private Map<String, Value> _variableMap;
 
     public void setClear(final boolean flag) {
         this.clear = flag;
@@ -254,34 +246,6 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         return this.removeComments;
     }
 
-    private void fillVariableMap() throws Exception {
-
-        final Map<String, Value> result = new HashMap<String, Value>();
-
-        if (project != null) {
-            final Properties props = project.getProperties();
-
-            final Enumeration keys = props.keys();
-            while (keys.hasMoreElements()) {
-                final String key = (String) keys.nextElement();
-                final String keyStr = "mvn." + key.toLowerCase();
-                final String value = props.getProperty(key.toString(), "value_undefined");
-                result.put(key, Value.recognizeRawString(value));
-            }
-
-            result.put("mvn.basedir", Value.recognizeRawString(project.getBasedir().getCanonicalPath()));
-            result.put("mvn.project.build.directory", Value.recognizeRawString(project.getBuild().getDirectory()));
-            result.put("mvn.project.build.outputDirectory", Value.recognizeRawString(project.getBuild().getOutputDirectory()));
-            result.put("mvn.project.name", Value.recognizeRawString(project.getName()));
-            result.put("mvn.project.version", Value.recognizeRawString(project.getVersion()));
-            result.put("mvn.project.build.finalname", Value.recognizeRawString(project.getBuild().getFinalName()));
-        } else {
-            warning("Project object is null");
-        }
-
-        _variableMap = result;
-    }
-
     private String makeSourceRootList() {
         String result = null;
         if (source != null) {
@@ -333,9 +297,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     PreprocessorContext makePreprocessorContext() throws IOException {
         final PreprocessorContext context = new PreprocessorContext();
-
+        context.setPreprocessorLogger(this);
+        
+        if (project != null){
+            final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project);
+            context.registerSpecialVariableProcessor(mavenPropertiesImporter);
+        }
+        
         context.setSourceDirectory(makeSourceRootList());
-
         context.setDestinationDirectory(destination.getCanonicalPath());
 
         if (inEncoding != null) {
@@ -386,18 +355,10 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try {
-            fillVariableMap();
-        } catch (Exception unexpected) {
-            throw new MojoExecutionException("Exception during project properties reading", unexpected);
-        }
-
         PreprocessorContext context = null;
 
         try {
             context = makePreprocessorContext();
-            context.registerSpecialVariableProcessor(this);
-            context.setPreprocessorLogger(this);
         } catch (Exception ex) {
             throw new MojoExecutionException("Exception during preprocessor context creation", ex);
         }
@@ -414,9 +375,6 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     }
 
-    private void overrideSourceRoot() {
-    }
-
     @Override
     public void error(final String message) {
         getLog().error(message);
@@ -430,27 +388,5 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     @Override
     public void warning(String message) {
         getLog().warn(message);
-    }
-
-    @Override
-    public String[] getVariableNames() {
-        return _variableMap.keySet().toArray(new String[_variableMap.size()]);
-    }
-
-    @Override
-    public Value getVariable(final String varName, final PreprocessorContext context) {
-        Value result = null;
-        if (_variableMap != null) {
-            result = _variableMap.get(varName);
-            if (result == null) {
-                throw new IllegalStateException("Detected request for a nonexsitiong variable [" + varName + ']');
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void setVariable(String varName, Value value, PreprocessorContext context) {
-        throw new UnsupportedOperationException("Writiong operation disallowed for maven properties [" + varName + ']');
     }
 }

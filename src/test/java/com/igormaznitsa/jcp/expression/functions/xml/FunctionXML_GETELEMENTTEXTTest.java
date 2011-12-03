@@ -2,8 +2,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,7 +17,7 @@ public class FunctionXML_GETELEMENTTEXTTest extends AbstractFunctionXMLTest {
     @Test
     public void testExecution() throws Exception {
         final Value root = HANDLER.executeStr(SPY_CONTEXT,  new FunctionXML_GETROOT().executeStr(SPY_CONTEXT,OPENED_DOCUMENT_ID));
-        assertEquals("\n\nelem1\nelem2\nelem3\n<test>\n\n",root.asString());
+        assertEquals("\nelem1\nelem2\nelem3\n<test>\n",root.asString());
     }
     
     @Override

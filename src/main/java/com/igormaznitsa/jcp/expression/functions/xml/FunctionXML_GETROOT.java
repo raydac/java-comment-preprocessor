@@ -43,10 +43,20 @@ public final class FunctionXML_GETROOT extends AbstractFunction {
         final String docIdStrRoot = docIdStr + "_root";
 
         final Value result = Value.valueOf(docIdStrRoot);
-
-        NodeContainer nodeContainer = (NodeContainer) context.getSharedResource(docIdStrRoot);
+        NodeContainer nodeContainer = null;
+        try {
+            nodeContainer = (NodeContainer) context.getSharedResource(docIdStrRoot);
+        }catch(ClassCastException ex){
+            throw new IllegalArgumentException("Wrong type of the cached object ["+docIdStrRoot+']');
+        }
+        
         if (nodeContainer == null) {
-            nodeContainer = (NodeContainer) context.getSharedResource(docIdStr);
+            try {
+                nodeContainer = (NodeContainer) context.getSharedResource(docIdStr);
+            }catch(ClassCastException ex){
+                throw new IllegalArgumentException("Incomatible type of cached document ["+docIdStr+']');
+            }
+            
             if (nodeContainer == null) {
                 throw new IllegalArgumentException("Can't find any opened xml document for the \'" + docIdStr + "\' id");
             }

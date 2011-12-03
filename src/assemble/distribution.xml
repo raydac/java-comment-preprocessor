@@ -15,26 +15,33 @@
             <directory>${project.basedir}</directory>
             <outputDirectory>/project</outputDirectory>
             <excludes>
-                <exclude>${project.basedir}/target/</exclude>
-                <exclude>${project.basedir}/texts/</exclude>
-                <exclude>${project.basedir}/nbactions.xml</exclude>
-                <exclude>${project.basedir}/catalog.xml</exclude>
-                <exclude>${project.basedir}/**/.*</exclude>
+                <exclude>target/</exclude>
+                <exclude>texts/</exclude>
+                <exclude>nbactions.xml</exclude>
+                <exclude>catalog.xml</exclude>
+                <exclude>**/.*</exclude>
             </excludes>    
         </fileSet>
         <fileSet>
-            <includes>
-                <include>${project.artifactId}-${project.version}.jar</include>
-            </includes>
-            <directory>${project.basedir}/target</directory>
             <outputDirectory>/lib</outputDirectory>
+            <directory>${project.basedir}/target</directory>
+            <includes>
+                <include>${project.build.finalName}.jar</include>
+            </includes>
         </fileSet>
-
-    </fileSets>
-    <files>
-        <file>
-            <source>${basedir}/texts/license.txt</source>
+        <fileSet>
+            <outputDirectory>/lib</outputDirectory>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <outputDirectory>/</outputDirectory>
-        </file>
-    </files>
+            <directory>${basedir}/texts</directory>
+            <includes>
+                <include>*.*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>

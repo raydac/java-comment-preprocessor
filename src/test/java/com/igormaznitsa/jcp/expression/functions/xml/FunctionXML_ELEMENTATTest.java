@@ -3,7 +3,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
-import sun.java2d.pipe.ValidatePipe;
 import static org.junit.Assert.*;
 
 public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
