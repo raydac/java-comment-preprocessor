@@ -1,0 +1,32 @@
+hello
+//#if false
+//#local test = 111
+nonprocessed /*$test$*/
+//#endif
+//#local x=true
+//#local y=false
+//#local z=false
+//#if x
+    //#if y
+unexpected1
+    //#else
+        //#if z
+unexpected2
+        //#else
+            //#if !z
+expected
+            //#endif
+        //#endif
+    //#endif
+//#else
+    //#if y
+must not be out
+    //#else
+unexpected3
+    //#endif
+//#endif
+world
+---START_ETALON---
+hello
+expected
+world

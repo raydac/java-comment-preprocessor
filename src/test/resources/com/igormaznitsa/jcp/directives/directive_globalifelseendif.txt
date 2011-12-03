@@ -1,0 +1,25 @@
+//#_if true
+    //#if true
+hello
+    //#else
+world
+    //#endif
+    //#global expected=true
+//#_else
+    //#_if true
+        //#global expected=false
+    //#_else
+        //#global expected=false
+    //#_endif
+    //#global unexpected=false
+    //#if false
+unexp
+    //#else
+exp
+    //#endif
+//#_endif
+test
+---START_ETALON---
+hello
+exp
+test

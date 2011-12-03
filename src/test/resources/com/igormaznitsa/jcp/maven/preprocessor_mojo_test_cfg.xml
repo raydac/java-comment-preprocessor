@@ -1,0 +1,63 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.igormaznitsa</groupId>
+    <artifactId>JCPreprocessor-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Test of Preprocessor Mojo</name>
+    <description>The pom is used for test purposes</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>jcp</artifactId>
+                <configuration>
+                    <source>/</source>
+                    <destination>destination_dir</destination>
+                    <excluded>xml,html</excluded>
+                    <processing>java,txt</processing>
+                    <inEncoding>UTF-16</inEncoding>
+                    <outEncoding>UTF-32</outEncoding>
+                    <keepSrcRoot>true</keepSrcRoot>
+                    <removeComments>true</removeComments>
+                    <disableOut>true</disableOut>
+                    <verbose>true</verbose>
+                    <clear>true</clear>
+                    <cfgFiles>
+                        <file>test1.cfg</file>
+                        <file>test2.cfg</file>
+                    </cfgFiles>    
+                    <globalVars>
+                        <property>
+                            <name>globalvar1</name>
+                            <value>3</value>
+                        </property>    
+                        <property>
+                            <name>globalvar2</name>
+                            <value>hello world</value>
+                        </property>    
+                    </globalVars>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>preprocess</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+            
+    </build>    
+
+</project>
