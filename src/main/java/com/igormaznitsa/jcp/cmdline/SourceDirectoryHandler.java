@@ -42,7 +42,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
             if (key.toUpperCase().startsWith(ARG_NAME)) {
                 final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 if (!tail.isEmpty()) {
-                    context.setSourceDirectory(PreprocessorUtils.extractTail(ARG_NAME, key));
+                    context.setSourceDirectories(PreprocessorUtils.extractTail(ARG_NAME, key));
                     result = true;
                 }
             }

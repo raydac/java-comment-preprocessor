@@ -265,7 +265,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     private void addPreprocessedAsSourceRoot(final PreprocessorContext context) throws IOException {
         if (project != null) {
-            final String sourceDirectories = context.getSourceDirectory();
+            final String sourceDirectories = context.getSourceDirectories();
             final String[] splitted = sourceDirectories.split(";");
             
             final List<String> sourceRoots = project.getCompileSourceRoots();
@@ -304,7 +304,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
             context.registerSpecialVariableProcessor(mavenPropertiesImporter);
         }
         
-        context.setSourceDirectory(makeSourceRootList());
+        context.setSourceDirectories(makeSourceRootList());
         context.setDestinationDirectory(destination.getCanonicalPath());
 
         if (inEncoding != null) {
@@ -320,7 +320,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
             context.setProcessingFileExtensions(processing);
         }
 
-        info("Preprocessing sources folder : " + context.getSourceDirectory());
+        info("Preprocessing sources folder : " + context.getSourceDirectories());
         info("Preprocessing destination folder : " + context.getDestinationDirectory());
 
         context.setClearDestinationDirBefore(clear);

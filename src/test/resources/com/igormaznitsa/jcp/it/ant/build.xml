@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="firstbuild" default="preprocess" >
+    <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties"/>
+
+    <target name="preprocess">
+        <preprocess 
+	    source="./src" 
+	    destination="./result" 
+	    verbose="true"
+            inCharset="UTF8"
+            outCharset="UTF8"
+            excluded="txt,cfg,xml"
+            processing="java"
+            clear="true"
+            removeComments="true"
+            disableOut="false"
+            >
+                <global name="globalvar" value="antdefined"/>
+                <cfgFile file="./cfgfile.cfg"/>
+        </preprocess>
+    </target>
+    
+</project>

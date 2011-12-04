@@ -55,7 +55,7 @@ public final class JCPreprocessorTest {
         }
         
         final PreprocessorContext context = new PreprocessorContext();
-        context.setSourceDirectory(testDirectory.getCanonicalPath());
+        context.setSourceDirectories(testDirectory.getCanonicalPath());
         context.setDestinationDirectory(testDirectory.getCanonicalPath());
         context.setClearDestinationDirBefore(false);
         context.setRemoveComments(true);

@@ -116,7 +116,7 @@ public final class PreprocessingState {
         rootReference = openFile(rootFile.getSourceFile());
     }
 
-    PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) throws IOException {
+    PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) {
         if (rootFile == null) {
             throw new NullPointerException("The root file is null");
         }
@@ -313,7 +313,7 @@ public final class PreprocessingState {
         return whileStack.isEmpty();
     }
 
-    private void init() throws IOException {
+    private void init() {
         preprocessingFlags.clear();
         resetPrinters();
 
@@ -339,7 +339,7 @@ public final class PreprocessingState {
         }
     }
 
-    public void resetPrinters() throws IOException {
+    public void resetPrinters() {
         normalPrinter.reset();
         prefixPrinter.reset();
         postfixPrinter.reset();

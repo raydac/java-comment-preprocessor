@@ -90,7 +90,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private String inCharSet = null;
     private String outCharSet = null;
     private String excludedExtensions = null;
-    private String processingExtensions = null;
+    private String processing = null;
     private boolean disableOut = false;
     private boolean verbose = false;
     private boolean clearDstFlag = false;
@@ -141,11 +141,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
     
     /**
-     * Set the "extensions" attribute, it defines the file extensions to be processed 
+     * Set the "processing" attribute, it defines the file extensions to be processed 
      * @param ext the list of file extensions which should be preprocessed, must not be null
      */
-    public void setExtensions(final String ext) {
-        this.processingExtensions = ext;
+    public void setProcessing(final String ext) {
+        this.processing = ext;
     }
     
     /**
@@ -226,17 +226,17 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         }
         
         if (sourceDirectory != null){
-            context.setSourceDirectory(sourceDirectory.getAbsolutePath());
+            context.setSourceDirectories(sourceDirectory.getAbsolutePath());
         } else {
-            context.setSourceDirectory(getProject().getBaseDir().getAbsolutePath());
+            context.setSourceDirectories(getProject().getBaseDir().getAbsolutePath());
         }
         
         if (excludedExtensions!=null) {
             context.setExcludedFileExtensions(excludedExtensions);
         }
         
-        if (processingExtensions!=null) {
-            context.setProcessingFileExtensions(processingExtensions);
+        if (processing!=null) {
+            context.setProcessingFileExtensions(processing);
         }
         
         context.setFileOutputDisabled(disableOut);

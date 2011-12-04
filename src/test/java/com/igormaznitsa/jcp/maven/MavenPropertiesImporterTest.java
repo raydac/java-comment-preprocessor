@@ -1,12 +1,7 @@
 package com.igormaznitsa.jcp.maven;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.junit.Assert.*;

@@ -45,7 +45,7 @@ public class PreprocessorMojoTest extends AbstractMojoTestCase {
 
         final PreprocessorContext context = mojo.makePreprocessorContext();
         
-        assertEquals("/", context.getSourceDirectory());
+        assertEquals("/", context.getSourceDirectories());
         assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
         assertArrayEqualsWithoutOrders(new String[]{"xml","html"}, context.getExcludedFileExtensions());
         assertArrayEqualsWithoutOrders(new String[]{"java","txt"}, context.getProcessingFileExtensions());

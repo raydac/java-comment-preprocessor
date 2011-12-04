@@ -252,7 +252,7 @@ public class FileInfoContainer {
         }
 
         if (!context.isFileOutputDisabled()) {
-            final File outFile = context.makeDestinationFile(getDestinationFilePath());
+            final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
             preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
         }
         return preprocessingState;

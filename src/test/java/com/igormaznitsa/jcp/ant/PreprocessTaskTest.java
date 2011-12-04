@@ -80,7 +80,7 @@ public class PreprocessTaskTest {
     @Test
     public void testSetExtensions() throws Exception {
         final String TEST = "pl,frt,bat";
-        antTask.setExtensions(TEST);
+        antTask.setProcessing(TEST);
         final String [] splitted = TEST.split(",");
         final String [] contextExtensions = antTask.generatePreprocessorContext().getProcessingFileExtensions();
         final Set<String> thoseExts = new HashSet<String>(Arrays.asList(contextExtensions));

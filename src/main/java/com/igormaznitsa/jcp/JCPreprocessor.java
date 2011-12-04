@@ -138,7 +138,7 @@ public final class JCPreprocessor {
                 continue;
             } else if (fileRef.isForCopyOnly()) {
                 if (!context.isFileOutputDisabled()) {
-                    PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.makeDestinationFile(fileRef.getDestinationFilePath()));
+                    PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.createDestinationFileForPath(fileRef.getDestinationFilePath()));
                 }
                 continue;
             } else {

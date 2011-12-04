@@ -143,7 +143,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
             context.setPreprocessorLogger(logger);
         }
         context.setFileOutputDisabled(true);
-        context.setSourceDirectory(srcfile.getParent());
+        context.setSourceDirectories(srcfile.getParent());
         
         context.setPreprocessorExtension(extension);
 

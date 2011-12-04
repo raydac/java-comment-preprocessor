@@ -29,7 +29,7 @@ public class PreprocessorExceptionTest {
         final File file = new File(this.getClass().getResource("wrong_bracket_include.txt").toURI());
 
         final PreprocessorContext context = new PreprocessorContext();
-        context.setSourceDirectory(file.getParent());
+        context.setSourceDirectories(file.getParent());
         context.setFileOutputDisabled(true);
 
         final FileInfoContainer container = new FileInfoContainer(file, "test", false);

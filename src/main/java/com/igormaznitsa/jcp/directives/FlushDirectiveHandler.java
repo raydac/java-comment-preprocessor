@@ -43,7 +43,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
     public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
          final PreprocessingState state = context.getPreprocessingState();
         if (!context.isFileOutputDisabled()) {
-            final File outFile = context.makeDestinationFile(state.getRootFileInfo().getDestinationFilePath());
+            final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());
             try {
                 state.saveBuffersToFile(outFile, context.isRemoveComments());
                 state.resetPrinters();
