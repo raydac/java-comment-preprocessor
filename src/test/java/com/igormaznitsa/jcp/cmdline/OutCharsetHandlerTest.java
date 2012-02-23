@@ -9,6 +9,11 @@ public class OutCharsetHandlerTest extends AbstractCommandLineHandlerTest {
     private static final OutCharsetHandler HANDLER = new OutCharsetHandler();
 
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = Mockito.mock(PreprocessorContext.class);
         assertFalse(HANDLER.processCommandLineKey(null, mock));

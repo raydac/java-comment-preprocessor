@@ -1,14 +1,12 @@
 package com.igormaznitsa.jcp;
 
-import java.io.File;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import org.junit.Test;
+import java.io.*;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public final class JCPreprocessorTest {
     

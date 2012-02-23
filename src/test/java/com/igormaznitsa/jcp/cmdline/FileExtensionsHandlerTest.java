@@ -9,6 +9,11 @@ public class FileExtensionsHandlerTest extends AbstractCommandLineHandlerTest {
     private static final FileExtensionsHandler HANDLER = new FileExtensionsHandler();
 
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
     

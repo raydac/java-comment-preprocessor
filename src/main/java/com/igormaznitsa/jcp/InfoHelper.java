@@ -22,8 +22,7 @@ import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class InfoHelper {
 
@@ -33,11 +32,11 @@ public final class InfoHelper {
     public static final String DELIMITER = "-------------------------------------------------";
 
     public static String getVersion() {
-        return "v5.00";
+        return "v5.1";
     }
 
     public static String getCopyright() {
-        return "(C) 2003-2011 All Copyright by Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+        return "(C) 2003-2012 All Copyright by Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
     }
 
     public static String getProductName() {
@@ -52,7 +51,7 @@ public final class InfoHelper {
 
         result.add("Command line directives\n------------");
         result.add(makeColumns("@file_path","to download variable list from the file",14));
-        for (final CommandLineHandler handler : JCPreprocessor.COMMAND_LINE_HANDLERS) {
+        for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
             result.add(makeCommandLineKeyReference(handler));
         }
         result.add(DELIMITER);

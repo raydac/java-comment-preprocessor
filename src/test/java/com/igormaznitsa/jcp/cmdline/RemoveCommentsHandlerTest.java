@@ -9,6 +9,11 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
     private static final RemoveCommentsHandler HANDLER = new RemoveCommentsHandler();
     
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         

@@ -9,6 +9,11 @@ public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest
     private static final ClearDstDirectoryHandler HANDLER = new ClearDstDirectoryHandler();
 
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
     

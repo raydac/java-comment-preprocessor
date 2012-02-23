@@ -9,6 +9,11 @@ public class DestinationDirectoryHandlerTest extends AbstractCommandLineHandlerT
     private static final DestinationDirectoryHandler HANDLER = new DestinationDirectoryHandler();
 
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         assertFalse(HANDLER.processCommandLineKey(null, mock));

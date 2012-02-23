@@ -18,9 +18,7 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.expression.Expression;
-import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 
@@ -35,7 +33,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
     @Override
     public String getDescription() {
-        return "read parameters from a file defined as a path or as an expression (after @@)";
+        return "read parameters from a file defined as a path or as an expression (if @@ is used)";
     }
 
     @Override

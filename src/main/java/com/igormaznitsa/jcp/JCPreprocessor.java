@@ -17,35 +17,15 @@
  */
 package com.igormaznitsa.jcp;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
-import com.igormaznitsa.jcp.cmdline.InCharsetHandler;
-import com.igormaznitsa.jcp.cmdline.ClearDstDirectoryHandler;
-import com.igormaznitsa.jcp.cmdline.DestinationDirectoryHandler;
-import com.igormaznitsa.jcp.cmdline.ExcludedFileExtensionsHandler;
-import com.igormaznitsa.jcp.cmdline.HelpHandler;
-import com.igormaznitsa.jcp.cmdline.FileExtensionsHandler;
-import com.igormaznitsa.jcp.cmdline.OutCharsetHandler;
-import com.igormaznitsa.jcp.cmdline.RemoveCommentsHandler;
-import com.igormaznitsa.jcp.cmdline.SourceDirectoryHandler;
-import com.igormaznitsa.jcp.cmdline.VerboseHandler;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.expression.Expression;
+import com.igormaznitsa.jcp.cmdline.*;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.context.PreprocessingState;
-import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
-import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
-import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
-import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.context.*;
+import com.igormaznitsa.jcp.directives.*;
+import com.igormaznitsa.jcp.exceptions.*;
+import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main method and can be started from a command string
@@ -65,9 +45,16 @@ public final class JCPreprocessor {
         new FileExtensionsHandler(),
         new ExcludedFileExtensionsHandler(),
         new RemoveCommentsHandler(),
-        new VerboseHandler()
+        new VerboseHandler(),
+        new GlobalVariableDefiningFileHandler(),
+        new GlobalVariableHandler()
     };
 
+    public static Iterable<CommandLineHandler> getCommandLineHandlers(){
+        return Arrays.asList(COMMAND_LINE_HANDLERS);
+    }
+    
+    
     public PreprocessorContext getContext() {
         return context;
     }
@@ -239,7 +226,7 @@ public final class JCPreprocessor {
 
         for (final String arg : args) {
             boolean processed = false;
-            for (final CommandLineHandler processor : COMMAND_LINE_HANDLERS) {
+            for (final CommandLineHandler processor : getCommandLineHandlers()) {
                 if (processor.processCommandLineKey(arg, result)) {
                     processed = true;
                     if (processor instanceof HelpHandler) {
@@ -277,7 +264,7 @@ public final class JCPreprocessor {
                     // a command line argument
                     boolean processed = false;
                     try {
-                        for (CommandLineHandler handler : COMMAND_LINE_HANDLERS) {
+                        for (CommandLineHandler handler : getCommandLineHandlers()) {
                             if (handler.processCommandLineKey(trimmed, context)) {
                                 if (context.isVerbose()) {
                                     context.logInfo("Processed key \'" + trimmed + "\' at " + file.getName() + ':' + (readStringIndex+1));

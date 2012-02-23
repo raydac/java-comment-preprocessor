@@ -11,6 +11,11 @@ public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
     private static final HelpHandler HANDLER = new HelpHandler();
     
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext context = Mockito.mock(PreprocessorContext.class);
         assertFalse(HANDLER.processCommandLineKey(null, context));

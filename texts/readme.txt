@@ -9,3 +9,11 @@ The preprocessor is an open source project and its home page is http://code.goog
 You can install the plugin into the local maven repository with the install:install-file goal:
 
     mvn install:install-file -Dfile=./jcp-5.0.jar -DpomFile=./pom.xml
+
+History of changes
+----------------------
+5.01
+- Fixed issue (ID 1). Inaccessible functionality both "load a file with global variables" and "define global variable" through a command line call. 
+
+5.0 
+- The first published version of totally refactored preprocessor

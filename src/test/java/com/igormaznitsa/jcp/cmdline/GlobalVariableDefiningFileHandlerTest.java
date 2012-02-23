@@ -1,14 +1,19 @@
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import org.junit.Test;
-import java.io.File;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.io.File;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHandlerTest {
 
     private static final GlobalVariableDefiningFileHandler HANDLER = new GlobalVariableDefiningFileHandler();
+
+    @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
     
     @Override
     public void testExecution() throws Exception {

@@ -9,6 +9,11 @@ public class SourceDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
     private static final SourceDirectoryHandler HANDLER = new SourceDirectoryHandler();
     
     @Override
+    public void testThatTheHandlerInTheHandlerList() {
+        assertHandlerInTheHandlerList(HANDLER);
+    }
+
+    @Override
     public void testExecution() throws Exception {
         final PreprocessorContext mock = mock(PreprocessorContext.class);
         
