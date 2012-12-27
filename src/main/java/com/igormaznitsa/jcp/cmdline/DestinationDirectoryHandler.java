@@ -19,6 +19,7 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.Locale;
 
 /**
  * The handler for the output directory command line key
@@ -40,7 +41,7 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
 
         if (key != null && !key.isEmpty()) {
 
-            if (key.toUpperCase().startsWith(ARG_NAME)) {
+            if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
                 final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 if (!name.isEmpty()) {
                     context.setDestinationDirectory(PreprocessorUtils.extractTail(ARG_NAME, key));

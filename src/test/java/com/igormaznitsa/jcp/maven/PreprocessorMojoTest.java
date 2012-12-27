@@ -1,21 +1,21 @@
 package com.igormaznitsa.jcp.maven;
 
-import java.util.List;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.junit.Before;
+import java.util.List;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class PreprocessorMojoTest extends AbstractMojoTestCase {
     
     private static void assertArrayEqualsWithoutOrders(final Object [] array1, final Object [] array2){
-        final List list1 = new ArrayList(Arrays.asList(array1));
-        final List list2 = new ArrayList(Arrays.asList(array2));
+        final List<Object> list1 = new ArrayList<Object>(Arrays.asList(array1));
+        final List<Object> list2 = new ArrayList<Object>(Arrays.asList(array2));
         
         while(!list1.isEmpty() && !list2.isEmpty()){
            final Object list1obj = list1.get(0);
@@ -32,10 +32,17 @@ public class PreprocessorMojoTest extends AbstractMojoTestCase {
     }
     
     @Before
-    public void setUp() throws Exception {
+    @Override
+    protected void setUp() throws Exception{
         super.setUp();
     }
-
+    
+    @After
+    @Override
+    protected void tearDown() throws Exception{
+        super.tearDown();
+    }
+    
     @Test
     public void testConfiguration() throws Exception {
         final File testPom = new File(this.getClass().getResource("preprocessor_mojo_test_cfg.xml").toURI());

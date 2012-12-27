@@ -19,8 +19,8 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
-import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionItem;
+import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.IOException;
@@ -54,7 +54,6 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     @Override
     public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
         if (context.getPreprocessorExtension() != null) {
-            final Expression stack = null;
 
             try {
                 final List<ExpressionTree> args = parseString(string, context);

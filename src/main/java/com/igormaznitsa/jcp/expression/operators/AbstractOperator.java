@@ -62,7 +62,7 @@ public abstract class AbstractOperator implements ExpressionItem {
     public static <E extends AbstractOperator> E findForClass(final Class<E> operatorClass) {
         for(final AbstractOperator operator : ALL_OPERATORS){
             if (operator.getClass() == operatorClass) {
-                return (E)operator;
+                return operatorClass.cast(operator);
             }
         }
         return null;

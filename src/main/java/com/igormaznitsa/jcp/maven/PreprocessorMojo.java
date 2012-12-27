@@ -142,6 +142,10 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
      */
     private File[] cfgFiles;
 
+    public PreprocessorMojo(){
+        super();
+    }
+    
     public void setClear(final boolean flag) {
         this.clear = flag;
     }

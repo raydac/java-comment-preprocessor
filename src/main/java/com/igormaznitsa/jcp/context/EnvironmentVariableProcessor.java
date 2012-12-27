@@ -20,6 +20,7 @@ package com.igormaznitsa.jcp.context;
 import com.igormaznitsa.jcp.expression.Value;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -40,7 +41,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
         final Properties properties = System.getProperties();
         
         for(final String key : properties.stringPropertyNames()){
-             env.put(PREFIX + key.toLowerCase().replace(' ', '_'), Value.valueOf(properties.getProperty(key)));
+             env.put(PREFIX + key.toLowerCase(Locale.ENGLISH).replace(' ', '_'), Value.valueOf(properties.getProperty(key)));
         }
    
         environmentVars = Collections.unmodifiableMap(env);

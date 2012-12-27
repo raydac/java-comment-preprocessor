@@ -17,7 +17,6 @@
  */
 package com.igormaznitsa.jcp.utils;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -36,10 +35,11 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * It is an auxiliary class contains some useful methods
- * 
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public enum PreprocessorUtils {
@@ -74,7 +74,7 @@ public enum PreprocessorUtils {
         } else {
             result = splitForChar(extensions, ',');
             for (int li = 0; li < result.length; li++) {
-                result[li] = result[li].trim().toLowerCase();
+                result[li] = result[li].trim().toLowerCase(Locale.ENGLISH);
             }
         }
 
@@ -139,12 +139,12 @@ public enum PreprocessorUtils {
             throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
         }
 
-        BufferedReader result = null;
+        BufferedReader result;
 
         if (bufferSize <= 0) {
-            result = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
         } else {
-            result = new BufferedReader(new InputStreamReader(new FileInputStream(file)), bufferSize);
+            result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset), bufferSize);
         }
 
         return result;
@@ -261,10 +261,10 @@ public enum PreprocessorUtils {
             throw new IllegalArgumentException("File can't be read because it's not a normal file");
         }
     }
-    
+
     public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
         checkFile(file);
-        
+
         final String enc = encoding == null ? "UTF8" : encoding;
 
         final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
@@ -286,24 +286,24 @@ public enum PreprocessorUtils {
 
     public static byte[] readFileAsByteArray(final File file) throws IOException {
         checkFile(file);
-        
-        int len = (int)file.length();
-        
+
+        int len = (int) file.length();
+
         final ByteBuffer buffer = ByteBuffer.allocate(len);
         final FileChannel inChannel = new FileInputStream(file).getChannel();
-        
+
         try {
-            while(len>0){
-               final int  read = inChannel.read(buffer);
-               if (read<0){
-                   throw new IOException("Can't read whole file ["+getFilePath(file)+'\'');
-               }
-               len -= read;
+            while (len > 0) {
+                final int read = inChannel.read(buffer);
+                if (read < 0) {
+                    throw new IOException("Can't read whole file [" + getFilePath(file) + '\'');
+                }
+                len -= read;
             }
-        }finally{
+        } finally {
             closeSilently(inChannel);
         }
-        
+
         return buffer.array();
     }
 
@@ -348,28 +348,26 @@ public enum PreprocessorUtils {
     }
 
     public static String normalizeVariableName(final String name) {
-        if (name == null){
+        if (name == null) {
             return null;
         }
-        
-        return name.trim().toLowerCase();
+
+        return name.trim().toLowerCase(Locale.ENGLISH);
     }
-    
-    public static String getFilePath(final File file){
+
+    public static String getFilePath(final File file) {
         String result = "";
-        if (file != null){
+        if (file != null) {
             try {
                 result = file.getCanonicalPath();
-            }catch(IOException ex){
+            } catch (IOException ex) {
                 result = file.getAbsolutePath();
             }
-        } 
+        }
         return result;
     }
 
-    public static void throwPreprocessorException(final String msg,final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
+    public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
         throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
     }
-    
-
 }

@@ -278,7 +278,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     @Override
     public void execute() throws BuildException {
         PreprocessorContext context = null;
-        JCPreprocessor preprocessor = null;
+        JCPreprocessor preprocessor;
         
         try {
             context = generatePreprocessorContext();
@@ -311,19 +311,19 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     private void fillAntVariables() {
-        final Project project = getProject();
+        final Project theProject = getProject();
 
-        Map<String, Value> result = null;
+        Map<String, Value> result;
 
-        if (project == null) {
-            result = Collections.EMPTY_MAP;
+        if (theProject == null) {
+            result = Collections.emptyMap();
         } else {
 
             result = new HashMap<String, Value>();
 
             for (final Object key : getProject().getProperties().keySet()) {
                 final String keyStr = key.toString();
-                final String value = project.getProperty(keyStr);
+                final String value = theProject.getProperty(keyStr);
                 if (value != null) {
                     result.put("ant."+keyStr.toLowerCase(), Value.valueOf(value));
                 }
@@ -334,7 +334,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     @Override
     public String[] getVariableNames() {
-        String [] result = null;
+        String [] result;
         
         if (antVariables == null) {
             result = new String[0];

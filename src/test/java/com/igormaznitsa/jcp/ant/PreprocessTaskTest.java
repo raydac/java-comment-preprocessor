@@ -1,18 +1,18 @@
 package com.igormaznitsa.jcp.ant;
 
 import com.igormaznitsa.jcp.ant.PreprocessTask.Global;
-import java.util.Set;
-import java.util.HashSet;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 import org.apache.tools.ant.Project;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 public class PreprocessTaskTest {
     
@@ -21,7 +21,7 @@ public class PreprocessTaskTest {
     final static Project projectMock = mock(Project.class);
     static {
         when(projectMock.getBaseDir()).thenReturn(new File("base/dir"));
-        when(projectMock.getProperties()).thenReturn(new Hashtable());
+        when(projectMock.getProperties()).thenReturn(new Hashtable<String,String>());
     }
 
     PreprocessTask antTask;

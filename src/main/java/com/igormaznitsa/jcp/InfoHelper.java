@@ -32,11 +32,11 @@ public final class InfoHelper {
     public static final String DELIMITER = "-------------------------------------------------";
 
     public static String getVersion() {
-        return "v5.1";
+        return "v5.2";
     }
 
     public static String getCopyright() {
-        return "(C) 2003-2012 All Copyright by Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+        return "2003-2013 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
     }
 
     public static String getProductName() {
@@ -112,7 +112,7 @@ public final class InfoHelper {
         final String descr = func.getReference();
         
         final StringBuilder variants = new StringBuilder("  [");
-        final String result = func.getResultType().getSignature().toUpperCase();
+        final String result = func.getResultType().getSignature().toUpperCase(Locale.ENGLISH);
         
         int variantIndex = 0;
         for(ValueType [] signature : func.getAllowedArgumentTypes()){

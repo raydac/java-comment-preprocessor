@@ -23,12 +23,14 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
- * The class implements the special variable processor interface and allows to get access to inside JCP variables
- * Inside JCP variables have the "jcp." prefix
- * 
+ * The class implements the special variable processor interface and allows to
+ * get access to inside JCP variables Inside JCP variables have the "jcp."
+ * prefix
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class JCPSpecialVariableProcessor implements SpecialVariableProcessor{
+public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
+
     public static final String VAR_DEST_DIR = "jcp.dst.dir";
     public static final String VAR_VERSION = "jcp.version";
     public static final String VAR_DEST_FILE_NAME = "jcp.dst.name";
@@ -40,20 +42,20 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor{
     @Override
     public String[] getVariableNames() {
         return new String[]{
-            VAR_DEST_DIR, 
-            VAR_DEST_FILE_NAME, 
-            VAR_DEST_FULLPATH, 
-            VAR_SRC_DIR, 
-            VAR_SRC_FILE_NAME, 
-            VAR_SRC_FULLPATH,
-            VAR_VERSION
-        };
+                    VAR_DEST_DIR,
+                    VAR_DEST_FILE_NAME,
+                    VAR_DEST_FULLPATH,
+                    VAR_SRC_DIR,
+                    VAR_SRC_FILE_NAME,
+                    VAR_SRC_FULLPATH,
+                    VAR_VERSION
+                };
     }
 
     @Override
     public Value getVariable(final String varName, final PreprocessorContext context) {
         final PreprocessingState state = context == null ? null : context.getPreprocessingState();
-        if (VAR_DEST_DIR.equals(varName)){
+        if (VAR_DEST_DIR.equals(varName)) {
             return Value.valueOf(state.getRootFileInfo().getDestinationDir());
         } else if (VAR_DEST_FILE_NAME.equals(varName)) {
             return Value.valueOf(state.getRootFileInfo().getDestinationName());
@@ -63,30 +65,36 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor{
             return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
         } else if (VAR_SRC_FILE_NAME.equals(varName)) {
             return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
-       } else if (VAR_SRC_FULLPATH.equals(varName)) {
+        } else if (VAR_SRC_FULLPATH.equals(varName)) {
             return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
-       } else if (VAR_VERSION.equals(varName)) {
+        } else if (VAR_VERSION.equals(varName)) {
             return Value.valueOf(InfoHelper.getVersion());
-        } else 
-            throw new IllegalArgumentException("Attemption to get unsupported variable ["+varName+']');
+        } else {
+            throw new IllegalArgumentException("Attemption to get unsupported variable [" + varName + ']');
+        }
     }
 
     @Override
     public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
         final PreprocessingState state = context == null ? null : context.getPreprocessingState();
-        if (VAR_DEST_DIR.equals(varName)){
-            if (value.getType()!=ValueType.STRING) throw new IllegalArgumentException("Only STRING type allowed");
+        if (VAR_DEST_DIR.equals(varName)) {
+            if (value.getType() != ValueType.STRING) {
+                throw new IllegalArgumentException("Only STRING type allowed");
+            }
             state.getRootFileInfo().setDestinationDir(value.asString());
         } else if (VAR_DEST_FILE_NAME.equals(varName)) {
-            if (value.getType()!=ValueType.STRING) throw new IllegalArgumentException("Only STRING type allowed");
+            if (value.getType() != ValueType.STRING) {
+                throw new IllegalArgumentException("Only STRING type allowed");
+            }
             state.getRootFileInfo().setDestinationName(value.asString());
-        } else if (VAR_DEST_FULLPATH.equals(varName) 
-                || VAR_SRC_DIR.equals(varName) 
-                || VAR_SRC_FILE_NAME.equals(varName) 
+        } else if (VAR_DEST_FULLPATH.equals(varName)
+                || VAR_SRC_DIR.equals(varName)
+                || VAR_SRC_FILE_NAME.equals(varName)
                 || VAR_SRC_FULLPATH.equals(varName)
                 || VAR_VERSION.equals(varName)) {
-           throw new UnsupportedOperationException("The variable \'"+varName+"\' can't be set directly");
-       } else 
-            throw new IllegalStateException("Attemption to change an unsupported variable ["+varName+']');
+            throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
+        } else {
+            throw new IllegalStateException("Attemption to change an unsupported variable [" + varName + ']');
+        }
     }
 }

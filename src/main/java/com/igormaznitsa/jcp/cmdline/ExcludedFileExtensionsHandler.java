@@ -19,6 +19,7 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.Locale;
 
 /**
  * The handler for the excluded extension list (with comma)
@@ -39,7 +40,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
         boolean result = false;
 
         if (key != null && !key.isEmpty()) {
-            if (key.toUpperCase().startsWith(ARG_NAME)) {
+            if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
                 final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
                 if (!extensions.isEmpty()) {
                     context.setExcludedFileExtensions(extensions);

@@ -45,7 +45,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
             throw new IllegalArgumentException("Can't find any element list for the \'"+elementIdStr+"\' id");
         }
         
-        final NodeList list = (NodeList)container.getNodeList();
+        final NodeList list = container.getNodeList();
         return Value.valueOf(Long.valueOf(list.getLength()));
     }
 

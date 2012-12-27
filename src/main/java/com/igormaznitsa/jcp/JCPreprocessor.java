@@ -286,7 +286,7 @@ public final class JCPreprocessor {
                     if (splitted.length != 2) {
                         PreprocessorUtils.throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
                     }
-                    final String name = splitted[0].trim().toLowerCase();
+                    final String name = splitted[0].trim().toLowerCase(Locale.ENGLISH);
                     final String expression = splitted[1].trim();
                     if (name.isEmpty()) {
                         PreprocessorUtils.throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);

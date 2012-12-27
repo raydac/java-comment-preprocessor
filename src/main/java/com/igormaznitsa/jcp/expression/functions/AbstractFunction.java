@@ -72,7 +72,7 @@ public abstract class AbstractFunction implements ExpressionItem {
         E result = null;
         for(final AbstractFunction function : ALL_FUNCTIONS){
             if (function.getClass() == functionClass) {
-                result = (E)function;
+                result = functionClass.cast(function);
                 break;
             }
         }

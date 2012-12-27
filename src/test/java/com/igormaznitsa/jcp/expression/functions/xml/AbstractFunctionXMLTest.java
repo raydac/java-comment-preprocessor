@@ -19,7 +19,7 @@ public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
         SPY_CONTEXT = spy(new PreprocessorContext());
         final File thisRoot = new File(this.getClass().getResource("./").toURI());
         
-        doAnswer(new Answer(){
+        doAnswer(new Answer<Object>(){
             @Override
             public Object answer(final InvocationOnMock invocation) throws Throwable {
                 final String name = (String)invocation.getArguments()[0];

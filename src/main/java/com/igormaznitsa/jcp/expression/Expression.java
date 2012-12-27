@@ -37,12 +37,12 @@ public class Expression {
     /**
      * Precreated array for speed up operations
      */
-    private static final Class[] OPERATOR_SIGNATURE_1 = new Class[]{Value.class};
+    private static final Class<?>[] OPERATOR_SIGNATURE_1 = new Class<?>[]{Value.class};
 
     /**
      * Precreated array for speed up operations
      */
-    private static final Class[] OPERATOR_SIGNATURE_2 = new Class[]{Value.class, Value.class};
+    private static final Class<?>[] OPERATOR_SIGNATURE_2 = new Class<?>[]{Value.class, Value.class};
     
     /**
      * The variable contains the preprocessor context for the expression, it can be null
@@ -101,7 +101,7 @@ public class Expression {
 
         final int arity = function.getArity();
         final Value[] arguments = new Value[arity];
-        final Class[] methodArguments = new Class[arity + 1];
+        final Class<?>[] methodArguments = new Class<?>[arity + 1];
         methodArguments[0] = PreprocessorContext.class;
 
         final StringBuilder signature = new StringBuilder(AbstractFunction.EXECUTION_PREFIX);
@@ -168,7 +168,7 @@ public class Expression {
                 callArgs[0] = context;
                 System.arraycopy(arguments, 0, callArgs, 1, arity);
 
-                final Value result = (Value) method.invoke(function, (Object[]) callArgs);
+                final Value result = (Value) method.invoke(function, callArgs);
 
                 if (!result.getType().isCompatible(function.getResultType())) {
                     throw new IllegalStateException("Unsupported function result detected [" + result.getType().getSignature() + ']');
@@ -250,7 +250,7 @@ public class Expression {
         }
 
         try {
-            return new ExpressionTreeElement((Value) executeMehod.invoke(operator, arguments));
+            return new ExpressionTreeElement((Value) executeMehod.invoke(operator, (Object[])arguments));
         } catch (ArithmeticException arithEx) {
             throw arithEx;
         } catch (InvocationTargetException ex) {

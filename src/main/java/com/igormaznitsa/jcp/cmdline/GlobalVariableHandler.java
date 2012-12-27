@@ -20,6 +20,7 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.Locale;
 
 /**
  * The handler for global variables, it adds met global variables into the inside storage
@@ -39,7 +40,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
     public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
         boolean result = false;
 
-        if (key != null && !key.isEmpty() && key.toUpperCase().startsWith(ARG_NAME)) {
+        if (key != null && !key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
 
             final String nameAndExpression = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 

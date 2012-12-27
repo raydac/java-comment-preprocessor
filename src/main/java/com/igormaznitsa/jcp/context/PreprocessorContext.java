@@ -687,7 +687,7 @@ public class PreprocessorContext {
             
             if (findFiles.size() == 1){
                 result = findFiles.get(0);
-            } else if (findFiles.size() == 0){
+            } else if (findFiles.isEmpty()){
                 result = null;
             } else {
                 throw new IllegalStateException("Found a few variants for \'"+path+"\' in different source roots");

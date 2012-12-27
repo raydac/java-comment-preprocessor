@@ -19,6 +19,7 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.Locale;
 
 /**
  * To set the output text character encoding
@@ -44,7 +45,7 @@ public class OutCharsetHandler implements CommandLineHandler {
 
         boolean result = false;
 
-        if (key != null && key.toUpperCase().startsWith(ARG_NAME)) {
+        if (key != null && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
                 final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
                 if (!value.isEmpty()) {

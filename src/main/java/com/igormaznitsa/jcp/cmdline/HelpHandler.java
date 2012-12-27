@@ -18,6 +18,7 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.util.Locale;
 
 /**
  * The handler processes a help command from the command string
@@ -38,7 +39,7 @@ public class HelpHandler implements CommandLineHandler {
         boolean result = false;
         if (key != null && !key.isEmpty()) {
             
-            final String argUpperCase = key.trim().toUpperCase();
+            final String argUpperCase = key.trim().toUpperCase(Locale.ENGLISH);
             
             for (final String str : ARG_NAMES) {
                 if (str.equals(argUpperCase)) {

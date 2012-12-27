@@ -2,16 +2,16 @@ package com.igormaznitsa.jcp.it.maven;
 
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.DataInputStream;
-import java.util.List;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.jar.JarEntry;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.apache.maven.shared.jar.JarAnalyzer;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ITPreprocessorMojo {
 
@@ -35,6 +35,7 @@ public class ITPreprocessorMojo {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testPreprocessorUsage() throws Exception {
         final File testDir = ResourceExtractor.simpleExtractResources(this.getClass(), "./dummy_maven_project");
 
@@ -48,17 +49,17 @@ public class ITPreprocessorMojo {
         verifier.verifyErrorFreeLog();
 
         final JarAnalyzer jarAnalyzer = new JarAnalyzer(resultJar);
-        List classEntries = null;
+        List<JarEntry> classEntries;
         try {
-            classEntries = jarAnalyzer.getClassEntries();
+            classEntries = (List<JarEntry>)jarAnalyzer.getClassEntries();
 
             assertEquals("Must have only class", 1, classEntries.size());
-            final JarEntry classEntry = (JarEntry) classEntries.get(0);
+            final JarEntry classEntry = classEntries.get(0);
             assertEquals("Class must be placed in the path", "com/igormaznitsa/dummyproject/testmain2.class", classEntry.getName());
 
             DataInputStream inStream = null;
             final byte[] buffer = new byte[(int) classEntry.getSize()];
-            Class instanceClass = null;
+            Class<?> instanceClass = null;
             try {
                 inStream = new DataInputStream(jarAnalyzer.getEntryInputStream(classEntry));
                 inStream.readFully(buffer);

@@ -20,14 +20,15 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
- * The handler processing the flag to clear all sources in the destination directory from inside comments
- * 
+ * The handler processing the flag to clear all sources in the destination
+ * directory from inside comments
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class RemoveCommentsHandler implements CommandLineHandler {
 
     private static final String ARG_NAME = "/R";
-    
+
     @Override
     public String getDescription() {
         return "to clear sources from commentaries (in Java-C style) after preprocessing";
@@ -36,12 +37,12 @@ public class RemoveCommentsHandler implements CommandLineHandler {
     @Override
     public boolean processCommandLineKey(final String argument, final PreprocessorContext configurator) {
         boolean result = false;
-        
-        if (ARG_NAME.equalsIgnoreCase(argument)){
+
+        if (ARG_NAME.equalsIgnoreCase(argument)) {
             configurator.setRemoveComments(true);
             result = true;
         }
-        
+
         return result;
     }
 
@@ -49,5 +50,4 @@ public class RemoveCommentsHandler implements CommandLineHandler {
     public String getKeyName() {
         return ARG_NAME;
     }
-    
 }
