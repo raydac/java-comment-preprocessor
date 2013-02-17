@@ -39,7 +39,7 @@ public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHa
         
         final String path = testFile.getParent().replace('\'', '/').replace("\"", "\\\"");
        
-        final String param = "@@\""+path+"\"+\"/\"+\""+"global_variable_def.txt"+"\"";
+        final String param = "@@\""+path.replace("\\", "\\\\") +"\"+\"/\"+\""+"global_variable_def.txt"+"\"";
         
         HANDLER.processCommandLineKey(param, context);
     

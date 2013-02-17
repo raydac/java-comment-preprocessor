@@ -11,7 +11,7 @@ public class IfElseEndifDirectiveHandlerTest extends AbstractDirectiveHandlerAcc
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_if_else_endif.txt", null, null);
+        assertFilePreprocessing("directive_if_else_endif.txt", false, null, null);
     }
 
     @Test

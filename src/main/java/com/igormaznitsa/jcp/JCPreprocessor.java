@@ -45,6 +45,7 @@ public final class JCPreprocessor {
         new FileExtensionsHandler(),
         new ExcludedFileExtensionsHandler(),
         new RemoveCommentsHandler(),
+        new KeepLineHandler(),
         new VerboseHandler(),
         new GlobalVariableDefiningFileHandler(),
         new GlobalVariableHandler()
@@ -70,9 +71,7 @@ public final class JCPreprocessor {
         processCfgFiles();
 
         final File[] srcDirs = context.getSourceDirectoryAsFiles();
-
         final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
-
         final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
         processFileExclusion(excludedIf);

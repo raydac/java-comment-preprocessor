@@ -53,6 +53,7 @@ public class PreprocessorContext {
     private boolean removeComments = false;
     private boolean clearDestinationDirectoryBefore = true;
     private boolean fileOutputDisabled = false;
+    private boolean keepNonExecutingLines = false;
 
     private String sourceDirectories;
     private String destinationDirectory;
@@ -569,6 +570,24 @@ public class PreprocessorContext {
         return verbose;
     }
 
+    /**
+     * Set the flag to keep lines as commented ones
+     * @param flag true if the preprocessor must keep non-executing lines, otherwise false
+     * @return this preprocessor context
+     */
+    public PreprocessorContext setKeepLines(final boolean flag){
+      keepNonExecutingLines = flag;
+      return this;
+    }
+    
+    /**
+     * Check that the preprocessor must keep lines as commented ones
+     * @return true if the preprocessor must keep lines, false otherwise
+     */
+    public boolean isKeepLines(){
+      return keepNonExecutingLines;
+    }
+    
     /**
      * Set a preprocessor extension, it is a module implements the PreprocessorExtension interface which can process and get some calls from a preprocessor during its work
      * @param extension an object implements the PreprocessorExtension interface, it can be null

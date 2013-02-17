@@ -95,7 +95,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private boolean verbose = false;
     private boolean clearDstFlag = false;
     private boolean removeComments = false;
-
+    private boolean keepLines = false;
+    
     private Map<String, Value> antVariables;
     private List<Global> globalVariables = new ArrayList<Global> ();
     private List<CfgFile> configFiles = new ArrayList<CfgFile>();
@@ -173,6 +174,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     /**
+     * Set the "keepLines" attribute, it is a boolean attribute to keep non-executing lines as commented ones in the output
+     * @param flag true if preprocessor should keep the lines as commented ones, false otherwise
+     */
+    public void setKeepLines(final boolean flag){
+      this.keepLines = flag;
+    }
+    
+    /**
      * Set the "disableOut" attribute, it is a boolean attribute allows to disable any output operations into the destination directory
      * @param flag true if the output operations must be disabled, otherwise false
      */
@@ -219,8 +228,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         context.setPreprocessorLogger(this);
         context.registerSpecialVariableProcessor(this);
         
-        context.setClearDestinationDirBefore(clearDstFlag);
-        
         if (destinationDirectory != null){
             context.setDestinationDirectory(destinationDirectory.getAbsolutePath());
         }
@@ -239,7 +246,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
             context.setProcessingFileExtensions(processing);
         }
         
-        context.setFileOutputDisabled(disableOut);
 
         if (inCharSet!=null){
             context.setInCharacterEncoding(inCharSet);
@@ -249,8 +255,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
             context.setOutCharacterEncoding(outCharSet);
         }
         
+        context.setClearDestinationDirBefore(clearDstFlag);
+        context.setFileOutputDisabled(disableOut);
         context.setRemoveComments(removeComments);
         context.setVerbose(verbose);
+        context.setKeepLines(keepLines);
         
         fillCfgFiles(context);
         fillGlobalVars(context);

@@ -9,7 +9,7 @@ public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_define.txt", null, null);
+        assertFilePreprocessing("directive_define.txt", false, null, null);
     }
 
     @Test

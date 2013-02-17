@@ -34,5 +34,9 @@ public enum AfterDirectiveProcessingBehaviour {
     /**
      * Notify preprocessor that the directive has not been processed
      */
-    NOT_PROCESSED
+    NOT_PROCESSED,
+    /**
+     * Notify preprocessor that the line should be commented
+     */
+    SHOULD_BE_COMMENTED;
 }

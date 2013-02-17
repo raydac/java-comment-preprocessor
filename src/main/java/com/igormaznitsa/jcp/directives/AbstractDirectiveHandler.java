@@ -31,6 +31,21 @@ public abstract class AbstractDirectiveHandler {
     public static final String DIRECTIVE_PREFIX = "//#";
     
     /**
+     * The prefix for lines to be kept by preprocessor
+     */
+    public static final String PREFIX_FOR_KEEPING_LINES = "//JCP> ";
+
+    /**
+     * The prefix for lines to be kept by preprocessor, which contain processed directives
+     */
+    public static final String PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES = "//JCP! ";
+    
+    /**
+     * The prefix for one line comment
+     */
+    public static final String ONE_LINE_COMMENT = "//";
+    
+    /**
      * The array contains all directives of the preprocessor
      */
     public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[]{

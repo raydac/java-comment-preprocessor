@@ -19,7 +19,7 @@ public class GlobalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
 
     @Test
     public void testExecution_PreprocessingPhase() throws Exception {
-        final PreprocessorContext context = assertFilePreprocessing("directive_global.txt",null, null);
+        final PreprocessorContext context = assertFilePreprocessing("directive_global.txt", false,null, null);
         assertFalse(context.containsGlobalVariable("xxx"));
         assertNull(context.findVariableForName("xxx"));
     }

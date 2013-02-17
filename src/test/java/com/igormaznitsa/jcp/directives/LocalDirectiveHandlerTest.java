@@ -10,7 +10,7 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
     
     @Override
     public void testExecution() throws Exception {
-        final PreprocessorContext context = assertFilePreprocessing("directive_local.txt", null, null);
+        final PreprocessorContext context = assertFilePreprocessing("directive_local.txt", false, null, null);
 
         assertEquals(Long.valueOf(5), context.getLocalVariable("x").asLong());
         assertEquals(Long.valueOf(10), context.getLocalVariable("y").asLong());

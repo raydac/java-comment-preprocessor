@@ -9,7 +9,7 @@ public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_outname.txt", null, null);
+        assertFilePreprocessing("directive_outname.txt", false, null, null);
     }
 
     @Test

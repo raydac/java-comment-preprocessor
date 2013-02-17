@@ -129,7 +129,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         }
     }
 
-    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger) throws Exception {
+    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger, final boolean keepLines) throws Exception {
         if (preprocessingText == null) {
             throw new NullPointerException("Preprocessing text is null");
         }
@@ -144,7 +144,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         }
         context.setFileOutputDisabled(true);
         context.setSourceDirectories(srcfile.getParent());
-        
+        context.setKeepLines(keepLines);
         context.setPreprocessorExtension(extension);
 
         final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
@@ -234,10 +234,10 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     
     private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
         final List<String> preprocessingPart = parseStringForLines(text);
-        return insidePreprocessingAndMatching(THIS_CLASS_FILE,preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null);
+        return insidePreprocessingAndMatching(THIS_CLASS_FILE,preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null, false);
     }
 
-    public PreprocessorContext assertFilePreprocessing(final String testFileName, final PreprocessorExtension ext, final PreprocessorLogger logger) throws Exception {
+    public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger) throws Exception {
         final File file = new File(getClass().getResource(testFileName).toURI());
         
         if (!file.exists() || !file.isFile()){
@@ -283,6 +283,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
             }
         }
 
-        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger);
+        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines);
     }
 }

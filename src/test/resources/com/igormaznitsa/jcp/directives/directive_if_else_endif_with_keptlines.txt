@@ -1,0 +1,57 @@
+hello
+//#if false
+//#local test = 111
+nonprocessed /*$test$*/
+//#endif
+//#local x=true
+//#local y=false
+//#local z=false
+//#if x
+    //#if y
+unexpected1
+    //#else
+        //#if z
+unexpected2
+        //#else
+            //#if !z
+expected
+            //#endif
+        //#endif
+    //#endif
+//#else
+    //#if y
+must not be out
+    //#else
+unexpected3
+    //#endif
+//#endif
+world
+---START_ETALON---
+hello
+//JCP! if false
+//JCP! local test = 111
+//JCP> nonprocessed /*$test$*/
+//JCP! endif
+//JCP! local x=true
+//JCP! local y=false
+//JCP! local z=false
+//JCP! if x
+    //JCP! if y
+//JCP> unexpected1
+    //JCP! else
+        //JCP! if z
+//JCP> unexpected2
+        //JCP! else
+            //JCP! if !z
+expected
+            //JCP! endif
+        //JCP! endif
+    //JCP! endif
+//JCP! else
+    //JCP! if y
+//JCP> must not be out
+    //JCP! else
+//JCP> unexpected3
+    //JCP! endif
+//JCP! endif
+world

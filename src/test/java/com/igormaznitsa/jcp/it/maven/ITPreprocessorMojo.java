@@ -28,7 +28,10 @@ public class ITPreprocessorMojo {
         verifier.assertFilePresent(jarFile);
         verifier.assertFilePresent(pomFile);
 
-        verifier.setCliOptions(Arrays.asList("-Dfile=" + jarFile, "-DpomFile=" + pomFile));
+        final String processedJarFileName = (jarFile.indexOf(' ')>=0 ? "\"" + jarFile + "\"" : jarFile).replace('/', File.separatorChar).replace('\\', File.separatorChar); 
+        final String processedPomFile = (pomFile.indexOf(' ')>=0 ? "\"" + pomFile + "\"" : pomFile).replace('/', File.separatorChar).replace('\\', File.separatorChar); 
+        
+        verifier.setCliOptions(Arrays.asList("-Dfile=" + processedJarFileName, "-DpomFile=" + processedPomFile));
         verifier.executeGoal("install:install-file");
 
         verifier.verifyErrorFreeLog();

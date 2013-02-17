@@ -9,7 +9,7 @@ public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_outdir.txt", null, null);
+        assertFilePreprocessing("directive_outdir.txt", false, null, null);
     }
 
     @Test

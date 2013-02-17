@@ -138,12 +138,11 @@ public class FileInfoContainer {
 
                 trimmedProcessingString = nonTrimmedProcessingString.trim();
 
-                final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
-
                 if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
                     switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context, true)) {
                         case PROCESSED:
                         case READ_NEXT_LINE:
+                        case SHOULD_BE_COMMENTED:
                             continue;
                         default:
                             throw new Error("Unsupported result");
@@ -188,18 +187,29 @@ public class FileInfoContainer {
 
                 final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
 
-                String stringPrefix = "";
+                final String stringPrefix;
                 if (numberOfSpacesAtTheLineBeginning>0){
                     stringPrefix = nonTrimmedProcessingString.substring(0, numberOfSpacesAtTheLineBeginning);
+                }else{
+                  stringPrefix = "";
                 }
                 
                 String stringToBeProcessed = trimmedProcessingString;
 
                 if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-                    switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed), context, false)) {
+                    final String extractedDirective = PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed);
+                    switch (processDirective(preprocessingState, extractedDirective, context, false)) {
                         case PROCESSED:
-                        case READ_NEXT_LINE:
+                        case READ_NEXT_LINE:{
+                          if (context.isKeepLines()){
+                            preprocessingState.getPrinter().println(stringPrefix+AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES+extractedDirective);
+                          }
+                          continue;
+                        }
+                        case SHOULD_BE_COMMENTED:{
+                            preprocessingState.getPrinter().println(stringPrefix+AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES+extractedDirective);
                             continue;
+                        }
                         default:
                             throw new Error("Unsupported result");
                     }
@@ -225,15 +235,16 @@ public class FileInfoContainer {
                         final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
                         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
-                            preprocessingState.getPrinter().print("//");
+                            preprocessingState.getPrinter().print(AbstractDirectiveHandler.ONE_LINE_COMMENT);
                             preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
                         }
 
                         preprocessingState.getPrinter().print(stringPrefix);
                         preprocessingState.getPrinter().println(strToOut);
                     }
+                }else if (context.isKeepLines()){
+                    preprocessingState.getPrinter().println(AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + nonTrimmedProcessingString);
                 }
-
             }
         } catch (Exception unexpected) {
             final String message = unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
@@ -315,7 +326,7 @@ public class FileInfoContainer {
                     if (allowedForExecution) {
                         return handler.execute(restOfString.trim(), configurator);
                     } else {
-                        return AfterDirectiveProcessingBehaviour.PROCESSED;
+                        return configurator.isKeepLines() ? AfterDirectiveProcessingBehaviour.SHOULD_BE_COMMENTED : AfterDirectiveProcessingBehaviour.PROCESSED;
                     }
                 } else {
                     throw new IllegalArgumentException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");

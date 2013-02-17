@@ -1,8 +1,9 @@
 package com.igormaznitsa.jcp.cmdline;
 
-import static org.mockito.Mockito.*;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.*;
 
 public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest{
 

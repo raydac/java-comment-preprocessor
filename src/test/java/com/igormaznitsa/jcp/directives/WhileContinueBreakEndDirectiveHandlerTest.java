@@ -12,7 +12,7 @@ public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirective
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_while_continue_break_end.txt", null, null);
+        assertFilePreprocessing("directive_while_continue_break_end.txt", false, null, null);
     }
 
     @Test

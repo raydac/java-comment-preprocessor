@@ -6,7 +6,7 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
 
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_special.txt", null, null);
+        assertFilePreprocessing("directive_special.txt", false, null, null);
     }
 
     @Override

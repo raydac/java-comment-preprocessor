@@ -13,7 +13,7 @@ The preprocessor is an open source project and its home page is http://code.goog
 
 You can install the plugin into the local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-5.2.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-5.3.jar -DpomFile=./pom.xml
 
 
 Building
@@ -23,6 +23,9 @@ The project needs Maven 3.0.3 and JDK 1.6 to be built. You have to enter the fil
 
 History of changes
 ----------------------
+5.3
+- Added feature to keep non-executing lines as commented ones (/k command line key), all non-executing lines will be saved in the output as commented ones
+
 5.2
 - Fixed issue (ID 3). The default charset was used to read text files.
 

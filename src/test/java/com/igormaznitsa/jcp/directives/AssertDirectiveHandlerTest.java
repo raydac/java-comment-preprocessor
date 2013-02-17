@@ -11,7 +11,7 @@ public class AssertDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     @Override
     public void testExecution() throws Exception {
         final PreprocessorLogger mock = Mockito.mock(PreprocessorLogger.class);
-        assertFilePreprocessing("directive_assert.txt", null, mock);
+        assertFilePreprocessing("directive_assert.txt", false, null, mock);
         Mockito.verify(mock).info("string 2 ok");
     }
 

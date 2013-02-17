@@ -7,7 +7,7 @@ public class ExitDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptance
 
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_exit.txt", null, null);
+        assertFilePreprocessing("directive_exit.txt", false, null, null);
     }
     
     @Override

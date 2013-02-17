@@ -32,6 +32,7 @@
                     <disableOut>true</disableOut>
                     <verbose>true</verbose>
                     <clear>true</clear>
+                    <keepLines>true</keepLines>
                     <cfgFiles>
                         <file>test1.cfg</file>
                         <file>test2.cfg</file>

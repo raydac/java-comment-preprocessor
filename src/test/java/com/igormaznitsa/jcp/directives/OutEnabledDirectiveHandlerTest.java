@@ -9,7 +9,7 @@ public class OutEnabledDirectiveHandlerTest extends AbstractDirectiveHandlerAcce
     
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_outenabled.txt", null, null);
+        assertFilePreprocessing("directive_outenabled.txt", false, null, null);
     }
 
     @Override

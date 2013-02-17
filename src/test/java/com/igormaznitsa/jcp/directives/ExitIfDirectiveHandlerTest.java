@@ -8,7 +8,7 @@ public class ExitIfDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
 
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_exitif.txt", null, null);
+        assertFilePreprocessing("directive_exitif.txt", false, null, null);
     }
     
     @Test

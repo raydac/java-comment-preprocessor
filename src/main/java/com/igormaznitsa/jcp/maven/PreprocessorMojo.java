@@ -141,7 +141,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
      * @readonly
      */
     private File[] cfgFiles;
-
+    /**
+     * Do not remove non-processing strings from the output
+     *
+     * @parameter name="keepLines" default-value="false"
+     * @readonly
+    */
+    private boolean keepLines;
+    
     public PreprocessorMojo(){
         super();
     }
@@ -242,6 +249,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         return this.verbose;
     }
 
+    public void setKeepLines(final boolean keepLines) {
+        this.keepLines = keepLines;
+    }
+    
+    public boolean getKeepLines() {
+        return this.keepLines;
+    }
+    
     public void setRemoveComments(final boolean value) {
         this.removeComments = value;
     }
@@ -330,6 +345,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         context.setClearDestinationDirBefore(clear);
         context.setRemoveComments(removeComments);
         context.setVerbose(verbose);
+        context.setKeepLines(keepLines);
         context.setFileOutputDisabled(disableOut);
 
         // process cfg files

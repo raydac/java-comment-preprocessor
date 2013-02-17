@@ -8,7 +8,7 @@ public class IfDefinedDirectiveHandlerTest extends AbstractDirectiveHandlerAccep
 
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_ifdefined.txt", null, null);
+        assertFilePreprocessing("directive_ifdefined.txt", false, null, null);
     }
 
     @Override

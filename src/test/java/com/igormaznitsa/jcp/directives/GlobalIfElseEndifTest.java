@@ -20,8 +20,8 @@ public class GlobalIfElseEndifTest extends AbstractDirectiveHandlerAcceptanceTes
 
     @Test
     public void testExecution_PreprocessingPhase() throws Exception {
-        assertFilePreprocessing("directive_globalifelseendif.txt", null, null);
-        assertFilePreprocessing("directive_globalifelseendif2.txt", null, null);
+        assertFilePreprocessing("directive_globalifelseendif.txt", false, null, null);
+        assertFilePreprocessing("directive_globalifelseendif2.txt", false, null, null);
     }
     
     @Test

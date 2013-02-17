@@ -17,8 +17,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
