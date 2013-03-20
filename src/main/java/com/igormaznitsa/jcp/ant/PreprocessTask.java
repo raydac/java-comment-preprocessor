@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -334,7 +335,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
                 final String keyStr = key.toString();
                 final String value = theProject.getProperty(keyStr);
                 if (value != null) {
-                    result.put("ant."+keyStr.toLowerCase(), Value.valueOf(value));
+                    result.put("ant."+keyStr.toLowerCase(Locale.ENGLISH), Value.valueOf(value));
                 }
             }
         }
