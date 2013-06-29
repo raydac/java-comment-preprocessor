@@ -11,9 +11,35 @@ The first version of the JCPreprocessor was developed by Igor Maznitsa in 2002 a
 
 The preprocessor is an open source project and its home page is http://code.google.com/p/java-comment-preprocessor/ where you can find new versions and wiki. Since 2011 the preprocessor has been being developed and distributed under GNU LGPL v3 license.
 
-You can install the plugin into the local maven repository with the install:install-file goal:
+I understand that testing of the plugin looks a bit bizarre but it was my first maven plugin thus I implemented it as a single pjoject.
 
-    mvn install:install-file -Dfile=./jcp-5.3.1.jar -DpomFile=./pom.xml
+Usage from Maven
+------------------
+You can install directly the plugin into your local maven repository with the install:install-file goal:
+
+    mvn install:install-file -Dfile=./jcp-5.3.2.jar -DpomFile=./pom.xml
+
+
+Since version 5.3.2 I public the plugin in the central Maven repository:
+<build>
+  <plugins>
+...
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>jcp</artifactId>
+                <version>5.3.2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>preprocess</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+...
+  </plugins>
+</build>
 
 
 Building
@@ -23,6 +49,11 @@ The project needs Maven 3.0.3 and JDK 1.6 to be built. You have to enter the fil
 
 History of changes
 ----------------------
+5.3.2
+- very minor refactoring.
+- fixed issue (ID 5) "Removing strings contain only spaces"
+- the first version published in the maven central
+
 5.3.1
 - very minor fixing, added the main-class attribute in the preprocessor JAR Manifest 
 
