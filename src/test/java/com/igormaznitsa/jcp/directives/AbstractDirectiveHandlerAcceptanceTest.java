@@ -184,19 +184,19 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
                 }
             }
         } catch (Exception unexpected) {
-            if (etalonList != null && result != null) {
+            if (etalonList != null) {
                 int index = 1;
                 for (final String str : etalonList) {
                     System.out.print(index++);
                     System.out.print('\t');
-                    System.out.println(str);
+                    println(str, true);
                 }
                 System.out.println("---------------------");
                 index = 1;
                 for (final String str : result) {
                     System.out.print(index++);
                     System.out.print('\t');
-                    System.out.println(str);
+                    println(str, true);
                 }
             }
             throw unexpected;
@@ -206,6 +206,17 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
     }
 
+    private void println(final String str, final boolean showWhitespaces){
+      for(final char chr : str.toCharArray()){
+        if (Character.isWhitespace(chr)){
+          System.out.print(showWhitespaces ? '.' : chr);
+        }else{
+          System.out.print(chr);
+        }
+      }
+      System.out.println();
+    }
+    
     private List<String> parseStringForLines(final String text) throws IOException {
         if (text == null || text.isEmpty())
         {

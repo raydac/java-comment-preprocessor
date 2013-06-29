@@ -185,13 +185,17 @@ public class FileInfoContainer {
 
                 trimmedProcessingString = nonTrimmedProcessingString.trim();
 
-                final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
-
                 final String stringPrefix;
-                if (numberOfSpacesAtTheLineBeginning>0){
-                    stringPrefix = nonTrimmedProcessingString.substring(0, numberOfSpacesAtTheLineBeginning);
+                if (trimmedProcessingString.isEmpty()){
+                  stringPrefix = nonTrimmedProcessingString;
                 }else{
-                  stringPrefix = "";
+                  final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
+
+                  if (numberOfSpacesAtTheLineBeginning>0){
+                      stringPrefix = nonTrimmedProcessingString.substring(0, numberOfSpacesAtTheLineBeginning);
+                  }else{
+                    stringPrefix = "";
+                  }
                 }
                 
                 String stringToBeProcessed = trimmedProcessingString;

@@ -309,7 +309,7 @@ public class PreprocessorContext {
 
     /**
      * Set file extensions of files to be preprocessed, it is a comma separated list
-     * @param a comma separated extensions list of file extensions to be preprocessed, must not be null
+     * @param extensions comma separated extensions list of file extensions to be preprocessed, must not be null
      * @return this preprocessor context
      */
     public PreprocessorContext setProcessingFileExtensions(final String extensions) {

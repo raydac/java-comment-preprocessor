@@ -54,24 +54,32 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
     @Override
     public Value getVariable(final String varName, final PreprocessorContext context) {
-        final PreprocessingState state = context == null ? null : context.getPreprocessingState();
-        if (VAR_DEST_DIR.equals(varName)) {
-            return Value.valueOf(state.getRootFileInfo().getDestinationDir());
-        } else if (VAR_DEST_FILE_NAME.equals(varName)) {
-            return Value.valueOf(state.getRootFileInfo().getDestinationName());
-        } else if (VAR_DEST_FULLPATH.equals(varName)) {
-            return Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
-        } else if (VAR_SRC_DIR.equals(varName)) {
-            return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
-        } else if (VAR_SRC_FILE_NAME.equals(varName)) {
-            return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
-        } else if (VAR_SRC_FULLPATH.equals(varName)) {
-            return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
-        } else if (VAR_VERSION.equals(varName)) {
-            return Value.valueOf(InfoHelper.getVersion());
-        } else {
-            throw new IllegalArgumentException("Attemption to get unsupported variable [" + varName + ']');
-        }
+      final PreprocessingState state = context == null ? null : context.getPreprocessingState();
+      
+      if (VAR_DEST_DIR.equals(varName)) {
+        return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationDir());
+      }
+      else if (VAR_DEST_FILE_NAME.equals(varName)) {
+        return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationName());
+      }
+      else if (VAR_DEST_FULLPATH.equals(varName)) {
+        return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
+      }
+      else if (VAR_SRC_DIR.equals(varName)) {
+        return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
+      }
+      else if (VAR_SRC_FILE_NAME.equals(varName)) {
+        return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
+      }
+      else if (VAR_SRC_FULLPATH.equals(varName)) {
+        return state == null ? null : Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
+      }
+      else if (VAR_VERSION.equals(varName)) {
+        return Value.valueOf(InfoHelper.getVersion());
+      }
+      else {
+        throw new IllegalArgumentException("Attemption to get unsupported variable [" + varName + ']');
+      }
     }
 
     @Override

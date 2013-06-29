@@ -23,9 +23,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 
 /**
- * The handler for '
- *
- * @' prefixed files in the command string
+ * The handler for '@' prefixed files in the command string
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */

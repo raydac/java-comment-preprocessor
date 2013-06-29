@@ -46,7 +46,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
      * 
      * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
      */
-    public class CfgFile {
+    public static class CfgFile {
         private File file;
         
         public void setFile(final File file){
@@ -64,7 +64,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
      * 
      * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
      */
-    public class Global {
+    public static class Global {
         private String name;
         private String value;
         
@@ -269,11 +269,10 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
     
     final String extractMessageFromException(final Throwable exception){
+        Throwable thr = exception;
         String result = exception.getMessage();
         
-        Throwable thr = exception;
-        
-        while(thr!=null){
+        while(result!=null){
             if (thr instanceof PreprocessorException || thr instanceof IllegalArgumentException || thr instanceof IllegalStateException) {
                 result = thr.getMessage() != null ? thr.getMessage() : result;
                 break;
