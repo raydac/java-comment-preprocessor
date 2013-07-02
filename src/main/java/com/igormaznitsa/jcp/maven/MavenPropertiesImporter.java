@@ -124,6 +124,9 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
                 for (int i = 1; i < splitted.length - 1; i++) {
                     final Method getter = root.getClass().getMethod(normalizeGetter(splitted[i]));
                     root = getter.invoke(root);
+                    if (root == null) {
+                      return "";
+                    }
                 }
 
                 final Method finalStringGetter = root.getClass().getMethod(normalizeGetter(splitted[splitted.length - 1]));

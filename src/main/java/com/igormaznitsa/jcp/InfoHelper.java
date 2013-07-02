@@ -32,7 +32,7 @@ public final class InfoHelper {
     public static final String DELIMITER = "-------------------------------------------------";
 
     public static String getVersion() {
-        return "v5.3.2";
+        return "v5.3.3";
     }
 
     public static String getCopyright() {

@@ -18,17 +18,13 @@
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-    <organization>
-        <name>Igor Maznitsa</name>
-        <url>http://www.igormaznitsa.com</url>
-    </organization>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.3.2</version>
+                <version>5.3.3-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
