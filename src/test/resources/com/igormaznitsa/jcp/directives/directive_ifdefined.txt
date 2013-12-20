@@ -12,9 +12,13 @@ expected2
 unexpected
     //#endif
 //#endif
+//#ifdefined BYTECODE
+somebytecode
+//#endif
 end
 ---START_ETALON---
 start
 expected1
 expected2
+somebytecode
 end

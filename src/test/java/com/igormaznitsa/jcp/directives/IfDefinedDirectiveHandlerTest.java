@@ -8,7 +8,14 @@ public class IfDefinedDirectiveHandlerTest extends AbstractDirectiveHandlerAccep
 
     @Override
     public void testExecution() throws Exception {
-        assertFilePreprocessing("directive_ifdefined.txt", false, null, null);
+        assertFilePreprocessing("directive_ifdefined.txt", false, null, null, new VariablePair("BYTECODE", "true"));
+        
+        try{
+          assertFilePreprocessing("directive_ifdefined.txt", false, null, null);
+        }catch(LinesNotMatchException expected){
+          assertEquals("somebytecode", expected.getEtalonString());
+          assertEquals("end",expected.getResultString());
+        }
     }
 
     @Override

@@ -297,8 +297,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
                 int index = sourceRoots.indexOf(str);
                 if (index<0){
                     // check for canonical paths
-                    final File source = new File(str);
-                    final String canonicalPath = source.getCanonicalPath();
+                    final File src = new File(str);
+                    final String canonicalPath = src.getCanonicalPath();
                     index = sourceRootsAsCanonical.indexOf(canonicalPath);
                 }
                 if (index>=0){

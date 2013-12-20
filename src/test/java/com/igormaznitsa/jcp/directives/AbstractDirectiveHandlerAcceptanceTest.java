@@ -62,9 +62,18 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         assertFalse("Reference must not be too short", reference.length() < 10);
     }
 
-    public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension) {
+    private PreprocessorContext setGlobalVars(final PreprocessorContext context, final VariablePair ... vars) {
+      if (vars.length!=0){
+        for(final VariablePair p : vars){
+          context.setGlobalVariable(p.getName(), p.getValue());
+        }
+      }
+      return context;
+    }
+    
+    public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension, final VariablePair ... globalVars) {
         try {
-            final PreprocessorContext context = preprocessString(preprocessingText, null, extension);
+            final PreprocessorContext context = preprocessString(preprocessingText, null, extension, globalVars);
             fail("Must throw PreprocessorException");
         } catch (PreprocessorException expected) {
             assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
@@ -129,7 +138,22 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         }
     }
 
-    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger, final boolean keepLines) throws Exception {
+    private void assertEqualsStringLists(final List<String> etalon, final List<String> result){
+      final String [] etalonStrings = etalon.toArray(new String[etalon.size()]);
+      final String [] resultStrings = result.toArray(new String[result.size()]);
+      final int len = Math.max(etalonStrings.length, resultStrings.length);
+      
+      for(int i=0;i<len;i++){
+        final String etalonStr = i<etalonStrings.length ? etalonStrings[i] : null;
+        final String resultStr = i<resultStrings.length ? resultStrings[i] : null;
+        
+        if ((etalonStr!=null && !etalonStr.equals(resultStr)) || (resultStr!=null && !resultStr.equals(etalonStr))){
+          throw new LinesNotMatchException(etalonStrings.length, resultStrings.length, i, etalonStr, resultStr);
+        }
+      }
+    }
+    
+    private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger, final boolean keepLines, final VariablePair ... globalVariables) throws Exception {
         if (preprocessingText == null) {
             throw new NullPointerException("Preprocessing text is null");
         }
@@ -147,6 +171,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         context.setKeepLines(keepLines);
         context.setPreprocessorExtension(extension);
 
+        setGlobalVars(context, globalVariables);
+        
         final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
         final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0));
 
@@ -168,20 +194,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
         try {
             if (etalonList != null) {
-                if (etalonList.size()!=result.size()){
-                    throw new RuntimeException("Result and etalon size are not equal ["+etalonList.size()+"!="+result.size()+']');
-                }
-   
-                int lineIndex = 0;
-                while (true) {
-                    if (lineIndex >= etalonList.size() || lineIndex >= result.size()) {
-                        break;
-                    }
-                    if (!etalonList.get(lineIndex).equals(result.get(lineIndex))){
-                        throw new RuntimeException("Non-equal lines detected at string "+(lineIndex+1));
-                    }
-                    lineIndex++;
-                }
+              assertEqualsStringLists(etalonList, result);
             }
         } catch (Exception unexpected) {
             if (etalonList != null) {
@@ -243,12 +256,12 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
         return preprocessingPart;
     }
     
-    private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext) throws Exception {
+    private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext, final VariablePair ... globalVars) throws Exception {
         final List<String> preprocessingPart = parseStringForLines(text);
-        return insidePreprocessingAndMatching(THIS_CLASS_FILE,preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null, false);
+        return insidePreprocessingAndMatching(THIS_CLASS_FILE,preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null, false, globalVars);
     }
 
-    public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger) throws Exception {
+    public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger, final VariablePair ... globalVars) throws Exception {
         final File file = new File(getClass().getResource(testFileName).toURI());
         
         if (!file.exists() || !file.isFile()){
@@ -294,6 +307,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
             }
         }
 
-        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines);
+        return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines, globalVars);
     }
 }
