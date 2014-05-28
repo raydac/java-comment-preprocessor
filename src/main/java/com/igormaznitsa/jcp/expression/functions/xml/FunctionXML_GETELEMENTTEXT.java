@@ -1,19 +1,17 @@
-/*
- * Copyright 2011 Igor Maznitsa (http://www.igormaznitsa.com)
+/* 
+ * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of version 3 of the GNU Lesser General Public
- * License as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307  USA
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
@@ -25,52 +23,52 @@ import org.w3c.dom.Element;
 
 /**
  * The class implements the xml_getelementtext function handler
- * 
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
 
-    private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
-    
-    @Override
-    public String getName() {
-        return "xml_getelementtext";
-    }
+  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
-    public Value executeStr(final PreprocessorContext context, final Value elementid) {
-        final String elementIdStr = elementid.asString();
-        
-        final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
-        if (container == null) {
-            throw new IllegalArgumentException("Can't find opened xml element for the \'"+elementIdStr+"\' id");
-        }
-        try {
-            final Element element = (Element)container.getNode();
-            return Value.valueOf(element.getTextContent());
-        }catch(ClassCastException unexpected){
-            throw new IllegalArgumentException("Incompatible cached item for \'"+elementIdStr+'\'');
-        }
-    }
+  @Override
+  public String getName() {
+    return "xml_getelementtext";
+  }
 
-    @Override
-    public int getArity() {
-        return 1;
-    }
+  public Value executeStr(final PreprocessorContext context, final Value elementid) {
+    final String elementIdStr = elementid.asString();
 
-    @Override
-    public ValueType[][] getAllowedArgumentTypes() {
-        return ARG_TYPES;
+    final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
+    if (container == null) {
+      throw new IllegalArgumentException("Can't find opened xml element for the \'" + elementIdStr + "\' id");
     }
+    try {
+      final Element element = (Element) container.getNode();
+      return Value.valueOf(element.getTextContent());
+    }
+    catch (ClassCastException unexpected) {
+      throw new IllegalArgumentException("Incompatible cached item for \'" + elementIdStr + '\'');
+    }
+  }
 
-    @Override
-    public String getReference() {
-        return "it returns the text from an element including text of all its children";
-    }
+  @Override
+  public int getArity() {
+    return 1;
+  }
 
-    @Override
-    public ValueType getResultType() {
-        return ValueType.STRING;
-    }
-    
-      
+  @Override
+  public ValueType[][] getAllowedArgumentTypes() {
+    return ARG_TYPES;
+  }
+
+  @Override
+  public String getReference() {
+    return "it returns the text from an element including text of all its children";
+  }
+
+  @Override
+  public ValueType getResultType() {
+    return ValueType.STRING;
+  }
+
 }

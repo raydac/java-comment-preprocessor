@@ -1,153 +1,170 @@
-/*
- * Copyright 2011 Igor Maznitsa (http://www.igormaznitsa.com)
+/* 
+ * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of version 3 of the GNU Lesser General Public
- * License as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307  USA
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
- * The class is the abstract parent for all classes process preprocessor directives 
+ * The class is the abstract parent for all classes process preprocessor
+ * directives
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public abstract class AbstractDirectiveHandler {
 
-    /**
-     * The common preprocessor prefix for all directives
-     */
-    public static final String DIRECTIVE_PREFIX = "//#";
-    
-    /**
-     * The prefix for lines to be kept by preprocessor
-     */
-    public static final String PREFIX_FOR_KEEPING_LINES = "//JCP> ";
+  /**
+   * The common preprocessor prefix for all directives
+   */
+  public static final String DIRECTIVE_PREFIX = "//#";
 
-    /**
-     * The prefix for lines to be kept by preprocessor, which contain processed directives
-     */
-    public static final String PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES = "//JCP! ";
-    
-    /**
-     * The prefix for one line comment
-     */
-    public static final String ONE_LINE_COMMENT = "//";
-    
-    /**
-     * The array contains all directives of the preprocessor
-     */
-    public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[]{
-        // Order makes sense !!!
-        new LocalDirectiveHandler(),
-        new IfDefinedDirectiveHandler(),
-        new IfDirectiveHandler(),
-        new ElseDirectiveHandler(),
-        new EndIfDirectiveHandler(),
-        new WhileDirectiveHandler(),
-        new BreakDirectiveHandler(),
-        new ContinueDirectiveHandler(),
-        new EndDirectiveHandler(),
-        new ExitIfDirectiveHandler(),
-        new ExitDirectiveHandler(),
-        new AssertDirectiveHandler(),
-        new OutDirDirectiveHandler(),
-        new OutEnabledDirectiveHandler(),
-        new OutNameDirectiveHandler(),
-        new OutDisabledDirectiveHandler(),
-        new CommentNextLineDirectiveHandler(),
-        new DefineDirectiveHandler(),
-        new FlushDirectiveHandler(),
-        new IncludeDirectiveHandler(),
-        new ActionDirectiveHandler(),
-        new PostfixDirectiveHandler(),
-        new PrefixDirectiveHandler(),
-        new GlobalDirectiveHandler(),
-        new GlobalElseDirectiveHandler(),
-        new GlobalEndIfDirectiveHandler(),
-        new GlobalIfDirectiveHandler(),
-        new ExcludeIfDirectiveHandler()
-    };
+  /**
+   * The prefix for lines to be kept by preprocessor
+   */
+  public static final String PREFIX_FOR_KEEPING_LINES = "//JCP> ";
 
-    /**
-     * The array contains preprocessor directives active only during the global preprocessing phase
-     */
-    public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[]{
-        new GlobalDirectiveHandler(),
-        new GlobalElseDirectiveHandler(),
-        new GlobalEndIfDirectiveHandler(),
-        new GlobalIfDirectiveHandler(),
-        new ExcludeIfDirectiveHandler()
-    };
+  /**
+   * The prefix for lines to be kept by preprocessor, which contain processed
+   * directives
+   */
+  public static final String PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES = "//JCP! ";
 
-    /**
-     * Get the name of the directive without prefix
-     * @return the directive name, must not be null
-     */
-    public abstract String getName();
+  /**
+   * The prefix for one line comment
+   */
+  public static final String ONE_LINE_COMMENT = "//";
 
-    /**
-     * Get the directive reference, it will be printed for a help request
-     * @return the directive reference as a String, must not be null
-     */
-    public abstract String getReference();
+  /**
+   * The array contains all directives of the preprocessor
+   */
+  public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[]{
+    // Order makes sense !!!
+    new LocalDirectiveHandler(),
+    new IfDefinedDirectiveHandler(),
+    new IfDirectiveHandler(),
+    new ElseDirectiveHandler(),
+    new EndIfDirectiveHandler(),
+    new WhileDirectiveHandler(),
+    new BreakDirectiveHandler(),
+    new ContinueDirectiveHandler(),
+    new EndDirectiveHandler(),
+    new ExitIfDirectiveHandler(),
+    new ExitDirectiveHandler(),
+    new AssertDirectiveHandler(),
+    new OutDirDirectiveHandler(),
+    new OutEnabledDirectiveHandler(),
+    new OutNameDirectiveHandler(),
+    new OutDisabledDirectiveHandler(),
+    new CommentNextLineDirectiveHandler(),
+    new DefineDirectiveHandler(),
+    new FlushDirectiveHandler(),
+    new IncludeDirectiveHandler(),
+    new ActionDirectiveHandler(),
+    new PostfixDirectiveHandler(),
+    new PrefixDirectiveHandler(),
+    new GlobalDirectiveHandler(),
+    new GlobalElseDirectiveHandler(),
+    new GlobalEndIfDirectiveHandler(),
+    new GlobalIfDirectiveHandler(),
+    new ExcludeIfDirectiveHandler()
+  };
 
-    /**
-     * Get the directive name with prefix
-     * @return the full directive name (it including prefix)
-     */
-    public String getFullName(){
-        return DIRECTIVE_PREFIX+getName();
-    }
-    
-    /**
-     * Get the argument type needed by the directive
-     * @return the argument type needed by the directive, it can't be null
-     */
-    public DirectiveArgumentType getArgumentType() {
-        return DirectiveArgumentType.NONE;
-    }
-    
-    /**
-     * Execute directive
-     * @param string the tail string from the string where the directive has been met, must not be null but can be empty one
-     * @param context the preprocessor context, it can be null
-     * @return the needed preprocessor behavior, must not be null
-     */
-    public abstract AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context);
+  /**
+   * The array contains preprocessor directives active only during the global
+   * preprocessing phase
+   */
+  public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[]{
+    new GlobalDirectiveHandler(),
+    new GlobalElseDirectiveHandler(),
+    new GlobalEndIfDirectiveHandler(),
+    new GlobalIfDirectiveHandler(),
+    new ExcludeIfDirectiveHandler()
+  };
 
-    /**
-     * Shows that the directive can be executed only when the preprocessing n active state i.e. if it is in active block //#if..//#endif of //#while
-     * @return true if the directive can be executed only if it is in active block, else the directive will be called in any case
-     */
-    public boolean executeOnlyWhenExecutionAllowed() {
-        return true;
-    }
+  /**
+   * Get the name of the directive without prefix
+   *
+   * @return the directive name, must not be null
+   */
+  public abstract String getName();
 
-    /**
-     * Shows that the directive can be executed during a global preprocessing phase
-     * @return true if the directive allows the global directive phase, false if the directive must be ignored during that phase
-     */
-    public boolean isGlobalPhaseAllowed() {
-        return false;
-    }
+  /**
+   * Get the directive reference, it will be printed for a help request
+   *
+   * @return the directive reference as a String, must not be null
+   */
+  public abstract String getReference();
 
-    /**
-     * Shows that the directive can be executed during the second preprocessing phase 
-     * @return true uf the directive can be executed during the second preprocessing phase else false if the directive must be ignored
-     */
-    public boolean isPreprocessingPhaseAllowed() {
-        return true;
-    }
+  /**
+   * Get the directive name with prefix
+   *
+   * @return the full directive name (it including prefix)
+   */
+  public String getFullName() {
+    return DIRECTIVE_PREFIX + getName();
+  }
+
+  /**
+   * Get the argument type needed by the directive
+   *
+   * @return the argument type needed by the directive, it can't be null
+   */
+  public DirectiveArgumentType getArgumentType() {
+    return DirectiveArgumentType.NONE;
+  }
+
+  /**
+   * Execute directive
+   *
+   * @param string the tail string from the string where the directive has been
+   * met, must not be null but can be empty one
+   * @param context the preprocessor context, it can be null
+   * @return the needed preprocessor behavior, must not be null
+   */
+  public abstract AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context);
+
+  /**
+   * Shows that the directive can be executed only when the preprocessing n
+   * active state i.e. if it is in active block //#if..//#endif of //#while
+   *
+   * @return true if the directive can be executed only if it is in active
+   * block, else the directive will be called in any case
+   */
+  public boolean executeOnlyWhenExecutionAllowed() {
+    return true;
+  }
+
+  /**
+   * Shows that the directive can be executed during a global preprocessing
+   * phase
+   *
+   * @return true if the directive allows the global directive phase, false if
+   * the directive must be ignored during that phase
+   */
+  public boolean isGlobalPhaseAllowed() {
+    return false;
+  }
+
+  /**
+   * Shows that the directive can be executed during the second preprocessing
+   * phase
+   *
+   * @return true uf the directive can be executed during the second
+   * preprocessing phase else false if the directive must be ignored
+   */
+  public boolean isPreprocessingPhaseAllowed() {
+    return true;
+  }
 }

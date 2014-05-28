@@ -1,19 +1,17 @@
-/*
- * Copyright 2011 Igor Maznitsa (http://www.igormaznitsa.com)
+/* 
+ * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of version 3 of the GNU Lesser General Public
- * License as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307  USA
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.igormaznitsa.jcp.utils;
 
@@ -44,330 +42,369 @@ import java.util.Locale;
  */
 public enum PreprocessorUtils {
 
-    ;
+  ;
 
     public static String getFileExtension(final File file) {
-        String result = null;
-        if (file != null) {
+    String result = null;
+    if (file != null) {
 
-            final String fileName = file.getName();
-            final int lastPointPos = fileName.lastIndexOf('.');
-            if (lastPointPos < 0) {
-                result = "";
-            } else {
-                result = fileName.substring(lastPointPos + 1);
-            }
-        }
-        return result;
+      final String fileName = file.getName();
+      final int lastPointPos = fileName.lastIndexOf('.');
+      if (lastPointPos < 0) {
+        result = "";
+      }
+      else {
+        result = fileName.substring(lastPointPos + 1);
+      }
+    }
+    return result;
+  }
+
+  public static String[] extractExtensions(final String extensions) {
+    if (extensions == null) {
+      throw new NullPointerException("String of extensions is null");
+    }
+    final String trimmed = extensions.trim();
+
+    String[] result;
+
+    if (trimmed.isEmpty()) {
+      result = new String[0];
+    }
+    else {
+      result = splitForChar(extensions, ',');
+      for (int li = 0; li < result.length; li++) {
+        result[li] = result[li].trim().toLowerCase(Locale.ENGLISH);
+      }
     }
 
-    public static String[] extractExtensions(final String extensions) {
-        if (extensions == null) {
-            throw new NullPointerException("String of extensions is null");
-        }
-        final String trimmed = extensions.trim();
+    return result;
+  }
 
-        String[] result;
-
-        if (trimmed.isEmpty()) {
-            result = new String[0];
-        } else {
-            result = splitForChar(extensions, ',');
-            for (int li = 0; li < result.length; li++) {
-                result[li] = result[li].trim().toLowerCase(Locale.ENGLISH);
-            }
-        }
-
-        return result;
+  public static boolean deleteDirectory(final File directory) {
+    if (directory == null) {
+      throw new NullPointerException("Argument is null");
     }
 
-    public static boolean deleteDirectory(final File directory) {
-        if (directory == null) {
-            throw new NullPointerException("Argument is null");
-        }
-
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException("Argument is not a directory");
-        }
-
-        boolean result = false;
-        if (clearDirectory(directory)) {
-            result = directory.delete();
-        }
-        return result;
+    if (!directory.isDirectory()) {
+      throw new IllegalArgumentException("Argument is not a directory");
     }
 
-    public static boolean clearDirectory(final File directory) {
-        if (directory.isDirectory()) {
-            final File files[] = directory.listFiles();
-            for (final File currentFile : files) {
-                if (currentFile.isDirectory()) {
-                    if (!clearDirectory(currentFile)) {
-                        return false;
-                    }
-                }
+    boolean result = false;
+    if (clearDirectory(directory)) {
+      result = directory.delete();
+    }
+    return result;
+  }
 
-                if (!currentFile.delete()) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
+  public static boolean clearDirectory(final File directory) {
+    if (directory.isDirectory()) {
+      final File files[] = directory.listFiles();
+      for (final File currentFile : files) {
+        if (currentFile.isDirectory()) {
+          if (!clearDirectory(currentFile)) {
             return false;
+          }
         }
+
+        if (!currentFile.delete()) {
+          return false;
+        }
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  public static void closeSilently(final Closeable stream) {
+    if (stream != null) {
+      try {
+        stream.close();
+      }
+      catch (IOException ignored) {
+      }
+    }
+  }
+
+  public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
+    if (file == null) {
+      throw new NullPointerException("File is null");
     }
 
-    public static void closeSilently(final Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException ignored) {
-            }
-        }
+    if (charset == null) {
+      throw new NullPointerException("Charset is null");
     }
 
-    public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
-        if (file == null) {
-            throw new NullPointerException("File is null");
-        }
-
-        if (charset == null) {
-            throw new NullPointerException("Charset is null");
-        }
-
-        if (!Charset.isSupported(charset)) {
-            throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
-        }
-
-        BufferedReader result;
-
-        if (bufferSize <= 0) {
-            result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
-        } else {
-            result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset), bufferSize);
-        }
-
-        return result;
+    if (!Charset.isSupported(charset)) {
+      throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
     }
 
-    public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
-        final String[] result = new String[source.length];
-        int index = 0;
-        for (final String curStr : source) {
-            result[index++] = curStr.replace(toBeReplaced, replacement);
-        }
-        return result;
+    BufferedReader result;
+
+    if (bufferSize <= 0) {
+      result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
+    }
+    else {
+      result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset), bufferSize);
     }
 
-    public static String extractTrimmedTail(final String prefix, final String value) {
-        return extractTail(prefix, value).trim();
+    return result;
+  }
+
+  public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
+    final String[] result = new String[source.length];
+    int index = 0;
+    for (final String curStr : source) {
+      result[index++] = curStr.replace(toBeReplaced, replacement);
+    }
+    return result;
+  }
+
+  public static String extractTrimmedTail(final String prefix, final String value) {
+    return extractTail(prefix, value).trim();
+  }
+
+  public static String extractTail(final String prefix, final String value) {
+    if (prefix == null) {
+      throw new NullPointerException("Prefix is null");
     }
 
-    public static String extractTail(final String prefix, final String value) {
-        if (prefix == null) {
-            throw new NullPointerException("Prefix is null");
-        }
-
-        if (value == null) {
-            throw new NullPointerException("Value is null");
-        }
-
-        if (prefix.length() > value.length()) {
-            throw new IllegalArgumentException("Prefix is taller than the value");
-        }
-
-        return value.substring(prefix.length());
+    if (value == null) {
+      throw new NullPointerException("Value is null");
     }
 
-    public static void copyFile(final File source, final File dest) throws IOException {
-        if (source == null) {
-            throw new NullPointerException("Source file is null");
-        }
-
-        if (dest == null) {
-            throw new NullPointerException("Destination file is null");
-        }
-
-        if (source.isDirectory()) {
-            throw new IllegalArgumentException("Source file is directory");
-        }
-
-        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
-            throw new IOException("Can't make directory [" + getFilePath(dest.getParentFile()) + ']');
-        }
-
-
-        FileChannel fileSrc = null;
-        FileChannel fileDst = null;
-        final FileInputStream fileSrcInput = new FileInputStream(source);
-        FileOutputStream fileOutput = null;
-        try {
-            fileSrc = fileSrcInput.getChannel();
-            fileOutput = new FileOutputStream(dest);
-            fileDst = fileOutput.getChannel();
-            long size = fileSrc.size();
-            long pos = 0L;
-            while (size > 0) {
-                final long written = fileSrc.transferTo(pos, size, fileDst);
-                pos += written;
-                size -= written;
-            }
-        } finally {
-            closeSilently(fileSrcInput);
-            closeSilently(fileOutput);
-            closeSilently(fileDst);
-            closeSilently(fileSrc);
-        }
+    if (prefix.length() > value.length()) {
+      throw new IllegalArgumentException("Prefix is taller than the value");
     }
 
-    public static String processMacroses(final String processingString, final PreprocessorContext context) {
-        int position;
-        String result = processingString;
+    return value.substring(prefix.length());
+  }
 
-        while (true) {
-            position = result.indexOf("/*$");
-
-            if (position >= 0) {
-                final String leftPart = result.substring(0, position);
-                final int beginIndex = position;
-                position = result.indexOf("$*/", position);
-                if (position >= 0) {
-                    final String macrosBody = result.substring(beginIndex + 3, position);
-                    final String rightPart = result.substring(position + 3);
-
-                    final Value value = Expression.evalExpression(macrosBody, context);
-
-                    result = leftPart + value.toString() + rightPart;
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-        return result;
+  public static void copyFile(final File source, final File dest) throws IOException {
+    if (source == null) {
+      throw new NullPointerException("Source file is null");
     }
 
-    private static void checkFile(final File file) throws IOException {
-        if (file == null) {
-            throw new NullPointerException("File is null");
-        }
-
-        if (!file.exists()) {
-            throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
-        }
-
-        if (!file.isFile()) {
-            throw new IllegalArgumentException("File can't be read because it's not a normal file");
-        }
+    if (dest == null) {
+      throw new NullPointerException("Destination file is null");
     }
 
-    public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
-        checkFile(file);
-
-        final String enc = encoding == null ? "UTF8" : encoding;
-
-        final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
-        final List<String> strContainer = new ArrayList<String>(1024);
-        try {
-            while (true) {
-                final String nextLine = srcBufferedReader.readLine();
-                if (nextLine == null) {
-                    break;
-                }
-                strContainer.add(nextLine);
-            }
-        } finally {
-            srcBufferedReader.close();
-        }
-
-        return strContainer.toArray(new String[strContainer.size()]);
+    if (source.isDirectory()) {
+      throw new IllegalArgumentException("Source file is directory");
     }
 
-    public static byte[] readFileAsByteArray(final File file) throws IOException {
-        checkFile(file);
-
-        int len = (int) file.length();
-
-        final ByteBuffer buffer = ByteBuffer.allocate(len);
-        final FileChannel inChannel = new FileInputStream(file).getChannel();
-
-        try {
-            while (len > 0) {
-                final int read = inChannel.read(buffer);
-                if (read < 0) {
-                    throw new IOException("Can't read whole file [" + getFilePath(file) + '\'');
-                }
-                len -= read;
-            }
-        } finally {
-            closeSilently(inChannel);
-        }
-
-        return buffer.array();
+    if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
+      throw new IOException("Can't make directory [" + getFilePath(dest.getParentFile()) + ']');
     }
 
-    public static String[] splitForSetOperator(final String string) {
-        final int index = string.indexOf('=');
+    FileChannel fileSrc = null;
+    FileChannel fileDst = null;
+    final FileInputStream fileSrcInput = new FileInputStream(source);
+    FileOutputStream fileOutput = null;
+    try {
+      fileSrc = fileSrcInput.getChannel();
+      fileOutput = new FileOutputStream(dest);
+      fileDst = fileOutput.getChannel();
+      long size = fileSrc.size();
+      long pos = 0L;
+      while (size > 0) {
+        final long written = fileSrc.transferTo(pos, size, fileDst);
+        pos += written;
+        size -= written;
+      }
+    }
+    finally {
+      closeSilently(fileSrcInput);
+      closeSilently(fileOutput);
+      closeSilently(fileDst);
+      closeSilently(fileSrc);
+    }
+  }
 
-        String[] result = null;
+  public static String processMacroses(final String processingString, final PreprocessorContext context) {
+    int position;
+    String result = processingString;
 
-        if (index < 0) {
-            result = new String[]{string};
-        } else {
-            final String leftPart = string.substring(0, index).trim();
-            final String rightPart = string.substring(index + 1).trim();
-            result = new String[]{leftPart, rightPart};
+    while (true) {
+      position = result.indexOf("/*$");
+
+      if (position >= 0) {
+        final String leftPart = result.substring(0, position);
+        final int beginIndex = position;
+        position = result.indexOf("$*/", position);
+        if (position >= 0) {
+          final String macrosBody = result.substring(beginIndex + 3, position);
+          final String rightPart = result.substring(position + 3);
+
+          final Value value = Expression.evalExpression(macrosBody, context);
+
+          result = leftPart + value.toString() + rightPart;
         }
-        return result;
+        else {
+          break;
+        }
+      }
+      else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  private static void checkFile(final File file) throws IOException {
+    if (file == null) {
+      throw new NullPointerException("File is null");
     }
 
-    public static String[] splitForChar(final String string, final char delimiter) {
-        final char[] array = string.toCharArray();
-        final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
+    if (!file.exists()) {
+      throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
+    }
 
-        final List<String> tokens = new ArrayList<String>(10);
+    if (!file.isFile()) {
+      throw new IllegalArgumentException("File can't be read because it's not a normal file");
+    }
+  }
 
-        for (final char curChar : array) {
-            if (curChar == delimiter) {
-                if (buffer.length() != 0) {
-                    tokens.add(buffer.toString());
-                    buffer.setLength(0);
-                }
-                continue;
-            } else {
-                buffer.append(curChar);
-            }
+  public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
+    checkFile(file);
+
+    final String enc = encoding == null ? "UTF8" : encoding;
+
+    final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
+    final List<String> strContainer = new ArrayList<String>(1024);
+    try {
+      while (true) {
+        final String nextLine = srcBufferedReader.readLine();
+        if (nextLine == null) {
+          break;
         }
+        strContainer.add(nextLine);
+      }
+    }
+    finally {
+      srcBufferedReader.close();
+    }
 
+    return strContainer.toArray(new String[strContainer.size()]);
+  }
+
+  public static byte[] readFileAsByteArray(final File file) throws IOException {
+    checkFile(file);
+
+    int len = (int) file.length();
+
+    final ByteBuffer buffer = ByteBuffer.allocate(len);
+    final FileChannel inChannel = new FileInputStream(file).getChannel();
+
+    try {
+      while (len > 0) {
+        final int read = inChannel.read(buffer);
+        if (read < 0) {
+          throw new IOException("Can't read whole file [" + getFilePath(file) + '\'');
+        }
+        len -= read;
+      }
+    }
+    finally {
+      closeSilently(inChannel);
+    }
+
+    return buffer.array();
+  }
+
+  public static String[] splitForSetOperator(final String string) {
+    final int index = string.indexOf('=');
+
+    String[] result = null;
+
+    if (index < 0) {
+      result = new String[]{string};
+    }
+    else {
+      final String leftPart = string.substring(0, index).trim();
+      final String rightPart = string.substring(index + 1).trim();
+      result = new String[]{leftPart, rightPart};
+    }
+    return result;
+  }
+
+  public static String[] splitForChar(final String string, final char delimiter) {
+    final char[] array = string.toCharArray();
+    final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
+
+    final List<String> tokens = new ArrayList<String>(10);
+
+    for (final char curChar : array) {
+      if (curChar == delimiter) {
         if (buffer.length() != 0) {
-            tokens.add(buffer.toString());
+          tokens.add(buffer.toString());
+          buffer.setLength(0);
         }
-
-        return tokens.toArray(new String[tokens.size()]);
+        continue;
+      }
+      else {
+        buffer.append(curChar);
+      }
     }
 
-    public static String normalizeVariableName(final String name) {
-        if (name == null) {
-            return null;
+    if (buffer.length() != 0) {
+      tokens.add(buffer.toString());
+    }
+
+    return tokens.toArray(new String[tokens.size()]);
+  }
+
+  public static String normalizeVariableName(final String name) {
+    if (name == null) {
+      return null;
+    }
+
+    return name.trim().toLowerCase(Locale.ENGLISH);
+  }
+
+  public static String getFilePath(final File file) {
+    String result = "";
+    if (file != null) {
+      try {
+        result = file.getCanonicalPath();
+      }
+      catch (IOException ex) {
+        result = file.getAbsolutePath();
+      }
+    }
+    return result;
+  }
+
+  public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
+    throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
+  }
+
+  public static String[] replaceStringPrefix(final String[] allowedPrefixesToBeReplaced, final String replacement, final String[] strings) {
+    final String[] result = new String[strings.length];
+
+    for (int i = 0; i < strings.length; i++) {
+      final String str = strings[i];
+
+      String detectedPrefix = null;
+
+      for (final String prefix : allowedPrefixesToBeReplaced) {
+        if (str.startsWith(prefix)) {
+          if (detectedPrefix == null || detectedPrefix.length() < prefix.length()) {
+            detectedPrefix = prefix;
+          }
         }
+      }
 
-        return name.trim().toLowerCase(Locale.ENGLISH);
+      if (detectedPrefix != null) {
+        result[i] = replacement + str.substring(detectedPrefix.length());
+      }
+      else {
+        result[i] = str;
+      }
     }
 
-    public static String getFilePath(final File file) {
-        String result = "";
-        if (file != null) {
-            try {
-                result = file.getCanonicalPath();
-            } catch (IOException ex) {
-                result = file.getAbsolutePath();
-            }
-        }
-        return result;
-    }
-
-    public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
-        throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
-    }
+    return result;
+  }
 }

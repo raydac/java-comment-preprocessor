@@ -1,19 +1,17 @@
-/*
- * Copyright 2011 Igor Maznitsa (http://www.igormaznitsa.com)
+/* 
+ * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
- * This library is free software; you can redistribute it and/or modify
- * it under the terms of version 3 of the GNU Lesser General Public
- * License as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307  USA
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.igormaznitsa.jcp.expression.functions;
 
@@ -22,69 +20,70 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
 /**
- * The class implements the user defined function handler (a function which name begins with $)
- * 
+ * The class implements the user defined function handler (a function which name
+ * begins with $)
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public final class FunctionDefinedByUser extends AbstractFunction {
 
-    private final String name;
-    private final int argsNumber;
-    private final PreprocessorContext configurator;
-    private final ValueType [][] argTypes;
-    
-    public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
-        super();
-        if (name == null) {
-            throw new NullPointerException("Name is null");
-        }
+  private final String name;
+  private final int argsNumber;
+  private final PreprocessorContext configurator;
+  private final ValueType[][] argTypes;
 
-        if (argsNumber < 0) {
-            throw new IllegalArgumentException("Argument number is less than zero");
-        }
-
-        if (context == null) {
-            throw new NullPointerException("Context is null");
-        }
-
-        this.name = name;
-        this.argsNumber = argsNumber;
-        this.configurator = context;
-        
-        final ValueType [] types = new ValueType[argsNumber];
-        
-        for(int li=0;li<argsNumber;li++){
-            types[li] = ValueType.ANY;
-        }
-        this.argTypes = new ValueType[][]{types};
+  public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
+    super();
+    if (name == null) {
+      throw new NullPointerException("Name is null");
     }
 
-    @Override
-    public String getName() {
-        return name;
+    if (argsNumber < 0) {
+      throw new IllegalArgumentException("Argument number is less than zero");
     }
 
-    public int getArity() {
-        return argsNumber;
+    if (context == null) {
+      throw new NullPointerException("Context is null");
     }
 
-    public Value execute(final PreprocessorContext context, final Value [] values) {
-        return context.getPreprocessorExtension().processUserFunction(name, values);
-    }
-    
-    @Override
-    public ValueType[][] getAllowedArgumentTypes() {
-        return argTypes;
-    }
+    this.name = name;
+    this.argsNumber = argsNumber;
+    this.configurator = context;
 
-    @Override
-    public String getReference() {
-        return "it's a user defined function";
-    }
+    final ValueType[] types = new ValueType[argsNumber];
 
-    @Override
-    public ValueType getResultType() {
-        return ValueType.ANY;
+    for (int li = 0; li < argsNumber; li++) {
+      types[li] = ValueType.ANY;
     }
-    
+    this.argTypes = new ValueType[][]{types};
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  public int getArity() {
+    return argsNumber;
+  }
+
+  public Value execute(final PreprocessorContext context, final Value[] values) {
+    return context.getPreprocessorExtension().processUserFunction(name, values);
+  }
+
+  @Override
+  public ValueType[][] getAllowedArgumentTypes() {
+    return argTypes;
+  }
+
+  @Override
+  public String getReference() {
+    return "it's a user defined function";
+  }
+
+  @Override
+  public ValueType getResultType() {
+    return ValueType.ANY;
+  }
+
 }
