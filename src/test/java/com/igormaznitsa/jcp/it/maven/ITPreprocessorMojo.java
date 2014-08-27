@@ -65,6 +65,7 @@ public class ITPreprocessorMojo {
     final File resultJar = ResourceExtractor.simpleExtractResources(this.getClass(), "./dummy_maven_project/target/DummyMavenProjectToTestJCP-1.0-SNAPSHOT.jar");
 
     verifier.verifyErrorFreeLog();
+    verifier.verifyTextInLog("PREPROCESSED_TESTING_COMPLETED");
 
     final JarAnalyzer jarAnalyzer = new JarAnalyzer(resultJar);
     List<JarEntry> classEntries;

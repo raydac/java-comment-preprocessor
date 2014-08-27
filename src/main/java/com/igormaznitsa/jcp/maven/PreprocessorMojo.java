@@ -42,6 +42,24 @@ import org.apache.maven.project.MavenProject;
 public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger {
 
   /**
+   * The Source directories containing the source to be compiled.
+   *
+   * @parameter default-value="${project.compileSourceRoots}"
+   * @readonly
+   * @required
+   */
+  private List<String> compileSourceRoots;
+
+  /**
+   * The Test Source directories containing the source to be compiled.
+   *
+   * @parameter default-value="${project.testCompileSourceRoots}"
+   * @readonly
+   * @required
+   */
+  private List<String> testCompileSourceRoots;
+
+  /**
    * The project to be preprocessed.
    *
    * @parameter default-value="${project}"
@@ -56,31 +74,45 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    * @readonly
    */
   private String source;
+  
   /**
-   * Destination directory
+   * Destination directory for sources.
    *
-   * @parameter name="destination" default-value="${project.build.directory}/generated-sources/preprocessed"
+   * @parameter name="destination"
+   * default-value="${project.build.directory}/generated-sources/preprocessed"
    * @readonly
    */
   private File destination;
+
+  /**
+   * Destination directory for preprocessed test sources.
+   *
+   * @parameter name="testDestination"
+   * default-value="${project.build.directory}/generated-test-sources/preprocessed"
+   * @readonly
+   */
+  private File testDestination;
+  
   /**
    * Input text character encoding
    *
-   * @parameter name="inEncoding" default-value="${project.build.sourceEncoding}"
+   * @parameter name="inEncoding"
+   * default-value="${project.build.sourceEncoding}"
    * @readonly
    */
   private String inEncoding;
   /**
    * Output text character encoding
    *
-   * @parameter name="outEncoding" default-value="${project.build.sourceEncoding}"
+   * @parameter name="outEncoding"
+   * default-value="${project.build.sourceEncoding}"
    * @readonly
    */
   private String outEncoding;
   /**
    * List of excluded extensions from preprocessing
    *
-   * @parameter name="excluded" 
+   * @parameter name="excluded"
    * @readonly
    */
   private String excluded;
@@ -148,8 +180,23 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   private boolean keepLines;
 
+  /**
+   * Allow usage of the preprocessor for test sources.
+   *
+   * @parameter name="useTestSources" default-value="false"
+   */
+  private boolean useTestSources;
+
   public PreprocessorMojo() {
     super();
+  }
+
+  public void setUseTestSources(final boolean flag) {
+    this.useTestSources = flag;
+  }
+
+  public boolean getUseTestSources() {
+    return this.useTestSources;
   }
 
   public void setClear(final boolean flag) {
@@ -198,6 +245,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   public File getDestination() {
     return this.destination;
+  }
+
+  public void setTestDestination(final File destination) {
+    this.testDestination = destination;
+  }
+
+  public File getTestDestination() {
+    return this.testDestination;
   }
 
   public void setInEncoding(final String value) {
@@ -266,12 +321,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   private String makeSourceRootList() {
     String result = null;
-    if (source != null) {
-      result = source;
+    if (this.source != null) {
+      result = this.source;
     }
-    else if (project != null) {
+    else if (this.project != null) {
       final StringBuilder accum = new StringBuilder();
-      for (final String srcRoot : project.getCompileSourceRoots()) {
+
+      for (final String srcRoot : (this.useTestSources ? this.testCompileSourceRoots : this.compileSourceRoots)) {
         if (accum.length() > 0) {
           accum.append(';');
         }
@@ -282,12 +338,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return result;
   }
 
-  private void addPreprocessedAsSourceRoot(final PreprocessorContext context) throws IOException {
-    if (project != null) {
+  private void replaceSourceRootByPreprocessingDestinationFolder(final PreprocessorContext context) throws IOException {
+    if (this.project != null) {
       final String sourceDirectories = context.getSourceDirectories();
       final String[] splitted = sourceDirectories.split(";");
 
-      final List<String> sourceRoots = project.getCompileSourceRoots();
+      final List<String> sourceRoots = this.useTestSources ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<String>();
       for (final String src : sourceRoots) {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
@@ -318,39 +374,39 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     final PreprocessorContext context = new PreprocessorContext();
     context.setPreprocessorLogger(this);
 
-    if (project != null) {
+    if (this.project != null) {
       final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project);
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
     context.setSourceDirectories(makeSourceRootList());
-    context.setDestinationDirectory(destination.getCanonicalPath());
+    context.setDestinationDirectory(this.useTestSources ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath());
 
-    if (inEncoding != null) {
-      context.setInCharacterEncoding(inEncoding);
+    if (this.inEncoding != null) {
+      context.setInCharacterEncoding(this.inEncoding);
     }
-    if (outEncoding != null) {
-      context.setOutCharacterEncoding(outEncoding);
+    if (this.outEncoding != null) {
+      context.setOutCharacterEncoding(this.outEncoding);
     }
-    if (excluded != null) {
-      context.setExcludedFileExtensions(excluded);
+    if (this.excluded != null) {
+      context.setExcludedFileExtensions(this.excluded);
     }
-    if (processing != null) {
-      context.setProcessingFileExtensions(processing);
+    if (this.processing != null) {
+      context.setProcessingFileExtensions(this.processing);
     }
 
     info("Preprocessing sources folder : " + context.getSourceDirectories());
     info("Preprocessing destination folder : " + context.getDestinationDirectory());
 
-    context.setClearDestinationDirBefore(clear);
-    context.setRemoveComments(removeComments);
-    context.setVerbose(verbose);
-    context.setKeepLines(keepLines);
-    context.setFileOutputDisabled(disableOut);
+    context.setClearDestinationDirBefore(this.clear);
+    context.setRemoveComments(this.removeComments);
+    context.setVerbose(this.verbose);
+    context.setKeepLines(this.keepLines);
+    context.setFileOutputDisabled(this.disableOut);
 
     // process cfg files
-    if (cfgFiles != null && cfgFiles.length != 0) {
-      for (final File file : cfgFiles) {
+    if (this.cfgFiles != null && this.cfgFiles.length != 0) {
+      for (final File file : this.cfgFiles) {
         if (file == null) {
           throw new NullPointerException("A NULL in place of a config file detected");
         }
@@ -360,9 +416,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     }
 
     // process global vars
-    if (globalVars != null && !globalVars.isEmpty()) {
-      for (final String key : globalVars.stringPropertyNames()) {
-        final String value = globalVars.getProperty(key);
+    if (this.globalVars != null && !this.globalVars.isEmpty()) {
+      for (final String key : this.globalVars.stringPropertyNames()) {
+        final String value = this.globalVars.getProperty(key);
         if (value == null) {
           throw new NullPointerException("Can't find defined value for '" + key + "' global variable");
         }
@@ -388,7 +444,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       final JCPreprocessor preprocessor = new JCPreprocessor(context);
       preprocessor.execute();
       if (!getKeepSrcRoot()) {
-        addPreprocessedAsSourceRoot(context);
+        replaceSourceRootByPreprocessingDestinationFolder(context);
       }
     }
     catch (Exception ex) {

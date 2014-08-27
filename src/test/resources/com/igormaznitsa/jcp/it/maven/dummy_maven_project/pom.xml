@@ -19,19 +19,39 @@
         <maven>3.0</maven>
     </prerequisites>
 
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.3.3-SNAPSHOT</version>
+                <version>5.3.4-SNAPSHOT</version>
                 <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>preprocess</goal>
-                        </goals>
-                    </execution>
+                  <execution>
+                    <id>generateSources</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                      <goal>preprocess</goal>
+                    </goals>
+                  </execution>
+                  <execution>
+                    <id>generateTests</id>
+                    <phase>generate-test-sources</phase>
+                    <goals>
+                      <goal>preprocess</goal>
+                    </goals>
+                    <configuration>
+                      <useTestSources>true</useTestSources>
+                    </configuration>
+                  </execution>
                 </executions>
             </plugin>
             <plugin>

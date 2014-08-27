@@ -8,7 +8,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>Java Comment Preprocessor</name>
-  <description>A Multi-pass java based preprocessor processing deirectives placed into Java comments</description>
+  <description>A Multi-pass java based preprocessor which directives can be injected as Java comments</description>
   <url>http://java-comment-preprocessor.googlecode.com/</url>
 
   <properties>
