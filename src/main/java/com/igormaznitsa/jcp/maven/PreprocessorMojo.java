@@ -181,7 +181,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private boolean keepLines;
 
   /**
-   * Allow usage of the preprocessor for test sources.
+   * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    *
    * @parameter name="useTestSources" default-value="false"
    */
