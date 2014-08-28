@@ -3,22 +3,22 @@ JCPreprocessor
 
 Author: Igor Maznitsa (http://www.igormaznitsa.com)
 
-The JCPreprocessor (Java Comment Preprocessor) is a very powerful multi-pass preprocessor supports loops and file generation features. Since it keeps its directives inside comment strings it can be used without problems in any Java IDE.
-The first version of the JCPreprocessor was developed by Igor Maznitsa in 2002 and was used in dozens of mobile application projects for well-known trademarks. 
+The JCPreprocessor (Java Comment Preprocessor) is a very powerful multi-pass preprocessor supports loops and file generation features. Since it keeps its directives inside commentaries it can be used transparently in any Java IDE.
+The first version of the JCPreprocessor was developed by Igor Maznitsa in 2002 and was in usage for tons of mobile application projects for well-known trademarks.
 In 2011 it had been totally refactored and the MAVEN support was added, then sourсes were opened as an OSS project.
-At present it can be used as:
+At present it can work as:
  - A Maven Plugin
  - An ANT task
  - A Standalone application called through command line
 
 The preprocessor is an open source project and its home page is http://code.google.com/p/java-comment-preprocessor/ where you can find new versions and wiki. 
-Since 2011 the preprocessor was distributed under GNU LGPL v3 license but since 2014 and the 5.5.3 version it is distributed under Apache License 2.0
+Since 2011 the preprocessor was distributed under GNU LGPL v3 license but since the 5.3.3 version (published in 2014) it is distributed under Apache License 2.0
 
 Usage from Maven
 ------------------
 You can install directly the plugin into your local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-5.3.2.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-5.3.4.jar -DpomFile=./pom.xml
 
 
 Since version 5.3.2 I public the plugin in the central Maven repository:
@@ -28,7 +28,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.3.3</version>
+                <version>5.3.4</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -51,7 +51,10 @@ It is a solid project without modules so that its inside testing (especialy for 
 
 History of changes
 ----------------------
-5.5.3
+5.3.4
+- added support of test source folder preprocessing in the maven plugin
+
+5.3.3
 - fixed bug in the comment removing (multiple stars before closing slash)
 - fixed exception if there is not any organization tag in a project pom.xml
 - added support for '-' and '--' prefixes of CLI arguments
@@ -76,4 +79,4 @@ History of changes
 - Fixed issue (ID 1). Inaccessible functionality both "load a file with global variables" and "define global variable" through a command line call. 
 
 5.0 
-- The first published version of totally refactored preprocessor
+- The first published version of totally reworked preprocessor

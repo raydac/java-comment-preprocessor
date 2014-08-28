@@ -13,6 +13,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
   </properties>
 
   <issueManagement>
@@ -75,6 +77,8 @@
                   <goal>single</goal>
                 </goals>
                 <configuration>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <finalName>${project.artifactId}-${project.version}-${timestamp}-distr</finalName>
                   <descriptors>
                     <descriptor>src/assemble/distribution.xml</descriptor>
                   </descriptors>
