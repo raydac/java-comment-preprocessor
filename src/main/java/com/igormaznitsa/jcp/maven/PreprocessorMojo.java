@@ -27,164 +27,129 @@ import java.util.Properties;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 
 /**
- * It allow to make preprocessing of sources and text data in maven projects.
- *
- * @goal preprocess
- * @phase generate-sources
- * @threadSafe
- * @requiresProject
- *
+ * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven project to use the preprocessed sources.
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
+@Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresProject = true)
 public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger {
 
   /**
-   * The Source directories containing the source to be compiled.
-   *
-   * @parameter default-value="${project.compileSourceRoots}"
-   * @readonly
-   * @required
+   * The Project source roots for non-test mode.
    */
+  @Parameter(name="compileSourceRoots", defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
   private List<String> compileSourceRoots;
 
   /**
-   * The Test Source directories containing the source to be compiled.
-   *
-   * @parameter default-value="${project.testCompileSourceRoots}"
-   * @readonly
-   * @required
+   * The Project source roots for test mode.
    */
+  @Parameter(name = "testCompileSourceRoots", defaultValue = "${project.testCompileSourceRoots}", required = true, readonly = true)
   private List<String> testCompileSourceRoots;
 
   /**
-   * The project to be preprocessed.
-   *
-   * @parameter default-value="${project}"
-   * @required
-   * @readonly
+   * The Maven Project to be preprocessed.
    */
+  @Parameter(defaultValue = "${project}", required = true, readonly = true)
   private MavenProject project;
+
   /**
-   * Source directory
-   *
-   * @parameter name="source"
-   * @readonly
+   * The Directly defined source directory, it will make plugin to preprocess the folder instead of project and maven defined ones. By default it is empty and is not used.
    */
+  @Parameter(name = "source", defaultValue = "")
   private String source;
   
   /**
-   * Destination directory for sources.
-   *
-   * @parameter name="destination"
-   * default-value="${project.build.directory}/generated-sources/preprocessed"
-   * @readonly
+   * The Destination folder where generated sources will be placed in non-test mode.
    */
+  @Parameter(name = "destination", defaultValue = "${project.build.directory}/generated-sources/preprocessed")
   private File destination;
 
   /**
-   * Destination directory for preprocessed test sources.
-   *
-   * @parameter name="testDestination"
-   * default-value="${project.build.directory}/generated-test-sources/preprocessed"
-   * @readonly
+   * Destination folder where generated sources will be placed in test-mode.
    */
+  @Parameter(name = "testDestination", defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
   private File testDestination;
   
   /**
-   * Input text character encoding
-   *
-   * @parameter name="inEncoding"
-   * default-value="${project.build.sourceEncoding}"
-   * @readonly
+   * The Input text encoding to be used for preprocessing, by default it uses defined in project properties.
    */
+  @Parameter(name = "inEncoding", defaultValue = "${project.build.sourceEncoding}")
   private String inEncoding;
+
   /**
-   * Output text character encoding
-   *
-   * @parameter name="outEncoding"
-   * default-value="${project.build.sourceEncoding}"
-   * @readonly
+   * The Encoding for preprocessed text output, by default it uses defined in
+   * project properties.
    */
+  @Parameter(name="outEncoding",defaultValue = "${project.build.sourceEncoding}")
   private String outEncoding;
+  
   /**
-   * List of excluded extensions from preprocessing
-   *
-   * @parameter name="excluded"
-   * @readonly
+   * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
    */
+  @Parameter(name = "excluded")
   private String excluded;
+
   /**
-   * List of extensions to be preprocessed
-   *
-   * @parameter name="processing"
-   * @readonly
+   * List of file extensions to be preprocessed. By default java,txt,htm,html
    */
+  @Parameter(name = "processing")
   private String processing;
+
   /**
-   * Disable any output file operations
-   *
-   * @parameter name="disableOut" default-value="false"
-   * @readonly
+   * Make dry run of the preprocessor without any saving of result.
    */
+  @Parameter(name="disableOut", defaultValue = "false")
   private boolean disableOut;
+  
   /**
-   * Make verbose message output for inside processes
-   *
-   * @parameter name="verbose" default-value="false"
-   * @readonly
+   * Turn on the verbose mode for preprocessing process.
    */
+  @Parameter(name="verbose", defaultValue = "false")
   private boolean verbose;
+
   /**
-   * Clear the destination directory before preprocessing if it is existing
-   *
-   * @parameter name="clear" default-value="false"
-   * @readonly
+   * Clear the destination folder before preprocessing (if it exists).
    */
+  @Parameter(name = "clear", defaultValue = "false")
   private boolean clear;
+  
   /**
-   * Flag to disable overriding of the source root directory by preprocessed
-   * directory
-   *
-   * @parameter name="keepSrcRoot" default-value="false"
+   * Disable overriding of the source root folders for maven project after preprocessing.
    */
+  @Parameter(name = "keepSrcRoot", defaultValue = "false")
   private boolean keepSrcRoot;
+
   /**
-   * Remove all Java like commentaries from the resulting files
-   *
-   * @parameter name="removeComments" default-value="false"
-   * @readonly
+   * Remove all Java like commentaries from preprocessed sources.
    */
+  @Parameter(name = "removeComments", defaultValue = "false")
   private boolean removeComments;
+  
   /**
-   * Global variables
-   *
-   * @parameter name="globalVars"
-   * @readonly
+   * List of global preprocessing variables.
    */
+  @Parameter(name = "globalVars")
   private Properties globalVars;
+
   /**
-   * Configuration files
-   *
-   * @parameter name="cfgFiles"
-   * @readonly
+   * List of external configuration files.
    */
+  @Parameter(name = "cfgFiles")
   private File[] cfgFiles;
+
   /**
-   * Do not remove non-processing strings from the output
-   *
-   * @parameter name="keepLines" default-value="false"
-   * @readonly
+   * Disable removing lines from preprocessed files, it allows to keep line numeration similar to original sources.
    */
+  @Parameter(name = "keepLines", defaultValue = "true")
   private boolean keepLines;
 
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
-   *
-   * @parameter name="useTestSources" default-value="false"
    */
+  @Parameter(name="useTestSources", defaultValue = "false")
   private boolean useTestSources;
 
   public PreprocessorMojo() {
@@ -321,7 +286,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   private String makeSourceRootList() {
     String result = null;
-    if (this.source != null) {
+    if (this.source != null && !this.source.isEmpty()) {
       result = this.source;
     }
     else if (this.project != null) {

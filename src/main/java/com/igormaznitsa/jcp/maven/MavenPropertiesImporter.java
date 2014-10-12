@@ -62,7 +62,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     "project.organization.name",
     "project.organization.url"};
 
-  private Map<String, Value> insideVarMap = new HashMap<String, Value>();
+  private final Map<String, Value> insideVarMap = new HashMap<String, Value>();
   private final MavenProject project;
 
   private void printInfoAboutVarIntoLog(final PreprocessorContext context, final String varName, final String value) {

@@ -199,7 +199,7 @@ public class Expression {
     final int arity = operator.getArity();
 
     final Value[] arguments = new Value[arity];
-    final Class[] methodArguments = arity == 1 ? OPERATOR_SIGNATURE_1 : OPERATOR_SIGNATURE_2;
+    final Class<?>[] methodArguments = arity == 1 ? OPERATOR_SIGNATURE_1 : OPERATOR_SIGNATURE_2;
 
     final StringBuilder signatureNormal = new StringBuilder(AbstractOperator.EXECUTION_PREFIX);
     final StringBuilder signatureAnyLeft = new StringBuilder(AbstractOperator.EXECUTION_PREFIX);

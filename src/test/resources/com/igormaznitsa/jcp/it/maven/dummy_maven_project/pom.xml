@@ -52,6 +52,12 @@
                       <useTestSources>true</useTestSources>
                     </configuration>
                   </execution>
+                  <execution>
+                    <id>clearPreprocessingFolders</id>
+                    <goals>
+                      <goal>clear</goal>
+                    </goals>
+                  </execution>
                 </executions>
             </plugin>
             <plugin>

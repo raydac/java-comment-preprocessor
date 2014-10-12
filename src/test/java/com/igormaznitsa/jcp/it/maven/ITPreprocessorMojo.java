@@ -66,6 +66,8 @@ public class ITPreprocessorMojo {
 
     verifier.verifyErrorFreeLog();
     verifier.verifyTextInLog("PREPROCESSED_TESTING_COMPLETED");
+    verifier.verifyTextInLog("Cleaning preprocessing folders");
+    verifier.verifyTextInLog("Deleting of preprocessed folders has been completed");
 
     final JarAnalyzer jarAnalyzer = new JarAnalyzer(resultJar);
     List<JarEntry> classEntries;
@@ -85,7 +87,7 @@ public class ITPreprocessorMojo {
 
         instanceClass = new ClassLoader() {
 
-          public Class<?> loadClass(byte[] data) throws ClassNotFoundException {
+          public Class<?> loadClass(final byte[] data) throws ClassNotFoundException {
             return defineClass(null, data, 0, data.length);
           }
         }.loadClass(buffer);
