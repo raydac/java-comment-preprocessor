@@ -17,11 +17,14 @@ package com.igormaznitsa.jcp.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.shared.model.fileset.FileSet;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
 
 /**
  * The Mojo allows to delete preprocessed folders.
@@ -35,21 +38,26 @@ public class PreprocessorClearMojo extends AbstractMojo {
    * The Destination folder where generated sources can be placed in non-test
    * mode and which will be removed.
    */
-  @Parameter(name = "destination", defaultValue = "${project.build.directory}/generated-sources/preprocessed")
+  @Parameter(name = "destination", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
   private File destination;
 
   /**
    * Destination folder where generated sources can be placed in test-mode and
    * which will be removed.
    */
-  @Parameter(name = "testDestination", defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
+  @Parameter(name = "testDestination", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
   private File testDestination;
 
-  @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
-    final Log log = getLog();
+  
+  
+  /**
+   * List of folders and files to be removed, every folder defined as a FileSet and can contain exclude and include lists.
+   * @see <a href="http://maven.apache.org/shared/file-management/apidocs/org/apache/maven/shared/model/fileset/FileSet.html">FileSet javadoc</a>
+   */
+  @Parameter(name = "fileSets", required = false)
+  private List<FileSet> fileSets;
 
-    log.info("Cleaning preprocessing folders");
+  private void processPredefinedFolders(final Log log) throws MojoFailureException {
     if (this.destination != null) {
       final String path = destination.getAbsolutePath();
       log.info("Removing preprocessed source folder '" + path + '\'');
@@ -81,6 +89,31 @@ public class PreprocessorClearMojo extends AbstractMojo {
         log.info("Preprocessed Test Source folder '" + path + "' doesn't exist");
       }
     }
-    log.info("Deleting of preprocessed folders has been completed");
+  }
+
+  @Override
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    final Log log = getLog();
+
+    log.info("Cleaning has been started");
+    if (this.fileSets == null) {
+      processPredefinedFolders(log);
+    }
+    else {
+      processFileSet(this.fileSets, log);
+    }
+    log.info("Cleaning has been completed");
+  }
+
+  private void processFileSet(final List<FileSet> fileSets, final Log log) throws MojoExecutionException {
+    final FileSetManager manager = new FileSetManager(log,true);
+    for (final FileSet fs : fileSets) {
+      try {
+        manager.delete(fs, true);
+      }
+      catch (IOException ex) {
+        throw new MojoExecutionException("Exception during cleaning", ex);
+      }
+    }
   }
 }

@@ -61,13 +61,18 @@ public class ITPreprocessorMojo {
 
     verifier.deleteArtifact("com.igormaznitsa", "DummyMavenProjectToTestJCP", "1.0-SNAPSHOT", "jar");
     verifier.executeGoal("package");
+    assertFalse("Folder must be removed", new File("./dummy_maven_project/target").exists());
 
-    final File resultJar = ResourceExtractor.simpleExtractResources(this.getClass(), "./dummy_maven_project/target/DummyMavenProjectToTestJCP-1.0-SNAPSHOT.jar");
-
+    final File resultJar = ResourceExtractor.simpleExtractResources(this.getClass(), "./dummy_maven_project/DummyMavenProjectToTestJCP-1.0-SNAPSHOT.jar");
+    
     verifier.verifyErrorFreeLog();
     verifier.verifyTextInLog("PREPROCESSED_TESTING_COMPLETED");
-    verifier.verifyTextInLog("Cleaning preprocessing folders");
-    verifier.verifyTextInLog("Deleting of preprocessed folders has been completed");
+    verifier.verifyTextInLog("Cleaning has been started");
+    verifier.verifyTextInLog("Removing preprocessed source folder");
+    verifier.verifyTextInLog("Removing preprocessed test source folder");
+    verifier.verifyTextInLog("Scanning for deletable directories");
+    verifier.verifyTextInLog("Deleting directory:");
+    verifier.verifyTextInLog("Cleaning has been completed");
 
     final JarAnalyzer jarAnalyzer = new JarAnalyzer(resultJar);
     List<JarEntry> classEntries;
