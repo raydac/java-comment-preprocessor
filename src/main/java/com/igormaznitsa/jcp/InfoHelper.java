@@ -48,7 +48,7 @@ public final class InfoHelper {
     result.add("");
 
     result.add("Command line directives\n------------");
-    result.add("\n(!)Historically all directives are prefixed by '/' but since 5.5.3 both '-' and '--' prefixes allowed\n");
+    result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes allowed\n");
     result.add(makeColumns("@file_path", "to download variable list from the file", 14));
     for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
       result.add(makeCommandLineKeyReference(handler));
