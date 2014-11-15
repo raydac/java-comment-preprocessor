@@ -38,32 +38,40 @@ public class PreprocessorClearMojo extends AbstractMojo {
    * The Destination folder where generated sources can be placed in non-test
    * mode and which will be removed.
    */
-  @Parameter(name = "destination", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
-  private File destination;
+  @Parameter(name = "preprocessedSources", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
+  private File preprocessedSources;
 
   /**
    * Destination folder where generated sources can be placed in test-mode and
    * which will be removed.
    */
-  @Parameter(name = "testDestination", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
-  private File testDestination;
+  @Parameter(name = "preprocessedTestSources", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
+  private File preprocessedTestSources;
 
-  
-  
   /**
    * List of folders and files to be removed, every folder defined as a FileSet and can contain exclude and include lists.
+   * <pre>
+   *  &lt;fileSets&gt;
+   *    &lt;fileSet&gt;
+   *      &lt;directory>${basedir}/someFolder&lt;/directory&gt;
+   *      &lt;includes>
+   *        &lt;include&gt;*.txt&lt;/include&gt;
+   *      &lt;/includes&gt;
+   *    &lt;/fileSet&gt;
+   *  &lt;/fileSets&gt;
+   * </pre>
    * @see <a href="http://maven.apache.org/shared/file-management/apidocs/org/apache/maven/shared/model/fileset/FileSet.html">FileSet javadoc</a>
    */
   @Parameter(name = "fileSets", required = false)
   private List<FileSet> fileSets;
 
   private void processPredefinedFolders(final Log log) throws MojoFailureException {
-    if (this.destination != null) {
-      final String path = destination.getAbsolutePath();
+    if (this.preprocessedSources != null) {
+      final String path = preprocessedSources.getAbsolutePath();
       log.info("Removing preprocessed source folder '" + path + '\'');
-      if (this.destination.isDirectory()) {
+      if (this.preprocessedSources.isDirectory()) {
         try {
-          FileUtils.deleteDirectory(this.destination);
+          FileUtils.deleteDirectory(this.preprocessedSources);
         }
         catch (IOException ex) {
           throw new MojoFailureException("Can't delete preprocessed source folder", ex);
@@ -74,12 +82,12 @@ public class PreprocessorClearMojo extends AbstractMojo {
       }
     }
 
-    if (this.testDestination != null) {
-      final String path = testDestination.getAbsolutePath();
+    if (this.preprocessedTestSources != null) {
+      final String path = preprocessedTestSources.getAbsolutePath();
       log.info("Removing preprocessed test source folder '" + path + '\'');
-      if (this.testDestination.isDirectory()) {
+      if (this.preprocessedTestSources.isDirectory()) {
         try {
-          FileUtils.deleteDirectory(this.testDestination);
+          FileUtils.deleteDirectory(this.preprocessedTestSources);
         }
         catch (IOException ex) {
           throw new MojoFailureException("Can't delete preprocessed test source folder", ex);

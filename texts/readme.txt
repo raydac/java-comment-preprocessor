@@ -3,23 +3,19 @@ JCPreprocessor
 
 Author: Igor Maznitsa (http://www.igormaznitsa.com)
 
-The JCPreprocessor (Java Comment Preprocessor) is a very powerful multi-pass preprocessor supports loops and file generation features. Since it keeps its directives inside commentaries it can be used transparently in any Java IDE.
-The first version of the JCPreprocessor was developed by Igor Maznitsa in 2002 and was in usage for tons of mobile application projects for well-known trademarks.
-In 2011 it had been totally refactored and the MAVEN support was added, then sourсes were opened as an OSS project.
-At present it can work as:
- - A Maven Plugin
- - An ANT task
- - A Standalone application called through command line
+It is a multi-pass preprocessor with very powerful features (like loops and global definitions accessible in all preprocessed files). The Initial version was developed in 2002 by Igor Maznitsa to make easier the development for the J2ME platform because it was very hard to support multi-veriants of the same sources for different J2ME API usage variants provided in devices of different vendors. To keep the preprocessor compatible with IDE and regular Java development chain, commented directives were choosed what doesn't make any influence to regular java development process and IDEs but allows to make changes related to external definitions.
+In 2011 the preprocessor was totaly refactored and published as an OSS project, it can be downloaded from https://code.google.com/p/java-comment-preprocessor/
+Now the preprocessor supports work by different ways:
+ - as a maven plugin
+ - as an ant task
+ - as a standalone application called through CLI (command line interface)
 
-The preprocessor is an open source project and its home page is http://code.google.com/p/java-comment-preprocessor/ where you can find new versions and wiki. 
-Since 2011 the preprocessor was distributed under GNU LGPL v3 license but since the 5.3.3 version (published in 2014) it is distributed under Apache License 2.0
+Licensing
+-----------
+Initially the preprocessor was published and distributed under GNU LGPL v3 but since the 5.3.3 version (2014) it has been distributed under Apache License 2.0
 
-Usage from Maven
+Usage with Maven
 ------------------
-You can install directly the plugin into your local maven repository with the install:install-file goal:
-
-    mvn install:install-file -Dfile=./jcp-5.3.4.jar -DpomFile=./pom.xml
-
 
 Since version 5.3.2 I public the plugin in the central Maven repository:
 <build>
@@ -31,9 +27,16 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
                 <version>5.3.4</version>
                 <executions>
                     <execution>
+                        <id>preprocessSources</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>preprocess</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>clearGeneratedFolders</id>
+                        <goals>
+                            <goal>clear</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -42,24 +45,30 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
   </plugins>
 </build>
 
+If you don't want use the maven repository then you can install the plugin manually into your local maven repository with the install:install-file goal:
+
+    mvn install:install-file -Dfile=./jcp-5.3.4.jar -DpomFile=./pom.xml
+
 
 Building
 ---------
-The project needs Maven 3.0.3 and JDK 1.6 to be built. You have to enter the file path to your Maven directory in the configuration property 'maven.home' of the 'maven-failsafe-plugin' in the pom.xml.
-It is a solid project without modules so that its inside testing (especialy for the maven part) looks a bit bizzare, may be it would be more rigth to implement as a project tree.
+The project needs as minimum Maven 3.0.3 and JDK 1.6 to be built. To build the preprocessor manually you have to define the path to your Maven directory in the configuration property 'maven.home' of the 'maven-failsafe-plugin' in the pom.xml.
+It is a solid project without modules so that its inside testing (especially for the maven part) looks a bit bizarre, may be it would be more better to be implemented as a multi-module maven project but it's some kind of legacy.
 
 
 History of changes
 ----------------------
 5.3.4
-- added support of test source folder preprocessing in the maven plugin
+- added support of test source folder preprocessing for maven projects
+- added the "clear" maven goal to clear created preprocessing folders or any defined folders and files
+- by default the maven plugin trying to keep numeration of lines in preprocessed files (the keepLines is true by default)
 
 5.3.3
-- fixed bug in the comment removing (multiple stars before closing slash)
-- fixed exception if there is not any organization tag in a project pom.xml
-- added support for '-' and '--' prefixes of CLI arguments
-- improved CLI argument error message
-- changed license to Apache 2.0
+- fixed the bug in the comment removing (multiple stars before closing slash)
+- fixed the exception if there is not any organization tag in a project pom.xml
+- added support for '-' and '--' prefixes in CLI arguments
+- improved CLI argument error messaging
+- the license has been changed to Apache 2.0
 
 5.3.2
 - very minor refactoring.
@@ -79,4 +88,4 @@ History of changes
 - Fixed issue (ID 1). Inaccessible functionality both "load a file with global variables" and "define global variable" through a command line call. 
 
 5.0 
-- The first published version of totally reworked preprocessor
+- The initial published version of totally reworked preprocessor
