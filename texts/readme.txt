@@ -3,7 +3,7 @@ JCPreprocessor
 
 Author: Igor Maznitsa (http://www.igormaznitsa.com)
 
-It is a multi-pass preprocessor with very powerful features (like loops and global definitions accessible in all preprocessed files). The Initial version was developed in 2002 by Igor Maznitsa to make easier the development for the J2ME platform because it was very hard to support multi-veriants of the same sources for different J2ME API usage variants provided in devices of different vendors. To keep the preprocessor compatible with IDE and regular Java development chain, commented directives were choosed what doesn't make any influence to regular java development process and IDEs but allows to make changes related to external definitions.
+It is a multi-pass preprocessor with very powerful features (like loops and global definitions accessible in all preprocessed files). The Initial version was developed in 2002 by Igor Maznitsa to make easier the development for the J2ME platform because it was very hard to support multi-variants of the same sources for different J2ME API usage variants provided in devices of different vendors. To keep the preprocessor compatible with IDE and regular Java development chain, commented directives were chosen what doesn't make any effect in the regular java development process and IDEs but allows to make changes related to external definitions.
 In 2011 the preprocessor was totaly refactored and published as an OSS project, it can be downloaded from https://code.google.com/p/java-comment-preprocessor/
 Now the preprocessor supports work by different ways:
  - as a maven plugin
