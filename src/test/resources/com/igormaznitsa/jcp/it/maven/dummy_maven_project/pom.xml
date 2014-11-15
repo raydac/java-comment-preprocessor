@@ -41,7 +41,7 @@
       <plugin>
         <groupId>com.igormaznitsa</groupId>
         <artifactId>jcp</artifactId>
-        <version>5.3.4</version>
+        <version>5.3.5-SNAPSHOT</version>
         <executions>
           <execution>
             <id>generateSources</id>
