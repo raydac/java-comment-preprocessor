@@ -16,11 +16,11 @@
 package com.igormaznitsa.jcp.it.maven;
 
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import java.io.DataInputStream;
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.jar.JarEntry;
+import java.util.jar.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.apache.maven.shared.jar.JarAnalyzer;
@@ -29,6 +29,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ITPreprocessorMojo {
+
+  private static void assertMainClass(final String jarFile, final String mainClass) throws Exception {
+    JarInputStream jarStream = null;
+    try {
+      jarStream = new JarInputStream(new FileInputStream(jarFile));
+      final Manifest manifest = jarStream.getManifest();
+      final Attributes attrs = manifest.getMainAttributes();
+      assertEquals("Maven plugin must also provide and main class in manifest",mainClass, attrs.getValue("Main-Class"));
+    }
+    finally {
+      IOUtils.closeQuietly(jarStream);
+    }
+  }
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
@@ -45,6 +58,9 @@ public class ITPreprocessorMojo {
 
     final String processedJarFileName = (jarFile.indexOf(' ') >= 0 ? "\"" + jarFile + "\"" : jarFile).replace('/', File.separatorChar).replace('\\', File.separatorChar);
     final String processedPomFile = (pomFile.indexOf(' ') >= 0 ? "\"" + pomFile + "\"" : pomFile).replace('/', File.separatorChar).replace('\\', File.separatorChar);
+
+    // check that manifest contains main class
+    assertMainClass(jarFile, "com.igormaznitsa.jcp.JCPreprocessor");
 
     verifier.setCliOptions(Arrays.asList("-Dfile=" + processedJarFileName, "-DpomFile=" + processedPomFile));
     verifier.executeGoal("install:install-file");
@@ -64,7 +80,7 @@ public class ITPreprocessorMojo {
     assertFalse("Folder must be removed", new File("./dummy_maven_project/target").exists());
 
     final File resultJar = ResourceExtractor.simpleExtractResources(this.getClass(), "./dummy_maven_project/DummyMavenProjectToTestJCP-1.0-SNAPSHOT.jar");
-    
+
     verifier.verifyErrorFreeLog();
     verifier.verifyTextInLog("PREPROCESSED_TESTING_COMPLETED");
     verifier.verifyTextInLog("Cleaning has been started");
