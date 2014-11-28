@@ -53,7 +53,8 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
     if (splitted.length != 2) {
-      throw new IllegalArgumentException("Can't recognize any expression");
+      final String text = "Can't recognize any expression";
+      throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 
     final String name = splitted[0];

@@ -47,6 +47,8 @@ import java.util.Set;
  */
 public final class PreprocessingState {
 
+  public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
+  
   public static class ExcludeIfInfo {
 
     private final FileInfoContainer fileInfoContainer;

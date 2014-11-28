@@ -15,8 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
 /**
  * The class describes an object contains an expression tree
@@ -24,8 +24,6 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class ExpressionTree {
-
-  public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
 
   private ExpressionTreeElement last;
 
@@ -37,7 +35,7 @@ public class ExpressionTree {
   }
 
   public ExpressionTree(final FilePositionInfo[] callStack, final String sources) {
-    this.callStack = callStack == null ? EMPTY_STACK : callStack;
+    this.callStack = callStack == null ? PreprocessingState.EMPTY_STACK : callStack;
     this.sources = sources == null ? "" : sources;
   }
 

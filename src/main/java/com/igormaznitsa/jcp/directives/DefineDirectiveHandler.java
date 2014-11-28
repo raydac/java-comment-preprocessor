@@ -55,19 +55,22 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     try {
       final ExpressionTree tree = ExpressionParser.getInstance().parse(string, context);
       if (tree.isEmpty()) {
-        throw new IllegalArgumentException("There is not any variable");
+        final String text = "There is not any variable";
+        throw new IllegalArgumentException(text,context.makeException(text, null));
       }
 
       final ExpressionTreeElement root = tree.getRoot();
       final ExpressionItem item = root.getItem();
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
-        throw new IllegalArgumentException("You must use a variable as the argument");
+        final String text = "You must use a variable as the argument";
+        throw new IllegalArgumentException(text, context.makeException(text, null));
       }
 
       name = ((Variable) item).getName();
     }
     catch (IOException ex) {
-      throw new IllegalArgumentException("Can't parse the variable name [" + string + ']', ex);
+      final String text = "Can't parse the variable name [" + string + ']';
+      throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
 
     if (context.findVariableForName(name) != null) {

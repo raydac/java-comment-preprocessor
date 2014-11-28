@@ -17,6 +17,8 @@ package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -33,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * The preprocessor context class is a main class which contains all options of
@@ -825,7 +828,8 @@ public class PreprocessorContext {
       parentDir = currentState.peekFile().getFile().getParent();
     }
 
-    if (path.charAt(0) == '.' && parentDir != null) {
+    if (FilenameUtils.getPrefixLength(path)<=0 && parentDir != null) {
+      // relative path
       result = new File(parentDir, path);
     }
     else {
@@ -922,5 +926,28 @@ public class PreprocessorContext {
    */
   public PreprocessingState getPreprocessingState() {
     return this.currentState;
+  }
+
+  /**
+   * Prepare exception with message and cause, or return cause if it is a preprocessor exception
+   * @param text the message text, must not be null
+   * @param cause the cause, it can be null
+   * @return prepared exception with additional information
+   */
+  public PreprocessorException makeException(final String text, final Throwable cause){
+    if (cause != null && cause instanceof PreprocessorException){
+      return (PreprocessorException)cause;
+    }
+    
+    final FilePositionInfo [] stack;
+    final String sourceLine;
+    if (this.currentState==null){
+      stack = PreprocessingState.EMPTY_STACK;
+      sourceLine = "";
+    }else{
+      stack = this.currentState.getFileStack();
+      sourceLine = this.currentState.getLastReadString();
+    }
+    return new PreprocessorException(text, sourceLine, stack, cause);
   }
 }

@@ -53,11 +53,14 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
           state.setPrinter(PreprocessingState.PrinterType.NORMAL);
         }
         break;
-        default:
-          throw new IllegalArgumentException("Unsupported parameter");
+        default:{
+          final String text = "Unsupported parameter";
+          throw new IllegalArgumentException(text, context.makeException(text, null));
+        }
       }
       return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
-    throw new IllegalArgumentException(DIRECTIVE_PREFIX + "prefix needs a parameter");
+    final String text = DIRECTIVE_PREFIX + "prefix needs a parameter";
+    throw new IllegalArgumentException(text, context.makeException(text, null));
   }
 }

@@ -63,7 +63,8 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
     if (splitted.length != 2) {
-      throw new IllegalArgumentException("Can't recognize an expression [" + string + ']');
+      final String text = "Can't recognize an expression [" + string + ']';
+      throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 
     final String name = splitted[0].trim();

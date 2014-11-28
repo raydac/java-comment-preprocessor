@@ -349,7 +349,7 @@ public class FileInfoContainer {
     return result;
   }
 
-  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext configurator, final boolean firstPass) throws IOException {
+  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext context, final boolean firstPass) throws IOException {
     final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
@@ -364,18 +364,20 @@ public class FileInfoContainer {
         final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
         if (checkDirectiveArgumentRoughly(handler, restOfString)) {
           if (allowedForExecution) {
-            return handler.execute(restOfString.trim(), configurator);
+            return handler.execute(restOfString.trim(), context);
           }
           else {
-            return configurator.isKeepLines() ? AfterDirectiveProcessingBehaviour.SHOULD_BE_COMMENTED : AfterDirectiveProcessingBehaviour.PROCESSED;
+            return context.isKeepLines() ? AfterDirectiveProcessingBehaviour.SHOULD_BE_COMMENTED : AfterDirectiveProcessingBehaviour.PROCESSED;
           }
         }
         else {
-          throw new IllegalArgumentException("Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument");
+          final String text = "Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument";
+          throw new IllegalArgumentException(text, context.makeException(text, null));
         }
       }
     }
-    throw new IllegalArgumentException("Unknown preprocessor directive detected [" + trimmedString + ']');
+    final String text = "Unknown preprocessor directive detected [" + trimmedString + ']';
+    throw new IllegalArgumentException(text, context.makeException(text, null));
   }
 
   public void setDestinationDir(final String destDir) {

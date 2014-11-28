@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.expression;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -116,7 +115,7 @@ public class Expression {
     final String sources;
     
     if (state == null){
-      stack = ExpressionTree.EMPTY_STACK;
+      stack = PreprocessingState.EMPTY_STACK;
       sources = "";
     }else{
       stack = state.getFileStack();
@@ -222,7 +221,7 @@ public class Expression {
     final FilePositionInfo [] stack;
     final String sources;
     if (state == null){
-      stack = ExpressionTree.EMPTY_STACK;
+      stack = PreprocessingState.EMPTY_STACK;
       sources = "";
     }else{
       stack = state.getFileStack();

@@ -43,7 +43,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
-    assertEquals("System.out.println(\"Hello World! TestEval.java\");", result.asString().trim());
+    assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
 
@@ -54,7 +54,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEvalWithIncluded.java\")", context);
     final String resultstr = result.asString().trim();
-    assertTrue(resultstr.startsWith("System.out.println(\"Hello World! TestEval.java\");"));
+    assertTrue(resultstr.startsWith("System.out.println(\"Hello World!\");"));
     assertTrue(resultstr.endsWith("TestEvalWithIncluded.java"));
     assertDestinationFolderEmpty();
   }
@@ -65,7 +65,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
-    assertEquals("System.out.println(\"Hello World! TestEval.java\");", result.asString().trim());
+    assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
 

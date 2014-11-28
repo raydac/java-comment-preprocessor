@@ -51,7 +51,8 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     final Value includingFilePath = Expression.evalExpression(string, context);
 
     if (includingFilePath == null || includingFilePath.getType() != ValueType.STRING) {
-      throw new IllegalArgumentException(DIRECTIVE_PREFIX + "include needs a string expression as a file path");
+      final String text = DIRECTIVE_PREFIX + "include needs a string expression as a file path";
+      throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 
     try {
@@ -62,7 +63,8 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
       state.openFile(includingFile);
     }
     catch (IOException ex) {
-      throw new IllegalArgumentException("Can't open a file to include [" + includingFilePath.asString() + ']', ex);
+      final String text = "Can't open a file to include [" + includingFilePath.asString() + ']';
+      throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

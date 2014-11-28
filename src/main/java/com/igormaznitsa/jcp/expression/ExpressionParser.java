@@ -161,7 +161,7 @@ public final class ExpressionParser {
     final String sourceLine;
 
     if (context == null) {
-      stack = ExpressionTree.EMPTY_STACK;
+      stack = PreprocessingState.EMPTY_STACK;
       sourceLine = "";
     }
     else {

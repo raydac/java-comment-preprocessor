@@ -65,7 +65,8 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
       if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
-        throw new IllegalArgumentException(DIRECTIVE_PREFIX + "_if needs a boolean expression");
+        final String text = DIRECTIVE_PREFIX + "_if needs a boolean expression";
+        throw new IllegalArgumentException(text, context.makeException(text, null));
       }
       state.pushIf(true);
       if (!expressionResult.asBoolean().booleanValue()) {

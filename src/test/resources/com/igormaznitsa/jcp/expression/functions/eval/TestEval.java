@@ -13,7 +13,7 @@ import org.junit.Test;
 public final class TestEval {
   public void main(String ... args){
 //#endif
-    System.out.println("/*$hello_world+" "+__filename__$*/");
+    System.out.println("/*$hello_world$*/");
 //#ifdefined includemeth
   }
 }

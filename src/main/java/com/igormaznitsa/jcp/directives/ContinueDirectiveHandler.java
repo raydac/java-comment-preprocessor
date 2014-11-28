@@ -41,7 +41,8 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
 
     if (state.isWhileStackEmpty()) {
-      throw new IllegalStateException(getFullName() + " without " + DIRECTIVE_PREFIX + "while detected");
+      final String text = getFullName() + " without " + DIRECTIVE_PREFIX + "while detected";
+      throw new IllegalStateException(text,context.makeException(text, null));
     }
 
     final TextFileDataContainer whileContainer = state.peekWhile();

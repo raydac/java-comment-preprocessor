@@ -56,7 +56,8 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value condition = Expression.evalExpression(string, context);
       if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-        throw new IllegalArgumentException(DIRECTIVE_PREFIX + "while needs a boolean expression");
+        final String text = DIRECTIVE_PREFIX + "while needs a boolean expression";
+        throw new IllegalArgumentException(text, context.makeException(text, null));
       }
 
       state.pushWhile(true);

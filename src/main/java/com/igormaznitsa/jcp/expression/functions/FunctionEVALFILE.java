@@ -18,11 +18,10 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.io.File;
-import java.io.StringWriter;
-import org.apache.commons.io.FilenameUtils;
+import java.io.*;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -71,23 +70,18 @@ public class FunctionEVALFILE extends AbstractFunction {
 
     final String filePath = strfilePath.asString();
 
-    File theFile = null;
-    if (FilenameUtils.getPrefixLength(filePath) > 0) {
-      // non relative
-      theFile = new File(filePath);
+    final File theFile;
+    try {
+      theFile = context.getSourceFile(filePath);
     }
-    else {
-      for (final File f : context.getSourceDirectoryAsFiles()) {
-        theFile = new File(f, filePath);
-        if (theFile.isFile()) {
-          break;
-        }
-        theFile = null;
-      }
+    catch (IOException ex) {
+      final String text = "Can't get get source file '" + filePath + '\'';
+      throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
 
     if (theFile == null) {
-      throw new IllegalArgumentException("Can't find any file for path \'" + filePath + "\' in source folders");
+      final String text = "Can't find any file for path \'" + filePath + "\' in source folders";
+      throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 
     try {
@@ -99,7 +93,12 @@ public class FunctionEVALFILE extends AbstractFunction {
       return Value.valueOf(strWriter.toString());
     }
     catch (Exception ex) {
-      throw new IllegalArgumentException("Can't make evaluation for file '" + filePath + "\' for an exception [" + ex.getMessage() + ']', ex);
+      final String text = "Can't make evaluation for file '" + filePath + "\' for an exception [" + ex.getMessage() + ']';
+      PreprocessorException pex = PreprocessorException.extractPreprocessorException(ex);
+      if (ex == null) {
+        pex = context.makeException(text, ex);
+      }
+      throw new IllegalArgumentException(text, pex);
     }
   }
 }
