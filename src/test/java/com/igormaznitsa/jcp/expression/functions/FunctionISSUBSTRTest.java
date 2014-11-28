@@ -32,6 +32,7 @@ public class FunctionISSUBSTRTest extends AbstractFunctionTest {
     assertFunction("issubstr(\"test\",\"one\")", Value.BOOLEAN_FALSE);
     assertFunction("issubstr(\"\",\"one\")", Value.BOOLEAN_TRUE);
     assertFunction("issubstr(\"\",\"\")", Value.BOOLEAN_TRUE);
+    assertDestinationFolderEmpty();
   }
 
   @Test
@@ -43,6 +44,7 @@ public class FunctionISSUBSTRTest extends AbstractFunctionTest {
     assertFunctionException("issubstr(false,\"ttt\")");
     assertFunctionException("issubstr(false,true)");
     assertFunctionException("issubstr(\"d\",1)");
+    assertDestinationFolderEmpty();
   }
 
   @Override

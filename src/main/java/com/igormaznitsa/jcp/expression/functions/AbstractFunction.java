@@ -51,6 +51,7 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionSTR2WEB(),
     new FunctionSTRLEN(),
     new FunctionISSUBSTR(),
+    new FunctionEVALFILE(),
     new FunctionXML_ELEMENTAT(),
     new FunctionXML_ELEMENTSNUMBER(),
     new FunctionXML_GETATTRIBUTE(),

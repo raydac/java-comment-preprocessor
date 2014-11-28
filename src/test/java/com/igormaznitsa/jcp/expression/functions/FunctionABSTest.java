@@ -28,18 +28,22 @@ public class FunctionABSTest extends AbstractFunctionTest {
   public void testExecution_Int() throws Exception {
     assertFunction("abs(-10)", Value.valueOf(Long.valueOf(10)));
     assertFunction("abs(1-3*2)", Value.valueOf(Long.valueOf(5)));
+    assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_Float() throws Exception {
     assertFunction("abs(-10.5)", Value.valueOf(Float.valueOf(10.5f)));
+    assertDestinationFolderEmpty();
   }
 
+  @Test
   public void testExecution_wrongCases() throws Exception {
     assertFunctionException("abs(\"test\")");
     assertFunctionException("abs()");
     assertFunctionException("abs(false)");
     assertFunctionException("abs(1,2,3)");
+    assertDestinationFolderEmpty();
   }
 
   @Override

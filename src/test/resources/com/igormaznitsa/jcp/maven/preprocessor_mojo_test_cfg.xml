@@ -20,7 +20,7 @@
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.3.5-SNAPSHOT</version>
+                <version>5.4.0-SNAPSHOT</version>
                 <configuration>
                     <source>/</source>
                     <destination>destination_dir</destination>

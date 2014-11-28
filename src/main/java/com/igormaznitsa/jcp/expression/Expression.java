@@ -15,8 +15,11 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
@@ -109,6 +112,17 @@ public class Expression {
     final Class<?>[] methodArguments = new Class<?>[arity + 1];
     methodArguments[0] = PreprocessorContext.class;
 
+    final FilePositionInfo [] stack;
+    final String sources;
+    
+    if (state == null){
+      stack = ExpressionTree.EMPTY_STACK;
+      sources = "";
+    }else{
+      stack = state.getFileStack();
+      sources = state.getLastReadString();
+    }
+    
     final StringBuilder signature = new StringBuilder(AbstractFunction.EXECUTION_PREFIX);
 
     for (int i = 1; i <= arity; i++) {
@@ -156,13 +170,13 @@ public class Expression {
     }
 
     if (allowed == null) {
-      throw new IllegalStateException("Unsupported argument set detected for \'" + function.getName() + '\'');
+      throw new IllegalStateException("Unsupported argument detected for \'" + function.getName() + '\'', new PreprocessorException("Unsupported argument detected for \'" + function.getName() + '\'', sources, stack, null));
     }
 
     if (function instanceof FunctionDefinedByUser) {
       final FunctionDefinedByUser userFunction = (FunctionDefinedByUser) function;
       try {
-        return new ExpressionTreeElement(userFunction.execute(context, arguments));
+        return new ExpressionTreeElement(userFunction.execute(context, arguments),stack, sources);
       }
       catch (Exception unexpected) {
         throw new RuntimeException("Unexpected exception during a user function processing", unexpected);
@@ -182,13 +196,13 @@ public class Expression {
           throw new IllegalStateException("Unsupported function result detected [" + result.getType().getSignature() + ']');
         }
 
-        return new ExpressionTreeElement(result);
+        return new ExpressionTreeElement(result, stack, sources);
       }
       catch (NoSuchMethodException unexpected) {
         throw new UnsupportedOperationException("Can't find a function method to process data [" + signature.toString() + ']', unexpected);
       }
       catch (Exception unexpected) {
-        throw new RuntimeException("Can't execute a function method to process data [" + signature.toString() + ']', unexpected);
+        throw new RuntimeException("Can't execute a function method to process data [" + function.getClass().getName()+'.'+signature.toString() + ']', unexpected);
       }
     }
   }
@@ -205,6 +219,16 @@ public class Expression {
     final StringBuilder signatureAnyLeft = new StringBuilder(AbstractOperator.EXECUTION_PREFIX);
     final StringBuilder signatureAnyRight = new StringBuilder(AbstractOperator.EXECUTION_PREFIX);
 
+    final FilePositionInfo [] stack;
+    final String sources;
+    if (state == null){
+      stack = ExpressionTree.EMPTY_STACK;
+      sources = "";
+    }else{
+      stack = state.getFileStack();
+      sources = state.getLastReadString();
+    }
+    
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement arg = operatorElement.getChildForIndex(i);
       if (arg == null) {
@@ -266,7 +290,7 @@ public class Expression {
     }
 
     try {
-      return new ExpressionTreeElement((Value) executeMehod.invoke(operator, (Object[]) arguments));
+      return new ExpressionTreeElement((Value) executeMehod.invoke(operator, (Object[]) arguments), stack, sources);
     }
     catch (ArithmeticException arithEx) {
       throw arithEx;
@@ -299,7 +323,7 @@ public class Expression {
           throw new RuntimeException("Unknown variable [" + name + ']');
         }
         else {
-          treeElement = new ExpressionTreeElement(value);
+          treeElement = new ExpressionTreeElement(value, state.getFileStack(), state.getLastReadString());
         }
       }
       break;

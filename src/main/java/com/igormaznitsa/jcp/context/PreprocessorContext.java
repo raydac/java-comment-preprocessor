@@ -73,8 +73,9 @@ public class PreprocessorContext {
 
   private final List<File> configFiles = new ArrayList<File>();
 
-  private PreprocessingState currentState;
-
+  private transient PreprocessingState currentState;
+  private final boolean cloned;
+  
   /**
    * The constructor
    */
@@ -82,8 +83,61 @@ public class PreprocessorContext {
     setSourceDirectories(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
+    this.cloned = false;
   }
 
+  
+  /**
+   * Check that the preprocessor context is a clone of another context.
+   * @return true if the context is a clone, false otherwise
+   */
+  public boolean isCloned(){
+    return this.cloned;
+  }
+  
+  /**
+   * Make clone of a preprocessor context but without cloning state.
+   *
+   * @param context the context to be cloned, must not be null.
+   */
+  public PreprocessorContext(final PreprocessorContext context) {
+    if (context == null) {
+      throw new NullPointerException("Source context muet not be null");
+    }
+    this.verbose = context.verbose;
+    this.removeComments = context.removeComments;
+    this.clearDestinationDirectoryBefore = context.clearDestinationDirectoryBefore;
+    this.fileOutputDisabled = context.fileOutputDisabled;
+    this.keepNonExecutingLines = context.keepNonExecutingLines;
+    this.sourceDirectories = context.sourceDirectories;
+    this.destinationDirectory = context.destinationDirectory;
+    this.destinationDirectoryFile = context.destinationDirectoryFile;
+    this.sourceDirectoryFiles = context.sourceDirectoryFiles.clone();
+
+    this.processingFileExtensions.clear();
+    this.processingFileExtensions.addAll(context.processingFileExtensions);
+
+    this.excludedFileExtensions.clear();
+    this.excludedFileExtensions.addAll(context.excludedFileExtensions);
+
+    this.preprocessorExtension = context.preprocessorExtension;
+    this.inCharacterEncoding = context.inCharacterEncoding;
+    this.outCharacterEncoding = context.outCharacterEncoding;
+
+    this.globalVarTable.putAll(context.globalVarTable);
+    this.localVarTable.putAll(context.localVarTable);
+    this.specialVariableProcessors.putAll(context.specialVariableProcessors);
+    this.sharedResources.putAll(context.sharedResources);
+
+    this.configFiles.addAll(context.configFiles);
+
+    this.currentState = context.currentState;
+    
+    this.cloned = true;
+  }
+
+  
+  
   /**
    * Set the logger to print information and error messages
    *

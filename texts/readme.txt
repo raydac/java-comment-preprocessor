@@ -24,7 +24,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.3.5</version>
+                <version>5.4.0</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -58,6 +58,10 @@ It is a solid project without modules so that its inside testing (especially for
 
 History of changes
 ----------------------
+5.4.0
+- fixed vanished main class attribute in the manifest
+- added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
+- added special local context dependent variables '__filename__','__filefolder__' and '__file__' which allow to get name and path parametersfor the preprocessing file
 5.3.4
 - added support of test source folder preprocessing for maven projects
 - added the "clear" maven goal to clear created preprocessing folders or any defined folders and files

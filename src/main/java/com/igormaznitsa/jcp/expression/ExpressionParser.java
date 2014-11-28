@@ -15,7 +15,10 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
@@ -109,7 +112,21 @@ public final class ExpressionParser {
     }
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
-    final ExpressionTree result = new ExpressionTree();
+
+    final ExpressionTree result;
+    if (context == null) {
+      result = new ExpressionTree();
+    }
+    else {
+      final PreprocessingState state = context.getPreprocessingState();
+      if (state == null) {
+        result = new ExpressionTree();
+      }
+      else {
+        result = new ExpressionTree(state.getFileStack(), state.getLastReadString());
+      }
+    }
+
     if (readExpression(reader, result, context, false, false) != null) {
       throw new IllegalStateException("Wrong result during expression parsing");
     }
@@ -140,6 +157,19 @@ public final class ExpressionParser {
 
     ExpressionItem result = null;
 
+    final FilePositionInfo[] stack;
+    final String sourceLine;
+
+    if (context == null) {
+      stack = ExpressionTree.EMPTY_STACK;
+      sourceLine = "";
+    }
+    else {
+      final PreprocessingState state = context.getPreprocessingState();
+      stack = state == null ? null : state.getFileStack();
+      sourceLine = state == null ? null : state.getLastReadString();
+    }
+
     while (working) {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
@@ -160,14 +190,15 @@ public final class ExpressionParser {
                 result = nextItem;
               }
               else {
-                throw new IllegalStateException("Closing bracket without any opening one detected");
+                throw new IllegalStateException("Closing bracket without any opening one detected", new PreprocessorException("Closing bracket without any opening one detected", sourceLine, stack, null));
               }
             }
           }
           else if (nextItem == SpecialItem.BRACKET_OPENING) {
-            final ExpressionTree subExpression = new ExpressionTree();
+            final ExpressionTree subExpression;
+            subExpression = new ExpressionTree(stack, sourceLine);
             if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
-              throw new IllegalStateException("Unclosed bracket detected");
+              throw new IllegalStateException("Unclosed bracket detected", new PreprocessorException("Unclosed bracket detected", sourceLine, stack, null));
             }
             tree.addTree(subExpression);
           }
@@ -178,7 +209,7 @@ public final class ExpressionParser {
         else {
           if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
             final AbstractFunction function = (AbstractFunction) nextItem;
-            ExpressionTree functionTree = readFunction(function, reader, context);
+            ExpressionTree functionTree = readFunction(function, reader, context, stack, sourceLine);
             tree.addTree(functionTree);
           }
           else {
@@ -199,10 +230,12 @@ public final class ExpressionParser {
    * null
    * @param context a preprocessor context, it will be used for a user functions
    * and variables, it can be null
+   * @param callStack the current file call stack, can be null
+   * @param sources the current source line, can be null
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
-  ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context) throws IOException {
+  private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context, final FilePositionInfo[] callStack, final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
       throw new IllegalStateException("A function without parameters detected [" + function.getName() + ']');
@@ -213,8 +246,8 @@ public final class ExpressionParser {
     ExpressionTree functionTree = null;
 
     if (arity == 0) {
-      final ExpressionTree subExpression = new ExpressionTree();
-      final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context);
+      final ExpressionTree subExpression = new ExpressionTree(callStack, sources);
+      final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, callStack, sources);
       if (SpecialItem.BRACKET_CLOSING != lastItem) {
         throw new IllegalArgumentException("There is not closing bracket for function [" + function.getName() + ']');
       }
@@ -222,7 +255,7 @@ public final class ExpressionParser {
         throw new IllegalStateException("The function \'" + function.getName() + "\' doesn't need arguments");
       }
       else {
-        functionTree = new ExpressionTree();
+        functionTree = new ExpressionTree(callStack, sources);
         functionTree.addItem(function);
       }
     }
@@ -230,8 +263,8 @@ public final class ExpressionParser {
 
       final List<ExpressionTree> arguments = new ArrayList<ExpressionTree>(arity);
       for (int i = 0; i < function.getArity(); i++) {
-        final ExpressionTree subExpression = new ExpressionTree();
-        final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context);
+        final ExpressionTree subExpression = new ExpressionTree(callStack, sources);
+        final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, callStack, sources);
 
         if (SpecialItem.BRACKET_CLOSING == lastItem) {
           arguments.add(subExpression);
@@ -242,16 +275,18 @@ public final class ExpressionParser {
           continue;
         }
         else {
-          throw new IllegalArgumentException("Wrong argument definition for function detected [" + function.getName() + ']');
+          final String text = "Wrong argument definition for function detected [" + function.getName() + ']';
+          throw new IllegalArgumentException(text, new PreprocessorException(text, sources, callStack, null));
         }
       }
 
-      functionTree = new ExpressionTree();
+      functionTree = new ExpressionTree(callStack, sources);
       functionTree.addItem(function);
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
       if (arguments.size() != functionTreeElement.getArity()) {
-        throw new IllegalArgumentException("Wrong argument number for function \'" + function.getName() + "\', it needs " + function.getArity() + " argument(s)");
+        final String text = "Wrong argument number for function \'" + function.getName() + "\', it needs " + function.getArity() + " argument(s)";
+        throw new IllegalArgumentException(text, new PreprocessorException(text, sources, callStack, null));
       }
 
       functionTreeElement.fillArguments(arguments);
@@ -265,11 +300,13 @@ public final class ExpressionParser {
    * @param reader a reader to be the character source, must not be null
    * @param tree the result tree to be filled by read items, must not be null
    * @param context a preprocessor context, it can be null
+   * @param callStack the current file call stack, can be null
+   * @param source the current source line, can be null
    * @return the last read expression item (a comma or a bracket)
    * @throws IOException it will be thrown if there is any error during char
    * reading from the reader
    */
-  ExpressionItem readFunctionArgument(final PushbackReader reader, final ExpressionTree tree, final PreprocessorContext context) throws IOException {
+  ExpressionItem readFunctionArgument(final PushbackReader reader, final ExpressionTree tree, final PreprocessorContext context, final FilePositionInfo[] callStack, final String source) throws IOException {
     boolean working = true;
     ExpressionItem result = null;
     while (working) {
@@ -282,7 +319,7 @@ public final class ExpressionParser {
         working = false;
       }
       else if (SpecialItem.BRACKET_OPENING == nextItem) {
-        final ExpressionTree subExpression = new ExpressionTree();
+        final ExpressionTree subExpression = new ExpressionTree(callStack, source);
         if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
           throw new IllegalStateException("Non-closed bracket inside a function argument detected");
         }
@@ -295,7 +332,7 @@ public final class ExpressionParser {
       else {
         if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
           final AbstractFunction function = (AbstractFunction) nextItem;
-          ExpressionTree functionTree = readFunction(function, reader, context);
+          ExpressionTree functionTree = readFunction(function, reader, context, callStack, source);
           tree.addTree(functionTree);
         }
         else {

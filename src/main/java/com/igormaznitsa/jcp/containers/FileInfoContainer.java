@@ -22,10 +22,12 @@ import com.igormaznitsa.jcp.directives.AfterDirectiveProcessingBehaviour;
 import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * The class is one from the main classes in the preprocessor because it
@@ -167,8 +169,29 @@ public class FileInfoContainer {
     return preprocessingState.popAllExcludeIfInfoData();
   }
 
+  private void setSpecialContextBasedLocalVariables(final PreprocessorContext context){
+    context.setLocalVariable("__filename__", Value.valueOf(this.sourceFile.getName()));
+    final File srcFolder = this.sourceFile.getParentFile();
+    context.setLocalVariable("__filefolder__", Value.valueOf(srcFolder == null ? "" : FilenameUtils.normalizeNoEndSeparator(srcFolder.getAbsolutePath())+File.separatorChar));
+    context.setLocalVariable("__file__", Value.valueOf(FilenameUtils.normalize(this.sourceFile.getAbsolutePath())));
+  }
+  
+  /**
+   * Preprocess file, NB! it doesn't clear local variables automatically for cloned contexts
+   * @param state the start preprocessing state, can be null
+   * @param context the preprocessor context, must not be null
+   * @return the state for the preprocessed file
+   * @throws IOException
+   * @throws PreprocessorException 
+   */
   public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
-    context.clearLocalVariables();
+    // do not clear local variables for cloned context to keep them in the new context
+    if (!context.isCloned()){
+      context.clearLocalVariables();
+    }
+    
+    setSpecialContextBasedLocalVariables(context);
+    
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
     String trimmedProcessingString = null;

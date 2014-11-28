@@ -15,6 +15,9 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+
 /**
  * The class describes an object contains an expression tree
  *
@@ -22,7 +25,21 @@ package com.igormaznitsa.jcp.expression;
  */
 public class ExpressionTree {
 
+  public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
+
   private ExpressionTreeElement last;
+
+  private final FilePositionInfo[] callStack;
+  private final String sources;
+
+  public ExpressionTree() {
+    this(null, null);
+  }
+
+  public ExpressionTree(final FilePositionInfo[] callStack, final String sources) {
+    this.callStack = callStack == null ? EMPTY_STACK : callStack;
+    this.sources = sources == null ? "" : sources;
+  }
 
   /**
    * Allows to check that the tree is empty
@@ -42,11 +59,12 @@ public class ExpressionTree {
     if (item == null) {
       throw new NullPointerException("Item is null");
     }
+
     if (last == null) {
-      last = new ExpressionTreeElement(item);
+      last = new ExpressionTreeElement(item, this.callStack, this.sources);
     }
     else {
-      last = last.addTreeElement(new ExpressionTreeElement(item));
+      last = last.addTreeElement(new ExpressionTreeElement(item, this.callStack, this.sources));
     }
   }
 

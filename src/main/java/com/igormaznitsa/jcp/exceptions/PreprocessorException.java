@@ -29,10 +29,10 @@ public class PreprocessorException extends Exception {
   private final String processingString;
   private final FilePositionInfo[] callStack;
 
-  public PreprocessorException(final String message, final String processinText, final FilePositionInfo[] callStack, final Throwable cause) {
+  public PreprocessorException(final String message, final String processedText, final FilePositionInfo[] callStack, final Throwable cause) {
     super(message, cause);
 
-    this.processingString = processinText;
+    this.processingString = processedText;
     this.callStack = callStack == null ? new FilePositionInfo[0] : callStack.clone();
   }
 
@@ -90,5 +90,15 @@ public class PreprocessorException extends Exception {
             append(' ').append('[').append(makeCallStackAsString()).append(']');
 
     return result.toString();
+  }
+  
+  public static PreprocessorException extractPreprocessorException(final Throwable thr){
+    if (thr == null) return null;
+    Throwable result = thr;
+    do{
+      if (result instanceof PreprocessorException) return (PreprocessorException)result;
+      result = result.getCause();
+    }while(result!=null);
+    return null;
   }
 }

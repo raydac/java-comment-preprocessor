@@ -28,11 +28,13 @@ public class FunctionROUNDTest extends AbstractFunctionTest {
   public void testExecution_Float() throws Exception {
     assertFunction("round(4.7)", Value.valueOf(Long.valueOf(5L)));
     assertFunction("round(3.1+3.6)", Value.valueOf(Long.valueOf(7L)));
+    assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_Int() throws Exception {
     assertFunction("round(4)", Value.valueOf(Long.valueOf(4L)));
+    assertDestinationFolderEmpty();
   }
 
   @Test
@@ -41,6 +43,7 @@ public class FunctionROUNDTest extends AbstractFunctionTest {
     assertFunctionException("round(\"aaa\")");
     assertFunctionException("round()");
     assertFunctionException("round(0.3,2.1)");
+    assertDestinationFolderEmpty();
   }
 
   @Override

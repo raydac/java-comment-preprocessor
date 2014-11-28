@@ -27,6 +27,7 @@ public class FunctionSTRLENTest extends AbstractFunctionTest {
   @Test
   public void testExecution_Str() throws Exception {
     assertFunction("strlen(\"hello world\")", Value.valueOf(Long.valueOf(11L)));
+    assertDestinationFolderEmpty();
   }
 
   @Test
@@ -36,6 +37,7 @@ public class FunctionSTRLENTest extends AbstractFunctionTest {
     assertFunctionException("strlen(true)");
     assertFunctionException("strlen(1,2)");
     assertFunctionException("strlen(,)");
+    assertDestinationFolderEmpty();
   }
 
   @Override

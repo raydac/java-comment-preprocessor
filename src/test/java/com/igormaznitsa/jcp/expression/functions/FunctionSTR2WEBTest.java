@@ -27,6 +27,7 @@ public class FunctionSTR2WEBTest extends AbstractFunctionTest {
   @Test
   public void testExecution_Str() throws Exception {
     assertFunction("str2web(\"<hello>\")", Value.valueOf("&lt;hello&gt;"));
+    assertDestinationFolderEmpty();
   }
 
   @Test
@@ -35,6 +36,8 @@ public class FunctionSTR2WEBTest extends AbstractFunctionTest {
     assertFunctionException("str2web(1,2)");
     assertFunctionException("str2web(true)");
     assertFunctionException("str2web(3)");
+    assertDestinationFolderEmpty();
+   
   }
 
   @Override

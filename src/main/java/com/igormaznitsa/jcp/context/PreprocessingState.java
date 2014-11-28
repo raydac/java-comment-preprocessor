@@ -52,7 +52,7 @@ public final class PreprocessingState {
     private final FileInfoContainer fileInfoContainer;
     private final String condition;
     private final int stringIndex;
-
+    
     public ExcludeIfInfo(final FileInfoContainer fileInfoContainer, final String condition, final int stringIndex) {
       this.fileInfoContainer = fileInfoContainer;
       this.condition = condition;
@@ -93,7 +93,8 @@ public final class PreprocessingState {
   private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
-
+  private String lastReadString;
+  
   PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
     if (rootFile == null) {
       throw new NullPointerException("The root file is null");
@@ -133,6 +134,10 @@ public final class PreprocessingState {
     fileStack.push(rootContainer);
   }
 
+  public String getLastReadString(){
+    return this.lastReadString;
+  }
+  
   public void pushExcludeIfData(final FileInfoContainer infoContainer, final String excludeIfCondition, final int stringIndex) {
     if (infoContainer == null) {
       throw new NullPointerException("File info is null");
@@ -186,6 +191,15 @@ public final class PreprocessingState {
     return fileStack.peek();
   }
 
+  public FilePositionInfo [] getFileStack(){
+    final FilePositionInfo[] stack = new FilePositionInfo[fileStack.size()];
+    for (int i = 0; i < fileStack.size(); i++) {
+      final TextFileDataContainer fileContainer = fileStack.get(i);
+      stack[i] = new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
+    }
+    return stack;
+  }
+  
   public TextFileDataContainer popTextContainer() {
     if (fileStack.size() == 1) {
       throw new IllegalStateException("Attemption to remove the root file");
@@ -236,7 +250,9 @@ public final class PreprocessingState {
   }
 
   public String nextLine() {
-    return fileStack.peek().nextLine();
+    final String result = fileStack.peek().nextLine();
+    this.lastReadString = result;
+    return result;
   }
 
   public PreprocessingState goToString(final int stringIndex) {
@@ -386,7 +402,7 @@ public final class PreprocessingState {
     }
   }
 
-  private void writePrinterBuffers(final Writer writer) throws IOException {
+  public void writePrinterBuffers(final Writer writer) throws IOException {
     if (!prefixPrinter.isEmpty()) {
       prefixPrinter.writeBufferTo(writer);
     }
@@ -401,12 +417,6 @@ public final class PreprocessingState {
   }
 
   public PreprocessorException makeException(final String message, final String text, final Throwable cause) {
-    final FilePositionInfo[] stack = new FilePositionInfo[fileStack.size()];
-    for (int i = 0; i < fileStack.size(); i++) {
-      final TextFileDataContainer fileContainer = fileStack.get(i);
-      stack[i] = new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
-    }
-
-    return new PreprocessorException(message, text, stack, cause);
+    return new PreprocessorException(message, text, getFileStack(), cause);
   }
 }

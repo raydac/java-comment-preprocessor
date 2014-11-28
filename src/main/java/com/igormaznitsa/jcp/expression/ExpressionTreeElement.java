@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
@@ -67,11 +69,24 @@ public class ExpressionTreeElement {
   private int nextChildSlot = 0;
 
   /**
+   * Contains the source string for the expression.
+   */
+  private final String sourceString;
+  
+  /**
+   * Current call stack of the preprocessor to the source string.
+   */
+  private final FilePositionInfo [] callStack;
+  
+  /**
    * The constructor
    *
    * @param item an expression item to be wrapped, must not be null
    */
-  ExpressionTreeElement(final ExpressionItem item) {
+  ExpressionTreeElement(final ExpressionItem item, final FilePositionInfo [] callStack, final String sourceString) {
+    this.sourceString = sourceString;
+    this.callStack = callStack;
+    
     if (item == null) {
       throw new NullPointerException("The item is null");
     }
@@ -223,6 +238,9 @@ public class ExpressionTreeElement {
       if (parentTreeElement != null) {
         parentTreeElement.replaceElement(this, element);
       }
+      if (element.nextChildSlot>=element.childElements.length){
+        throw new IllegalArgumentException("Can't process expression item, may be wrong number of arguments",new PreprocessorException("Can't process expression item, may be wrong number of arguments", this.sourceString, this.callStack, null));
+      }
       element.childElements[element.nextChildSlot] = this;
       element.nextChildSlot++;
       this.parentTreeElement = element;
@@ -284,7 +302,7 @@ public class ExpressionTreeElement {
 
       final ExpressionTreeElement root = arg.getRoot();
       if (root == null) {
-        throw new IllegalArgumentException("Empty argument [" + (i + 1) + "] detected");
+        throw new IllegalArgumentException("Empty argument [" + (i + 1) + "] detected",new PreprocessorException("Empty argument [" + (i + 1) + "] detected", this.sourceString, this.callStack, null));
       }
       childElements[i] = root;
       root.parentTreeElement = this;

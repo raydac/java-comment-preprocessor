@@ -15,7 +15,9 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionParser;
@@ -80,8 +82,26 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     final PushbackReader reader = new PushbackReader(new StringReader(str));
     final List<ExpressionTree> result = new ArrayList<ExpressionTree>();
 
+    final PreprocessingState state = context.getPreprocessingState();
+    final FilePositionInfo[] stack;
+    final String sources;
+    if (state == null) {
+      stack = null;
+      sources = null;
+    }
+    else {
+      stack = state.getFileStack();
+      sources = state.getLastReadString();
+    }
+
     while (true) {
-      final ExpressionTree tree = new ExpressionTree();
+      final ExpressionTree tree;
+      if (state == null) {
+        tree = new ExpressionTree();
+      }
+      else {
+        tree = new ExpressionTree(stack, sources);
+      }
       final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);
 
       if (delimiter != null && ExpressionParser.SpecialItem.COMMA != delimiter) {
