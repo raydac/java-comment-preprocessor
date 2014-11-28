@@ -61,7 +61,8 @@ History of changes
 5.4.0
 - fixed vanished main class attribute in the manifest
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
-- added special local context dependent variables '__filename__','__filefolder__' and '__file__' which allow to get name and path parametersfor the preprocessing file
+- added special local context dependent variables '__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the preprocessing file
+- added function 'STR str2java(STR,BOOL)' to escape and split string to be presented as java sources
 5.3.4
 - added support of test source folder preprocessing for maven projects
 - added the "clear" maven goal to clear created preprocessing folders or any defined folders and files

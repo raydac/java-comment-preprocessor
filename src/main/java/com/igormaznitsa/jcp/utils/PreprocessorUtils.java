@@ -407,4 +407,8 @@ public enum PreprocessorUtils {
 
     return result;
   }
+
+  public static String getNextLineCodes(){
+    return System.getProperty("line.separator","\r\n");
+  }
 }
