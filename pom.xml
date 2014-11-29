@@ -279,6 +279,9 @@
           <target>1.6</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
+          <excludes>
+            <exclude>**/JCPreprocessor/src/test/resources/com/igormaznitsa/jcp/it/maven/dummy_maven_project/**/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
