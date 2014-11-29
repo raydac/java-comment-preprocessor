@@ -105,7 +105,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "it opens an XML file and return its descriptor";
+    return "open and parse into DOM an xml file and return its descriptor";
   }
 
   @Override

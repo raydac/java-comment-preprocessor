@@ -62,7 +62,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "allows to find elements by their tag name and form list by them";
+    return "get element list descriptor of named elements from an element defined by its descriptor";
   }
 
   @Override

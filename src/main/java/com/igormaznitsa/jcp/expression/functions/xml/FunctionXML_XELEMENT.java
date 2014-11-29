@@ -84,7 +84,7 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "allows to get an element in a document for xpath";
+    return "get an element descriptor for XPath in a document defined by its descriptor";
   }
 
   @Override

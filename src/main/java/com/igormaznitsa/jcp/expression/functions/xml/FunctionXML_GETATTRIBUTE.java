@@ -49,7 +49,7 @@ public final class FunctionXML_GETATTRIBUTE extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "allows to get an element attribute by its name";
+    return "get attribute text by its name from an element defined by its descriptor, if attribute nonexists then empty string";
   }
 
   @Override

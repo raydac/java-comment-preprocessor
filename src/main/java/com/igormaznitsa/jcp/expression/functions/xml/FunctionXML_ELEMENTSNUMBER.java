@@ -49,7 +49,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "returns the number of elements of an active element list";
+    return "get number of elements in an element list defined by its descriptor";
   }
 
   @Override

@@ -35,8 +35,13 @@ public class FunctionXML_GETATTRIBUTETest extends AbstractFunctionXMLTest {
   }
 
   @Test
-  public void testExecution() throws Exception {
+  public void testExecution_ExistsAttribute() throws Exception {
     assertEquals("hello", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("attr")).asString());
+  }
+
+  @Test
+  public void testExecution_nonExistsAttribute() throws Exception {
+    assertEquals("", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("hhhmattr")).asString());
   }
 
   @Override
