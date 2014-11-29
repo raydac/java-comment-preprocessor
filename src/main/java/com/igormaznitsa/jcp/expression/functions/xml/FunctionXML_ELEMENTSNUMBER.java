@@ -18,15 +18,13 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
-import org.w3c.dom.NodeList;
 
 /**
  * The class implements the xml_elementsnumber function
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
+public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
@@ -35,16 +33,8 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
     return "xml_elementsnumber";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value listId) {
-    final String elementIdStr = listId.asString();
-
-    final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
-    if (container == null || container.getNodeList() == null) {
-      throw new IllegalArgumentException("Can't find any element list for the \'" + elementIdStr + "\' id");
-    }
-
-    final NodeList list = container.getNodeList();
-    return Value.valueOf(Long.valueOf(list.getLength()));
+  public Value executeStr(final PreprocessorContext context, final Value elementListId) {
+    return Value.valueOf(Long.valueOf(getElementListSize(context, elementListId.asString())));
   }
 
   @Override
@@ -59,7 +49,7 @@ public final class FunctionXML_ELEMENTSNUMBER extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns the length of an element list";
+    return "returns the number of elements of an active element list";
   }
 
   @Override

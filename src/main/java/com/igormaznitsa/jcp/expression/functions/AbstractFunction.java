@@ -27,6 +27,7 @@ import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.expression.functions.xml.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -60,7 +61,9 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionXML_GETELEMENTNAME(),
     new FunctionXML_GETELEMENTSFORNAME(),
     new FunctionXML_GETELEMENTTEXT(),
-    new FunctionXML_OPEN()
+    new FunctionXML_OPEN(),
+    new FunctionXML_XLIST(),
+    new FunctionXML_XELEMENT()
   };
 
   /**

@@ -18,16 +18,13 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * The class implements the xml_elementat function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_ELEMENTAT extends AbstractFunction {
+public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.INT}};
 
@@ -36,37 +33,8 @@ public final class FunctionXML_ELEMENTAT extends AbstractFunction {
     return "xml_elementat";
   }
 
-  public Value executeStrInt(final PreprocessorContext context, final Value listId, final Value index) {
-    final String listIdStr = listId.asString();
-    final int indexAsInt = index.asLong().intValue();
-
-    final String listElementId = listIdStr + '_' + indexAsInt;
-    final Value result = Value.valueOf(listElementId);
-
-    NodeContainer container = (NodeContainer) context.getSharedResource(listElementId);
-    if (container == null) {
-
-      container = (NodeContainer) context.getSharedResource(listIdStr);
-      if (container == null) {
-        throw new IllegalArgumentException("Can't find any active node list for the id \'" + listIdStr + '\'');
-      }
-
-      final NodeList list = container.getNodeList();
-      if (indexAsInt < 0 || indexAsInt >= list.getLength()) {
-        throw new IllegalArgumentException("The Element Index is out of bound [" + indexAsInt + ']');
-      }
-
-      final Element element = (Element) list.item(indexAsInt);
-
-      if (element == null) {
-        throw new IllegalArgumentException("Index is not valud [" + indexAsInt + ']');
-      }
-
-      container = new NodeContainer(UID_COUNTER.getAndIncrement(), element);
-      context.setSharedResource(listElementId, container);
-    }
-
-    return result;
+  public Value executeStrInt(final PreprocessorContext context, final Value elementListId, final Value elementIndex) {
+    return Value.valueOf(findElementForIndex(context, elementListId.asString(), elementIndex.asLong().intValue()));
   }
 
   @Override
@@ -81,7 +49,7 @@ public final class FunctionXML_ELEMENTAT extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it reads an element at some position from an element list and return its id";
+    return "allows to get the element id from an xml node list for its index (the first index is 0)";
   }
 
   @Override

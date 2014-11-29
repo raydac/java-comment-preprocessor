@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  *
  * @author Igor Maznits (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_OPEN extends AbstractFunction {
+public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
   public static final String RES_XML_DOC_PREFIX = "xml_doc_";
   public static final String RES_XML_ELEMENT_PREFIX = "xml_elem_";
@@ -43,30 +43,34 @@ public final class FunctionXML_OPEN extends AbstractFunction {
     return "xml_open";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value fileName) {
-    final String name = fileName.asString();
+  public Value executeStr(final PreprocessorContext context, final Value filePath) {
+    final String name = filePath.asString();
 
-    final String xml_docId = RES_XML_DOC_PREFIX + name;
-    NodeContainer docContainer = (NodeContainer) context.getSharedResource(xml_docId);
-
+    final String documentId = makeDocumentId(name);
+    final String documentIdRoot = makeDocumentRootId(documentId);
+    
+    NodeContainer docContainer = (NodeContainer) context.getSharedResource(documentId);
     if (docContainer == null) {
       File file = null;
       try {
         file = context.getSourceFile(name);
       }
       catch (IOException unexpected) {
-        throw new IllegalArgumentException("Can't find source file \'" + name + '\'', unexpected);
+        final String text = "Can't read \'" + name + '\'';
+        throw new IllegalArgumentException(text, context.makeException(text, unexpected));
       }
 
-      final Document document = openFileAndParse(file);
+      final Document document = openFileAndParse(context, file);
       docContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document);
-      context.setSharedResource(xml_docId, docContainer);
+      context.setSharedResource(documentId, docContainer);
+      final NodeContainer rootContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document.getDocumentElement());
+      context.setSharedResource(documentIdRoot, rootContainer);
     }
 
-    return Value.valueOf(xml_docId);
+    return Value.valueOf(documentId);
   }
 
-  private Document openFileAndParse(final File file) {
+  private Document openFileAndParse(final PreprocessorContext context, final File file) {
     final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     docBuilderFactory.setIgnoringComments(true);
     docBuilderFactory.setCoalescing(true);
@@ -76,13 +80,16 @@ public final class FunctionXML_OPEN extends AbstractFunction {
       return docBuilderFactory.newDocumentBuilder().parse(file);
     }
     catch (ParserConfigurationException unexpected) {
-      throw new IllegalStateException("XML parser configuration exception", unexpected);
+      final String text = "XML parser configuration exception";
+      throw new IllegalStateException(text,context.makeException(text, unexpected));
     }
     catch (SAXException unexpected) {
-      throw new IllegalStateException("Exception during XML parsing", unexpected);
+      final String text = "Exception during XML parsing";
+      throw new IllegalStateException(text, context.makeException(text, unexpected));
     }
     catch (IOException unexpected) {
-      throw new IllegalArgumentException("Can't read XML file", unexpected);
+      final String text = "Can't read XML file";
+      throw new IllegalArgumentException(text, context.makeException(text, unexpected));
     }
   }
 

@@ -18,16 +18,13 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * The class implements the xml_getroot function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETROOT extends AbstractFunction {
+public final class FunctionXML_GETROOT extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
@@ -36,39 +33,15 @@ public final class FunctionXML_GETROOT extends AbstractFunction {
     return "xml_getroot";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value docId) {
-    final String docIdStr = docId.asString();
-    final String docIdStrRoot = docIdStr + "_root";
-
-    final Value result = Value.valueOf(docIdStrRoot);
-    NodeContainer nodeContainer = null;
-    try {
-      nodeContainer = (NodeContainer) context.getSharedResource(docIdStrRoot);
+  public Value executeStr(final PreprocessorContext context, final Value documentId) {
+    final String documentRootId = makeDocumentRootId(documentId.asString());
+    
+    final NodeContainer root = (NodeContainer) context.getSharedResource(documentRootId);
+    if (root == null){
+      final String text = "Can't find any root for document ["+documentId+']';
+      throw new IllegalArgumentException(text, context.makeException(text, null));
     }
-    catch (ClassCastException ex) {
-      throw new IllegalArgumentException("Wrong type of the cached object [" + docIdStrRoot + ']');
-    }
-
-    if (nodeContainer == null) {
-      try {
-        nodeContainer = (NodeContainer) context.getSharedResource(docIdStr);
-      }
-      catch (ClassCastException ex) {
-        throw new IllegalArgumentException("Incomatible type of cached document [" + docIdStr + ']');
-      }
-
-      if (nodeContainer == null) {
-        throw new IllegalArgumentException("Can't find any opened xml document for the \'" + docIdStr + "\' id");
-      }
-
-      final Document doc = (Document) nodeContainer.getNode();
-      final Element rootElement = doc.getDocumentElement();
-
-      final NodeContainer rootContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), rootElement);
-      context.setSharedResource(docIdStrRoot, rootContainer);
-    }
-
-    return result;
+    return Value.valueOf(documentRootId);
   }
 
   @Override

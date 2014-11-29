@@ -18,14 +18,14 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
+import org.w3c.dom.Element;
 
 /**
  * The class implements the xml_getelementname function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
+public final class FunctionXML_GETELEMENTNAME extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
@@ -35,14 +35,8 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
   }
 
   public Value executeStr(final PreprocessorContext context, final Value elementId) {
-    final String elementIdStr = elementId.asString();
-
-    final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
-    if (container == null) {
-      throw new IllegalArgumentException("Can't find any active element for the \'" + elementIdStr + "\' id");
-    }
-
-    return Value.valueOf(container.getNode().getNodeName());
+    final Element cachedelement = getCachedElement(context, elementId.asString());
+    return Value.valueOf(cachedelement.getTagName());
   }
 
   @Override
@@ -57,7 +51,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns the element node name";
+    return "allows to get the name of an element";
   }
 
   @Override

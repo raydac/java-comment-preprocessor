@@ -814,11 +814,13 @@ public class PreprocessorContext {
    */
   public File getSourceFile(final String path) throws IOException {
     if (path == null) {
-      throw new NullPointerException("File is null");
+      final String text = "Path is null";
+      throw new IllegalArgumentException(text, makeException(text, null));
     }
 
     if (path.isEmpty()) {
-      throw new IllegalArgumentException("File name is an empty string");
+      final String text = "File name is an empty string";
+      throw new IllegalArgumentException(text,makeException(text, null));
     }
 
     File result = null;
@@ -848,12 +850,14 @@ public class PreprocessorContext {
         result = null;
       }
       else {
-        throw new IllegalStateException("Found a few variants for \'" + path + "\' in different source roots");
+        final String text = "Found several variants for path \'" + path + "\' in different source roots";
+        throw new IllegalStateException(text, makeException(text, null));
       }
     }
 
-    if (result == null || !result.isFile() || !result.exists()) {
-      throw new FileNotFoundException("File " + PreprocessorUtils.getFilePath(result) + " is not found");
+    if (result == null || !result.isFile()) {
+      final String text = "The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file";
+      throw new IllegalArgumentException(text, makeException(text, null));
     }
     return result;
   }

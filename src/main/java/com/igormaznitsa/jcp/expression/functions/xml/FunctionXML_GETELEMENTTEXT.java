@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
+public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
@@ -36,19 +36,8 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
   }
 
   public Value executeStr(final PreprocessorContext context, final Value elementid) {
-    final String elementIdStr = elementid.asString();
-
-    final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
-    if (container == null) {
-      throw new IllegalArgumentException("Can't find opened xml element for the \'" + elementIdStr + "\' id");
-    }
-    try {
-      final Element element = (Element) container.getNode();
-      return Value.valueOf(element.getTextContent());
-    }
-    catch (ClassCastException unexpected) {
-      throw new IllegalArgumentException("Incompatible cached item for \'" + elementIdStr + '\'');
-    }
+    final Element element = getCachedElement(context, elementid.asString());
+    return Value.valueOf(element.getTextContent());
   }
 
   @Override
@@ -63,7 +52,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns the text from an element including text of all its children";
+    return "allows to get the text content of an element";
   }
 
   @Override

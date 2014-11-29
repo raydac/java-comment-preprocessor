@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -27,7 +26,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
+public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
 
@@ -37,25 +36,18 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
   }
 
   public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value name) {
-    final String elementIdStr = elementId.asString();
-    final String nameStr = name.asString();
-
-    final String nodeListId = elementIdStr + "_nodelist_" + name;
-    final Value result = Value.valueOf(nodeListId);
-
-    NodeContainer container = (NodeContainer) context.getSharedResource(nodeListId);
+    final String nodeName = name.asString();
+    final Element element = getCachedElement(context, elementId.asString());
+    final String listId = makeElementListId(element, nodeName);
+    
+    NodeContainer container = (NodeContainer) context.getSharedResource(listId);
     if (container == null) {
-      container = (NodeContainer) context.getSharedResource(elementIdStr);
-      if (container == null) {
-        throw new IllegalArgumentException("Can't find any element for the \'" + elementIdStr + "\' id");
-      }
-      final Element element = (Element) container.getNode();
-      final NodeList list = element.getElementsByTagName(nameStr);
+      final NodeList list = element.getElementsByTagName(nodeName);
       container = new NodeContainer(UID_COUNTER.getAndIncrement(), list);
-      context.setSharedResource(nodeListId, container);
+      context.setSharedResource(listId, container);
     }
 
-    return result;
+    return Value.valueOf(listId);
   }
 
   @Override
@@ -70,7 +62,7 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it makes a node list from element children with the name and return the list id";
+    return "allows to find elements by their tag name and form list by them";
   }
 
   @Override

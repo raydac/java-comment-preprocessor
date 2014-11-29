@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <root attr="hello">
-<element>elem1</element>
+<element attr="first">elem1</element>
 <element>elem2</element>
 <element>elem3</element>
 <element><![CDATA[<test>]]></element>

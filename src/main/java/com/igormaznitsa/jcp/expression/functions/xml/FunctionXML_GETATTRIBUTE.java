@@ -18,15 +18,13 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
-import org.w3c.dom.Element;
 
 /**
  * The class implements the xml_getattribute function
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETATTRIBUTE extends AbstractFunction {
+public final class FunctionXML_GETATTRIBUTE extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
 
@@ -36,19 +34,7 @@ public final class FunctionXML_GETATTRIBUTE extends AbstractFunction {
   }
 
   public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value attributeName) {
-    final String elementIdStr = elementId.asString();
-    final String attributeNameStr = attributeName.asString();
-
-    final NodeContainer container = (NodeContainer) context.getSharedResource(elementIdStr);
-    if (container == null) {
-      throw new IllegalArgumentException("Can't find any active element for the \'" + elementIdStr + "\' id");
-    }
-    try {
-      return Value.valueOf(((Element) container.getNode()).getAttribute(attributeNameStr));
-    }
-    catch (ClassCastException ex) {
-      throw new IllegalArgumentException("Incompatible cached element type");
-    }
+    return Value.valueOf(getAttribute(context, elementId.asString(), attributeName.asString()));
   }
 
   @Override
@@ -63,7 +49,7 @@ public final class FunctionXML_GETATTRIBUTE extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns an attribute value of an element";
+    return "allows to get an element attribute by its name";
   }
 
   @Override
