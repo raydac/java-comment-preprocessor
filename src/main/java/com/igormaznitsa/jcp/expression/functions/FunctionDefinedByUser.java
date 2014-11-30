@@ -63,6 +63,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
     return name;
   }
 
+  @Override
   public int getArity() {
     return argsNumber;
   }
