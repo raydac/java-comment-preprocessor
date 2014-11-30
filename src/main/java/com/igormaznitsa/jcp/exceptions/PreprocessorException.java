@@ -69,26 +69,23 @@ public class PreprocessorException extends Exception {
 
   private String makeCallStackAsString() {
     final StringBuilder result = new StringBuilder();
-    for (int i = 0; i < callStack.length; i++) {
+    for (int i = 0; i < this.callStack.length; i++) {
       if (i > 0) {
         result.append("<-");
       }
-      result.append(callStack[i].toString());
+      result.append(this.callStack[i].toString());
     }
     return result.toString();
   }
 
   public FilePositionInfo[] getFileStack() {
-    return callStack.clone();
+    return this.callStack.clone();
   }
 
   @Override
   public String toString() {
     final StringBuilder result = new StringBuilder();
-
-    result.append(getMessage()).append(' ').append(processingString).
-            append(' ').append('[').append(makeCallStackAsString()).append(']');
-
+    result.append(getMessage()).append(", call stack: ").append(makeCallStackAsString()).append(", source line: ").append(this.processingString);
     return result.toString();
   }
   

@@ -17,6 +17,7 @@ package com.igormaznitsa.jcp.maven;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import java.io.File;
@@ -373,7 +374,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {
       for (final File file : this.cfgFiles) {
         if (file == null) {
-          throw new NullPointerException("A NULL in place of a config file detected");
+          throw new NullPointerException("Detected null where a config file was expected");
         }
 
         context.addConfigFile(file);
@@ -402,7 +403,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       context = makePreprocessorContext();
     }
     catch (Exception ex) {
-      throw new MojoExecutionException("Exception during preprocessor context creation", ex);
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+      throw new MojoExecutionException(pp==null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
     }
 
     try {
@@ -413,7 +415,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       }
     }
     catch (Exception ex) {
-      throw new MojoFailureException("Exception during preprocessing or preparation", ex);
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+      throw new MojoFailureException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
     }
 
   }

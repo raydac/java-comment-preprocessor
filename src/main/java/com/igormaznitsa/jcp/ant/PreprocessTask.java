@@ -105,8 +105,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean keepLines = false;
 
   private Map<String, Value> antVariables;
-  private List<Global> globalVariables = new ArrayList<Global>();
-  private List<CfgFile> configFiles = new ArrayList<CfgFile>();
+  private final List<Global> globalVariables = new ArrayList<Global>();
+  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
 
   /**
    * Set the "source" attribute, it allows to define the source directory to be
@@ -306,22 +306,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     return context;
   }
 
-  final String extractMessageFromException(final Throwable exception) {
-    Throwable thr = exception;
-    String result = exception.getMessage();
-
-    while (result != null) {
-      if (thr instanceof PreprocessorException || thr instanceof IllegalArgumentException || thr instanceof IllegalStateException) {
-        result = thr.getMessage() != null ? thr.getMessage() : result;
-        break;
-      }
-      thr = thr.getCause();
-      result = thr.getMessage() != null ? thr.getMessage() : result;
-    }
-
-    return result == null ? "" : result;
-  }
-
   @Override
   public void execute() throws BuildException {
     PreprocessorContext context = null;
@@ -331,7 +315,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       context = generatePreprocessorContext();
     }
     catch (Exception unexpected) {
-      throw new BuildException(extractMessageFromException(unexpected), unexpected);
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
+      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
     }
 
     preprocessor = new JCPreprocessor(context);
@@ -340,7 +325,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       preprocessor.execute();
     }
     catch (Exception unexpected) {
-      throw new BuildException(extractMessageFromException(unexpected), unexpected);
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
+      throw new BuildException(pp == null ? unexpected.getMessage(): pp.toString(), pp == null ? unexpected : pp);
     }
   }
 

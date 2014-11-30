@@ -157,7 +157,13 @@ public class FileInfoContainer {
       }
     }
     catch (Exception unexpected) {
-      throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
+      if (pp == null) {
+        throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
+      }
+      else {
+        throw pp;
+      }
     }
 
     if (!preprocessingState.isIfStackEmpty()) {
@@ -169,29 +175,31 @@ public class FileInfoContainer {
     return preprocessingState.popAllExcludeIfInfoData();
   }
 
-  private void setSpecialContextBasedLocalVariables(final PreprocessorContext context){
+  private void setSpecialContextBasedLocalVariables(final PreprocessorContext context) {
     context.setLocalVariable("__filename__", Value.valueOf(this.sourceFile.getName()));
     final File srcFolder = this.sourceFile.getParentFile();
-    context.setLocalVariable("__filefolder__", Value.valueOf(srcFolder == null ? "" : FilenameUtils.normalizeNoEndSeparator(srcFolder.getAbsolutePath())+File.separatorChar));
+    context.setLocalVariable("__filefolder__", Value.valueOf(srcFolder == null ? "" : FilenameUtils.normalizeNoEndSeparator(srcFolder.getAbsolutePath()) + File.separatorChar));
     context.setLocalVariable("__file__", Value.valueOf(FilenameUtils.normalize(this.sourceFile.getAbsolutePath())));
   }
-  
+
   /**
-   * Preprocess file, NB! it doesn't clear local variables automatically for cloned contexts
+   * Preprocess file, NB! it doesn't clear local variables automatically for
+   * cloned contexts
+   *
    * @param state the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
    * @return the state for the preprocessed file
    * @throws IOException
-   * @throws PreprocessorException 
+   * @throws PreprocessorException
    */
   public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
     // do not clear local variables for cloned context to keep them in the new context
-    if (!context.isCloned()){
+    if (!context.isCloned()) {
       context.clearLocalVariables();
     }
-    
+
     setSpecialContextBasedLocalVariables(context);
-    
+
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
     String trimmedProcessingString = null;
