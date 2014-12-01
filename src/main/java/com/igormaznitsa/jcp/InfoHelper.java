@@ -55,7 +55,7 @@ public final class InfoHelper {
     }
     result.add(DELIMITER);
 
-    result.add("Preprocessor directives\n------------");
+    result.add("Preprocessor directives (THE PREPROCESSOR IS A TWO-PASS ONE)\n------------");
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
       result.add(makeDirectiveReference(handler));
     }
@@ -80,7 +80,9 @@ public final class InfoHelper {
     result.add("INTEGER: 2374,0x56FE (signed 64 bit)");
     result.add("STRING : \"Hello World!\" (or $Hello World!$ for the command string)");
     result.add("FLOAT  : 0.745 (signed 32 bit)");
-
+    result.add(DELIMITER);
+    result.add("Special variables\n------------");
+    
     return result;
   }
 
@@ -92,7 +94,7 @@ public final class InfoHelper {
 
   private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
     final String directiveName = directive.getFullName();
-    final String descr = directive.getReference()+'('+(directive.isGlobalPhaseAllowed()?"I pass":"II pass")+')';
+    final String descr = directive.getReference()+" ("+(directive.isGlobalPhaseAllowed()?"I pass":"II pass")+')';
     return makeColumns(directiveName, descr, 14);
   }
 

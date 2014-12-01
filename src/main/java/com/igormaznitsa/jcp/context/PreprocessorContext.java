@@ -342,8 +342,8 @@ public class PreprocessorContext {
     int index = 0;
     for (final String dirName : splitted) {
       final File dir = new File(dirName);
-      if (!dir.exists() || !dir.isDirectory()) {
-        throw new IllegalArgumentException("Can't find source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
+      if (!dir.isDirectory()) {
+        throw new IllegalStateException("Can't find a source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
       }
       result[index++] = dir;
     }

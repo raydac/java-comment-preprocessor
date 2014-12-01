@@ -175,13 +175,6 @@ public class FileInfoContainer {
     return preprocessingState.popAllExcludeIfInfoData();
   }
 
-  private void setSpecialContextBasedLocalVariables(final PreprocessorContext context) {
-    context.setLocalVariable("__filename__", Value.valueOf(this.sourceFile.getName()));
-    final File srcFolder = this.sourceFile.getParentFile();
-    context.setLocalVariable("__filefolder__", Value.valueOf(srcFolder == null ? "" : FilenameUtils.normalizeNoEndSeparator(srcFolder.getAbsolutePath()) + File.separatorChar));
-    context.setLocalVariable("__file__", Value.valueOf(FilenameUtils.normalize(this.sourceFile.getAbsolutePath())));
-  }
-
   /**
    * Preprocess file, NB! it doesn't clear local variables automatically for
    * cloned contexts
@@ -197,8 +190,6 @@ public class FileInfoContainer {
     if (!context.isCloned()) {
       context.clearLocalVariables();
     }
-
-    setSpecialContextBasedLocalVariables(context);
 
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 

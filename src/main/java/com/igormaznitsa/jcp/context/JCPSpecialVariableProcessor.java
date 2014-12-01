@@ -34,8 +34,11 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static final String VAR_DEST_FILE_NAME = "jcp.dst.name";
   public static final String VAR_DEST_FULLPATH = "jcp.dst.path";
   public static final String VAR_SRC_FILE_NAME = "jcp.src.name";
+  public static final String VAR_SRC_FILE_NAME2 = "__filename__";
   public static final String VAR_SRC_DIR = "jcp.src.dir";
+  public static final String VAR_SRC_DIR2 = "__filefolder__";
   public static final String VAR_SRC_FULLPATH = "jcp.src.path";
+  public static final String VAR_SRC_FULLPATH2 = "__file__";
 
   @Override
   public String[] getVariableNames() {
@@ -44,12 +47,15 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       VAR_DEST_FILE_NAME,
       VAR_DEST_FULLPATH,
       VAR_SRC_DIR,
+      VAR_SRC_DIR2,
       VAR_SRC_FILE_NAME,
+      VAR_SRC_FILE_NAME2,
       VAR_SRC_FULLPATH,
+      VAR_SRC_FULLPATH2,
       VAR_VERSION
     };
   }
-
+  
   @Override
   public Value getVariable(final String varName, final PreprocessorContext context) {
     final PreprocessingState state = context == null ? null : context.getPreprocessingState();
@@ -63,13 +69,13 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     else if (VAR_DEST_FULLPATH.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
     }
-    else if (VAR_SRC_DIR.equals(varName)) {
+    else if (VAR_SRC_DIR.equals(varName) || VAR_SRC_DIR2.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
     }
-    else if (VAR_SRC_FILE_NAME.equals(varName)) {
+    else if (VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FILE_NAME2.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
     }
-    else if (VAR_SRC_FULLPATH.equals(varName)) {
+    else if (VAR_SRC_FULLPATH.equals(varName) || VAR_SRC_FULLPATH2.equals(varName)) {
       return state == null ? null : Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
     }
     else if (VAR_VERSION.equals(varName)) {
