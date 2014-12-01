@@ -19,6 +19,7 @@ import com.igormaznitsa.jcp.InfoHelper;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.*;
 
 /**
  * The class implements the special variable processor interface and allows to
@@ -40,6 +41,42 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static final String VAR_SRC_FULLPATH = "jcp.src.path";
   public static final String VAR_SRC_FULLPATH2 = "__file__";
 
+  public static final class NameReferencePair{
+    private final String name;
+    private final String reference;
+    
+    private NameReferencePair(final String name, final String reference){
+      this.name = name;
+      this.reference = reference;
+    }
+    
+    public String getName(){
+      return this.name;
+    }
+    
+    public String getReference(){
+      return this.reference;
+    }
+  }
+  
+  public static List<NameReferencePair> getReference(){
+    final List<NameReferencePair> result = new ArrayList<NameReferencePair>();
+    
+    result.add(new NameReferencePair(VAR_VERSION, "The Preprocessor version"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to the current preprocessing file, read only"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "The Synonym for '"+VAR_DEST_FULLPATH+"', read only"));
+    result.add(new NameReferencePair(VAR_SRC_DIR, "The Current preprocessing file folder, read only"));
+    result.add(new NameReferencePair(VAR_SRC_DIR2, "The Synonym for '"+VAR_SRC_DIR+"', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "The Current preprocessing file name, read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "The Synonym for '"+VAR_SRC_FILE_NAME+"', read only"));
+
+    result.add(new NameReferencePair(VAR_DEST_FULLPATH, "The Full Destination File path for the preprocessing file, read only"));
+    result.add(new NameReferencePair(VAR_DEST_DIR, "The Destination File path for the preprocessing file, read only"));
+    result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "The Destination File name for the preprocessing file, allowed for reading and writing"));
+    
+    return result;
+  }
+  
   @Override
   public String[] getVariableNames() {
     return new String[]{
@@ -103,8 +140,11 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     }
     else if (VAR_DEST_FULLPATH.equals(varName)
             || VAR_SRC_DIR.equals(varName)
+            || VAR_SRC_DIR2.equals(varName)
             || VAR_SRC_FILE_NAME.equals(varName)
+            || VAR_SRC_FILE_NAME2.equals(varName)
             || VAR_SRC_FULLPATH.equals(varName)
+            || VAR_SRC_FULLPATH2.equals(varName)
             || VAR_VERSION.equals(varName)) {
       throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
     }

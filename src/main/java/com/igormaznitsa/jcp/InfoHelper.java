@@ -16,6 +16,8 @@
 package com.igormaznitsa.jcp;
 
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
+import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
+import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
@@ -82,8 +84,16 @@ public final class InfoHelper {
     result.add("FLOAT  : 0.745 (signed 32 bit)");
     result.add(DELIMITER);
     result.add("Special variables\n------------");
-    
+    for(final JCPSpecialVariableProcessor.NameReferencePair p : JCPSpecialVariableProcessor.getReference()){
+      result.add(makeSpecialVariableReference(p));
+    }
     return result;
+  }
+
+  private static String makeSpecialVariableReference(final JCPSpecialVariableProcessor.NameReferencePair p) {
+    final String name = p.getName();
+    final String ref = p.getReference();
+    return makeColumns(name, ref, 24);
   }
 
   private static String makeCommandLineKeyReference(final CommandLineHandler handler) {
