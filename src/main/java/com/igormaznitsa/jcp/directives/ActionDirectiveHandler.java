@@ -43,7 +43,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "calls a preprocessor extension and pass directive arguments to it (arguments separated by comma)";
+    return "make a call to a preprocessor extension with comma separated arguments";
   }
 
   @Override

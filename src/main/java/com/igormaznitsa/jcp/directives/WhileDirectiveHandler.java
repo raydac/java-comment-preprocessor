@@ -36,7 +36,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "makes a loop until " + DIRECTIVE_PREFIX + "end if its condition result is true";
+    return "start a " + DIRECTIVE_PREFIX + "while.."+DIRECTIVE_PREFIX+"end loop structure, if the BOOLEAN expression is TRUE";
   }
 
   @Override

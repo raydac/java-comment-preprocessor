@@ -37,7 +37,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to include another file body into the current preprocessing file";
+    return "include another file body for its path into the site, the file body will be preprocessed in the same context as the including one";
   }
 
   @Override
@@ -51,7 +51,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     final Value includingFilePath = Expression.evalExpression(string, context);
 
     if (includingFilePath == null || includingFilePath.getType() != ValueType.STRING) {
-      final String text = DIRECTIVE_PREFIX + "include needs a string expression as a file path";
+      final String text = DIRECTIVE_PREFIX + "include works only with STR expression result";
       throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 

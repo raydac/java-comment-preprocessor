@@ -32,7 +32,7 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "makes the next text line commented, only the next line (!)";
+    return "comment the next line, only the next line!";
   }
 
   @Override

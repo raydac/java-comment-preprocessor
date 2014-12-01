@@ -33,7 +33,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "works similar //#if but needs only a variable name to check that it has been defined";
+    return "check definition of a variable, it makes "+ DIRECTIVE_PREFIX +"ifdefined.."+DIRECTIVE_PREFIX +"else.."+DIRECTIVE_PREFIX+"endif control structure";
   }
 
   @Override

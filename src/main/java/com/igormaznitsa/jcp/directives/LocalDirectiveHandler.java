@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
@@ -41,7 +40,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to define new one or change an existing local variable";
+    return "define a local variable to be visible only in the current preprocessing file context and the value will be lost after end of the current file preprocessing";
   }
 
   @Override
@@ -53,7 +52,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
     if (splitted.length != 2) {
-      final String text = "Can't recognize any expression";
+      final String text = "Can't recognize expression";
       throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 

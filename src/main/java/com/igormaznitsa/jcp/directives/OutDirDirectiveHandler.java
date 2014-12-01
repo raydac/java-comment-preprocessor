@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
@@ -36,7 +35,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to change the output directory for the preprocessing file (also it can be read through " + JCPSpecialVariableProcessor.VAR_DEST_DIR + ')';
+    return "change the output directory for the current result file, it works like change value in the special variable \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + '\'';
   }
 
   @Override

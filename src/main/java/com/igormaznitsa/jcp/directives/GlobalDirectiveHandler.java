@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
@@ -46,7 +45,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to set a value for global variable during the first pass (the global phase)";
+    return "define a global variable";
   }
 
   @Override

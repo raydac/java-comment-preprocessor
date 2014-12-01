@@ -36,7 +36,7 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "starts a global //#_if..//#_else..//#_endif construction";
+    return "start a global "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
   }
 
   @Override

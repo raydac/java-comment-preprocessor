@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
@@ -33,7 +32,7 @@ public class OutEnabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to switch on the text output, if the //#- has been met before";
+    return "turn on preprocess result save  into result file";
   }
 
   @Override

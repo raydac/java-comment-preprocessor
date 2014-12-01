@@ -33,7 +33,7 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to break the current " + DIRECTIVE_PREFIX + "while..." + DIRECTIVE_PREFIX + "end construction";
+    return "leave active " + DIRECTIVE_PREFIX + "while..." + DIRECTIVE_PREFIX + "end loop";
   }
 
   @Override

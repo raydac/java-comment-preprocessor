@@ -29,7 +29,7 @@ public class HelpHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "to print information about allowed preprocessor commands";
+    return "print information about preprocessor usage and its directives";
   }
 
   @Override

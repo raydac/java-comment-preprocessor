@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
@@ -33,7 +32,7 @@ public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "allows to switch off the text output, text after the directive will not be placed into inside buffers";
+    return "turn off preprocess result save into result file";
   }
 
   @Override

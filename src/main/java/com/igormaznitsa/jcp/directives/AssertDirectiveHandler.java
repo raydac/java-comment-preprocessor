@@ -37,7 +37,7 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "asserts some info to the console, it supports macroses";
+    return "just print text into console, macroses allowed in the text";
   }
 
   @Override

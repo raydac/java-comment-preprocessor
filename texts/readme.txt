@@ -64,6 +64,7 @@ History of changes
 - added predefined local variables '__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current processing file
 - added function 'STR str2java(STR,BOOL)' to escape and split string to be presented as java sources
 - added functions 'STR xml_xlist(STR,STR)' and 'STR xml_xelement(STR,STR)' which allow to use xpath to get element lists an elements
+- apache commons libraries added into the jar and hidden to remove "class not found exceptions" under ANT, now JCP is a "uber jar"
 
 5.3.4
 - added support of test source folder preprocessing for maven projects
