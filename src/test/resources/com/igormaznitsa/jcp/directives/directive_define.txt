@@ -1,8 +1,9 @@
 test
 //#define somevar
-/*$somevar$*/
+//#define somenum 3*8
+/*$somevar$*/ /*$somenum$*/
 end
 ---START_ETALON---
 test
-true
+true 24
 end

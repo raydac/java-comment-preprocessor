@@ -52,7 +52,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
 
     if (splitted.length != 2) {
-      final String text = "Can't recognize expression";
+      final String text = "Can't find expression";
       throw new IllegalArgumentException(text, context.makeException(text, null));
     }
 

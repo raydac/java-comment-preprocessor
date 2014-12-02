@@ -32,6 +32,8 @@ public class DefinelDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
     assertPreprocessorException("\n\n//#definel \n", 3, null);
     assertPreprocessorException("\n\n//#definel 1223\n", 3, null);
     assertPreprocessorException("\n\n//#definel \"test\"\n", 3, null);
+    assertPreprocessorException("\n\n//#definel var 3*8 \\\\ test \n", 3, null);
+    assertPreprocessorException("\n\n//#definel var 3*8  /* hhhh */ \n", 3, null);
   }
 
   @Override

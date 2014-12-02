@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.expression.Value;
 
 /**
  * The class implements the //#undef directive handler
@@ -35,7 +36,8 @@ public class UndefDirectiveHandler extends DefineDirectiveHandler {
   }
 
   @Override
-  protected void process(final PreprocessorContext context, final String varName, final boolean exists) {
+  protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists) {
     context.removeGlobalVariable(varName);
   }
+
 }

@@ -16,13 +16,7 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.expression.ExpressionItem;
-import com.igormaznitsa.jcp.expression.ExpressionItemType;
-import com.igormaznitsa.jcp.expression.ExpressionParser;
-import com.igormaznitsa.jcp.expression.ExpressionTree;
-import com.igormaznitsa.jcp.expression.ExpressionTreeElement;
-import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.Variable;
+import com.igormaznitsa.jcp.expression.*;
 import java.io.IOException;
 
 /**
@@ -44,43 +38,61 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a global(!) variable as TRUE";
+    return "define a global(!) variable as TRUE by default (but also allowed expression after a space)";
   }
 
-  protected void process(final PreprocessorContext context, final String varName, final boolean exists){
+  protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){
     if (exists){
       context.logWarning("Variable \'" + varName + "\' has been already defined");
     }else{
-      context.setGlobalVariable(varName, Value.BOOLEAN_TRUE);
+      context.setGlobalVariable(varName, value);
     }
   }
   
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
-    String name = null;
-
+  public AfterDirectiveProcessingBehaviour execute(final String trimmedString, final PreprocessorContext context) {
     try {
-      final ExpressionTree tree = ExpressionParser.getInstance().parse(string, context);
-      if (tree.isEmpty()) {
-        final String text = "There is not any variable";
-        throw new IllegalArgumentException(text,context.makeException(text, null));
+      final int spaceIndex = trimmedString.indexOf(' ');
+      final String name;
+      final String expression;
+      if (spaceIndex>0){
+        name = trimmedString.substring(0,spaceIndex).trim();
+        final String trimmed = trimmedString.substring(spaceIndex).trim();
+        expression = trimmed.isEmpty() || trimmed.startsWith("//") || trimmed.startsWith("/*") ? null : trimmed;
+      }else{
+        name = trimmedString;
+        expression = null;
       }
-
-      final ExpressionTreeElement root = tree.getRoot();
-      final ExpressionItem item = root.getItem();
-      if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
-        final String text = "You must use a variable as the argument";
+      
+      final ExpressionTree nameTree = ExpressionParser.getInstance().parse(name, context);
+      
+      if (nameTree.isEmpty()){
+        final String text = "Can't find variable name";
         throw new IllegalArgumentException(text, context.makeException(text, null));
       }
 
-      name = ((Variable) item).getName();
+      final ExpressionTreeElement root = nameTree.getRoot();
+      final ExpressionItem item = root.getItem();
+      if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
+        final String text = "Can't recognize variable name ["+name+']';
+        throw new IllegalArgumentException(text, context.makeException(text, null));
+      }
+      
+      final Value value;
+      
+      if (expression!=null){
+        value = Expression.evalExpression(expression, context);
+      }else{
+        value = Value.valueOf(Boolean.TRUE);
+      }
+      
+      process(context, ((Variable) item).getName(), value,context.findVariableForName(name) != null);
     }
     catch (IOException ex) {
-      final String text = "Can't parse the variable name [" + string + ']';
+      final String text = "Can't recognize variable name [" + trimmedString + ']';
       throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
 
-    process(context, name, context.findVariableForName(name) != null);
 
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

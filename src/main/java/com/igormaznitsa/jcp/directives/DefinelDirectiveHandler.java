@@ -32,16 +32,11 @@ public class DefinelDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a local(!) variable as TRUE, if it is not defined already";
+    return "define a local(!) variable as TRUE by default (but also allowed expression after a space)";
   }
 
   @Override
-  protected void process(final PreprocessorContext context, final String varName, final boolean exists) {
-    if (exists) {
-      context.logWarning("Variable \'" + varName + "\' has been already defined");
-    }
-    else {
-      context.setLocalVariable(varName, Value.BOOLEAN_TRUE);
-    }
+  protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists) {
+      context.setLocalVariable(varName, value);
   }
 }
