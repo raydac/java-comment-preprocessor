@@ -17,7 +17,6 @@ package com.igormaznitsa.jcp;
 
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
-import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;

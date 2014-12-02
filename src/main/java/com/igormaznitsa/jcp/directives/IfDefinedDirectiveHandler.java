@@ -51,7 +51,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isDirectiveCanBeProcessed()) {
       if (string.isEmpty()) {
-        final String text = DIRECTIVE_PREFIX + "ifdefined needs a variable";
+        final String text = DIRECTIVE_PREFIX + getName()+" needs a variable";
         throw new IllegalArgumentException(text, context.makeException(text, null));
       }
       state.pushIf(true);

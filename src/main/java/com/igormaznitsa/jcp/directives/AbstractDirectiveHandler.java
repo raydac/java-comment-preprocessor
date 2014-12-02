@@ -53,6 +53,7 @@ public abstract class AbstractDirectiveHandler {
     // Order makes sense !!!
     new LocalDirectiveHandler(),
     new IfDefinedDirectiveHandler(),
+    new IfDefDirectiveHandler(),
     new IfDirectiveHandler(),
     new ElseDirectiveHandler(),
     new EndIfDirectiveHandler(),

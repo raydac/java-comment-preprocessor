@@ -1,0 +1,24 @@
+start
+//#ifdef test
+unexpected
+//#else
+expected1
+//#endif
+//#define test
+//#if true
+    //#ifdef test
+expected2
+    //#else
+unexpected
+    //#endif
+//#endif
+//#ifdef BYTECODE
+somebytecode
+//#endif
+end
+---START_ETALON---
+start
+expected1
+expected2
+somebytecode
+end
