@@ -68,7 +68,7 @@ public class PreprocessorContext {
 
   private final Map<String, Value> globalVarTable = new HashMap<String, Value>();
   private final Map<String, Value> localVarTable = new HashMap<String, Value>();
-  private final Map<String, SpecialVariableProcessor> specialVariableProcessors = new HashMap<String, SpecialVariableProcessor>();
+  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<String, SpecialVariableProcessor>();
   private final Map<String, Object> sharedResources = new HashMap<String, Object>();
 
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
@@ -128,7 +128,7 @@ public class PreprocessorContext {
 
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
-    this.specialVariableProcessors.putAll(context.specialVariableProcessors);
+    this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
     this.sharedResources.putAll(context.sharedResources);
 
     this.configFiles.addAll(context.configFiles);
@@ -165,10 +165,10 @@ public class PreprocessorContext {
       if (varName == null) {
         throw new NullPointerException("A Special Var name is null");
       }
-      if (specialVariableProcessors.containsKey(varName)) {
+      if (mapVariableNameToSpecialVarProcessor.containsKey(varName)) {
         throw new IllegalStateException("There is already defined processor for " + varName);
       }
-      specialVariableProcessors.put(varName, processor);
+      mapVariableNameToSpecialVarProcessor.put(varName, processor);
     }
   }
 
@@ -509,10 +509,62 @@ public class PreprocessorContext {
       throw new IllegalArgumentException("Empty variable name");
     }
 
-    if (specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
-      throw new IllegalArgumentException("Attemption to set a global variable or a special variable as a local one [" + normalized + ']');
+    if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
+      throw new IllegalArgumentException("Attempting to set either a global variable or a special variable as a local one [" + normalized + ']');
     }
     localVarTable.put(normalized, value);
+    return this;
+  }
+
+  /**
+   * Remove a local variable value from the context.
+   *
+   * @param name the variable name, must not be null, remember that the name
+   * will be normalized and will be entirely in lower case
+   * @return this preprocessor context
+   * @see Value
+   */
+  public PreprocessorContext removeLocalVariable(final String name) {
+    if (name == null) {
+      throw new NullPointerException("Variable name is null");
+    }
+
+    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+
+    if (normalized.isEmpty()) {
+      throw new IllegalArgumentException("Empty variable name");
+    }
+
+    if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
+      throw new IllegalArgumentException("Attempting to remove either a global variable or a special variable as a local one [" + normalized + ']');
+    }
+    localVarTable.remove(normalized);
+    return this;
+  }
+
+  /**
+   * Remove a global variable value from the context.
+   *
+   * @param name the variable name, must not be null, remember that the name
+   * will be normalized and will be entirely in lower case
+   * @return this preprocessor context
+   * @see Value
+   */
+  public PreprocessorContext removeGlobalVariable(final String name) {
+    if (name == null) {
+      throw new NullPointerException("Variable name is null");
+    }
+
+    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+
+    if (normalized.isEmpty()) {
+      throw new IllegalArgumentException("Empty variable name");
+    }
+
+    if (mapVariableNameToSpecialVarProcessor.containsKey(normalized)) {
+      throw new IllegalArgumentException("Attempting to remove a special variable as a global one [" + normalized + ']');
+    }
+    globalVarTable.remove(normalized);
     return this;
   }
 
@@ -593,8 +645,8 @@ public class PreprocessorContext {
       throw new NullPointerException("Value is null");
     }
 
-    if (specialVariableProcessors.containsKey(normalizedName)) {
-      specialVariableProcessors.get(normalizedName).setVariable(normalizedName, value, this);
+    if (mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
+      mapVariableNameToSpecialVarProcessor.get(normalizedName).setVariable(normalizedName, value, this);
     }
     else {
 
@@ -625,7 +677,7 @@ public class PreprocessorContext {
       return false;
     }
 
-    return specialVariableProcessors.containsKey(normalized) || globalVarTable.containsKey(normalized);
+    return mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized);
   }
 
   /**
@@ -648,7 +700,7 @@ public class PreprocessorContext {
       return null;
     }
 
-    final SpecialVariableProcessor processor = specialVariableProcessors.get(normalized);
+    final SpecialVariableProcessor processor = mapVariableNameToSpecialVarProcessor.get(normalized);
 
     if (processor != null && currentState != null) {
       return processor.getVariable(normalized, this);
@@ -662,6 +714,34 @@ public class PreprocessorContext {
     return globalVarTable.get(normalized);
   }
 
+  /**
+   * Check that there is a global variable with such name.
+   * @param variableName a name to be checked, can be null
+   * @return false if there is not such variable or it is null, true if such global or special variable exists
+   */
+  public boolean isGlobalVariable(final String variableName){
+    boolean result = false;
+    if (variableName!=null){
+      final String normalized = PreprocessorUtils.normalizeVariableName(variableName);
+      result = this.globalVarTable.containsKey(normalized) || mapVariableNameToSpecialVarProcessor.containsKey(normalized);
+    }
+    return result;
+  }
+  
+  /**
+   * Check that there is a local variable with such name.
+   * @param variableName a name to be checked, can be null
+   * @return false if there is not such variable or it is null, true if such local variable exists
+   */
+  public boolean isLocalVariable(final String variableName){
+    boolean result = false;
+    if (variableName!=null){
+      final String normalized = PreprocessorUtils.normalizeVariableName(variableName);
+      result = this.localVarTable.containsKey(normalized);
+    }
+    return result;
+  }
+  
   /**
    * Set the verbose flag
    *

@@ -18,26 +18,25 @@ package com.igormaznitsa.jcp.directives;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class DefinelDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final DefineDirectiveHandler HANDLER = new DefineDirectiveHandler();
+  private static final DefinelDirectiveHandler HANDLER = new DefinelDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {
-    assertTrue(assertFilePreprocessing("directive_define.txt", false, null, null).isGlobalVariable("somevar"));
-    
+    assertTrue(assertFilePreprocessing("directive_definel.txt", false, null, null).isLocalVariable("somevar"));
   }
 
   @Test
   public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#define \n", 3, null);
-    assertPreprocessorException("\n\n//#define 1223\n", 3, null);
-    assertPreprocessorException("\n\n//#define \"test\"\n", 3, null);
+    assertPreprocessorException("\n\n//#definel \n", 3, null);
+    assertPreprocessorException("\n\n//#definel 1223\n", 3, null);
+    assertPreprocessorException("\n\n//#definel \"test\"\n", 3, null);
   }
 
   @Override
   public void testKeyword() throws Exception {
-    assertEquals("define", HANDLER.getName());
+    assertEquals("definel", HANDLER.getName());
   }
 
   @Override

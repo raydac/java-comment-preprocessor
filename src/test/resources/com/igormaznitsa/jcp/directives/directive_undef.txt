@@ -1,0 +1,8 @@
+test
+/*$somevar$*/
+//#undef somevar
+end
+---START_ETALON---
+test
+true
+end

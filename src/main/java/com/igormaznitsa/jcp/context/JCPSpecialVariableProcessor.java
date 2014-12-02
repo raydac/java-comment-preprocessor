@@ -119,7 +119,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       return Value.valueOf(InfoHelper.getVersion());
     }
     else {
-      throw new IllegalArgumentException("Attemption to get unsupported variable [" + varName + ']');
+      throw new IllegalArgumentException("Attempting to read unexpected special variable [" + varName + ']');
     }
   }
 
@@ -149,7 +149,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
     }
     else {
-      throw new IllegalStateException("Attemption to change an unsupported variable [" + varName + ']');
+      throw new IllegalStateException("Attempting to write unexpected special variable [" + varName + ']');
     }
   }
 }

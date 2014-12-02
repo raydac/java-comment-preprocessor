@@ -44,9 +44,17 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a global variable as TRUE";
+    return "define a global(!) variable as TRUE";
   }
 
+  protected void process(final PreprocessorContext context, final String varName, final boolean exists){
+    if (exists){
+      context.logWarning("Variable \'" + varName + "\' has been already defined");
+    }else{
+      context.setGlobalVariable(varName, Value.BOOLEAN_TRUE);
+    }
+  }
+  
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     String name = null;
@@ -72,11 +80,8 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
 
-    if (context.findVariableForName(name) != null) {
-      context.logWarning("Variable \'" + name + "\' was already defined");
-    }
+    process(context, name, context.findVariableForName(name) != null);
 
-    context.setGlobalVariable(name, Value.BOOLEAN_TRUE);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

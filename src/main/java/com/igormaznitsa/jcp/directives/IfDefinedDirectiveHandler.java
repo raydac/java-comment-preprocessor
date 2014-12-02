@@ -33,9 +33,13 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "check definition of a variable, it makes "+ DIRECTIVE_PREFIX +"ifdefined.."+DIRECTIVE_PREFIX +"else.."+DIRECTIVE_PREFIX+"endif control structure";
+    return "check existence of a variable without check of its value, it makes "+ DIRECTIVE_PREFIX +"ifdefined.."+DIRECTIVE_PREFIX +"else.."+DIRECTIVE_PREFIX+"endif control structure";
   }
 
+  protected boolean postprocessFlag(final boolean variableExists){
+    return !variableExists;
+  }
+  
   @Override
   public boolean executeOnlyWhenExecutionAllowed() {
     return false;
@@ -55,8 +59,8 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
         throw new IllegalArgumentException(text, context.makeException(text, null));
       }
       state.pushIf(true);
-      final boolean definitionFlag = context.findVariableForName(string) != null;
-      if (!definitionFlag) {
+      final boolean variableExists = context.findVariableForName(string) != null;
+      if (postprocessFlag(variableExists)) {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
     }

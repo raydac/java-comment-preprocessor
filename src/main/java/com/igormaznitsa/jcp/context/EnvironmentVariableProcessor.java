@@ -62,6 +62,6 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
 
   @Override
   public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
-    throw new UnsupportedOperationException("Attemption to change an environment variable [" + varName + ']');
+    throw new UnsupportedOperationException("Attempting to change an environment variable [" + varName + ']');
   }
 }

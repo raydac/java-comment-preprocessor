@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * It is an auxiliary class contains some useful methods

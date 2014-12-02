@@ -204,7 +204,7 @@ public final class PreprocessingState {
   
   public TextFileDataContainer popTextContainer() {
     if (fileStack.size() == 1) {
-      throw new IllegalStateException("Attemption to remove the root file");
+      throw new IllegalStateException("Attempting to remove the root file");
     }
     else {
       return fileStack.pop();

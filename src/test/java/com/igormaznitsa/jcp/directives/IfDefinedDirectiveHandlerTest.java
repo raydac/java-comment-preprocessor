@@ -23,8 +23,10 @@ public class IfDefinedDirectiveHandlerTest extends AbstractDirectiveHandlerAccep
 
   @Override
   public void testExecution() throws Exception {
+    // with defined global var
     assertFilePreprocessing("directive_ifdefined.txt", false, null, null, new VariablePair("BYTECODE", "true"));
 
+    // with non-defined global var
     try {
       assertFilePreprocessing("directive_ifdefined.txt", false, null, null);
     }

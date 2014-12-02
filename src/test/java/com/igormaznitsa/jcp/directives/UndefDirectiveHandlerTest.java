@@ -18,26 +18,26 @@ package com.igormaznitsa.jcp.directives;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class UndefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final DefineDirectiveHandler HANDLER = new DefineDirectiveHandler();
+  private static final UndefDirectiveHandler HANDLER = new UndefDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {
-    assertTrue(assertFilePreprocessing("directive_define.txt", false, null, null).isGlobalVariable("somevar"));
+    assertFalse(assertFilePreprocessing("directive_undef.txt", false, null, null, new VariablePair("somevar", "true")).isGlobalVariable("somevar"));
     
   }
 
   @Test
   public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#define \n", 3, null);
-    assertPreprocessorException("\n\n//#define 1223\n", 3, null);
-    assertPreprocessorException("\n\n//#define \"test\"\n", 3, null);
+    assertPreprocessorException("\n\n//#undef \n", 3, null);
+    assertPreprocessorException("\n\n//#undef 1223\n", 3, null);
+    assertPreprocessorException("\n\n//#undef \"test\"\n", 3, null);
   }
 
   @Override
   public void testKeyword() throws Exception {
-    assertEquals("define", HANDLER.getName());
+    assertEquals("undef", HANDLER.getName());
   }
 
   @Override

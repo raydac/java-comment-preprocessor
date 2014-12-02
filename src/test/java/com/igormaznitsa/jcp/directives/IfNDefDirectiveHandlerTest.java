@@ -15,34 +15,33 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class IfNDefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final DefineDirectiveHandler HANDLER = new DefineDirectiveHandler();
+  private static final IfNDefDirectiveHandler HANDLER = new IfNDefDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {
-    assertTrue(assertFilePreprocessing("directive_define.txt", false, null, null).isGlobalVariable("somevar"));
-    
-  }
+    assertFilePreprocessing("directive_ifndef.txt", false, null, null);
 
-  @Test
-  public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#define \n", 3, null);
-    assertPreprocessorException("\n\n//#define 1223\n", 3, null);
-    assertPreprocessorException("\n\n//#define \"test\"\n", 3, null);
+    try {
+      assertFilePreprocessing("directive_ifndef.txt", false, null, null, new VariablePair("BYTECODE", "123"));
+    }
+    catch (LinesNotMatchException expected) {
+      assertEquals("somebytecode", expected.getEtalonString());
+      assertEquals("end", expected.getResultString());
+    }
   }
 
   @Override
   public void testKeyword() throws Exception {
-    assertEquals("define", HANDLER.getName());
+    assertEquals("ifndef", HANDLER.getName());
   }
 
   @Override
   public void testExecutionCondition() throws Exception {
-    assertTrue(HANDLER.executeOnlyWhenExecutionAllowed());
+    assertFalse(HANDLER.executeOnlyWhenExecutionAllowed());
   }
 
   @Override
@@ -60,5 +59,4 @@ public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
   public void testArgumentType() throws Exception {
     assertEquals(DirectiveArgumentType.VARNAME, HANDLER.getArgumentType());
   }
-
 }

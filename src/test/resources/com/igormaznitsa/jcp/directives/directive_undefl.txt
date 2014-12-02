@@ -1,0 +1,9 @@
+test
+//#definel somevar
+/*$somevar$*/
+//#undefl somevar
+end
+---START_ETALON---
+test
+true
+end
