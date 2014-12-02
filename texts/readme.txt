@@ -47,7 +47,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
 
 If you don't want use the maven repository then you can install the plugin manually into your local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-5.3.5.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-5.4.0.jar -DpomFile=./pom.xml
 
 
 Building
