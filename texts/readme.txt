@@ -69,6 +69,7 @@ History of changes
 - added '//#ifndef BOOL' to check that a variable is undefined
 - added '//#definel NAME' to define a local (!) variable as TRUE (just //#define defines a global(!) variable)
 - added '//#undefl NAME' to remove a local (!) variable from the current context, and '//#undef NAME' to remove a global definition
+- //#define and //#definel can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
 
 5.3.4
 - added support of test source folder preprocessing for maven projects
