@@ -91,7 +91,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
       sources = null;
     }
     else {
-      stack = state.getFileStack();
+      stack = state.makeIncludeStack();
       sources = state.getLastReadString();
     }
 

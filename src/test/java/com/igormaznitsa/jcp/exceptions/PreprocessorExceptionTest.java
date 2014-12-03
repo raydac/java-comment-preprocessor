@@ -54,7 +54,7 @@ public class PreprocessorExceptionTest {
       fail("Must throw PreprocessorException");
     }
     catch (PreprocessorException expected) {
-      final FilePositionInfo[] fileStack = expected.getFileStack();
+      final FilePositionInfo[] fileStack = expected.getIncludeChain();
       assertEquals("Must have depth 2", 2, fileStack.length);
       assertEquals("String index in the including file is 26", 25, fileStack[1].getStringIndex());
       assertEquals("String index in the wrong bracket file is 15", 16, fileStack[0].getStringIndex());

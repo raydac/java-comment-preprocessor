@@ -86,7 +86,7 @@ public final class PreprocessingState {
   private final FileInfoContainer rootFileInfo;
   private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
   private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<TextFileDataContainer> fileStack = new LinkedList<TextFileDataContainer>();
+  private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<TextFileDataContainer>();
   private final LinkedList<ExcludeIfInfo> excludeStack = new LinkedList<ExcludeIfInfo>();
   private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
@@ -133,7 +133,7 @@ public final class PreprocessingState {
     this.rootFileInfo = rootFile;
     init();
     rootReference = rootContainer;
-    fileStack.push(rootContainer);
+    includeStack.push(rootContainer);
   }
 
   public String getLastReadString(){
@@ -185,29 +185,29 @@ public final class PreprocessingState {
 
     final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding);
     final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, 0);
-    fileStack.push(newContainer);
+    includeStack.push(newContainer);
     return newContainer;
   }
 
   public TextFileDataContainer peekFile() {
-    return fileStack.peek();
+    return includeStack.peek();
   }
 
-  public FilePositionInfo [] getFileStack(){
-    final FilePositionInfo[] stack = new FilePositionInfo[fileStack.size()];
-    for (int i = 0; i < fileStack.size(); i++) {
-      final TextFileDataContainer fileContainer = fileStack.get(i);
+  public FilePositionInfo [] makeIncludeStack(){
+    final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
+    for (int i = 0; i < includeStack.size(); i++) {
+      final TextFileDataContainer fileContainer = includeStack.get(i);
       stack[i] = new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
     }
     return stack;
   }
   
   public TextFileDataContainer popTextContainer() {
-    if (fileStack.size() == 1) {
+    if (includeStack.size() == 1) {
       throw new IllegalStateException("Attempting to remove the root file");
     }
     else {
-      return fileStack.pop();
+      return includeStack.pop();
     }
   }
 
@@ -216,11 +216,11 @@ public final class PreprocessingState {
   }
 
   public boolean isOnlyRootOnStack() {
-    return fileStack.size() == 1;
+    return includeStack.size() == 1;
   }
 
   private TextFileDataContainer cloneTopTextDataContainer(final boolean useLastReadStringIndex) {
-    final TextFileDataContainer topElement = fileStack.peek();
+    final TextFileDataContainer topElement = includeStack.peek();
     return new TextFileDataContainer(topElement, useLastReadStringIndex ? topElement.getLastReadStringIndex() : topElement.getNextStringIndex());
   }
 
@@ -252,13 +252,13 @@ public final class PreprocessingState {
   }
 
   public String nextLine() {
-    final String result = fileStack.peek().nextLine();
+    final String result = includeStack.peek().nextLine();
     this.lastReadString = result;
     return result;
   }
 
   public PreprocessingState goToString(final int stringIndex) {
-    fileStack.peek().setNextStringIndex(stringIndex);
+    includeStack.peek().setNextStringIndex(stringIndex);
     return this;
   }
 
@@ -419,6 +419,6 @@ public final class PreprocessingState {
   }
 
   public PreprocessorException makeException(final String message, final String text, final Throwable cause) {
-    return new PreprocessorException(message, text, getFileStack(), cause);
+    return new PreprocessorException(message, text, makeIncludeStack(), cause);
   }
 }

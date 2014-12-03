@@ -1,0 +1,7 @@
+start
+//#local test=1
+//#warning "string"+(test+1)
+end
+---START_ETALON---
+start
+end

@@ -27,39 +27,39 @@ public class PreprocessorException extends Exception {
 
   private static final long serialVersionUID = 2857499664112391862L;
   private final String processingString;
-  private final FilePositionInfo[] callStack;
+  private final FilePositionInfo[] includeStack;
 
-  public PreprocessorException(final String message, final String processedText, final FilePositionInfo[] callStack, final Throwable cause) {
+  public PreprocessorException(final String message, final String processedText, final FilePositionInfo[] includeStack, final Throwable cause) {
     super(message, cause);
 
     this.processingString = processedText;
-    this.callStack = callStack == null ? new FilePositionInfo[0] : callStack.clone();
+    this.includeStack = includeStack == null ? new FilePositionInfo[0] : includeStack.clone();
   }
 
   public File getRootFile() {
-    if (callStack.length == 0) {
+    if (includeStack.length == 0) {
       return null;
     }
     else {
-      return callStack[callStack.length - 1].getFile();
+      return includeStack[includeStack.length - 1].getFile();
     }
   }
 
   public File getProcessingFile() {
-    if (callStack.length == 0) {
+    if (includeStack.length == 0) {
       return null;
     }
     else {
-      return callStack[0].getFile();
+      return includeStack[0].getFile();
     }
   }
 
   public int getStringIndex() {
-    if (callStack.length == 0) {
+    if (includeStack.length == 0) {
       return -1;
     }
     else {
-      return callStack[0].getStringIndex() + 1;
+      return includeStack[0].getStringIndex() + 1;
     }
   }
 
@@ -67,25 +67,25 @@ public class PreprocessorException extends Exception {
     return processingString;
   }
 
-  private String makeCallStackAsString() {
+  private String convertIncludeStackToString() {
     final StringBuilder result = new StringBuilder();
-    for (int i = 0; i < this.callStack.length; i++) {
+    for (int i = 0; i < this.includeStack.length; i++) {
       if (i > 0) {
         result.append("<-");
       }
-      result.append(this.callStack[i].toString());
+      result.append(this.includeStack[i].toString());
     }
     return result.toString();
   }
 
-  public FilePositionInfo[] getFileStack() {
-    return this.callStack.clone();
+  public FilePositionInfo[] getIncludeChain() {
+    return this.includeStack.clone();
   }
 
   @Override
   public String toString() {
     final StringBuilder result = new StringBuilder();
-    result.append(getMessage()).append(", call stack: ").append(makeCallStackAsString()).append(", source line: ").append(this.processingString);
+    result.append(getMessage()).append(", call stack: ").append(convertIncludeStackToString()).append(", source line: ").append(this.processingString);
     return result.toString();
   }
   

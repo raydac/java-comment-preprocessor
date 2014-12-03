@@ -123,7 +123,7 @@ public final class ExpressionParser {
         result = new ExpressionTree();
       }
       else {
-        result = new ExpressionTree(state.getFileStack(), state.getLastReadString());
+        result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
       }
     }
 
@@ -166,7 +166,7 @@ public final class ExpressionParser {
     }
     else {
       final PreprocessingState state = context.getPreprocessingState();
-      stack = state == null ? null : state.getFileStack();
+      stack = state == null ? null : state.makeIncludeStack();
       sourceLine = state == null ? null : state.getLastReadString();
     }
 

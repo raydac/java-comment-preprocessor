@@ -118,7 +118,7 @@ public class Expression {
       stack = PreprocessingState.EMPTY_STACK;
       sources = "";
     }else{
-      stack = state.getFileStack();
+      stack = state.makeIncludeStack();
       sources = state.getLastReadString();
     }
     
@@ -224,7 +224,7 @@ public class Expression {
       stack = PreprocessingState.EMPTY_STACK;
       sources = "";
     }else{
-      stack = state.getFileStack();
+      stack = state.makeIncludeStack();
       sources = state.getLastReadString();
     }
     
@@ -322,7 +322,7 @@ public class Expression {
           throw new RuntimeException("Unknown variable [" + name + ']');
         }
         else {
-          treeElement = new ExpressionTreeElement(value, state.getFileStack(), state.getLastReadString());
+          treeElement = new ExpressionTreeElement(value, state.makeIncludeStack(), state.getLastReadString());
         }
       }
       break;

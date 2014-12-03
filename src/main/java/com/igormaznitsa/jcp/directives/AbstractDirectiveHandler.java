@@ -64,7 +64,6 @@ public abstract class AbstractDirectiveHandler {
     new EndDirectiveHandler(),
     new ExitIfDirectiveHandler(),
     new ExitDirectiveHandler(),
-    new AssertDirectiveHandler(),
     new OutDirDirectiveHandler(),
     new OutEnabledDirectiveHandler(),
     new OutNameDirectiveHandler(),
@@ -83,7 +82,10 @@ public abstract class AbstractDirectiveHandler {
     new GlobalElseDirectiveHandler(),
     new GlobalEndIfDirectiveHandler(),
     new GlobalIfDirectiveHandler(),
-    new ExcludeIfDirectiveHandler()
+    new ExcludeIfDirectiveHandler(),
+    new ErrorDirectiveHandler(),
+    new WarningDirectiveHandler(),
+    new AssertDirectiveHandler()
   };
 
   /**

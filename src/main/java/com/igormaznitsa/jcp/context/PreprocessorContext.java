@@ -1022,15 +1022,15 @@ public class PreprocessorContext {
       return (PreprocessorException)cause;
     }
     
-    final FilePositionInfo [] stack;
+    final FilePositionInfo [] includeStack;
     final String sourceLine;
     if (this.currentState==null){
-      stack = PreprocessingState.EMPTY_STACK;
+      includeStack = PreprocessingState.EMPTY_STACK;
       sourceLine = "";
     }else{
-      stack = this.currentState.getFileStack();
+      includeStack = this.currentState.makeIncludeStack();
       sourceLine = this.currentState.getLastReadString();
     }
-    return new PreprocessorException(text, sourceLine, stack, cause);
+    return new PreprocessorException(text, sourceLine, includeStack, cause);
   }
 }
