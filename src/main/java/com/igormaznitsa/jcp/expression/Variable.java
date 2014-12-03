@@ -53,6 +53,7 @@ public final class Variable implements ExpressionItem {
    *
    * @return it returns only ExpressionItemType.VARIABLE
    */
+  @Override
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VARIABLE;
   }
@@ -62,8 +63,14 @@ public final class Variable implements ExpressionItem {
    *
    * @return it returns only ExpressionItemPriority.VALUE
    */
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.VALUE;
   }
 
+  @Override
+  public String toString(){
+    return this.variableName;
+  }
+  
 }

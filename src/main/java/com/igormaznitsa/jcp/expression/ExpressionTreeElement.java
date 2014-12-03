@@ -322,7 +322,7 @@ public class ExpressionTreeElement {
     }
 
     if (childElements.length == 0) {
-      throw new IllegalArgumentException("The element doesn't support arguments [" + savedItem.toString() + ']');
+      throw new IllegalArgumentException("Unexpected element, may be unknown function [" + savedItem.toString() + ']');
     }
     else {
       if (isFull()) {

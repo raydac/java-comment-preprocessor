@@ -150,6 +150,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the expression item priority for the function, must not be null
    */
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;
   }
@@ -160,6 +161,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the expression item type, in the case it is always
    * ExpressionItemType.FUNCTION
    */
+  @Override
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.FUNCTION;
   }

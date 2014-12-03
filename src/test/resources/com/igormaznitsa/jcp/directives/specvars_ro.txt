@@ -1,0 +1,22 @@
+start
+//#outname "hello_world.jpg"
+line /*$__LINE__$*/
+line /*$__LINE__$*/
+line /*$__LINE__$*/
+line /*$__LINE__$*/
+line /*$__LINE__$*/
+filesrc /*$__FILENAME__$*/
+filesrc /*$jcp.src.name$*/
+filedst /*$jcp.dst.name$*/
+end
+---START_ETALON---
+start
+line 3
+line 4
+line 5
+line 6
+line 7
+filesrc specvars_ro.txt
+filesrc specvars_ro.txt
+filedst hello_world.jpg
+end

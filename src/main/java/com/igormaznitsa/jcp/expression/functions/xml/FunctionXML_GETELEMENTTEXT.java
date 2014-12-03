@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import org.w3c.dom.Element;
 
 /**
@@ -52,7 +51,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get text content of an element defined by its descriptor";
+    return "get the text content of an element and its children, the element is defined by its descriptor";
   }
 
   @Override

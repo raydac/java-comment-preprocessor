@@ -61,7 +61,7 @@ History of changes
 5.4.0
 - fixed vanished main class attribute in the manifest
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
-- added predefined special read only variables '__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current preprocessing file
+- added predefined special read only variables '__line__','__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current preprocessing file
 - added function 'STR str2java(STR,BOOL)' to escape and split string to be presented as java sources
 - added functions 'STR xml_xlist(STR,STR)' and 'STR xml_xelement(STR,STR)' which allow to use xpath to get element lists an elements
 - apache common-io and common-lang libraries have been packed into the jar and hidden

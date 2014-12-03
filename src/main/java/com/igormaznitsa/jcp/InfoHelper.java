@@ -103,7 +103,7 @@ public final class InfoHelper {
 
   private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
     final String directiveName = directive.getFullName();
-    final String descr = directive.getReference()+" ("+(directive.isGlobalPhaseAllowed()?"I pass":"II pass")+')';
+    final String descr = directive.getReference()+" ("+(directive.isGlobalPhaseAllowed()?"1st pass":"2th pass")+')';
     return makeColumns(directiveName, descr, 14);
   }
 

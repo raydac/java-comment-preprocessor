@@ -35,14 +35,14 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
     return "xml_getelementsforname";
   }
 
-  public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value name) {
-    final String nodeName = name.asString();
+  public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value elementTag) {
+    final String tagName = elementTag.asString();
     final Element element = getCachedElement(context, elementId.asString());
-    final String listId = makeElementListId(element, nodeName);
+    final String listId = makeElementListId(element, tagName);
     
     NodeContainer container = (NodeContainer) context.getSharedResource(listId);
     if (container == null) {
-      final NodeList list = element.getElementsByTagName(nodeName);
+      final NodeList list = element.getElementsByTagName(tagName);
       container = new NodeContainer(UID_COUNTER.getAndIncrement(), list);
       context.setSharedResource(listId, container);
     }

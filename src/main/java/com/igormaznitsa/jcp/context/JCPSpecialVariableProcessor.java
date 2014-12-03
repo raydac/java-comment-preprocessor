@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.InfoHelper;
+import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
@@ -40,6 +41,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static final String VAR_SRC_DIR2 = "__filefolder__";
   public static final String VAR_SRC_FULLPATH = "jcp.src.path";
   public static final String VAR_SRC_FULLPATH2 = "__file__";
+  public static final String VAR_LINE = "__line__";
 
   public static final class NameReferencePair{
     private final String name;
@@ -70,6 +72,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "The Current preprocessing file name, read only"));
     result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "The Synonym for '"+VAR_SRC_FILE_NAME+"', read only"));
 
+    result.add(new NameReferencePair(VAR_LINE, "The Current preprocessing line number in the current source file, read only"));
     result.add(new NameReferencePair(VAR_DEST_FULLPATH, "The Full Destination File path for the preprocessing file, read only"));
     result.add(new NameReferencePair(VAR_DEST_DIR, "The Destination File path for the preprocessing file, read only"));
     result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "The Destination File name for the preprocessing file, allowed for reading and writing"));
@@ -89,7 +92,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       VAR_SRC_FILE_NAME2,
       VAR_SRC_FULLPATH,
       VAR_SRC_FULLPATH2,
-      VAR_VERSION
+      VAR_VERSION,
+      VAR_LINE,
     };
   }
   
@@ -118,6 +122,16 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     else if (VAR_VERSION.equals(varName)) {
       return Value.valueOf(InfoHelper.getVersion());
     }
+    else if (VAR_LINE.equals(varName)) {
+      final TextFileDataContainer currentFile = context.getPreprocessingState().peekFile();
+      final long line;
+      if (currentFile == null){
+        line = -1L;
+      }else{
+        line = currentFile.getLastReadStringIndex()+1;
+      }
+      return Value.valueOf(line);
+    }
     else {
       throw new IllegalArgumentException("Attempting to read unexpected special variable [" + varName + ']');
     }
@@ -145,7 +159,9 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
             || VAR_SRC_FILE_NAME2.equals(varName)
             || VAR_SRC_FULLPATH.equals(varName)
             || VAR_SRC_FULLPATH2.equals(varName)
-            || VAR_VERSION.equals(varName)) {
+            || VAR_VERSION.equals(varName)
+            || VAR_LINE.equals(varName)
+            ) {
       throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
     }
     else {

@@ -5,4 +5,12 @@
 <element>elem2</element>
 <element>elem3</element>
 <element><![CDATA[<test>]]></element>
+<languages>
+  <language short="rus" long="russian">rustext</language>
+  <language short="ger" long="german">gertext</language>
+  <language short="est" long="estonian">esttext</language>
+  <language short="fin" long="finnish">fintext</language>
+  <language short="fr" long="french">frtext</language>
+  <language short="it" long="italian">ittext</language>
+</languages>
 </root>

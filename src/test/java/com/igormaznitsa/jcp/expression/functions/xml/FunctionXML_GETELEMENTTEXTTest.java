@@ -31,8 +31,8 @@ public class FunctionXML_GETELEMENTTEXTTest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution() throws Exception {
-    final Value root = HANDLER.executeStr(SPY_CONTEXT, new FunctionXML_GETROOT().executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID));
-    assertEquals("\nelem1\nelem2\nelem3\n<test>\n", root.asString());
+    final Value elements = HANDLER.executeStr(SPY_CONTEXT, new FunctionXML_XELEMENT().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID,Value.valueOf("/root/languages")));
+    assertEquals("rustext\n  gertext\n  esttext\n  fintext\n  frtext\n  ittext", elements.asString().trim());
   }
 
   @Override

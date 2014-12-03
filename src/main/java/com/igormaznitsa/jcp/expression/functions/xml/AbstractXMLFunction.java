@@ -128,18 +128,37 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   }
 
   public static String buildPathForElement(final Element element) {
-    final StringBuilder result = new StringBuilder(element.getNodeName());
+    final StringBuilder result = new StringBuilder();
 
-    Node thenode = element.getParentNode();
+    Node thenode = element;
 
     while (thenode != null) {
-      result.append('/').append(thenode.getNodeName());
+      int level = 0;
+      Node sibling = thenode;
+      while (sibling != null) {
+        level++;
+        sibling = sibling.getPreviousSibling();
+      }
+
+      result.append('/').append(thenode.getNodeName()).append('{').append(level).append('}');
       thenode = thenode.getParentNode();
     }
 
     return result.toString();
   }
 
+  public static String getFirstLevelTextContent(final Node node) {
+    final NodeList list = node.getChildNodes();
+    final StringBuilder textContent = new StringBuilder(128);
+    for (int i = 0; i < list.getLength(); ++i) {
+      final Node child = list.item(i);
+      if (child.getNodeType() == Node.TEXT_NODE) {
+        textContent.append(child.getTextContent());
+      }
+    }
+    return textContent.toString();
+  }
+  
   public String findElementForIndex(final PreprocessorContext context, final String elementListId, final int elementIndex) {
     final String elementCacheId = makeElementId(elementListId, elementIndex);
     NodeContainer container = (NodeContainer) context.getSharedResource(elementCacheId);
@@ -153,14 +172,14 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
 
       final NodeList list = container.getNodeList();
       if (elementIndex < 0 || elementIndex >= list.getLength()) {
-        final String text = "The Element Index is out of bound [" + elementIndex + ']';
+        final String text = "The Element Index is out of bounds [" + elementIndex + ']';
         throw new IllegalArgumentException(text, context.makeException(text, null));
       }
 
       final Element element = (Element) list.item(elementIndex);
 
       if (element == null) {
-        final String text = "Index is not valud [" + elementIndex + ']';
+        final String text = "Index is not valid [" + elementIndex + ']';
         throw new IllegalArgumentException(text);
       }
 

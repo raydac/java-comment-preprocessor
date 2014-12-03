@@ -43,7 +43,12 @@ public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
     assertEquals("elem2", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_ONE)).asString());
     assertEquals("elem3", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_TWO)).asString());
     assertEquals("<test>", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_THREE)).asString());
-  }
+    final Value elementList2 = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
+    assertEquals("elem1", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_ZERO)).asString());
+    assertEquals("elem2", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_ONE)).asString());
+    assertEquals("elem3", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_TWO)).asString());
+    assertEquals("<test>", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_THREE)).asString());
+}
 
   @Override
   public void testName() {

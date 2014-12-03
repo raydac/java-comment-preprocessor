@@ -36,9 +36,10 @@ public class FunctionXML_ELEMENTSNUMBERTest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution() throws Exception {
-    final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
+    final Value languageElement = new FunctionXML_ELEMENTAT().executeStrInt(SPY_CONTEXT, new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("languages")), Value.valueOf(0L));
+    final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, languageElement, Value.valueOf("language"));
     assertNotNull(elementList);
-    assertEquals(4L, HANDLER.executeStr(SPY_CONTEXT, elementList).asLong().longValue());
+    assertEquals(6L, HANDLER.executeStr(SPY_CONTEXT, elementList).asLong().longValue());
   }
 
   @Override
