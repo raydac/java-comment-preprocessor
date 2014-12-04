@@ -60,7 +60,6 @@ public class ResetablePrinter {
     for (final char chr : text.toCharArray()) {
       outStream.write(chr);
     }
-    outStream.write('\r');
-    outStream.write('\n');
+    outStream.write(PreprocessorUtils.LINE_END, 0, PreprocessorUtils.LINE_END.length());
   }
 }

@@ -63,6 +63,7 @@ History of changes
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
 - added predefined special read only variables '__line__','__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current preprocessing file
 - added function 'STR str2java(STR,BOOL)' to escape and split string to be presented as java sources
+- added functions 'STR str2js(STR)', 'STR str2json(STR)','STR str2xml(STR)' and 'STR str2csv(STR)'
 - added functions 'STR xml_xlist(STR,STR)' and 'STR xml_xelement(STR,STR)' which allow to use xpath to get element lists an elements
 - apache common-io and common-lang libraries have been packed into the jar and hidden
 - added the short variant '//#ifdef BOOL' for '//#ifdefined BOOL'
@@ -71,6 +72,7 @@ History of changes
 - added '//#undefl NAME' to remove a local (!) variable from the current context, and '//#undef NAME' to remove a global definition
 - //#define and //#definel can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
 - added '//#error EXPR' and '//#warning EXPR' directives to throw exception and log warnings
+- added support of custom line end trhoug property 'jcp.line.separator'
 
 5.3.4
 - added support of test source folder preprocessing for maven projects

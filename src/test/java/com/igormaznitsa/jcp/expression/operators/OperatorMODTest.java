@@ -32,16 +32,12 @@ public class OperatorMODTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("%");
-    assertIllegalStateException("%1");
-    assertIllegalStateException("2%");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("true%false");
-    assertIllegalArgumentException("1%true");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("%");
+    assertPreprocessorException("%1");
+    assertPreprocessorException("2%");
+    assertPreprocessorException("true%false");
+    assertPreprocessorException("1%true");
   }
 
   @Test(expected = ArithmeticException.class)

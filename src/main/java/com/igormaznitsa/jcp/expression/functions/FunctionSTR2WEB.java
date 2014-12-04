@@ -18,40 +18,41 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * The class implements the str2web function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionSTR2WEB extends AbstractFunction {
-
-  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
+public final class FunctionSTR2WEB extends AbstractStrConverter {
 
   @Override
   public String getName() {
     return "str2web";
   }
 
+  @Override
   public Value executeStr(final PreprocessorContext context, final Value value) {
-    final String escaped = StringEscapeUtils.escapeHtml(value.asString());
-    return Value.valueOf(escaped);
-  }
-
-  @Override
-  public int getArity() {
-    return 1;
-  }
-
-  @Override
-  public ValueType[][] getAllowedArgumentTypes() {
-    return ARG_TYPES;
+    final String escaped = StringEscapeUtils.escapeHtml3(value.asString());
+    
+    final StringBuilder result = new StringBuilder(escaped.length()*2);
+    for(int i=0;i<escaped.length();i++){
+      final char ch = escaped.charAt(i);
+      if (CharUtils.isAscii(ch)){
+        result.append(ch);
+      }else{
+        result.append("&#").append(Integer.toString(Character.codePointAt(escaped, i))).append(';');
+      }
+    }
+    
+    return Value.valueOf(result.toString());
   }
 
   @Override
   public String getReference() {
-    return "escape a string to make it compatible with HTML";
+    return "escape string for HTML3";
   }
 
   @Override

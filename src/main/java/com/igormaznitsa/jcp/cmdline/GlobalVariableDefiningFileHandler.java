@@ -42,7 +42,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       String stringRest = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (stringRest.isEmpty()) {
-        throw new IllegalArgumentException("Empty string");
+        throw context.makeException("Empty string",null);
       }
 
       File file = null;
@@ -59,7 +59,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
         }
         else {
-          throw new IllegalArgumentException("Wrong global variable file name expression [" + stringRest + ']');
+          throw context.makeException("Wrong global variable file name expression [" + stringRest + ']',null);
         }
       }
       else {
@@ -73,7 +73,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         }
       }
       else {
-        throw new IllegalArgumentException("Can't find a global variable defining file \'" + PreprocessorUtils.getFilePath(file) + '\'');
+        throw context.makeException("Can't find a global variable defining file \'" + PreprocessorUtils.getFilePath(file) + '\'',null);
       }
 
       result = true;

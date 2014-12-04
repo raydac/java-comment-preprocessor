@@ -107,9 +107,7 @@ public final class ExpressionParser {
    * expression string
    */
   public ExpressionTree parse(final String expressionStr, final PreprocessorContext context) throws IOException {
-    if (expressionStr == null) {
-      throw new NullPointerException("Expression is null");
-    }
+    PreprocessorUtils.assertNotNull("Expression is null",expressionStr);
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
 
@@ -387,9 +385,7 @@ public final class ExpressionParser {
    * reading
    */
   ExpressionItem nextItem(final PushbackReader reader, final PreprocessorContext context) throws IOException {
-    if (reader == null) {
-      throw new NullPointerException("Reader is null");
-    }
+    PreprocessorUtils.assertNotNull("Reader is null", reader);
 
     ParserState state = ParserState.WAIT;
     final StringBuilder builder = new StringBuilder(12);
@@ -447,7 +443,7 @@ public final class ExpressionParser {
             state = ParserState.OPERATOR;
           }
           else {
-            throw new IllegalArgumentException("Unsupported token character detected \'" + chr + '\'');
+            throw context.makeException("Unsupported token character detected \'" + chr + '\'', null);
           }
         }
         break;
@@ -556,8 +552,9 @@ public final class ExpressionParser {
             case '\'':
               builder.append('\'');
               break;
-            default:
-              throw new IllegalArgumentException("Unsupported special char detected \'\\" + chr + '\'');
+            default:{
+              throw context.makeException("Unsupported special char detected \'\\" + chr + '\'',null);
+            }
           }
           state = ParserState.STRING;
         }
@@ -586,8 +583,9 @@ public final class ExpressionParser {
     if (!found) {
       switch (state) {
         case SPECIAL_CHAR:
-        case STRING:
-          throw new IllegalStateException("Unclosed string has been detected");
+        case STRING:{
+          throw context.makeException("Unclosed string has been detected", null);
+        }
         default:
           return null;
       }
@@ -624,7 +622,7 @@ public final class ExpressionParser {
           }
 
           if (result == null) {
-            throw new IllegalArgumentException("Unknown operator detected \'" + operatorLC + '\'');
+            throw context.makeException("Unknown operator detected \'" + operatorLC + '\'',null);
           }
         }
         break;
@@ -635,13 +633,14 @@ public final class ExpressionParser {
         case VALUE_OR_FUNCTION: {
           final String str = builder.toString().toLowerCase();
           if (str.charAt(0) == '$') {
+
             if (context == null) {
-              throw new IllegalStateException("There is not a preprocessor context to define a user function [" + str + ']');
+              throw context.makeException("There is not a preprocessor context to define a user function [" + str + ']',null);
             }
 
             final PreprocessorExtension extension = context.getPreprocessorExtension();
             if (extension == null) {
-              throw new IllegalStateException("There is not any defined preprocessor extension to get data about user functions [" + str + ']');
+              throw context.makeException("There is not any defined preprocessor extension to get data about user functions [" + str + ']',null);
             }
 
             final String userFunctionName = PreprocessorUtils.extractTail("$", str);

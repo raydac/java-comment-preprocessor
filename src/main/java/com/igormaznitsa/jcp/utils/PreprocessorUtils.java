@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,6 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +33,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -46,26 +45,24 @@ public enum PreprocessorUtils {
 
   ;
 
+    public static final String LINE_END;
+        
+    static {
+      final String jcpLlineEnd = System.getProperty("jcp.line.separator");
+      LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator","\r\n") : jcpLlineEnd;
+    }
+    
     public static String getFileExtension(final File file) {
     String result = null;
     if (file != null) {
-
-      final String fileName = file.getName();
-      final int lastPointPos = fileName.lastIndexOf('.');
-      if (lastPointPos < 0) {
-        result = "";
-      }
-      else {
-        result = fileName.substring(lastPointPos + 1);
-      }
+      result = FilenameUtils.getExtension(file.getName());
     }
     return result;
   }
 
-  public static String[] extractExtensions(final String extensions) {
-    if (extensions == null) {
-      throw new NullPointerException("String of extensions is null");
-    }
+  public static String[] splitExtensionCommaList(final String extensions) {
+    PreprocessorUtils.assertNotNull("String of extensions is null", extensions);
+
     final String trimmed = extensions.trim();
 
     String[] result;
@@ -83,14 +80,15 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
-    if (file == null) {
-      throw new NullPointerException("File is null");
+  public static void assertNotNull(final String message, final Object obj) {
+    if (obj == null) {
+      throw new NullPointerException(message);
     }
+  }
 
-    if (charset == null) {
-      throw new NullPointerException("Charset is null");
-    }
+  public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
+    PreprocessorUtils.assertNotNull("File is null", file);
+    PreprocessorUtils.assertNotNull("Charset is null", charset);
 
     if (!Charset.isSupported(charset)) {
       throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
@@ -122,13 +120,8 @@ public enum PreprocessorUtils {
   }
 
   public static String extractTail(final String prefix, final String value) {
-    if (prefix == null) {
-      throw new NullPointerException("Prefix is null");
-    }
-
-    if (value == null) {
-      throw new NullPointerException("Value is null");
-    }
+    PreprocessorUtils.assertNotNull("Prefix is null", prefix);
+    PreprocessorUtils.assertNotNull("Value is null", value);
 
     if (prefix.length() > value.length()) {
       throw new IllegalArgumentException("Prefix is taller than the value");
@@ -138,13 +131,8 @@ public enum PreprocessorUtils {
   }
 
   public static void copyFile(final File source, final File dest) throws IOException {
-    if (source == null) {
-      throw new NullPointerException("Source file is null");
-    }
-
-    if (dest == null) {
-      throw new NullPointerException("Destination file is null");
-    }
+    PreprocessorUtils.assertNotNull("Source is null", source);
+    PreprocessorUtils.assertNotNull("Destination file is null", dest);
 
     if (source.isDirectory()) {
       throw new IllegalArgumentException("Source file is directory");
@@ -209,16 +197,10 @@ public enum PreprocessorUtils {
   }
 
   private static void checkFile(final File file) throws IOException {
-    if (file == null) {
-      throw new NullPointerException("File is null");
-    }
-
-    if (!file.exists()) {
-      throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
-    }
+    PreprocessorUtils.assertNotNull("File is null", file);
 
     if (!file.isFile()) {
-      throw new IllegalArgumentException("File can't be read because it's not a normal file");
+      throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
     }
   }
 
@@ -269,7 +251,7 @@ public enum PreprocessorUtils {
     return buffer.array();
   }
 
-  public static String[] splitForSetOperator(final String string) {
+  public static String[] splitForEqualChar(final String string) {
     final int index = string.indexOf('=');
 
     final String[] result;
@@ -361,7 +343,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String getNextLineCodes(){
-    return System.getProperty("line.separator","\r\n");
+  public static String getNextLineCodes() {
+    return System.getProperty("line.separator", "\r\n");
   }
 }

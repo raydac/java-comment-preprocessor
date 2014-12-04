@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.removers;
 
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -31,14 +32,8 @@ public class JavaCommentsRemover {
   private final Writer dstWriter;
 
   public JavaCommentsRemover(final Reader src, final Writer dst) {
-    if (src == null) {
-      throw new NullPointerException("The reader is null");
-    }
-
-    if (dst == null) {
-      throw new NullPointerException("The writer is null");
-    }
-
+    PreprocessorUtils.assertNotNull("The reader is null", src);
+    PreprocessorUtils.assertNotNull("The writer is null", dst);
     this.srcReader = src;
     this.dstWriter = dst;
   }

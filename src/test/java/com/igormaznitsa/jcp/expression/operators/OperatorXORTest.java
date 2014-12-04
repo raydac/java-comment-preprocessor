@@ -53,18 +53,14 @@ public class OperatorXORTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("^");
-    assertIllegalStateException("1^");
-    assertIllegalStateException("^2");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("\"test\"^1");
-    assertIllegalArgumentException("1.3^1");
-    assertIllegalArgumentException("2^\"test\"");
-    assertIllegalArgumentException("2^1.2");
-    assertIllegalArgumentException("2.1^1.2");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("^");
+    assertPreprocessorException("1^");
+    assertPreprocessorException("^2");
+    assertPreprocessorException("\"test\"^1");
+    assertPreprocessorException("1.3^1");
+    assertPreprocessorException("2^\"test\"");
+    assertPreprocessorException("2^1.2");
+    assertPreprocessorException("2.1^1.2");
   }
 }

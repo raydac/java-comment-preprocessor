@@ -20,29 +20,23 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
 /**
- * The class implements the str2int function handler
+ * The class is parent for converting classes.
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionSTR2INT extends AbstractStrConverter {
+public abstract class AbstractStrConverter extends AbstractFunction {
+
+  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
+
+  public abstract Value executeStr(final PreprocessorContext context, final Value stringToConvert);
 
   @Override
-  public String getName() {
-    return "str2int";
+  public final int getArity() {
+    return 1;
   }
 
   @Override
-  public Value executeStr(final PreprocessorContext context, final Value value) {
-    return Value.valueOf(Long.parseLong(value.asString().trim()));
-  }
-
-  @Override
-  public String getReference() {
-    return "convert string into integet number";
-  }
-
-  @Override
-  public ValueType getResultType() {
-    return ValueType.INT;
+  public final ValueType[][] getAllowedArgumentTypes() {
+    return ARG_TYPES;
   }
 }

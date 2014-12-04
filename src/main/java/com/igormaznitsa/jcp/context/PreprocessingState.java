@@ -99,17 +99,9 @@ public final class PreprocessingState {
   private String lastReadString;
   
   PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
-    if (rootFile == null) {
-      throw new NullPointerException("The root file is null");
-    }
-
-    if (inEncoding == null) {
-      throw new NullPointerException("InEncoding is null");
-    }
-
-    if (outEncoding == null) {
-      throw new NullPointerException("OutEncoding is null");
-    }
+    PreprocessorUtils.assertNotNull("The root file is null", rootFile);
+    PreprocessorUtils.assertNotNull("InEncoding is null",inEncoding);
+    PreprocessorUtils.assertNotNull("OutEncoding is null",outEncoding);
 
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
@@ -120,13 +112,8 @@ public final class PreprocessingState {
   }
 
   PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) {
-    if (rootFile == null) {
-      throw new NullPointerException("The root file is null");
-    }
-
-    if (inEncoding == null) {
-      throw new NullPointerException("InEncoding is null");
-    }
+    PreprocessorUtils.assertNotNull("The root file is null", rootFile);
+    PreprocessorUtils.assertNotNull("InEncoding is null", inEncoding);
 
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
@@ -142,13 +129,8 @@ public final class PreprocessingState {
   }
   
   public void pushExcludeIfData(final FileInfoContainer infoContainer, final String excludeIfCondition, final int stringIndex) {
-    if (infoContainer == null) {
-      throw new NullPointerException("File info is null");
-    }
-
-    if (excludeIfCondition == null) {
-      throw new NullPointerException("Condition is null");
-    }
+    PreprocessorUtils.assertNotNull("File info is null", infoContainer);
+    PreprocessorUtils.assertNotNull("Condition is null", excludeIfCondition);
 
     if (stringIndex < 0) {
       throw new IllegalArgumentException("String index is less than zero");
@@ -180,9 +162,7 @@ public final class PreprocessingState {
   }
 
   public TextFileDataContainer openFile(final File file) throws IOException {
-    if (file == null) {
-      throw new NullPointerException("The file is null");
-    }
+    PreprocessorUtils.assertNotNull("The file is null", file);
 
     final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding);
     final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, 0);
@@ -345,9 +325,7 @@ public final class PreprocessingState {
   }
 
   public void setPrinter(final PrinterType type) {
-    if (type == null) {
-      throw new NullPointerException("Type is null");
-    }
+    PreprocessorUtils.assertNotNull("Type is null", type);
     switch (type) {
       case NORMAL:
         currentPrinter = normalPrinter;

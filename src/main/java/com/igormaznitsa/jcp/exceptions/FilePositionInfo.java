@@ -37,9 +37,7 @@ public class FilePositionInfo {
   private final int stringIndex;
 
   public FilePositionInfo(final File file, final int stringIndex) {
-    if (file == null) {
-      throw new NullPointerException("File is null");
-    }
+    PreprocessorUtils.assertNotNull("File is null", file);
     this.file = file;
     this.stringIndex = stringIndex;
   }

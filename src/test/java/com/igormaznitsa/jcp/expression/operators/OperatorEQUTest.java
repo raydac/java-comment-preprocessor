@@ -37,15 +37,11 @@ public class OperatorEQUTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("true==1");
-  }
-
-  @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("==");
-    assertIllegalStateException("1==");
-    assertIllegalStateException("==1");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("true==1");
+    assertPreprocessorException("==");
+    assertPreprocessorException("1==");
+    assertPreprocessorException("==1");
   }
 
   @Override

@@ -18,31 +18,33 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
- * The class implements the str2int function handler
+ * The class implements the str2json function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionSTR2INT extends AbstractStrConverter {
+public final class FunctionSTR2JSON extends AbstractStrConverter {
 
   @Override
   public String getName() {
-    return "str2int";
+    return "str2json";
   }
 
   @Override
   public Value executeStr(final PreprocessorContext context, final Value value) {
-    return Value.valueOf(Long.parseLong(value.asString().trim()));
+    final String escaped = StringEscapeUtils.escapeJson(value.asString());
+    return Value.valueOf(escaped);
   }
 
   @Override
   public String getReference() {
-    return "convert string into integet number";
+    return "escape string for JSON";
   }
 
   @Override
   public ValueType getResultType() {
-    return ValueType.INT;
+    return ValueType.STRING;
   }
 }

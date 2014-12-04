@@ -49,7 +49,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   private void processLocalDefinition(final String string, final PreprocessorContext context) {
-    final String[] splitted = PreprocessorUtils.splitForSetOperator(string);
+    final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
 
     if (splitted.length != 2) {
       final String text = "Can't find expression";

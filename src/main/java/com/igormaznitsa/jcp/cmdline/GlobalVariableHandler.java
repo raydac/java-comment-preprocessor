@@ -45,7 +45,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
       if (!nameAndExpression.isEmpty()) {
 
-        final String[] splitted = PreprocessorUtils.splitForSetOperator(nameAndExpression);
+        final String[] splitted = PreprocessorUtils.splitForEqualChar(nameAndExpression);
         if (splitted.length != 2) {
           throw new IllegalArgumentException("Wrong expression at a " + ARG_NAME + " directive [" + nameAndExpression + ']');
         }

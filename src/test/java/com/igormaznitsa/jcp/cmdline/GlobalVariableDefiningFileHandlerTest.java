@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import static org.junit.Assert.*;
@@ -64,25 +65,25 @@ public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHa
     assertEquals("File must be equals", testFile, globalVarFiles[0]);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFileWithExpression() {
     final PreprocessorContext context = new PreprocessorContext();
     HANDLER.processCommandLineKey("@@\"undefinded_file.111111.txtt\"", context);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFile() {
     final PreprocessorContext context = new PreprocessorContext();
     HANDLER.processCommandLineKey("@undefinded_file.111111.txtt", context);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFile() {
     final PreprocessorContext context = new PreprocessorContext();
     HANDLER.processCommandLineKey("@", context);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFileForExpressionMode() {
     final PreprocessorContext context = new PreprocessorContext();
     HANDLER.processCommandLineKey("@@", context);

@@ -112,9 +112,7 @@ public final class Value implements ExpressionItem {
   }
 
   public static Value recognizeRawString(final String str) {
-    if (str == null) {
-      throw new NullPointerException("Parameter is null");
-    }
+    PreprocessorUtils.assertNotNull("Parameter is null", str);
 
     if (str.equals("true")) {
       return Value.BOOLEAN_TRUE;

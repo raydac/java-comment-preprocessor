@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 /**
  * The class describes an expression variable
  *
@@ -33,9 +35,7 @@ public final class Variable implements ExpressionItem {
    * @param varName the variable name, it must not be null
    */
   public Variable(final String varName) {
-    if (varName == null) {
-      throw new NullPointerException("Var name is null");
-    }
+    PreprocessorUtils.assertNotNull("Var name is null", varName);
     this.variableName = varName;
   }
 

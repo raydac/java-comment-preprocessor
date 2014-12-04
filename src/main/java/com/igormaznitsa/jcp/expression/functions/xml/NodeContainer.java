@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -31,18 +32,14 @@ public class NodeContainer {
   private final long id;
 
   public NodeContainer(final long id, final Node node) {
-    if (node == null) {
-      throw new NullPointerException("Node is null");
-    }
+    PreprocessorUtils.assertNotNull("Node is null", node);
     this.id = id;
     this.node = node;
     this.nodeList = null;
   }
 
   public NodeContainer(final long id, final NodeList list) {
-    if (list == null) {
-      throw new NullPointerException("NodeList is null");
-    }
+    PreprocessorUtils.assertNotNull("NodeList is null", list);
     this.id = id;
     this.node = null;
     this.nodeList = list;

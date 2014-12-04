@@ -36,19 +36,15 @@ public class OperatorMULTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("*");
-    assertIllegalStateException("*1");
-    assertIllegalStateException("2*");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("true*false");
-    assertIllegalArgumentException("1*true");
-    assertIllegalArgumentException("1.3*true");
-    assertIllegalArgumentException("false*1");
-    assertIllegalArgumentException("false*1.1");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("*");
+    assertPreprocessorException("*1");
+    assertPreprocessorException("2*");
+    assertPreprocessorException("true*false");
+    assertPreprocessorException("1*true");
+    assertPreprocessorException("1.3*true");
+    assertPreprocessorException("false*1");
+    assertPreprocessorException("false*1.1");
   }
 
   @Override

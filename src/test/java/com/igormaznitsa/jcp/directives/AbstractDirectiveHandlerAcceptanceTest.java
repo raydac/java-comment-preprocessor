@@ -174,13 +174,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
   }
 
   private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger, final boolean keepLines, final VariablePair... globalVariables) throws Exception {
-    if (preprocessingText == null) {
-      throw new NullPointerException("Preprocessing text is null");
-    }
-
-    if (result == null) {
-      throw new NullPointerException("Result container is null");
-    }
+    PreprocessorUtils.assertNotNull("Preprocessing text is null", preprocessingText);
+    PreprocessorUtils.assertNotNull("Result container is null", result);
 
     final PreprocessorContext context = new PreprocessorContext();
     if (logger != null) {

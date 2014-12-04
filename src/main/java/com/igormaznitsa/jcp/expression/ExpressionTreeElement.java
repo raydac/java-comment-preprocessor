@@ -20,6 +20,7 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.util.List;
 
 /**
@@ -76,7 +77,7 @@ public class ExpressionTreeElement {
   /**
    * Current call stack of the preprocessor to the source string.
    */
-  private final FilePositionInfo [] callStack;
+  private final FilePositionInfo [] includeStack;
   
   /**
    * The constructor
@@ -85,10 +86,10 @@ public class ExpressionTreeElement {
    */
   ExpressionTreeElement(final ExpressionItem item, final FilePositionInfo [] callStack, final String sourceString) {
     this.sourceString = sourceString;
-    this.callStack = callStack;
+    this.includeStack = callStack;
     
     if (item == null) {
-      throw new NullPointerException("The item is null");
+      throw new PreprocessorException("[Expression]The item is null", this.sourceString, this.includeStack, null);
     }
 
     int arity = 0;
@@ -171,11 +172,11 @@ public class ExpressionTreeElement {
    */
   public boolean replaceElement(final ExpressionTreeElement oldOne, final ExpressionTreeElement newOne) {
     if (oldOne == null) {
-      throw new NullPointerException("The old element is null");
+      throw new PreprocessorException("[Expression]The old element is null", this.sourceString, this.includeStack, null);
     }
 
     if (newOne == null) {
-      throw new NullPointerException("The new element is null");
+      throw new PreprocessorException("[Expression]The new element is null", this.sourceString, this.includeStack, null);
     }
 
     boolean result = false;
@@ -213,9 +214,7 @@ public class ExpressionTreeElement {
    * @return the element which should be used as the last for the current tree
    */
   public ExpressionTreeElement addTreeElement(final ExpressionTreeElement element) {
-    if (element == null) {
-      throw new NullPointerException("The element is null");
-    }
+    PreprocessorUtils.assertNotNull("The element is null", element);
 
     final int newElementPriority = element.getPriority();
 
@@ -239,7 +238,7 @@ public class ExpressionTreeElement {
         parentTreeElement.replaceElement(this, element);
       }
       if (element.nextChildSlot>=element.childElements.length){
-        throw new IllegalArgumentException("Can't process expression item, may be wrong number of arguments",new PreprocessorException("Can't process expression item, may be wrong number of arguments", this.sourceString, this.callStack, null));
+        throw new PreprocessorException("[Expression]Can't process expression item, may be wrong number of arguments", this.sourceString, this.includeStack, null);
       }
       element.childElements[element.nextChildSlot] = this;
       element.nextChildSlot++;
@@ -283,26 +282,26 @@ public class ExpressionTreeElement {
    */
   public void fillArguments(final List<ExpressionTree> arguments) {
     if (arguments == null) {
-      throw new NullPointerException("Argument list is null");
+      throw new PreprocessorException("[Expression]Argument list is null",this.sourceString, this.includeStack, null);
     }
 
     if (childElements.length != arguments.size()) {
-      throw new IllegalArgumentException("Wrong argument list size");
+      throw new PreprocessorException("Wrong argument list size",this.sourceString, this.includeStack, null);
     }
 
     int i = 0;
     for (ExpressionTree arg : arguments) {
       if (arg == null) {
-        throw new NullPointerException("Argument [" + (i + 1) + "] is null");
+        throw new PreprocessorException("[Expression]Argument [" + (i + 1) + "] is null", this.sourceString, this.includeStack, null);
       }
 
       if (childElements[i] != null) {
-        throw new IllegalStateException("Non-null slot detected, it is possible that there is a program error, contact a developer please");
+        throw new PreprocessorException("[Expression]Non-null slot detected, it is possible that there is a program error, contact a developer please",this.sourceString, this.includeStack, null);
       }
 
       final ExpressionTreeElement root = arg.getRoot();
       if (root == null) {
-        throw new IllegalArgumentException("Empty argument [" + (i + 1) + "] detected",new PreprocessorException("Empty argument [" + (i + 1) + "] detected", this.sourceString, this.callStack, null));
+        throw new PreprocessorException("[Expression]Empty argument [" + (i + 1) + "] detected", this.sourceString, this.includeStack, null);
       }
       childElements[i] = root;
       root.parentTreeElement = this;
@@ -318,15 +317,15 @@ public class ExpressionTreeElement {
    */
   private void addElementToNextFreeSlot(final ExpressionTreeElement element) {
     if (element == null) {
-      throw new NullPointerException("Element is null");
+      throw new PreprocessorException("[Expression]Element is null", this.sourceString, this.includeStack, null);
     }
 
     if (childElements.length == 0) {
-      throw new IllegalArgumentException("Unexpected element, may be unknown function [" + savedItem.toString() + ']');
+      throw new PreprocessorException("[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']',this.sourceString, this.includeStack, null);
     }
     else {
       if (isFull()) {
-        throw new IllegalStateException("There is not any possibility to add new argument [" + savedItem.toString() + ']');
+        throw new PreprocessorException("[Expression]There is not any possibility to add new argument [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
       }
       else {
         childElements[nextChildSlot++] = element;
@@ -350,12 +349,12 @@ public class ExpressionTreeElement {
               final Value val = (Value) item;
               if (val.getType() == ValueType.INT) {
                 childElements = EMPTY;
-                savedItem = Value.valueOf(Long.valueOf(0 - val.asLong().longValue()));
+                savedItem = Value.valueOf(0 - val.asLong());
                 makeMaxPriority();
               }
               else if (val.getType() == ValueType.FLOAT) {
                 childElements = EMPTY;
-                savedItem = Value.valueOf(Float.valueOf(0 - val.asFloat().floatValue()));
+                savedItem = Value.valueOf(Float.valueOf(0 - val.asFloat()));
                 makeMaxPriority();
               }
               else {

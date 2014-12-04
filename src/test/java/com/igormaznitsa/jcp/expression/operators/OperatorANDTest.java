@@ -39,16 +39,12 @@ public class OperatorANDTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("&&");
-    assertIllegalStateException("true &&");
-    assertIllegalStateException("&& false");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("\"test\" && true");
-    assertIllegalArgumentException("false && 1.3");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("&&");
+    assertPreprocessorException("true &&");
+    assertPreprocessorException("&& false");
+    assertPreprocessorException("\"test\" && true");
+    assertPreprocessorException("false && 1.3");
   }
 
   @Override

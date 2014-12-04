@@ -51,15 +51,11 @@ public class OperatorNOTTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("!");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("!");
 //TODO        assertIllegalStateException("2!");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("!\"test\"");
-    assertIllegalArgumentException("!3.2");
+    assertPreprocessorException("!\"test\"");
+    assertPreprocessorException("!3.2");
   }
 
 }

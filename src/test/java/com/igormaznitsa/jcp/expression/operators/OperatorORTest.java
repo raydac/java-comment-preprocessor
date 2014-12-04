@@ -53,16 +53,12 @@ public class OperatorORTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("||");
-    assertIllegalStateException("true||");
-    assertIllegalStateException("||false");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("\"test\"||true");
-    assertIllegalArgumentException("true||1");
-    assertIllegalArgumentException("1.2||1.1");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("||");
+    assertPreprocessorException("true||");
+    assertPreprocessorException("\"test\"||true");
+    assertPreprocessorException("true||1");
+    assertPreprocessorException("1.2||1.1");
+    assertPreprocessorException("||false");
   }
 }

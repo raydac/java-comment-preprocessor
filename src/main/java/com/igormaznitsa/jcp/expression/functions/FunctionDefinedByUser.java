@@ -18,6 +18,7 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
  * The class implements the user defined function handler (a function which name
@@ -34,16 +35,11 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
   public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
     super();
-    if (name == null) {
-      throw new NullPointerException("Name is null");
-    }
+    PreprocessorUtils.assertNotNull("Name is null", name);
+    PreprocessorUtils.assertNotNull("Context is null", context);
 
     if (argsNumber < 0) {
       throw new IllegalArgumentException("Argument number is less than zero");
-    }
-
-    if (context == null) {
-      throw new NullPointerException("Context is null");
     }
 
     this.name = name;

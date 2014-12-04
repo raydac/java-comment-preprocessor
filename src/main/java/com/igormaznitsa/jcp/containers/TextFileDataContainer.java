@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.containers;
 
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 
 /**
@@ -71,14 +72,8 @@ public final class TextFileDataContainer {
   }
 
   public TextFileDataContainer(final File currentFile, final String[] text, final int stringIndex) {
-    if (currentFile == null) {
-      throw new NullPointerException("File is null");
-    }
-
-    if (text == null) {
-      throw new NullPointerException("Text is null");
-    }
-
+    PreprocessorUtils.assertNotNull("File is null", currentFile);
+    PreprocessorUtils.assertNotNull("Text is null", text);
     this.file = currentFile;
     this.text = text;
     setNextStringIndex(stringIndex);

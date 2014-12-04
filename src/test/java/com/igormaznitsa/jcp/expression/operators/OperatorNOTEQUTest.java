@@ -58,16 +58,12 @@ public class OperatorNOTEQUTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("!=");
-    assertIllegalStateException("true!=");
-    assertIllegalStateException("!=2");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("true!=\"hello\"");
-    assertIllegalArgumentException("true!=1.2");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("!=");
+    assertPreprocessorException("true!=");
+    assertPreprocessorException("!=2");
+    assertPreprocessorException("true!=\"hello\"");
+    assertPreprocessorException("true!=1.2");
   }
 
 }

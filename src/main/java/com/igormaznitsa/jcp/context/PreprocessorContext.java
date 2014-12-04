@@ -103,9 +103,8 @@ public class PreprocessorContext {
    * @param context the context to be cloned, must not be null.
    */
   public PreprocessorContext(final PreprocessorContext context) {
-    if (context == null) {
-      throw new NullPointerException("Source context muet not be null");
-    }
+    PreprocessorUtils.assertNotNull("Source context muet not be null", context);
+
     this.verbose = context.verbose;
     this.removeComments = context.removeComments;
     this.clearDestinationDirectoryBefore = context.clearDestinationDirectoryBefore;
@@ -157,14 +156,10 @@ public class PreprocessorContext {
    * @see SpecialVariableProcessor
    */
   public void registerSpecialVariableProcessor(final SpecialVariableProcessor processor) {
-    if (processor == null) {
-      throw new NullPointerException("Processor is null");
-    }
+    PreprocessorUtils.assertNotNull("Processor is null", processor);
 
     for (final String varName : processor.getVariableNames()) {
-      if (varName == null) {
-        throw new NullPointerException("A Special Var name is null");
-      }
+      PreprocessorUtils.assertNotNull("A Special Var name is null", varName);
       if (mapVariableNameToSpecialVarProcessor.containsKey(varName)) {
         throw new IllegalStateException("There is already defined processor for " + varName);
       }
@@ -258,9 +253,7 @@ public class PreprocessorContext {
    * @return this preprocessor context instance
    */
   public PreprocessorContext setSourceDirectories(final String directories) {
-    if (directories == null) {
-      throw new NullPointerException("Directory is null");
-    }
+    PreprocessorUtils.assertNotNull("Source directory is null", directories);
 
     this.sourceDirectories = directories;
     this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
@@ -275,13 +268,8 @@ public class PreprocessorContext {
    * @param obj the object to be saved in, must not be null
    */
   public void setSharedResource(final String name, final Object obj) {
-    if (name == null) {
-      throw new NullPointerException("Name is null");
-    }
-
-    if (obj == null) {
-      throw new NullPointerException("Object is null");
-    }
+    PreprocessorUtils.assertNotNull("Name is null",name);
+    PreprocessorUtils.assertNotNull("Object is null",obj);
 
     sharedResources.put(name, obj);
   }
@@ -293,9 +281,7 @@ public class PreprocessorContext {
    * @return a cached object or null if it is not found
    */
   public Object getSharedResource(final String name) {
-    if (name == null) {
-      throw new NullPointerException("Name is null");
-    }
+    PreprocessorUtils.assertNotNull("Name is null", name);
     return sharedResources.get(name);
   }
 
@@ -306,9 +292,7 @@ public class PreprocessorContext {
    * @return removing object or null if it is not found
    */
   public Object removeSharedResource(final String name) {
-    if (name == null) {
-      throw new NullPointerException("Name is null");
-    }
+    PreprocessorUtils.assertNotNull("Name is null", name);
     return sharedResources.remove(name);
   }
 
@@ -358,10 +342,7 @@ public class PreprocessorContext {
    * @return this preprocessor context instance
    */
   public PreprocessorContext setDestinationDirectory(final String directory) {
-    if (directory == null) {
-      throw new NullPointerException("Directory is null");
-    }
-
+    PreprocessorUtils.assertNotNull("Directory is null", directory);
     this.destinationDirectory = directory;
     destinationDirectoryFile = new File(this.destinationDirectory);
 
@@ -395,10 +376,8 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setProcessingFileExtensions(final String extensions) {
-    if (extensions == null) {
-      throw new NullPointerException("Argument is null");
-    }
-    processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.extractExtensions(extensions)));
+    PreprocessorUtils.assertNotNull("Argument is null", extensions);
+    processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -432,11 +411,13 @@ public class PreprocessorContext {
    * @return true if th file must be excluded, otherwise false
    */
   public final boolean isFileExcludedFromProcess(final File file) {
-    if (file == null || !file.exists() || file.isDirectory()) {
-      return false;
+    final boolean result;
+    if (file != null && file.isFile()) {
+      result = excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
+    }else{
+      result = false;
     }
-
-    return excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
+    return result;
   }
 
   /**
@@ -448,10 +429,8 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setExcludedFileExtensions(final String extensions) {
-    if (extensions == null) {
-      throw new NullPointerException("Argument is null");
-    }
-    excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.extractExtensions(extensions)));
+    PreprocessorUtils.assertNotNull("Argument is null", extensions);
+    excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -495,13 +474,8 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext setLocalVariable(final String name, final Value value) {
-    if (name == null) {
-      throw new NullPointerException("Variable name is null");
-    }
-
-    if (value == null) {
-      throw new NullPointerException("Value is null");
-    }
+    PreprocessorUtils.assertNotNull("Variable name is null", name);
+    PreprocessorUtils.assertNotNull("Value is null", value);
 
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
@@ -512,6 +486,7 @@ public class PreprocessorContext {
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
       throw new IllegalArgumentException("Attempting to set either a global variable or a special variable as a local one [" + normalized + ']');
     }
+    
     localVarTable.put(normalized, value);
     return this;
   }
@@ -525,10 +500,7 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext removeLocalVariable(final String name) {
-    if (name == null) {
-      throw new NullPointerException("Variable name is null");
-    }
-
+    PreprocessorUtils.assertNotNull("Variable name is null", name);
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
     if (normalized.isEmpty()) {
@@ -551,9 +523,7 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext removeGlobalVariable(final String name) {
-    if (name == null) {
-      throw new NullPointerException("Variable name is null");
-    }
+    PreprocessorUtils.assertNotNull("Variable name is null", name);
 
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
@@ -631,9 +601,7 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setGlobalVariable(final String name, final Value value) {
-    if (name == null) {
-      throw new NullPointerException("Variable name is null");
-    }
+    PreprocessorUtils.assertNotNull("Variable name is null", name);
 
     final String normalizedName = PreprocessorUtils.normalizeVariableName(name);
 
@@ -641,9 +609,7 @@ public class PreprocessorContext {
       throw new IllegalArgumentException("Name is empty");
     }
 
-    if (value == null) {
-      throw new NullPointerException("Value is null");
-    }
+    PreprocessorUtils.assertNotNull("Value is null", value);
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
       mapVariableNameToSpecialVarProcessor.get(normalizedName).setVariable(normalizedName, value, this);
@@ -817,9 +783,7 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setInCharacterEncoding(final String characterEncoding) {
-    if (characterEncoding == null) {
-      throw new NullPointerException("Value is null");
-    }
+    PreprocessorUtils.assertNotNull("Value is null", characterEncoding);
 
     if (!Charset.isSupported(characterEncoding)) {
       throw new IllegalArgumentException("Unsupported character encoding [" + characterEncoding + ']');
@@ -870,9 +834,7 @@ public class PreprocessorContext {
    * @return a generated File object for the path
    */
   public File createDestinationFileForPath(final String path) {
-    if (path == null) {
-      throw new NullPointerException("File is null");
-    }
+    PreprocessorUtils.assertNotNull("Path is null", path);
 
     if (path.isEmpty()) {
       throw new IllegalArgumentException("File name is an empty string");
@@ -948,9 +910,7 @@ public class PreprocessorContext {
    * @param file a file, it must not be null
    */
   public void addConfigFile(final File file) {
-    if (file == null) {
-      throw new NullPointerException("File is null");
-    }
+    PreprocessorUtils.assertNotNull("File is null", file);
     configFiles.add(file);
   }
 
@@ -974,9 +934,7 @@ public class PreprocessorContext {
    * reading operations
    */
   public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer) throws IOException {
-    if (fileContainer == null) {
-      throw new NullPointerException("The file container is null");
-    }
+    PreprocessorUtils.assertNotNull("File container is null", fileContainer);
 
     if (verbose) {
       logInfo("Open file to preprocess [" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + ']');

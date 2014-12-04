@@ -83,13 +83,8 @@ public class FileInfoContainer {
   }
 
   public FileInfoContainer(final File srcFile, final String dstFileName, final boolean copyOnly) {
-    if (srcFile == null) {
-      throw new NullPointerException("The source file is null");
-    }
-
-    if (dstFileName == null) {
-      throw new NullPointerException("The destination file name is null");
-    }
+    PreprocessorUtils.assertNotNull("The source file is null", srcFile);
+    PreprocessorUtils.assertNotNull("The destination file name is null", dstFileName);
 
     forCopyOnly = copyOnly;
     excludedFromPreprocessing = false;
@@ -378,16 +373,12 @@ public class FileInfoContainer {
   }
 
   public void setDestinationDir(final String destDir) {
-    if (destDir == null) {
-      throw new NullPointerException("String is null");
-    }
+    PreprocessorUtils.assertNotNull("String is null",destDir);
     destinationDir = destDir;
   }
 
   public void setDestinationName(final String destName) {
-    if (destName == null) {
-      throw new NullPointerException("String is null");
-    }
+    PreprocessorUtils.assertNotNull("String is null", destName);
     destinationName = destName;
   }
 

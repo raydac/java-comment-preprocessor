@@ -20,6 +20,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -373,10 +374,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {
       for (final File file : this.cfgFiles) {
-        if (file == null) {
-          throw new NullPointerException("Detected null where a config file was expected");
-        }
-
+        PreprocessorUtils.assertNotNull("Detected null where a config file was expected", file);
         context.addConfigFile(file);
       }
     }
@@ -385,9 +383,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     if (this.globalVars != null && !this.globalVars.isEmpty()) {
       for (final String key : this.globalVars.stringPropertyNames()) {
         final String value = this.globalVars.getProperty(key);
-        if (value == null) {
-          throw new NullPointerException("Can't find defined value for '" + key + "' global variable");
-        }
+        PreprocessorUtils.assertNotNull("Can't find defined value for '" + key + "' global variable",value);
         context.setGlobalVariable(key, Value.recognizeRawString(value));
       }
     }

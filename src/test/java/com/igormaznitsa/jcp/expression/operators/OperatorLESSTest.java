@@ -53,20 +53,16 @@ public class OperatorLESSTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() throws Exception {
-    assertIllegalStateException("<");
-    assertIllegalStateException("1<");
-    assertIllegalStateException("<0");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() throws Exception {
-    assertIllegalArgumentException("true<\"test\"");
-    assertIllegalArgumentException("true<1");
-    assertIllegalArgumentException("2.3<\"test\"");
-    assertIllegalArgumentException("2.3<false");
-    assertIllegalArgumentException("true<false");
-    assertIllegalArgumentException("1<false");
+  public void testExecution_PreprocessorException() throws Exception {
+    assertPreprocessorException("<");
+    assertPreprocessorException("1<");
+    assertPreprocessorException("<0");
+    assertPreprocessorException("true<\"test\"");
+    assertPreprocessorException("true<1");
+    assertPreprocessorException("2.3<\"test\"");
+    assertPreprocessorException("2.3<false");
+    assertPreprocessorException("true<false");
+    assertPreprocessorException("1<false");
   }
 
 }

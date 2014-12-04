@@ -60,9 +60,7 @@ public final class JCPreprocessor {
   }
 
   public JCPreprocessor(final PreprocessorContext context) {
-    if (context == null) {
-      throw new NullPointerException("Configurator is null");
-    }
+    PreprocessorUtils.assertNotNull("Configurator is null", context);
     this.context = context;
   }
 
@@ -161,8 +159,6 @@ public final class JCPreprocessor {
       final Set<File> allFoundFiles = findAllFiles(dir);
 
       for (final File file : allFoundFiles) {
-        final String extension = PreprocessorUtils.getFileExtension(file);
-
         if (context.isFileExcludedFromProcess(file)) {
           // ignore excluded file
           continue;
@@ -298,7 +294,7 @@ public final class JCPreprocessor {
         }
         else {
           // a global variable
-          final String[] splitted = PreprocessorUtils.splitForSetOperator(trimmed);
+          final String[] splitted = PreprocessorUtils.splitForEqualChar(trimmed);
           if (splitted.length != 2) {
             PreprocessorUtils.throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
           }

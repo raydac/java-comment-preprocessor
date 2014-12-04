@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.expression.operators;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
@@ -39,10 +40,7 @@ public abstract class AbstractOperatorTest {
   public abstract void testExecution() throws Exception;
 
   @Test
-  public abstract void testExecution_illegalState() throws Exception;
-
-  @Test
-  public abstract void testExecution_illegalArgument() throws Exception;
+  public abstract void testExecution_PreprocessorException() throws Exception;
 
   public void assertReference(final AbstractOperator operator) {
     final String reference = operator.getReference();
@@ -57,25 +55,12 @@ public abstract class AbstractOperatorTest {
     return context;
   }
 
-  public void assertIllegalStateException(final String expression) {
+  public void assertPreprocessorException(final String expression) {
     try {
       assertExecution(Value.INT_ZERO, expression);
-      fail("Must throw ITE");
+      fail("Must throw PE");
     }
-    catch (IllegalStateException expected) {
-    }
-    catch (Exception unexpected) {
-      unexpected.printStackTrace();
-      fail("Unexpected exception detected, must be you have a program error");
-    }
-  }
-
-  public void assertIllegalArgumentException(final String expression) {
-    try {
-      assertExecution(Value.INT_ZERO, expression);
-      fail("Must throw ITE");
-    }
-    catch (IllegalArgumentException expected) {
+    catch (PreprocessorException expected) {
     }
     catch (Exception unexpected) {
       unexpected.printStackTrace();

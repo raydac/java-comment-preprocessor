@@ -23,7 +23,7 @@ import java.io.File;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class PreprocessorException extends Exception {
+public class PreprocessorException extends RuntimeException {
 
   private static final long serialVersionUID = 2857499664112391862L;
   private final String processingString;

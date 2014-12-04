@@ -17,6 +17,8 @@ package com.igormaznitsa.jcp.expression;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
  * The class describes an object contains an expression tree
@@ -27,7 +29,7 @@ public class ExpressionTree {
 
   private ExpressionTreeElement last;
 
-  private final FilePositionInfo[] callStack;
+  private final FilePositionInfo[] includeStack;
   private final String sources;
 
   public ExpressionTree() {
@@ -35,7 +37,7 @@ public class ExpressionTree {
   }
 
   public ExpressionTree(final FilePositionInfo[] callStack, final String sources) {
-    this.callStack = callStack == null ? PreprocessingState.EMPTY_STACK : callStack;
+    this.includeStack = callStack == null ? PreprocessingState.EMPTY_STACK : callStack;
     this.sources = sources == null ? "" : sources;
   }
 
@@ -55,14 +57,14 @@ public class ExpressionTree {
    */
   public void addItem(final ExpressionItem item) {
     if (item == null) {
-      throw new NullPointerException("Item is null");
+      throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack, null);
     }
 
     if (last == null) {
-      last = new ExpressionTreeElement(item, this.callStack, this.sources);
+      last = new ExpressionTreeElement(item, this.includeStack, this.sources);
     }
     else {
-      last = last.addTreeElement(new ExpressionTreeElement(item, this.callStack, this.sources));
+      last = last.addTreeElement(new ExpressionTreeElement(item, this.includeStack, this.sources));
     }
   }
 
@@ -73,9 +75,7 @@ public class ExpressionTree {
    * @param tree a tree to be added as an item, must not be null
    */
   public void addTree(final ExpressionTree tree) {
-    if (tree == null) {
-      throw new NullPointerException("Tree is null");
-    }
+    PreprocessorUtils.assertNotNull("Tree is null", tree);
     if (last == null) {
       final ExpressionTreeElement thatTreeRoot = tree.getRoot();
       if (thatTreeRoot != null) {

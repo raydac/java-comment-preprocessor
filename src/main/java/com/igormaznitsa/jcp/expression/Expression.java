@@ -78,7 +78,7 @@ public class Expression {
       return evalTree(tree, context);
     }
     catch (IOException unexpected) {
-      throw new IllegalArgumentException("Wrong expression format detected [" + expression + ']');
+      throw context.makeException("[Expression]Wrong expression format detected [" + expression + ']',unexpected);
     }
   }
 
@@ -97,7 +97,7 @@ public class Expression {
 
   private Expression(final PreprocessorContext context, final ExpressionTree tree) {
     if (tree == null) {
-      throw new NullPointerException("The expression tree is null");
+      throw context.makeException("[Expression]The expression tree is null",null);
     }
     this.context = context;
     this.expressionTree = tree;
@@ -132,7 +132,7 @@ public class Expression {
       final ExpressionTreeElement item = calculateTreeElement(functionElement.getChildForIndex(i), state);
 
       if (item == null) {
-        throw new IllegalStateException("There is not needed argument for the \'" + function.getName() + "\' function");
+        throw this.context.makeException("[Expression]There is not needed argument for the \'" + function.getName() + "\' function",null);
       }
 
       final ExpressionItem itemValue = item.getItem();
@@ -141,7 +141,7 @@ public class Expression {
         arguments[i] = (Value) itemValue;
       }
       else {
-        throw new IllegalStateException("Wrong argument type detected for the \'" + function.getName() + "\' function");
+        throw this.context.makeException("[Expression]Wrong argument type detected for the \'" + function.getName() + "\' function",null);
       }
     }
 
@@ -169,7 +169,7 @@ public class Expression {
     }
 
     if (allowed == null) {
-      throw new IllegalStateException("Unsupported argument detected for \'" + function.getName() + '\'', new PreprocessorException("Unsupported argument detected for \'" + function.getName() + '\'', sources, stack, null));
+      throw this.context.makeException("[Expression]Unsupported argument detected for \'" + function.getName() + '\'', null);
     }
 
     if (function instanceof FunctionDefinedByUser) {
@@ -178,7 +178,7 @@ public class Expression {
         return new ExpressionTreeElement(userFunction.execute(context, arguments),stack, sources);
       }
       catch (Exception unexpected) {
-        throw new RuntimeException("Unexpected exception during a user function processing", unexpected);
+        throw this.context.makeException("[Expression]Unexpected exception during a user function processing", unexpected);
       }
     }
     else {
@@ -192,16 +192,16 @@ public class Expression {
         final Value result = (Value) method.invoke(function, callArgs);
 
         if (!result.getType().isCompatible(function.getResultType())) {
-          throw new IllegalStateException("Unsupported function result detected [" + result.getType().getSignature() + ']');
+          throw this.context.makeException("[Expression]Unsupported function result detected [" + result.getType().getSignature() + ']',null);
         }
 
         return new ExpressionTreeElement(result, stack, sources);
       }
       catch (NoSuchMethodException unexpected) {
-        throw new UnsupportedOperationException("Can't find a function method to process data [" + signature.toString() + ']', unexpected);
+        throw this.context.makeException("[Expression]Can't find a function method to process data [" + signature.toString() + ']', unexpected);
       }
       catch (Exception unexpected) {
-        throw new RuntimeException("Can't execute a function method to process data [" + function.getClass().getName()+'.'+signature.toString() + ']', unexpected);
+        throw this.context.makeException("[Expression]Can't execute a function method to process data [" + function.getClass().getName()+'.'+signature.toString() + ']', unexpected);
       }
     }
   }
@@ -231,7 +231,7 @@ public class Expression {
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement arg = operatorElement.getChildForIndex(i);
       if (arg == null) {
-        throw new IllegalStateException("There is not needed argument for the operator [" + operator.getKeyword() + ']');
+        throw this.context.makeException("[Expression]There is not needed argument for the operator [" + operator.getKeyword() + ']',null);
       }
 
       final ExpressionTreeElement currentElement = calculateTreeElement(arg, state);
@@ -242,7 +242,7 @@ public class Expression {
         arguments[i] = (Value) item;
       }
       else {
-        throw new IllegalStateException("Non-value detected for the \'" + operator.getKeyword() + "\' operator");
+        throw this.context.makeException("[Expression]Non-value detected for the \'" + operator.getKeyword() + "\' operator",null);
       }
     }
 
@@ -285,7 +285,7 @@ public class Expression {
     }
 
     if (executeMehod == null) {
-      throw new IllegalArgumentException("Unsupported arguments detected for operator \'" + operator.getKeyword() + "\' " + Arrays.toString(arguments));
+      throw this.context.makeException("[Expression]Unsupported arguments detected for operator \'" + operator.getKeyword() + "\' " + Arrays.toString(arguments),null);
     }
 
     try {
@@ -302,7 +302,7 @@ public class Expression {
       throw new RuntimeException("Invocation exception during \'" + operator.getKeyword() + "\' processing", thr);
     }
     catch (Exception unexpected) {
-      throw new RuntimeException("Exception during \'" + operator.getKeyword() + "\' processing", unexpected);
+      throw this.context.makeException("[Exception]Exception during \'" + operator.getKeyword() + "\' processing", unexpected);
     }
   }
 
@@ -312,7 +312,7 @@ public class Expression {
     switch (element.getItem().getExpressionItemType()) {
       case VARIABLE: {
         if (context == null) {
-          throw new NullPointerException("Variable can't be used without context [" + element.getItem().toString() + ']');
+          throw this.context.makeException("[Expression]Variable can't be used without context [" + element.getItem().toString() + ']',null);
         }
 
         final Variable var = (Variable) element.getItem();
@@ -340,20 +340,20 @@ public class Expression {
 
   private Value eval(final PreprocessingState state) {
     if (expressionTree.isEmpty()) {
-      throw new IllegalArgumentException("The expression is empty");
+      throw this.context.makeException("[Expression]The expression is empty",null);
     }
     final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
     final ExpressionItem resultItem = result.getItem();
 
     if (resultItem == null) {
-      throw new IllegalStateException("Expression doesn't have result");
+      throw this.context.makeException("[Expression]Expression doesn't have result",null);
     }
 
     if (resultItem instanceof Value) {
       return (Value) resultItem;
     }
     else {
-      throw new IllegalStateException("The expression returns non-value result [" + resultItem + ']');
+      throw this.context.makeException("[Expression]The expression returns non-value result [" + resultItem + ']',null);
     }
   }
 

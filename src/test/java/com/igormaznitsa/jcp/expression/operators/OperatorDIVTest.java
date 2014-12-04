@@ -37,18 +37,14 @@ public class OperatorDIVTest extends AbstractOperatorTest {
   }
 
   @Override
-  public void testExecution_illegalState() {
-    assertIllegalStateException("/");
-    assertIllegalStateException("1/");
-    assertIllegalStateException("/2.2");
-  }
-
-  @Override
-  public void testExecution_illegalArgument() {
-    assertIllegalArgumentException("1/true");
-    assertIllegalArgumentException("false/3");
-    assertIllegalArgumentException("\"hello\"/2.2");
-    assertIllegalArgumentException("1/\"hello\"");
+  public void testExecution_PreprocessorException() {
+    assertPreprocessorException("/");
+    assertPreprocessorException("1/");
+    assertPreprocessorException("/2.2");
+    assertPreprocessorException("1/true");
+    assertPreprocessorException("false/3");
+    assertPreprocessorException("\"hello\"/2.2");
+    assertPreprocessorException("1/\"hello\"");
   }
 
   @Test(expected = ArithmeticException.class)
