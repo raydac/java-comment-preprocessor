@@ -20,6 +20,7 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -42,7 +43,14 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static final String VAR_SRC_FULLPATH = "jcp.src.path";
   public static final String VAR_SRC_FULLPATH2 = "__file__";
   public static final String VAR_LINE = "__line__";
+  public static final String VAR_DATE = "__date__";
+  public static final String VAR_TIME = "__time__";
+  public static final String VAR_TIMESTAMP = "__timestamp__";
 
+  static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
+  static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+  static final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+  
   public static final class NameReferencePair{
     private final String name;
     private final String reference;
@@ -77,6 +85,10 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     result.add(new NameReferencePair(VAR_DEST_DIR, "The Destination File path for the preprocessing file, read only"));
     result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "The Destination File name for the preprocessing file, allowed for reading and writing"));
     
+    result.add(new NameReferencePair(VAR_TIME, "The Current time"));
+    result.add(new NameReferencePair(VAR_DATE, "The Current date"));
+    result.add(new NameReferencePair(VAR_TIMESTAMP, "The Timestamp of the current source file"));
+    
     return result;
   }
   
@@ -94,9 +106,12 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       VAR_SRC_FULLPATH2,
       VAR_VERSION,
       VAR_LINE,
+      VAR_TIME,
+      VAR_TIMESTAMP,
+      VAR_DATE
     };
   }
-  
+
   @Override
   public Value getVariable(final String varName, final PreprocessorContext context) {
     final PreprocessingState state = context == null ? null : context.getPreprocessingState();
@@ -121,6 +136,19 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     }
     else if (VAR_VERSION.equals(varName)) {
       return Value.valueOf(InfoHelper.getVersion());
+    }
+    else if (VAR_TIME.equals(varName)) {
+      return Value.valueOf(timeFormat.format(new Date()));
+    }
+    else if (VAR_DATE.equals(varName)) {
+      return Value.valueOf(dateFormat.format(new Date()));
+    }
+    else if (VAR_TIMESTAMP.equals(varName)) {
+      if (state == null){
+        return Value.valueOf("<no file>");
+      }else{
+        return Value.valueOf(timestampFormat.format(new Date(state.peekFile().getFile().lastModified())));
+      }
     }
     else if (VAR_LINE.equals(varName)) {
       final TextFileDataContainer currentFile = state == null ? null : state.peekFile();
@@ -161,6 +189,9 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
             || VAR_SRC_FULLPATH2.equals(varName)
             || VAR_VERSION.equals(varName)
             || VAR_LINE.equals(varName)
+            || VAR_TIME.equals(varName)
+            || VAR_TIMESTAMP.equals(varName)
+            || VAR_DATE.equals(varName)
             ) {
       throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
     }

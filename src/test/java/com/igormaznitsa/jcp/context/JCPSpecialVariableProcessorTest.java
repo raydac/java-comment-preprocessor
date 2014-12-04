@@ -25,6 +25,10 @@ public class JCPSpecialVariableProcessorTest {
   @Test
   public void testReadVariable() {
     assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", null).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__line__", null).toString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__date__", null).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__time__", null).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__timestamp__", null).asString());
   }
 
   @Test(expected = IllegalArgumentException.class)
