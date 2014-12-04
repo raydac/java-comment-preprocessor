@@ -24,6 +24,7 @@ import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.*;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
@@ -138,8 +139,10 @@ public final class JCPreprocessor {
 
     if (context.doesClearDestinationDirBefore()) {
       if (destinationExistsAndDirectory) {
-        if (!PreprocessorUtils.clearDirectory(destination)) {
-          throw new IOException("I can't clear the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
+        try{
+          FileUtils.cleanDirectory(destination);
+        }catch(IOException ex){
+          throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']',ex);
         }
       }
     }

@@ -45,12 +45,12 @@ public final class InfoHelper {
   public static List<String> makeTextForHelpInfo() {
     final List<String> result = new ArrayList<String>();
 
-    result.add(JCPreprocessor.class.getCanonicalName() + " [@file_path] [cli_directives]");
+    result.add(JCPreprocessor.class.getCanonicalName() + " [@cfg_file] [cli_directives]");
     result.add("");
 
     result.add("Command line directives\n------------");
     result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes allowed\n");
-    result.add(makeColumns("@file_path", "read variables defined as a list from the file", 14));
+    result.add(makeColumns("@cfg_file", "file contains global definition list", 14));
     for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
       result.add(makeCommandLineKeyReference(handler));
     }

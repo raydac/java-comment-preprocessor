@@ -34,6 +34,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -79,53 +81,6 @@ public enum PreprocessorUtils {
     }
 
     return result;
-  }
-
-  public static boolean deleteDirectory(final File directory) {
-    if (directory == null) {
-      throw new NullPointerException("Argument is null");
-    }
-
-    if (!directory.isDirectory()) {
-      throw new IllegalArgumentException("Argument is not a directory");
-    }
-
-    boolean result = false;
-    if (clearDirectory(directory)) {
-      result = directory.delete();
-    }
-    return result;
-  }
-
-  public static boolean clearDirectory(final File directory) {
-    if (directory.isDirectory()) {
-      final File files[] = directory.listFiles();
-      for (final File currentFile : files) {
-        if (currentFile.isDirectory()) {
-          if (!clearDirectory(currentFile)) {
-            return false;
-          }
-        }
-
-        if (!currentFile.delete()) {
-          return false;
-        }
-      }
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
-  public static void closeSilently(final Closeable stream) {
-    if (stream != null) {
-      try {
-        stream.close();
-      }
-      catch (IOException ignored) {
-      }
-    }
   }
 
   public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
@@ -216,10 +171,10 @@ public enum PreprocessorUtils {
       }
     }
     finally {
-      closeSilently(fileSrcInput);
-      closeSilently(fileOutput);
-      closeSilently(fileDst);
-      closeSilently(fileSrc);
+      IOUtils.closeQuietly(fileSrcInput);
+      IOUtils.closeQuietly(fileOutput);
+      IOUtils.closeQuietly(fileDst);
+      IOUtils.closeQuietly(fileSrc);
     }
   }
 
@@ -308,7 +263,7 @@ public enum PreprocessorUtils {
       }
     }
     finally {
-      closeSilently(inChannel);
+      IOUtils.closeQuietly(inChannel);
     }
 
     return buffer.array();

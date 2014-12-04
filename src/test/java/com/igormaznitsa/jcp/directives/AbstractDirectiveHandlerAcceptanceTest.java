@@ -272,7 +272,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       }
     }
     finally {
-      PreprocessorUtils.closeSilently(reader);
+      IOUtils.closeQuietly(reader);
     }
 
     return preprocessingPart;

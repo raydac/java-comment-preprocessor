@@ -29,7 +29,7 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "the destination directory will be cleared before processing";
+    return "clear destination folder before processing";
   }
 
   @Override

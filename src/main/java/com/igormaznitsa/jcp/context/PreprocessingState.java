@@ -38,6 +38,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The class describes a preprocessor state also it contains inside buffers and
@@ -400,7 +401,7 @@ public final class PreprocessingState {
       }
     }
     finally {
-      PreprocessorUtils.closeSilently(writer);
+      IOUtils.closeQuietly(writer);
     }
   }
 

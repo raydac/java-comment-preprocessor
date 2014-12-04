@@ -114,7 +114,7 @@ public class ITPreprocessorMojo {
         }.loadClass(buffer);
       }
       finally {
-        PreprocessorUtils.closeSilently(inStream);
+        IOUtils.closeQuietly(inStream);
       }
 
       if (instanceClass!=null){
