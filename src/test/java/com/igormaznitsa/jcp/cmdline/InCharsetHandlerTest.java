@@ -16,7 +16,6 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.junit.Test;
 import org.mockito.Mockito;
 import static org.junit.Assert.*;
 

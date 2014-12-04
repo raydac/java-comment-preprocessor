@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
-import org.junit.Before;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;

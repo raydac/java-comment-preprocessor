@@ -18,8 +18,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -37,7 +35,8 @@ public final class FunctionSTR2WEB extends AbstractFunction {
   }
 
   public Value executeStr(final PreprocessorContext context, final Value value) {
-    return Value.valueOf(StringEscapeUtils.escapeHtml(value.asString()));
+    final String escaped = StringEscapeUtils.escapeHtml(value.asString());
+    return Value.valueOf(escaped);
   }
 
   @Override
@@ -52,7 +51,7 @@ public final class FunctionSTR2WEB extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it escapes a string to make it compatible with the html format";
+    return "escape a string to make it compatible with HTML";
   }
 
   @Override

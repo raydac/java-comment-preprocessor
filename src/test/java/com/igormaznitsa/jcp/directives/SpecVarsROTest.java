@@ -17,7 +17,6 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import org.mockito.Mockito;
-import static org.junit.Assert.*;
 
 /**
  * Test for special read only predefined variables

@@ -51,7 +51,7 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get the text content of an element and its children, the element is defined by its descriptor";
+    return "get element text content, text of children also included";
   }
 
   @Override

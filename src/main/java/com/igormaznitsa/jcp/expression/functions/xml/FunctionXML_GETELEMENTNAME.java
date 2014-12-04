@@ -51,7 +51,7 @@ public final class FunctionXML_GETELEMENTNAME extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get tag name for element defined by its descriptor";
+    return "get element tag";
   }
 
   @Override

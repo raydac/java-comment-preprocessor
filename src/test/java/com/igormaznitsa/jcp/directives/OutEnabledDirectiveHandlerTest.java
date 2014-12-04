@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class OutEnabledDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {

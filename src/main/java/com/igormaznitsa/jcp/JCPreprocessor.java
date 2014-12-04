@@ -108,10 +108,7 @@ public final class JCPreprocessor {
   private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
     for (final FileInfoContainer fileRef : files) {
-      if (fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly()) {
-        continue;
-      }
-      else {
+      if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
         result.addAll(fileRef.processGlobalDirectives(null, context));
       }
     }
@@ -121,13 +118,12 @@ public final class JCPreprocessor {
   private void preprocessFiles(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
     for (final FileInfoContainer fileRef : files) {
       if (fileRef.isExcludedFromPreprocessing()) {
-        continue;
+        // do nothing
       }
       else if (fileRef.isForCopyOnly()) {
         if (!context.isFileOutputDisabled()) {
           PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.createDestinationFileForPath(fileRef.getDestinationFilePath()));
         }
-        continue;
       }
       else {
         fileRef.preprocessFile(null, context);
@@ -200,14 +196,15 @@ public final class JCPreprocessor {
 
     final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[]{"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
 
-    PreprocessorContext preprocessorContext = null;
+    final PreprocessorContext preprocessorContext;
 
     try {
       preprocessorContext = processCommandString(null, args, normalizedStrings);
     }
     catch (IOException ex) {
-      System.err.println("Error during command string processing [" + ex.getMessage() + ']');
+      System.err.println("Error during command line processing [" + ex.getMessage() + ']');
       System.exit(1);
+      throw new RuntimeException("To show compiler executiion stop");
     }
 
     final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
@@ -216,8 +213,13 @@ public final class JCPreprocessor {
       preprocessor.execute();
     }
     catch (Exception unexpected) {
-      preprocessorContext.logError(unexpected.toString());
-      unexpected.printStackTrace();
+      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
+      if (pp!=null){
+        preprocessorContext.logError(pp.toString());
+      }else{
+        preprocessorContext.logError(unexpected.toString());
+        unexpected.printStackTrace();
+      }
       System.exit(1);
     }
 
@@ -264,7 +266,7 @@ public final class JCPreprocessor {
         readStringIndex++;
 
         if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
-          continue;
+          // do nothing
         }
         else if (trimmed.charAt(0) == '@') {
           PreprocessorUtils.throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);

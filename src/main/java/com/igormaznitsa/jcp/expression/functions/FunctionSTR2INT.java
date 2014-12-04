@@ -34,7 +34,7 @@ public final class FunctionSTR2INT extends AbstractFunction {
   }
 
   public Value executeStr(final PreprocessorContext context, final Value value) {
-    return Value.valueOf(Long.valueOf(Long.parseLong(value.asString().trim())));
+    return Value.valueOf(Long.parseLong(value.asString().trim()));
   }
 
   @Override
@@ -49,7 +49,7 @@ public final class FunctionSTR2INT extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it converts a string containing a number into an integer";
+    return "convert string into integet number";
   }
 
   @Override

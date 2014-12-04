@@ -272,7 +272,6 @@ public final class ExpressionParser {
         }
         else if (SpecialItem.COMMA == lastItem) {
           arguments.add(subExpression);
-          continue;
         }
         else {
           final String text = "Wrong argument definition for function detected [" + function.getName() + ']';
@@ -412,7 +411,7 @@ public final class ExpressionParser {
       switch (state) {
         case WAIT: {
           if (Character.isWhitespace(chr)) {
-            continue;
+            // do nothing
           }
           else if (chr == ',') {
             return SpecialItem.COMMA;

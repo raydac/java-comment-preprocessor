@@ -42,7 +42,7 @@ public class FunctionEVALFILE extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "Preprocess a file in memory and return the result as a string.";
+    return "load and preprocess file and return text result as string";
   }
 
   @Override
@@ -95,7 +95,7 @@ public class FunctionEVALFILE extends AbstractFunction {
     catch (Exception ex) {
       final String text = "Can't make evaluation for file '" + filePath + "\' for an exception [" + ex.getMessage() + ']';
       PreprocessorException pex = PreprocessorException.extractPreprocessorException(ex);
-      if (ex == null) {
+      if (pex == null) {
         pex = context.makeException(text, ex);
       }
       throw new IllegalArgumentException(text, pex);

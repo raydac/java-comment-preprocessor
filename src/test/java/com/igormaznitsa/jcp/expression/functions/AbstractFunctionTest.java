@@ -82,10 +82,7 @@ public abstract class AbstractFunctionTest {
           break;
         }
       }
-      if (found) {
-        continue;
-      }
-      else {
+      if (!found) {
         fail("Found not allowed argument types " + Arrays.toString(currentTypes));
       }
     }

@@ -15,9 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class IfElseEndifDirectiveWithKeepLinesHandlerTest extends IfElseEndifDirectiveHandlerTest {
 
   private static final IfDirectiveHandler IF_HANDLER = new IfDirectiveHandler();

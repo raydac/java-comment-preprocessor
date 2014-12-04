@@ -117,8 +117,12 @@ public class ITPreprocessorMojo {
         PreprocessorUtils.closeSilently(inStream);
       }
 
-      final Object instance = instanceClass.newInstance();
-      assertEquals("Must return the project name", "Dummy Maven Project To Test JCP", instanceClass.getMethod("test").invoke(instance));
+      if (instanceClass!=null){
+        final Object instance = instanceClass.newInstance();
+        assertEquals("Must return the project name", "Dummy Maven Project To Test JCP", instanceClass.getMethod("test").invoke(instance));
+      }else{
+        fail("Unexpected state");
+      }
     }
     finally {
       jarAnalyzer.closeQuietly();

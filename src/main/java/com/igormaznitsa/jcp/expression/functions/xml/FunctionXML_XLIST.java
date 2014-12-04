@@ -76,7 +76,7 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get descriptor of a list of elements for XPath in a document defined by its descriptor";
+    return "get element list by its XPath";
   }
 
   @Override

@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -105,7 +104,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "open and parse into DOM an xml file and return its descriptor";
+    return "open XML file and parse as DOM";
   }
 
   @Override

@@ -22,12 +22,10 @@ import com.igormaznitsa.jcp.directives.AfterDirectiveProcessingBehaviour;
 import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * The class is one from the main classes in the preprocessor because it

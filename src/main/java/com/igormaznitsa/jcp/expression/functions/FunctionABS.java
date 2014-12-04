@@ -53,7 +53,7 @@ public final class FunctionABS extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns the absolute value of either an integer or a float argument";
+    return "get absolute value of numeric value";
   }
 
   @Override

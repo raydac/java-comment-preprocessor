@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.extension;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 

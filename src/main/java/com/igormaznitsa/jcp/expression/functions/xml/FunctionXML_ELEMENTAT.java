@@ -49,7 +49,7 @@ public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get an element descriptor from an element list by its index (first 0)";
+    return "get element from element list by its index (first 0)";
   }
 
   @Override

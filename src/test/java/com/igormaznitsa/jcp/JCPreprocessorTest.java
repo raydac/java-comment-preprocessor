@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public final class JCPreprocessorTest {
 
-  private final void assertGVDFPreprocessorException(final String file, final int stringIndex) throws Exception {
+  private void assertGVDFPreprocessorException(final String file, final int stringIndex) throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
     context.addConfigFile(new File(this.getClass().getResource(file).toURI()));
     final JCPreprocessor preprocessor = new JCPreprocessor(context);

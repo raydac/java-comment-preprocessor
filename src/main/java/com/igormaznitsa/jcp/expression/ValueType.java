@@ -53,10 +53,6 @@ public enum ValueType {
       return false;
     }
 
-    if (this == ANY || type == ANY) {
-      return true;
-    }
-
-    return false;
+    return this == ANY || type == ANY;
   }
 }

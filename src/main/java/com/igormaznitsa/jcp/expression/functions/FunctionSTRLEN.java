@@ -49,7 +49,7 @@ public final class FunctionSTRLEN extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns number of characters in a string";
+    return "get string length";
   }
 
   @Override

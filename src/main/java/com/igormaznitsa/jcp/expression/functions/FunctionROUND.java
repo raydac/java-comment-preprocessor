@@ -53,7 +53,7 @@ public final class FunctionROUND extends AbstractFunction {
 
   @Override
   public String getReference() {
-    return "it returns closest integer value to the argument";
+    return "round float value to nearest integer";
   }
 
   @Override

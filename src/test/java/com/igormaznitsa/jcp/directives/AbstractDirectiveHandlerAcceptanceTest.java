@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -323,13 +324,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       }
     }
     finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        }
-        catch (IOException ex) {
-        }
-      }
+      IOUtils.closeQuietly(reader);
     }
 
     return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines, globalVars);

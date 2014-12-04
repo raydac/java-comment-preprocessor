@@ -123,7 +123,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       return Value.valueOf(InfoHelper.getVersion());
     }
     else if (VAR_LINE.equals(varName)) {
-      final TextFileDataContainer currentFile = context.getPreprocessingState().peekFile();
+      final TextFileDataContainer currentFile = state == null ? null : state.peekFile();
       final long line;
       if (currentFile == null){
         line = -1L;
@@ -144,13 +144,13 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      state.getRootFileInfo().setDestinationDir(value.asString());
+      if (state!=null) state.getRootFileInfo().setDestinationDir(value.asString());
     }
     else if (VAR_DEST_FILE_NAME.equals(varName)) {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      state.getRootFileInfo().setDestinationName(value.asString());
+      if (state!=null) state.getRootFileInfo().setDestinationName(value.asString());
     }
     else if (VAR_DEST_FULLPATH.equals(varName)
             || VAR_SRC_DIR.equals(varName)

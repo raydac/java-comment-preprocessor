@@ -56,7 +56,7 @@ public final class FunctionXML_GETROOT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get the document root element, the document defined by its descriptor";
+    return "get document root element";
   }
 
   @Override

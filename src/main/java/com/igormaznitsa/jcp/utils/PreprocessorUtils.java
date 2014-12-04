@@ -34,7 +34,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -318,8 +317,7 @@ public enum PreprocessorUtils {
   public static String[] splitForSetOperator(final String string) {
     final int index = string.indexOf('=');
 
-    String[] result = null;
-
+    final String[] result;
     if (index < 0) {
       result = new String[]{string};
     }
@@ -343,7 +341,6 @@ public enum PreprocessorUtils {
           tokens.add(buffer.toString());
           buffer.setLength(0);
         }
-        continue;
       }
       else {
         buffer.append(curChar);
