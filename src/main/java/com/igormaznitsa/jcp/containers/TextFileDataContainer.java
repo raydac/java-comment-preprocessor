@@ -29,8 +29,20 @@ public final class TextFileDataContainer {
   private final String[] text;
   private final File file;
 
+  /**
+   * Flag shows to save automatically buffers after file preprocessing end.
+   */
+  private boolean autoFlush = true;
   private int nextStringIndex;
 
+  public void disableAutoFlush(){
+    this.autoFlush = false;
+  }
+  
+  public boolean isAutoFlush(){
+    return this.autoFlush;
+  }
+  
   public String[] getText() {
     return text.clone();
   }

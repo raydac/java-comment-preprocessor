@@ -34,6 +34,24 @@ import org.apache.commons.io.FileUtils;
  */
 public final class JCPreprocessor {
 
+  private static final class PreprocessingStatistics {
+    private final int numberOfPreprocessed;
+    private final int numberOfCopied;
+
+    public PreprocessingStatistics(final int numberOfPreprocessed, final int numberOfCopied) {
+      this.numberOfPreprocessed = numberOfPreprocessed;
+      this.numberOfCopied = numberOfCopied;
+    }
+    
+    public int getNumberOfCopied(){
+      return this.numberOfCopied;
+    }
+    
+    public int getNumberOfPreprocessed(){
+      return this.numberOfPreprocessed;
+    }
+  }
+  
   private final PreprocessorContext context;
   static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[]{
     new HelpHandler(),
@@ -65,6 +83,8 @@ public final class JCPreprocessor {
   }
 
   public void execute() throws PreprocessorException, IOException {
+    final long timeStart = System.currentTimeMillis();
+    
     processCfgFiles();
 
     final File[] srcDirs = context.getSourceDirectoryAsFiles();
@@ -75,7 +95,11 @@ public final class JCPreprocessor {
     if (!context.isFileOutputDisabled()) {
       createDestinationDirectory();
     }
-    preprocessFiles(filesToBePreprocessed);
+    final PreprocessingStatistics stat = preprocessFiles(filesToBePreprocessed);
+    
+    final long elapsedTime = System.currentTimeMillis()-timeStart;
+    this.context.logInfo("-----------------------------------------------------------------");
+    this.context.logInfo("Completed, preprocessed "+stat.getNumberOfPreprocessed()+" files, copied "+stat.getNumberOfCopied()+" files, elapsed time "+elapsedTime+"ms");
   }
 
   private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
@@ -114,7 +138,9 @@ public final class JCPreprocessor {
     return result;
   }
 
-  private void preprocessFiles(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
+  private PreprocessingStatistics preprocessFiles(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
+    int prepFileCounter = 0;
+    int copFileCounter = 0;
     for (final FileInfoContainer fileRef : files) {
       if (fileRef.isExcludedFromPreprocessing()) {
         // do nothing
@@ -122,12 +148,16 @@ public final class JCPreprocessor {
       else if (fileRef.isForCopyOnly()) {
         if (!context.isFileOutputDisabled()) {
           PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.createDestinationFileForPath(fileRef.getDestinationFilePath()));
+          copFileCounter ++;
         }
       }
       else {
         fileRef.preprocessFile(null, context);
+        prepFileCounter++;
       }
     }
+    final PreprocessingStatistics stat = new PreprocessingStatistics(prepFileCounter, copFileCounter);
+    return stat;
   }
 
   private void createDestinationDirectory() throws IOException {

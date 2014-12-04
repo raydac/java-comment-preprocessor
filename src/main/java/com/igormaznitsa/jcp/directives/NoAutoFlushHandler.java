@@ -17,39 +17,29 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import java.io.File;
-import java.io.IOException;
 
 /**
- * The class implements the //#flush directive handler
+ * The class implements the //#noautoflush directive handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class FlushDirectiveHandler extends AbstractDirectiveHandler {
+public class NoAutoFlushHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getName() {
-    return "flush";
+    return "noautoflush";
   }
 
   @Override
   public String getReference() {
-    return "save all buffered text to disk and clear buffers";
+    return "disable file text buffers autoflush at the end of file preprocessing";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
-    if (!context.isFileOutputDisabled()) {
-      final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());
-      try {
-        state.saveBuffersToFile(outFile, context.isRemoveComments());
-        state.resetPrinters();
-      }
-      catch (IOException ex) {
-        final String text = "Can't flush buffers";
-        throw new IllegalStateException(text, context.makeException(text, ex));
-      }
+    if (state!=null){
+      state.peekFile().disableAutoFlush();
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

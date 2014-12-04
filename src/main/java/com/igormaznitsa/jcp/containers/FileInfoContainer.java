@@ -293,7 +293,7 @@ public class FileInfoContainer {
               "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled()) {
+    if (!context.isFileOutputDisabled() && preprocessingState.peekFile().isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
     }

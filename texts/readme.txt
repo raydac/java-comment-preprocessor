@@ -73,6 +73,7 @@ History of changes
 - //#define and //#definel can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
 - added '//#error EXPR' and '//#warning EXPR' directives to throw exception and log warnings
 - added support of custom line end trhoug property 'jcp.line.separator'
+- added '//#noautoflush' to prevent auto saving text buffers after file preprocessing
 
 5.3.4
 - added support of test source folder preprocessing for maven projects
