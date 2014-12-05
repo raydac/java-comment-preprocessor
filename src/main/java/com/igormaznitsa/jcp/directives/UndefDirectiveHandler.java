@@ -32,12 +32,13 @@ public class UndefDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "undefine a global(!) variable, variable will be just removed from context if it exists";
+    return "undefine variable, variable will be just removed from context if it exists";
   }
 
   @Override
   protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists) {
     context.removeGlobalVariable(varName);
+    context.removeLocalVariable(varName);
   }
 
 }

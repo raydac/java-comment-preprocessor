@@ -16,27 +16,34 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
- * The class implements the //#undefl directive handler
+ * The class implements //#assert directive handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class UndeflDirectiveHandler extends DefineDirectiveHandler {
+public class MsgDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getName() {
-    return "undefl";
+    return "msg";
+  }
+
+  @Override
+  public DirectiveArgumentType getArgumentType() {
+    return DirectiveArgumentType.TAIL;
   }
 
   @Override
   public String getReference() {
-    return "undefine a local(!) variable, variable will be just removed from context if it exists";
+    return "string tail will be printed as line with macroses";
   }
 
   @Override
-  protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists) {
-    context.removeLocalVariable(varName);
+  public AfterDirectiveProcessingBehaviour execute(final String rawTail, final PreprocessorContext context) {
+    final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
+    context.logInfo(PreprocessorUtils.processMacroses(normal, context));
+    return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

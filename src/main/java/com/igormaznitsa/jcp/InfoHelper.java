@@ -83,7 +83,7 @@ public final class InfoHelper {
     result.add("FLOAT  : 0.745 (signed 32 bit)");
     result.add(DELIMITER);
     result.add("Special variables\n------------");
-    for(final JCPSpecialVariableProcessor.NameReferencePair p : JCPSpecialVariableProcessor.getReference()){
+    for (final JCPSpecialVariableProcessor.NameReferencePair p : JCPSpecialVariableProcessor.getReference()) {
       result.add(makeSpecialVariableReference(p));
     }
     return result;
@@ -103,7 +103,7 @@ public final class InfoHelper {
 
   private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
     final String directiveName = directive.getFullName();
-    final String descr = directive.getReference()+" ("+(directive.isGlobalPhaseAllowed()?"1st pass":"2th pass")+')';
+    final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + (directive.isGlobalPhaseAllowed() ? "1st pass" : "2th pass") + ')';
     return makeColumns(directiveName, descr, 14);
   }
 

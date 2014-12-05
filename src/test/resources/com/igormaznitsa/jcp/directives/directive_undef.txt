@@ -1,8 +1,10 @@
 test
-/*$somevar$*/
+//#definel localone
+/*$somevar$*/ /*$localone$*/
 //#undef somevar
+//#undef localone
 end
 ---START_ETALON---
 test
-true
+true true
 end

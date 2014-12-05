@@ -37,12 +37,17 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "just print text into console, macroses allowed in the text";
+    return "just print text into console, macroses allowed in the text (use //#msg instead)";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));
     return AfterDirectiveProcessingBehaviour.PROCESSED;
+  }
+
+  @Override
+  public boolean isDeprecated() {
+    return true;
   }
 }

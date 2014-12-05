@@ -58,7 +58,7 @@ public final class PreprocessingState {
     
     public ExcludeIfInfo(final FileInfoContainer fileInfoContainer, final String condition, final int stringIndex) {
       this.fileInfoContainer = fileInfoContainer;
-      this.condition = condition;
+      this.condition = condition.trim();
       this.stringIndex = stringIndex;
     }
 

@@ -346,4 +346,13 @@ public enum PreprocessorUtils {
   public static String getNextLineCodes() {
     return System.getProperty("line.separator", "\r\n");
   }
+
+  public static String leftTrim(String rawString) {
+    int firstNonSpace = 0;
+    for(int i=0;i<rawString.length();i++){
+      if (!Character.isSpaceChar(rawString.charAt(i))) break;
+      firstNonSpace ++;
+    }
+    return rawString.substring(firstNonSpace);
+  }
 }

@@ -33,7 +33,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.VARNAME;
+    return DirectiveArgumentType.TAIL;
   }
 
   @Override
@@ -50,17 +50,18 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
   }
   
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String trimmedString, final PreprocessorContext context) {
+  public AfterDirectiveProcessingBehaviour execute(final String rawTail, final PreprocessorContext context) {
     try {
-      final int spaceIndex = trimmedString.indexOf(' ');
+      final String trimmedTail = rawTail.trim();
+      final int spaceIndex = trimmedTail.indexOf(' ');
       final String name;
       final String expression;
       if (spaceIndex>0){
-        name = trimmedString.substring(0,spaceIndex).trim();
-        final String trimmed = trimmedString.substring(spaceIndex).trim();
+        name = trimmedTail.substring(0,spaceIndex).trim();
+        final String trimmed = trimmedTail.substring(spaceIndex).trim();
         expression = trimmed.isEmpty() || trimmed.startsWith("//") || trimmed.startsWith("/*") ? null : trimmed;
       }else{
-        name = trimmedString;
+        name = trimmedTail;
         expression = null;
       }
       
@@ -89,7 +90,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       process(context, ((Variable) item).getName(), value,context.findVariableForName(name) != null);
     }
     catch (IOException ex) {
-      final String text = "Can't recognize variable name [" + trimmedString + ']';
+      final String text = "Can't recognize variable name [" + rawTail + ']';
       throw new IllegalArgumentException(text, context.makeException(text, ex));
     }
 

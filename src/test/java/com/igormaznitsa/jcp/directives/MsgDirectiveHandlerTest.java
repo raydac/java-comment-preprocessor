@@ -15,28 +15,32 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import org.junit.Test;
+import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import java.util.List;
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import org.mockito.ArgumentCaptor;
 
-public class UndeflDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class MsgDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final UndeflDirectiveHandler HANDLER = new UndeflDirectiveHandler();
+  private static final MsgDirectiveHandler HANDLER = new MsgDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {
-    assertFalse(assertFilePreprocessing("directive_undefl.txt", false, null, null).isLocalVariable("somevar"));
-  }
-
-  @Test
-  public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#undefl \n", 3, null);
-    assertPreprocessorException("\n\n//#undefl 1223\n", 3, null);
-    assertPreprocessorException("\n\n//#undefl \"test\"\n", 3, null);
+    final PreprocessorLogger mock = mock(PreprocessorLogger.class);
+    assertFilePreprocessing("directive_msg.txt", false, null, mock);
+    
+    ArgumentCaptor<String> varArgs = ArgumentCaptor.forClass(String.class);
+    verify(mock,times(2)).info(varArgs.capture());
+    final List<String> calls = varArgs.getAllValues();
+    assertEquals(2, calls.size());
+    assertEquals("  string 2 ok  ",calls.get(0));
+    assertEquals("string 48 ok",calls.get(1));
   }
 
   @Override
   public void testKeyword() throws Exception {
-    assertEquals("undefl", HANDLER.getName());
+    assertEquals("msg", HANDLER.getName());
   }
 
   @Override
@@ -50,14 +54,13 @@ public class UndeflDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
   }
 
   @Override
-  public void testPhase() throws Exception {
-    assertFalse(HANDLER.isGlobalPhaseAllowed());
-    assertTrue(HANDLER.isPreprocessingPhaseAllowed());
+  public void testArgumentType() throws Exception {
+    assertEquals(DirectiveArgumentType.TAIL, HANDLER.getArgumentType());
   }
 
   @Override
-  public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.VARNAME, HANDLER.getArgumentType());
+  public void testPhase() throws Exception {
+    assertTrue(HANDLER.isPreprocessingPhaseAllowed());
+    assertFalse(HANDLER.isGlobalPhaseAllowed());
   }
-
 }

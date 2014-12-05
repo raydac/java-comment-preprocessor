@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -24,7 +25,9 @@ public class UndefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Override
   public void testExecution() throws Exception {
-    assertFalse(assertFilePreprocessing("directive_undef.txt", false, null, null, new VariablePair("somevar", "true")).isGlobalVariable("somevar"));
+    final PreprocessorContext context = assertFilePreprocessing("directive_undef.txt", false, null, null, new VariablePair("somevar", "true"));
+    assertFalse(context.isGlobalVariable("somevar"));
+    assertFalse(context.isLocalVariable("localone"));
     
   }
 
@@ -58,7 +61,7 @@ public class UndefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Override
   public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.VARNAME, HANDLER.getArgumentType());
+    assertEquals(DirectiveArgumentType.TAIL, HANDLER.getArgumentType());
   }
 
 }

@@ -117,7 +117,7 @@ public class FileInfoContainer {
   public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
     final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this) : state;
 
-    String trimmedProcessingString = null;
+    String leftTrimmedString = null;
     try {
       while (true) {
         String nonTrimmedProcessingString = preprocessingState.nextLine();
@@ -135,10 +135,10 @@ public class FileInfoContainer {
           }
         }
 
-        trimmedProcessingString = nonTrimmedProcessingString.trim();
+        leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
 
-        if (trimmedProcessingString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-          switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, trimmedProcessingString), context, true)) {
+        if (leftTrimmedString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
+          switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, leftTrimmedString), context, true)) {
             case PROCESSED:
             case READ_NEXT_LINE:
             case SHOULD_BE_COMMENTED:
@@ -152,7 +152,7 @@ public class FileInfoContainer {
     catch (Exception unexpected) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
       if (pp == null) {
-        throw preprocessingState.makeException("Unexpected exception detected", trimmedProcessingString, unexpected);
+        throw preprocessingState.makeException("Unexpected exception detected", leftTrimmedString, unexpected);
       }
       else {
         throw pp;
@@ -186,15 +186,15 @@ public class FileInfoContainer {
 
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
-    String trimmedProcessingString = null;
+    String leftTrimmedString = null;
     try {
       while (true) {
-        String nonTrimmedProcessingString = preprocessingState.nextLine();
+        String rawString = preprocessingState.nextLine();
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
-          nonTrimmedProcessingString = null;
+          rawString = null;
         }
 
-        if (nonTrimmedProcessingString == null) {
+        if (rawString == null) {
           if (!preprocessingState.isOnlyRootOnStack()) {
             preprocessingState.popTextContainer();
             continue;
@@ -204,24 +204,24 @@ public class FileInfoContainer {
           }
         }
 
-        trimmedProcessingString = nonTrimmedProcessingString.trim();
+        leftTrimmedString = PreprocessorUtils.leftTrim(rawString);
 
         final String stringPrefix;
-        if (trimmedProcessingString.isEmpty()) {
-          stringPrefix = nonTrimmedProcessingString;
+        if (leftTrimmedString.isEmpty()) {
+          stringPrefix = rawString;
         }
         else {
-          final int numberOfSpacesAtTheLineBeginning = nonTrimmedProcessingString.indexOf(trimmedProcessingString);
+          final int numberOfSpacesAtTheLineBeginning = rawString.indexOf(leftTrimmedString);
 
           if (numberOfSpacesAtTheLineBeginning > 0) {
-            stringPrefix = nonTrimmedProcessingString.substring(0, numberOfSpacesAtTheLineBeginning);
+            stringPrefix = rawString.substring(0, numberOfSpacesAtTheLineBeginning);
           }
           else {
             stringPrefix = "";
           }
         }
 
-        String stringToBeProcessed = trimmedProcessingString;
+        String stringToBeProcessed = leftTrimmedString;
 
         if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
           final String extractedDirective = PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed);
@@ -243,16 +243,16 @@ public class FileInfoContainer {
         }
 
         if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
-          final boolean startsWithTwoDollars = trimmedProcessingString.startsWith("//$$");
+          final boolean startsWithTwoDollars = leftTrimmedString.startsWith("//$$");
 
           if (!startsWithTwoDollars) {
-            stringToBeProcessed = PreprocessorUtils.processMacroses(trimmedProcessingString, context);
+            stringToBeProcessed = PreprocessorUtils.processMacroses(leftTrimmedString, context);
           }
 
           if (startsWithTwoDollars) {
             // Output the tail of the string to the output stream without comments and macroses
             preprocessingState.getPrinter().print(stringPrefix);
-            preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", trimmedProcessingString));
+            preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", leftTrimmedString));
           }
           else if (stringToBeProcessed.startsWith("//$")) {
             // Output the tail of the string to the output stream without comments
@@ -273,13 +273,13 @@ public class FileInfoContainer {
           }
         }
         else if (context.isKeepLines()) {
-          preprocessingState.getPrinter().println(AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + nonTrimmedProcessingString);
+          preprocessingState.getPrinter().println(AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString);
         }
       }
     }
     catch (Exception unexpected) {
       final String message = unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
-      throw preprocessingState.makeException(message, trimmedProcessingString, unexpected);
+      throw preprocessingState.makeException(message, leftTrimmedString, unexpected);
     }
 
     if (!preprocessingState.isIfStackEmpty()) {
@@ -341,35 +341,33 @@ public class FileInfoContainer {
     return result;
   }
 
-  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String trimmedString, final PreprocessorContext context, final boolean firstPass) throws IOException {
+  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String directiveString, final PreprocessorContext context, final boolean firstPass) throws IOException {
     final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
       final String name = handler.getName();
-      if (trimmedString.startsWith(name)) {
+      if (directiveString.startsWith(name)) {
         if ((firstPass && !handler.isGlobalPhaseAllowed()) || (!firstPass && !handler.isPreprocessingPhaseAllowed())) {
           return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
         }
 
         final boolean allowedForExecution = executionEnabled || !handler.executeOnlyWhenExecutionAllowed();
 
-        final String restOfString = PreprocessorUtils.extractTail(name, trimmedString);
+        final String restOfString = PreprocessorUtils.extractTail(name, directiveString);
         if (checkDirectiveArgumentRoughly(handler, restOfString)) {
           if (allowedForExecution) {
-            return handler.execute(restOfString.trim(), context);
+            return handler.execute(restOfString, context);
           }
           else {
             return context.isKeepLines() ? AfterDirectiveProcessingBehaviour.SHOULD_BE_COMMENTED : AfterDirectiveProcessingBehaviour.PROCESSED;
           }
         }
         else {
-          final String text = "Directive " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName() + " has wrong argument";
-          throw new IllegalArgumentException(text, context.makeException(text, null));
+          throw context.makeException("Detected bad argument for " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName(), null);
         }
       }
     }
-    final String text = "Unknown preprocessor directive detected [" + trimmedString + ']';
-    throw new IllegalArgumentException(text, context.makeException(text, null));
+    throw context.makeException("Unknown preprocessor directive [" + directiveString + ']', null);
   }
 
   public void setDestinationDir(final String destDir) {

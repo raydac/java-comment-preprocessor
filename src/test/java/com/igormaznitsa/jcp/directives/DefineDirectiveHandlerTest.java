@@ -58,7 +58,7 @@ public class DefineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
 
   @Override
   public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.VARNAME, HANDLER.getArgumentType());
+    assertEquals(DirectiveArgumentType.TAIL, HANDLER.getArgumentType());
   }
 
 }

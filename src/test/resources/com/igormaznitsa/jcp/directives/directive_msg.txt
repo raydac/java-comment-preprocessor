@@ -1,0 +1,8 @@
+start
+//#local test=1
+//#msg   string /*$test+1$*/ ok  
+//#msg string /*$6*8$*/ ok
+end
+---START_ETALON---
+start
+end

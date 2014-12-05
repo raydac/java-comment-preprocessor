@@ -71,7 +71,6 @@ public abstract class AbstractDirectiveHandler {
     new CommentNextLineDirectiveHandler(),
     new DefinelDirectiveHandler(),
     new DefineDirectiveHandler(),
-    new UndeflDirectiveHandler(),
     new UndefDirectiveHandler(),
     new FlushDirectiveHandler(),
     new IncludeDirectiveHandler(),
@@ -86,6 +85,7 @@ public abstract class AbstractDirectiveHandler {
     new ErrorDirectiveHandler(),
     new WarningDirectiveHandler(),
     new AssertDirectiveHandler(),
+    new MsgDirectiveHandler(),
     new NoAutoFlushHandler()
   };
 
@@ -136,12 +136,11 @@ public abstract class AbstractDirectiveHandler {
   /**
    * Execute directive
    *
-   * @param string the tail string from the string where the directive has been
-   * met, must not be null but can be empty one
+   * @param tailString the tail of the string where the directive has been met, must not be null but can be empty
    * @param context the preprocessor context, it can be null
    * @return the needed preprocessor behavior, must not be null
    */
-  public abstract AfterDirectiveProcessingBehaviour execute(String string, PreprocessorContext context);
+  public abstract AfterDirectiveProcessingBehaviour execute(String tailString, PreprocessorContext context);
 
   /**
    * Shows that the directive can be executed only when the preprocessing n
@@ -174,5 +173,13 @@ public abstract class AbstractDirectiveHandler {
    */
   public boolean isPreprocessingPhaseAllowed() {
     return true;
+  }
+
+  /**
+   * Check that the directive is deprecated one and can be removed in a next release
+   * @return true if the directive is deprecated, false otherwise
+   */
+  public boolean isDeprecated() {
+    return false;
   }
 }
