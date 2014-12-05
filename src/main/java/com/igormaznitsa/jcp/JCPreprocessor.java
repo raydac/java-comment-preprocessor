@@ -82,7 +82,7 @@ public final class JCPreprocessor {
     this.context = context;
   }
 
-  public void execute() throws PreprocessorException, IOException {
+  public void execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
     
     processCfgFiles();
@@ -102,8 +102,8 @@ public final class JCPreprocessor {
     this.context.logInfo("Completed, preprocessed "+stat.getNumberOfPreprocessed()+" files, copied "+stat.getNumberOfCopied()+" files, elapsed time "+elapsedTime+"ms");
   }
 
-  private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) throws PreprocessorException {
-    final String DIRECTIVE_NAME = AbstractDirectiveHandler.DIRECTIVE_PREFIX + (new ExcludeIfDirectiveHandler().getName());
+  private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
+    final String DIRECTIVE_NAME = new ExcludeIfDirectiveHandler().getFullName();
 
     for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
       final String condition = item.getCondition();
@@ -111,6 +111,10 @@ public final class JCPreprocessor {
 
       Value val = null;
 
+      if (context.isVerbose()){
+        context.logForVerbose("Processing condition '"+condition+"' for file '"+file.getAbsolutePath()+"'");
+      }
+      
       try {
         val = Expression.evalExpression(condition, context);
       }
@@ -122,13 +126,16 @@ public final class JCPreprocessor {
         throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, null);
       }
 
-      if (val.asBoolean().booleanValue()) {
+      if (val.asBoolean()) {
         item.getFileInfoContainer().setExcluded(true);
+        if (context.isVerbose()) {
+          context.logForVerbose("File '" + file.getAbsolutePath() + "' excluded because '"+condition+"' returns TRUE");
+        }
       }
     }
   }
 
-  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final Collection<FileInfoContainer> files) throws PreprocessorException, IOException {
+  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final Collection<FileInfoContainer> files) throws IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
@@ -138,7 +145,7 @@ public final class JCPreprocessor {
     return result;
   }
 
-  private PreprocessingStatistics preprocessFiles(final Collection<FileInfoContainer> files) throws IOException, PreprocessorException {
+  private PreprocessingStatistics preprocessFiles(final Collection<FileInfoContainer> files) throws IOException {
     int prepFileCounter = 0;
     int copFileCounter = 0;
     for (final FileInfoContainer fileRef : files) {
@@ -147,12 +154,20 @@ public final class JCPreprocessor {
       }
       else if (fileRef.isForCopyOnly()) {
         if (!context.isFileOutputDisabled()) {
+          if (context.isVerbose()){
+            context.logForVerbose("Copy file "+PreprocessorUtils.getFilePath(fileRef.getSourceFile())+" -> {dst}"+fileRef.getDestinationFilePath());
+          }
           PreprocessorUtils.copyFile(fileRef.getSourceFile(), context.createDestinationFileForPath(fileRef.getDestinationFilePath()));
           copFileCounter ++;
         }
       }
       else {
+        final long startTime = System.currentTimeMillis();
         fileRef.preprocessFile(null, context);
+        final long elapsedTime = System.currentTimeMillis() - startTime;
+        if (context.isVerbose()){
+          context.logForVerbose("Completed file preprocessing ["+PreprocessorUtils.getFilePath(fileRef.getSourceFile())+"], elapsed time "+elapsedTime+"ms");
+        }
         prepFileCounter++;
       }
     }
@@ -284,7 +299,7 @@ public final class JCPreprocessor {
     return result;
   }
 
-  void processCfgFiles() throws IOException, PreprocessorException {
+  void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
       final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8");
@@ -305,10 +320,10 @@ public final class JCPreprocessor {
           boolean processed = false;
           try {
             for (CommandLineHandler handler : getCommandLineHandlers()) {
+              if (context.isVerbose()) {
+                context.logForVerbose("Processing сonfig file key \'" + trimmed + "\' at " + file.getName() + ':' + (readStringIndex + 1));
+              }
               if (handler.processCommandLineKey(trimmed, context)) {
-                if (context.isVerbose()) {
-                  context.logInfo("Processed key \'" + trimmed + "\' at " + file.getName() + ':' + (readStringIndex + 1));
-                }
                 processed = true;
                 break;
               }
@@ -339,7 +354,7 @@ public final class JCPreprocessor {
             context.setGlobalVariable(name, result);
 
             if (context.isVerbose()) {
-              context.logInfo("Added global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
+              context.logForVerbose("Register global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
             }
           }
           catch (Exception unexpected) {

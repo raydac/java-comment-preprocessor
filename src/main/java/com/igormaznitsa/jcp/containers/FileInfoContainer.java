@@ -26,6 +26,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * The class is one from the main classes in the preprocessor because it
@@ -55,12 +56,12 @@ public class FileInfoContainer {
   /**
    * The destination directory for the file
    */
-  private String destinationDir;
+  private String destFolder;
 
   /**
    * The destination name for the file
    */
-  private String destinationName;
+  private String destFileName;
 
   public File getSourceFile() {
     return sourceFile;
@@ -75,11 +76,11 @@ public class FileInfoContainer {
   }
 
   public String getDestinationDir() {
-    return destinationDir;
+    return destFolder;
   }
 
   public String getDestinationName() {
-    return destinationName;
+    return destFileName;
   }
 
   public FileInfoContainer(final File srcFile, final String dstFileName, final boolean copyOnly) {
@@ -90,31 +91,36 @@ public class FileInfoContainer {
     excludedFromPreprocessing = false;
     sourceFile = srcFile;
 
-    int dirSeparator = dstFileName.lastIndexOf('/');
-    if (dirSeparator < 0) {
-      dirSeparator = dstFileName.lastIndexOf('\\');
+    int lastDirSeparator = dstFileName.lastIndexOf('/');
+    if (lastDirSeparator < 0) {
+      lastDirSeparator = dstFileName.lastIndexOf('\\');
     }
 
-    if (dirSeparator < 0) {
-      destinationDir = "." + File.separatorChar;
-      destinationName = dstFileName;
+    if (lastDirSeparator < 0) {
+      destFolder = "." + File.separatorChar;
+      destFileName = dstFileName;
     }
     else {
-      destinationDir = dstFileName.substring(0, dirSeparator);
-      destinationName = dstFileName.substring(dirSeparator);
+      destFolder = dstFileName.substring(0, lastDirSeparator);
+      destFileName = dstFileName.substring(lastDirSeparator+1);
     }
   }
 
   public String getDestinationFilePath() {
-    return destinationDir + File.separatorChar + destinationName;
+    String dir = this.destFolder;
+    if (!dir.isEmpty() && dir.charAt(dir.length() - 1) != File.separatorChar) {
+      dir = dir + File.separatorChar;
+    }
+
+    return dir + destFileName;
   }
 
   @Override
   public String toString() {
-    return "FileInfoContainer: file=" + PreprocessorUtils.getFilePath(sourceFile) + " toDir=" + destinationDir + " toName=" + destinationName;
+    return "FileInfoContainer: source=" + PreprocessorUtils.getFilePath(sourceFile) + " destFolder=" + destFolder + " destFile=" + destFileName;
   }
 
-  public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws PreprocessorException, IOException {
+  public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws IOException {
     final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this) : state;
 
     String leftTrimmedString = null;
@@ -126,13 +132,9 @@ public class FileInfoContainer {
         }
 
         if (nonTrimmedProcessingString == null) {
-          if (!preprocessingState.isOnlyRootOnStack()) {
             preprocessingState.popTextContainer();
-            continue;
-          }
-          else {
-            break;
-          }
+            if (preprocessingState.isIncludeStackEmpty())
+            break; else continue;
         }
 
         leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
@@ -178,7 +180,7 @@ public class FileInfoContainer {
    * @throws IOException
    * @throws PreprocessorException
    */
-  public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException, PreprocessorException {
+  public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException {
     // do not clear local variables for cloned context to keep them in the new context
     if (!context.isCloned()) {
       context.clearLocalVariables();
@@ -187,6 +189,9 @@ public class FileInfoContainer {
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
     String leftTrimmedString = null;
+    
+    TextFileDataContainer lastTextFileDataContainer = null;
+    
     try {
       while (true) {
         String rawString = preprocessingState.nextLine();
@@ -195,14 +200,13 @@ public class FileInfoContainer {
         }
 
         if (rawString == null) {
-          if (!preprocessingState.isOnlyRootOnStack()) {
-            preprocessingState.popTextContainer();
-            continue;
-          }
-          else {
+          lastTextFileDataContainer = preprocessingState.popTextContainer();
+          if (preprocessingState.isIncludeStackEmpty())
             break;
-          }
+          else
+            continue;
         }
+        
 
         leftTrimmedString = PreprocessorUtils.leftTrim(rawString);
 
@@ -293,7 +297,7 @@ public class FileInfoContainer {
               "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled() && preprocessingState.peekFile().isAutoFlush()) {
+    if (!context.isFileOutputDisabled() && lastTextFileDataContainer!=null && lastTextFileDataContainer.isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
     }
@@ -371,13 +375,13 @@ public class FileInfoContainer {
   }
 
   public void setDestinationDir(final String destDir) {
-    PreprocessorUtils.assertNotNull("String is null",destDir);
-    destinationDir = destDir;
+    PreprocessorUtils.assertNotNull("String is null", destDir);
+    destFolder = destDir;
   }
 
   public void setDestinationName(final String destName) {
     PreprocessorUtils.assertNotNull("String is null", destName);
-    destinationName = destName;
+    destFileName = destName;
   }
 
   public void setExcluded(final boolean flag) {

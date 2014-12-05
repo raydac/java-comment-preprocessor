@@ -31,7 +31,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "read parameters from a file defined as a path or as an expression (if @@ is used)";
+    return "load global parameters from a file defined either by path or expression for @@ case";
   }
 
   @Override
@@ -50,13 +50,15 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       if (stringRest.charAt(0) == '@') {
         stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
 
+        if (context.isVerbose()){
+          context.logForVerbose("Global parameter file defined as an expression \'"+stringRest+'\'');
+        }
+        
         final Value resultValue = Expression.evalExpression(stringRest, context);
 
         if (resultValue != null && resultValue.getType() == ValueType.STRING) {
           final String fileName = resultValue.asString();
-
           file = new File(fileName);
-
         }
         else {
           throw context.makeException("Wrong global variable file name expression [" + stringRest + ']',null);
@@ -66,14 +68,14 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         file = new File(stringRest);
       }
 
-      if (file.exists() && file.isFile()) {
+      if (context.isVerbose()) {
+        context.logForVerbose("Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  \'" + stringRest + '\'');
+      }
+      if (file.isFile()) {
         context.addConfigFile(file);
-        if (context.isVerbose()) {
-          context.logInfo("A Global variable defining file has been added [" + PreprocessorUtils.getFilePath(file) + "] for the expression \'" + stringRest + '\'');
-        }
       }
       else {
-        throw context.makeException("Can't find a global variable defining file \'" + PreprocessorUtils.getFilePath(file) + '\'',null);
+        throw context.makeException("Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'',null);
       }
 
       result = true;

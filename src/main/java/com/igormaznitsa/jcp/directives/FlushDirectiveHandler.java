@@ -34,7 +34,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "save all buffered text to disk and clear buffers";
+    return "flush all text buffers to disk under current destination name, then clear the buffers";
   }
 
   @Override
@@ -43,12 +43,14 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
     if (!context.isFileOutputDisabled()) {
       final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());
       try {
+        if (context.isVerbose()){
+          context.logForVerbose("Flush buffers into file '"+outFile+'\'');
+        }
         state.saveBuffersToFile(outFile, context.isRemoveComments());
         state.resetPrinters();
       }
       catch (IOException ex) {
-        final String text = "Can't flush buffers";
-        throw new IllegalStateException(text, context.makeException(text, ex));
+        throw context.makeException("Can't flush text buffers", ex);
       }
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;

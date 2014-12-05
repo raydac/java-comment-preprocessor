@@ -19,7 +19,6 @@ import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.ValueType;
 
 /**
  * The class implements the //#outname directive handler
@@ -35,7 +34,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "change the result file name, it works like direct change value of the special variable \'" + JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME+'\'';
+    return "change result file name (works like change \'" + JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME+"\')";
   }
 
   @Override
@@ -45,13 +44,12 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
-    final Value dirName = Expression.evalExpression(string, context);
-
-    if (dirName == null || dirName.getType() != ValueType.STRING) {
-      final String text = DIRECTIVE_PREFIX + "outname needs a string expression";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+    final Value fileName = Expression.evalExpression(string, context);
+    final String fileNameAsStr = fileName.toString();
+    if (context.isVerbose()){
+      context.logForVerbose("Change result file name to '"+fileNameAsStr+"\'");
     }
-    context.getPreprocessingState().getRootFileInfo().setDestinationName(dirName.asString());
+    context.getPreprocessingState().getRootFileInfo().setDestinationName(fileNameAsStr);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

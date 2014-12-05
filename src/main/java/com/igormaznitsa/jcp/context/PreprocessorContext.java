@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,7 +77,7 @@ public class PreprocessorContext {
 
   private transient PreprocessingState currentState;
   private final boolean cloned;
-  
+
   /**
    * The constructor
    */
@@ -88,22 +88,22 @@ public class PreprocessorContext {
     this.cloned = false;
   }
 
-  
   /**
    * Check that the preprocessor context is a clone of another context.
+   *
    * @return true if the context is a clone, false otherwise
    */
-  public boolean isCloned(){
+  public boolean isCloned() {
     return this.cloned;
   }
-  
+
   /**
    * Make clone of a preprocessor context but without cloning state.
    *
    * @param context the context to be cloned, must not be null.
    */
   public PreprocessorContext(final PreprocessorContext context) {
-    PreprocessorUtils.assertNotNull("Source context muet not be null", context);
+    PreprocessorUtils.assertNotNull("Source context must not be null", context);
 
     this.verbose = context.verbose;
     this.removeComments = context.removeComments;
@@ -133,12 +133,9 @@ public class PreprocessorContext {
     this.configFiles.addAll(context.configFiles);
 
     this.currentState = context.currentState;
-    
     this.cloned = true;
   }
 
-  
-  
   /**
    * Set the logger to print information and error messages
    *
@@ -268,8 +265,8 @@ public class PreprocessorContext {
    * @param obj the object to be saved in, must not be null
    */
   public void setSharedResource(final String name, final Object obj) {
-    PreprocessorUtils.assertNotNull("Name is null",name);
-    PreprocessorUtils.assertNotNull("Object is null",obj);
+    PreprocessorUtils.assertNotNull("Name is null", name);
+    PreprocessorUtils.assertNotNull("Object is null", obj);
 
     sharedResources.put(name, obj);
   }
@@ -414,7 +411,8 @@ public class PreprocessorContext {
     final boolean result;
     if (file != null && file.isFile()) {
       result = excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
-    }else{
+    }
+    else {
       result = false;
     }
     return result;
@@ -486,7 +484,7 @@ public class PreprocessorContext {
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
       throw new IllegalArgumentException("Attempting to set either a global variable or a special variable as a local one [" + normalized + ']');
     }
-    
+
     localVarTable.put(normalized, value);
     return this;
   }
@@ -615,12 +613,16 @@ public class PreprocessorContext {
       mapVariableNameToSpecialVarProcessor.get(normalizedName).setVariable(normalizedName, value, this);
     }
     else {
-
-      globalVarTable.put(normalizedName, value);
-
       if (isVerbose()) {
-        logInfo("A global variable has been set [" + normalizedName + '=' + value.toString() + ']');
+        final String valueAsStr = value.toString();
+        if (globalVarTable.containsKey(normalizedName)) {
+          logForVerbose("Replacing global variable [" + normalizedName + '=' + valueAsStr + ']');
+        }
+        else {
+          logForVerbose("Defining new global variable [" + normalizedName + '=' + valueAsStr + ']');
+        }
       }
+      globalVarTable.put(normalizedName, value);
     }
     return this;
   }
@@ -682,32 +684,36 @@ public class PreprocessorContext {
 
   /**
    * Check that there is a global variable with such name.
+   *
    * @param variableName a name to be checked, can be null
-   * @return false if there is not such variable or it is null, true if such global or special variable exists
+   * @return false if there is not such variable or it is null, true if such
+   * global or special variable exists
    */
-  public boolean isGlobalVariable(final String variableName){
+  public boolean isGlobalVariable(final String variableName) {
     boolean result = false;
-    if (variableName!=null){
+    if (variableName != null) {
       final String normalized = PreprocessorUtils.normalizeVariableName(variableName);
       result = this.globalVarTable.containsKey(normalized) || mapVariableNameToSpecialVarProcessor.containsKey(normalized);
     }
     return result;
   }
-  
+
   /**
    * Check that there is a local variable with such name.
+   *
    * @param variableName a name to be checked, can be null
-   * @return false if there is not such variable or it is null, true if such local variable exists
+   * @return false if there is not such variable or it is null, true if such
+   * local variable exists
    */
-  public boolean isLocalVariable(final String variableName){
+  public boolean isLocalVariable(final String variableName) {
     boolean result = false;
-    if (variableName!=null){
+    if (variableName != null) {
       final String normalized = PreprocessorUtils.normalizeVariableName(variableName);
       result = this.localVarTable.containsKey(normalized);
     }
     return result;
   }
-  
+
   /**
    * Set the verbose flag
    *
@@ -861,7 +867,7 @@ public class PreprocessorContext {
 
     if (path.isEmpty()) {
       final String text = "File name is an empty string";
-      throw new IllegalArgumentException(text,makeException(text, null));
+      throw new IllegalArgumentException(text, makeException(text, null));
     }
 
     File result = null;
@@ -871,7 +877,7 @@ public class PreprocessorContext {
       parentDir = currentState.peekFile().getFile().getParent();
     }
 
-    if (FilenameUtils.getPrefixLength(path)<=0 && parentDir != null) {
+    if (FilenameUtils.getPrefixLength(path) <= 0 && parentDir != null) {
       // relative path
       result = new File(parentDir, path);
     }
@@ -937,7 +943,7 @@ public class PreprocessorContext {
     PreprocessorUtils.assertNotNull("File container is null", fileContainer);
 
     if (verbose) {
-      logInfo("Open file to preprocess [" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + ']');
+      logInfo("Start preprocessing for [" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + ']');
     }
     this.currentState = new PreprocessingState(fileContainer, getInCharacterEncoding(), getOutCharacterEncoding());
     return this.currentState;
@@ -970,25 +976,70 @@ public class PreprocessorContext {
   }
 
   /**
-   * Prepare exception with message and cause, or return cause if it is a preprocessor exception
+   * Prepare exception with message and cause, or return cause if it is a
+   * preprocessor exception
+   *
    * @param text the message text, must not be null
    * @param cause the cause, it can be null
    * @return prepared exception with additional information
    */
-  public PreprocessorException makeException(final String text, final Throwable cause){
-    if (cause != null && cause instanceof PreprocessorException){
-      return (PreprocessorException)cause;
+  public PreprocessorException makeException(final String text, final Throwable cause) {
+    if (cause != null && cause instanceof PreprocessorException) {
+      return (PreprocessorException) cause;
     }
-    
-    final FilePositionInfo [] includeStack;
+
+    final FilePositionInfo[] includeStack;
     final String sourceLine;
-    if (this.currentState==null){
+    if (this.currentState == null) {
       includeStack = PreprocessingState.EMPTY_STACK;
       sourceLine = "";
-    }else{
+    }
+    else {
       includeStack = this.currentState.makeIncludeStack();
       sourceLine = this.currentState.getLastReadString();
     }
     return new PreprocessorException(text, sourceLine, includeStack, cause);
+  }
+
+  public void logForVerbose(final String str) {
+    if (isVerbose()) {
+      final String stack = makeStackView();
+      this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
+    }
+  }
+
+  private String makeStackView() {
+    final PreprocessingState state = this.currentState;
+    if (state == null) {
+      return "";
+    }
+    final StringBuilder builder = new StringBuilder();
+    int tab = 5;
+    final List<TextFileDataContainer> includeStack = state.getCurrentIncludeStack();
+    if (includeStack.isEmpty()) {
+      return "";
+    }
+
+    
+    for (int s = 0; s < tab; s++) {
+      builder.append(' ');
+    }
+    builder.append("{File chain}");
+    tab +=5;
+    
+    int fileIndex = 1;
+    for (int i = includeStack.size() - 1; i >= 0; i--) {
+      final TextFileDataContainer cur = includeStack.get(i);
+      builder.append('\n');
+      for (int s = 0; s < tab; s++) {
+        builder.append(' ');
+      }
+      builder.append("└>");
+      builder.append(fileIndex++).append(". ");
+      builder.append(cur.getFile().getName()).append(':').append(cur.getLastReadStringIndex() + 1);
+      tab += 3;
+   }
+
+    return builder.toString();
   }
 }

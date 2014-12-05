@@ -40,7 +40,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a local variable to be visible only in the current preprocessing file context and the value will be lost after end of the current file preprocessing";
+    return "make local definition which is visilble only in the context of the current file";
   }
 
   @Override
@@ -52,8 +52,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
 
     if (splitted.length != 2) {
-      final String text = "Can't find expression";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+      throw context.makeException("Can't find expression", null);
     }
 
     final String name = splitted[0];

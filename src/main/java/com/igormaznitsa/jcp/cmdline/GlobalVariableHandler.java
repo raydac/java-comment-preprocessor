@@ -47,14 +47,14 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
         final String[] splitted = PreprocessorUtils.splitForEqualChar(nameAndExpression);
         if (splitted.length != 2) {
-          throw new IllegalArgumentException("Wrong expression at a " + ARG_NAME + " directive [" + nameAndExpression + ']');
+          throw context.makeException("Illegal expression for directive '" + ARG_NAME + "' [" + nameAndExpression + ']',null);
         }
 
         final String value = splitted[0];
         final String expression = splitted[1];
 
         if (context.containsGlobalVariable(value)) {
-          throw new IllegalArgumentException("Duplicated global definition detected [" + value + ']');
+          throw context.makeException("Duplicated global definition [" + value + ']',null);
         }
 
         final Value resultVal = Expression.evalExpression(expression, context);

@@ -362,8 +362,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       context.setProcessingFileExtensions(this.processing);
     }
 
-    info("Preprocessing sources folder : " + context.getSourceDirectories());
-    info("Preprocessing destination folder : " + context.getDestinationDirectory());
+    info("Preprocess sources : " + context.getSourceDirectories());
+    info("Preprocess destination : " + context.getDestinationDirectory());
 
     context.setClearDestinationDirBefore(this.clear);
     context.setRemoveComments(this.removeComments);

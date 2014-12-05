@@ -25,7 +25,7 @@ public class SystemOutLogger implements PreprocessorLogger {
   @Override
   public void error(final String text) {
     if (text != null) {
-      final String out = "[ERROR]--> " + text;
+      final String out = "[JCP.ERR] " + text;
       System.err.println(out);
     }
   }
@@ -33,7 +33,7 @@ public class SystemOutLogger implements PreprocessorLogger {
   @Override
   public void info(final String text) {
     if (text != null) {
-      final String out = "[INFO]--> " + text;
+      final String out = "[JCP.INFO] " + text;
       System.out.println(out);
     }
   }
@@ -41,7 +41,7 @@ public class SystemOutLogger implements PreprocessorLogger {
   @Override
   public void warning(final String text) {
     if (text != null) {
-      final String out = "[WARNING]--> " + text;
+      final String out = "[JCP.WARN] " + text;
       System.out.println(out);
     }
   }

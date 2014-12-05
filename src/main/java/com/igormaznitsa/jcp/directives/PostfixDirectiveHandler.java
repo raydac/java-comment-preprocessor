@@ -32,7 +32,7 @@ public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "turn on(+) or turn off(-) writing into the postfix part of the result file";
+    return "turn on(+) or turn off(-) writing into result file postfix";
   }
 
   @Override
@@ -54,13 +54,11 @@ public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
         }
         break;
         default:{
-          final String text = "Unsupported parameter";
-          throw new IllegalArgumentException(text, context.makeException(text, null));
+          throw context.makeException("Unsupported ending ["+string+']', null);
         }
       }
       return AfterDirectiveProcessingBehaviour.PROCESSED;
     }
-    final String text = DIRECTIVE_PREFIX + "prefix needs a parameter";
-    throw new IllegalArgumentException(text, context.makeException(text, null));
+    throw context.makeException(getFullName() + " needs ending [+|-]", null);
   }
 }

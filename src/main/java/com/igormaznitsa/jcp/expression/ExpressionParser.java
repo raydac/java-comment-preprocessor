@@ -228,12 +228,12 @@ public final class ExpressionParser {
    * null
    * @param context a preprocessor context, it will be used for a user functions
    * and variables, it can be null
-   * @param callStack the current file call stack, can be null
+   * @param includeStack the current file include stack, can be null
    * @param sources the current source line, can be null
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
-  private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context, final FilePositionInfo[] callStack, final String sources) throws IOException {
+  private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context, final FilePositionInfo[] includeStack, final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
       throw new IllegalStateException("A function without parameters detected [" + function.getName() + ']');
@@ -244,8 +244,8 @@ public final class ExpressionParser {
     ExpressionTree functionTree = null;
 
     if (arity == 0) {
-      final ExpressionTree subExpression = new ExpressionTree(callStack, sources);
-      final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, callStack, sources);
+      final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
+      final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);
       if (SpecialItem.BRACKET_CLOSING != lastItem) {
         throw new IllegalArgumentException("There is not closing bracket for function [" + function.getName() + ']');
       }
@@ -253,7 +253,7 @@ public final class ExpressionParser {
         throw new IllegalStateException("The function \'" + function.getName() + "\' doesn't need arguments");
       }
       else {
-        functionTree = new ExpressionTree(callStack, sources);
+        functionTree = new ExpressionTree(includeStack, sources);
         functionTree.addItem(function);
       }
     }
@@ -261,8 +261,8 @@ public final class ExpressionParser {
 
       final List<ExpressionTree> arguments = new ArrayList<ExpressionTree>(arity);
       for (int i = 0; i < function.getArity(); i++) {
-        final ExpressionTree subExpression = new ExpressionTree(callStack, sources);
-        final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, callStack, sources);
+        final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
+        final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);
 
         if (SpecialItem.BRACKET_CLOSING == lastItem) {
           arguments.add(subExpression);
@@ -273,17 +273,17 @@ public final class ExpressionParser {
         }
         else {
           final String text = "Wrong argument definition for function detected [" + function.getName() + ']';
-          throw new IllegalArgumentException(text, new PreprocessorException(text, sources, callStack, null));
+          throw new IllegalArgumentException(text, new PreprocessorException(text, sources, includeStack, null));
         }
       }
 
-      functionTree = new ExpressionTree(callStack, sources);
+      functionTree = new ExpressionTree(includeStack, sources);
       functionTree.addItem(function);
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
       if (arguments.size() != functionTreeElement.getArity()) {
         final String text = "Wrong argument number for function \'" + function.getName() + "\', it needs " + function.getArity() + " argument(s)";
-        throw new IllegalArgumentException(text, new PreprocessorException(text, sources, callStack, null));
+        throw new IllegalArgumentException(text, new PreprocessorException(text, sources, includeStack, null));
       }
 
       functionTreeElement.fillArguments(arguments);

@@ -62,18 +62,12 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
 
     if (splitted.length != 2) {
-      final String text = "Can't recognize an expression [" + string + ']';
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+      throw context.makeException("Can't find expression [" + string + ']', null);
     }
 
     final String name = splitted[0].trim();
-    final Value value = Expression.evalExpression(splitted[1].trim(), context);
+    final Value newValue = Expression.evalExpression(splitted[1].trim(), context);
 
-    context.setGlobalVariable(name, value);
-
-    if (context.isVerbose() && context.containsGlobalVariable(name)) {
-      context.logWarning("Global value has been changed [" + name + '=' + value + ']');
-    }
-
+    context.setGlobalVariable(name, newValue);
   }
 }

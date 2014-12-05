@@ -19,7 +19,6 @@ import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.ValueType;
 
 /**
  * The class implements the //#outdir directive handler
@@ -35,7 +34,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "change the output directory for the current result file, it works like change value in the special variable \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + '\'';
+    return "change result file folder (works like change \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
   }
 
   @Override
@@ -46,12 +45,11 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final Value name = Expression.evalExpression(string, context);
-
-    if (name == null || name.getType() != ValueType.STRING) {
-      final String text = DIRECTIVE_PREFIX + "outdir needs a string expression";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+    final String nameAsString = name.toString();
+    if (context.isVerbose()) {
+      context.logForVerbose("Change result file folder '" + nameAsString + "\'");
     }
-    context.getPreprocessingState().getRootFileInfo().setDestinationDir((String) name.getValue());
+    context.getPreprocessingState().getRootFileInfo().setDestinationDir(nameAsString);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

@@ -55,13 +55,21 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   public Value getVariable(final String varName, final PreprocessorContext context) {
     final Value result = environmentVars.get(varName);
     if (result == null) {
-      throw new IllegalArgumentException("Request for an unknown environment variable \'" + varName + '\'');
+      if (context==null){
+        throw new IllegalArgumentException("Reaing undefined environment record \'" + varName + '\'');
+      }else{
+        throw context.makeException("Reaing undefined environment record \'" + varName + '\'',null);
+      }
     }
     return result;
   }
 
   @Override
   public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
-    throw new UnsupportedOperationException("Attempting to change an environment variable [" + varName + ']');
+    if (context!=null){
+      throw context.makeException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!",null);
+    }else{
+      throw new UnsupportedOperationException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!");
+    }
   }
 }

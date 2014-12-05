@@ -75,7 +75,7 @@ public class ExpressionTreeElement {
   private final String sourceString;
   
   /**
-   * Current call stack of the preprocessor to the source string.
+   * Current include stack of the preprocessor to the source string.
    */
   private final FilePositionInfo [] includeStack;
   

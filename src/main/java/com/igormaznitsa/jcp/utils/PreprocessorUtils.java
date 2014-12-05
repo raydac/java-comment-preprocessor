@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharUtils;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -312,7 +313,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) throws PreprocessorException {
+  public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) {
     throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
   }
 
@@ -350,7 +351,8 @@ public enum PreprocessorUtils {
   public static String leftTrim(String rawString) {
     int firstNonSpace = 0;
     for(int i=0;i<rawString.length();i++){
-      if (!Character.isSpaceChar(rawString.charAt(i))) break;
+      final char ch = rawString.charAt(i);
+      if (ch>32) break;
       firstNonSpace ++;
     }
     return rawString.substring(firstNonSpace);

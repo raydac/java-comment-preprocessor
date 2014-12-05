@@ -37,7 +37,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "include another file body for its path into the site, the file body will be preprocessed in the same context as the including one";
+    return "include file and preprocess the file in the current context";
   }
 
   @Override
@@ -50,21 +50,17 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     final Value includingFilePath = Expression.evalExpression(string, context);
 
-    if (includingFilePath == null || includingFilePath.getType() != ValueType.STRING) {
-      final String text = DIRECTIVE_PREFIX + "include works only with STR expression result";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
-    }
-
+    final String filePath = includingFilePath.toString();
+    
     try {
-      final File includingFile = context.getSourceFile(includingFilePath.asString());
+      final File thefile = context.getSourceFile(filePath);
       if (context.isVerbose()) {
-        context.logInfo("Including file [" + includingFile.getCanonicalPath() + ']');
+        context.logForVerbose("Including file '" + thefile.getCanonicalPath() + '\'');
       }
-      state.openFile(includingFile);
+      state.openFile(thefile);
     }
     catch (IOException ex) {
-      final String text = "Can't open a file to include [" + includingFilePath.asString() + ']';
-      throw new IllegalArgumentException(text, context.makeException(text, ex));
+      throw context.makeException("Can't open file '" + filePath + '\'', ex);
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

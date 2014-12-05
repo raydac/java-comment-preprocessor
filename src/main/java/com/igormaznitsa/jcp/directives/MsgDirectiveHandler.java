@@ -37,13 +37,18 @@ public class MsgDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "string tail will be printed as line with macroses";
+    return "string tail will be printed as line with macroses and with include chain in verbose case";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String rawTail, final PreprocessorContext context) {
     final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
-    context.logInfo(PreprocessorUtils.processMacroses(normal, context));
+    final String message = PreprocessorUtils.processMacroses(normal, context);
+    if (context.isVerbose()){
+      context.logForVerbose(message);
+    }else{
+      context.logInfo(message);
+    }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

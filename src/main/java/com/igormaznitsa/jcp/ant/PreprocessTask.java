@@ -244,7 +244,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         context.addConfigFile(f.getFile());
       }
       else {
-        throw new IllegalArgumentException("One of config files doesn't contain the file attribute");
+        throw context.makeException("A Config file record doesn't contain the 'file' attribute",null);
       }
     }
   }
@@ -255,7 +255,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         context.setGlobalVariable(g.getName(), Value.recognizeRawString(g.getValue()));
       }
       else {
-        throw new IllegalArgumentException("Wrong definition of a global variable, may be there is not a needed attribute");
+        throw context.makeException("Wrong global definition, may be there is neither 'name' nor 'value' attribute",null);
       }
     }
   }
@@ -390,13 +390,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     final Value result = antVariables.get(varName);
 
     if (result == null) {
-      throw new IllegalArgumentException("Unsupported Ant property requested \'" + varName + '\'');
+      throw context.makeException("Request for unsupported Ant property \'" + varName + '\'',null);
     }
     return result;
   }
 
   @Override
   public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
-    throw new UnsupportedOperationException("An Attempt to change an ANT property \'" + varName + "\'. All ANT properties allowed only to be read!");
+    throw new UnsupportedOperationException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!");
   }
 }

@@ -49,7 +49,7 @@ import org.apache.commons.io.IOUtils;
 public final class PreprocessingState {
 
   public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
-  
+
   public static class ExcludeIfInfo {
 
     private final FileInfoContainer fileInfoContainer;
@@ -88,7 +88,7 @@ public final class PreprocessingState {
   private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
   private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
   private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<ExcludeIfInfo> excludeStack = new LinkedList<ExcludeIfInfo>();
+  private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<ExcludeIfInfo>();
   private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
   private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
@@ -133,20 +133,20 @@ public final class PreprocessingState {
     PreprocessorUtils.assertNotNull("Condition is null", excludeIfCondition);
 
     if (stringIndex < 0) {
-      throw new IllegalArgumentException("String index is less than zero");
+      throw new IllegalArgumentException("Unexpected string index ["+stringIndex+']');
     }
 
-    excludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
+    deferredExcludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
   }
 
   public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
-    final List<ExcludeIfInfo> result = new ArrayList<ExcludeIfInfo>(excludeStack);
-    excludeStack.clear();
+    final List<ExcludeIfInfo> result = new ArrayList<ExcludeIfInfo>(deferredExcludeStack);
+    deferredExcludeStack.clear();
     return result;
   }
 
   public ExcludeIfInfo popExcludeIfData() {
-    return excludeStack.pop();
+    return deferredExcludeStack.pop();
   }
 
   public Set<PreprocessingFlag> getPreprocessingFlags() {
@@ -174,6 +174,10 @@ public final class PreprocessingState {
     return includeStack.peek();
   }
 
+  List<TextFileDataContainer> getCurrentIncludeStack(){
+    return this.includeStack;
+  }
+  
   public FilePositionInfo [] makeIncludeStack(){
     final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
     for (int i = 0; i < includeStack.size(); i++) {
@@ -184,18 +188,20 @@ public final class PreprocessingState {
   }
   
   public TextFileDataContainer popTextContainer() {
-    if (includeStack.size() == 1) {
-      throw new IllegalStateException("Attempting to remove the root file");
+    if (includeStack.isEmpty()){
+      throw new IllegalStateException("Include stack is empty");
     }
-    else {
-      return includeStack.pop();
-    }
+    return includeStack.pop();
   }
 
   public FileInfoContainer getRootFileInfo() {
     return rootFileInfo;
   }
 
+  public boolean isIncludeStackEmpty(){
+    return includeStack.isEmpty();
+  }
+  
   public boolean isOnlyRootOnStack() {
     return includeStack.size() == 1;
   }
@@ -397,7 +403,14 @@ public final class PreprocessingState {
     }
   }
 
-  public PreprocessorException makeException(final String message, final String text, final Throwable cause) {
-    return new PreprocessorException(message, text, makeIncludeStack(), cause);
+  public PreprocessorException makeException(final String message, final String causeString, final Throwable cause) {
+    return new PreprocessorException(message, causeString, makeIncludeStack(), cause);
+  }
+
+  public void dispose() {
+    this.deferredExcludeStack.clear();
+    this.ifStack.clear();
+    this.includeStack.clear();
+    this.whileStack.clear();
   }
 }
