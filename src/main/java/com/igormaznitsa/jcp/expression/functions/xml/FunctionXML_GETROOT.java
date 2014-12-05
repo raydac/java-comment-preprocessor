@@ -38,8 +38,7 @@ public final class FunctionXML_GETROOT extends AbstractXMLFunction {
     
     final NodeContainer root = (NodeContainer) context.getSharedResource(documentRootId);
     if (root == null){
-      final String text = "Can't find any root for document ["+documentId+']';
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+      throw context.makeException("Can't find any root for document ["+documentId+']',null);
     }
     return Value.valueOf(documentRootId);
   }
@@ -56,7 +55,7 @@ public final class FunctionXML_GETROOT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get document root element";
+    return "get the document root element";
   }
 
   @Override

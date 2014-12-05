@@ -33,7 +33,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "check existence of a variable without check of its value, it makes "+ DIRECTIVE_PREFIX +"ifdefined.."+DIRECTIVE_PREFIX +"else.."+DIRECTIVE_PREFIX+"endif control structure";
+    return "check existence of a variable in the current context, it starts "+ DIRECTIVE_PREFIX +"ifdefined.."+DIRECTIVE_PREFIX +"else.."+DIRECTIVE_PREFIX+"endif control structure";
   }
 
   protected boolean postprocessFlag(final boolean variableExists){
@@ -55,8 +55,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isDirectiveCanBeProcessed()) {
       if (string.isEmpty()) {
-        final String text = DIRECTIVE_PREFIX + getName()+" needs a variable";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException(getFullName()+" needs variable name",null);
       }
       state.pushIf(true);
       final boolean variableExists = context.findVariableForName(string) != null;

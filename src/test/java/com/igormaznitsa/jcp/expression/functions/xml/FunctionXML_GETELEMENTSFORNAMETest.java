@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class FunctionXML_GETELEMENTSFORNAMETest extends AbstractFunctionXMLTest 
 
   private static final FunctionXML_GETELEMENTSFORNAME HANDLER = new FunctionXML_GETELEMENTSFORNAME();
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_ForWrongElement() throws Exception {
     assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
   }

@@ -36,7 +36,7 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "check an expression result which must be BOOL, it starts a " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
+    return "check flag and start " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
   }
 
   @Override
@@ -55,11 +55,10 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
       if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
-        final String text = DIRECTIVE_PREFIX + "if works only with BOOLEAN expression result";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Non boolean flag",null);
       }
       state.pushIf(true);
-      if (!expressionResult.asBoolean().booleanValue()) {
+      if (!expressionResult.asBoolean()) {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
     }

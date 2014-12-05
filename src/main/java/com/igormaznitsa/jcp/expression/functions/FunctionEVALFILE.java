@@ -74,13 +74,11 @@ public class FunctionEVALFILE extends AbstractFunction {
       theFile = context.getSourceFile(filePath);
     }
     catch (IOException ex) {
-      final String text = "Can't get get source file '" + filePath + '\'';
-      throw new IllegalArgumentException(text, context.makeException(text, ex));
+      throw context.makeException("Can't get get source file '" + filePath + '\'',null);
     }
 
     if (theFile == null) {
-      final String text = "Can't find any file for path \'" + filePath + "\' in source folders";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+      throw context.makeException("Can't find any file for path \'" + filePath + "\' in defined source folders",null);
     }
 
     try {
@@ -92,12 +90,7 @@ public class FunctionEVALFILE extends AbstractFunction {
       return Value.valueOf(strWriter.toString());
     }
     catch (Exception ex) {
-      final String text = "Can't make evaluation for file '" + filePath + "\' for an exception [" + ex.getMessage() + ']';
-      PreprocessorException pex = PreprocessorException.extractPreprocessorException(ex);
-      if (pex == null) {
-        pex = context.makeException(text, ex);
-      }
-      throw new IllegalArgumentException(text, pex);
+      throw context.makeException("Unexpected exception",ex);
     }
   }
 }

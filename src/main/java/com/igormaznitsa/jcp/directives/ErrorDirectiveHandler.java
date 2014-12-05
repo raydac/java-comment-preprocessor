@@ -42,8 +42,9 @@ public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   protected void process(final PreprocessorContext context, final String message) {
-    context.logError(PreprocessorUtils.processMacroses(message, context));
-    throw new IllegalStateException(message, context.makeException(message, null));
+    final String text = PreprocessorUtils.processMacroses(message, context);
+    context.logError(text);
+    throw context.makeException(text, null);
   }
  
   @Override

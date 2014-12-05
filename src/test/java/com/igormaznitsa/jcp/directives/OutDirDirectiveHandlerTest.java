@@ -31,7 +31,7 @@ public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
   public void testExecution_wrongExpression() {
     assertPreprocessorException("\n //#outdir", 2, null);
     assertPreprocessorException("\n //#outdir ", 2, null);
-    assertPreprocessorException("\n //#outdir 234324", 2, null);
+    assertPreprocessorException("\n //#outdir 234324 8", 2, null);
   }
 
   @Override

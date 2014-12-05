@@ -36,7 +36,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "start a " + DIRECTIVE_PREFIX + "while.."+DIRECTIVE_PREFIX+"end loop structure, if the BOOLEAN expression is TRUE";
+    return "start a " + getFullName() + ".."+DIRECTIVE_PREFIX+"end loop structure";
   }
 
   @Override
@@ -56,12 +56,11 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value condition = Expression.evalExpression(string, context);
       if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-        final String text = DIRECTIVE_PREFIX + "while needs a boolean expression";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Non boolean argument", null);
       }
 
       state.pushWhile(true);
-      if (!condition.asBoolean().booleanValue()) {
+      if (!condition.asBoolean()) {
         state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);
       }
     }

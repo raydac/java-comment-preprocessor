@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class FunctionXML_GETROOTTest extends AbstractFunctionXMLTest {
 
   private static final FunctionXML_GETROOT HANDLER = new FunctionXML_GETROOT();
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_WrongDocId() throws Exception {
     HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("jlskjlasjdsa123213213"));
   }

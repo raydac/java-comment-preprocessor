@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
@@ -25,12 +26,12 @@ public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
   private static final FunctionXML_ELEMENTAT HANDLER = new FunctionXML_ELEMENTAT();
   private static final FunctionXML_GETELEMENTTEXT GETTEXT = new FunctionXML_GETELEMENTTEXT();
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_WrongElementId() throws Exception {
     HANDLER.executeStrInt(SPY_CONTEXT, Value.valueOf("12qwewqe"), Value.INT_ZERO);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testExecution_WrongIndex() throws Exception {
     final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
     HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.valueOf(Long.valueOf(-1)));

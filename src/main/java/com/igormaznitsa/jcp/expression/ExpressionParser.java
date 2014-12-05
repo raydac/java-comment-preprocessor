@@ -126,7 +126,7 @@ public final class ExpressionParser {
     }
 
     if (readExpression(reader, result, context, false, false) != null) {
-      throw new IllegalStateException("Wrong result during expression parsing");
+      throw context.makeException("Unexpected result during parsing ["+expressionStr+']',null);
     }
 
     result.postProcess();
@@ -188,7 +188,7 @@ public final class ExpressionParser {
                 result = nextItem;
               }
               else {
-                throw new IllegalStateException("Closing bracket without any opening one detected", new PreprocessorException("Closing bracket without any opening one detected", sourceLine, stack, null));
+                throw context.makeException("Detected alone closing bracket", null);
               }
             }
           }
@@ -196,7 +196,7 @@ public final class ExpressionParser {
             final ExpressionTree subExpression;
             subExpression = new ExpressionTree(stack, sourceLine);
             if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
-              throw new IllegalStateException("Unclosed bracket detected", new PreprocessorException("Unclosed bracket detected", sourceLine, stack, null));
+              throw context.makeException("Detected unclosed bracket", null);
             }
             tree.addTree(subExpression);
           }
@@ -236,7 +236,7 @@ public final class ExpressionParser {
   private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context, final FilePositionInfo[] includeStack, final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
-      throw new IllegalStateException("A function without parameters detected [" + function.getName() + ']');
+      throw context.makeException("Detected function without params [" + function.getName() + ']',null);
     }
 
     final int arity = function.getArity();
@@ -247,10 +247,10 @@ public final class ExpressionParser {
       final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
       final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);
       if (SpecialItem.BRACKET_CLOSING != lastItem) {
-        throw new IllegalArgumentException("There is not closing bracket for function [" + function.getName() + ']');
+        throw context.makeException("There is not closing bracket for function [" + function.getName() + ']',null);
       }
       else if (subExpression.getRoot() != null) {
-        throw new IllegalStateException("The function \'" + function.getName() + "\' doesn't need arguments");
+        throw context.makeException("The function \'" + function.getName() + "\' doesn't need arguments",null);
       }
       else {
         functionTree = new ExpressionTree(includeStack, sources);
@@ -272,8 +272,7 @@ public final class ExpressionParser {
           arguments.add(subExpression);
         }
         else {
-          final String text = "Wrong argument definition for function detected [" + function.getName() + ']';
-          throw new IllegalArgumentException(text, new PreprocessorException(text, sources, includeStack, null));
+         throw context.makeException("Wrong argument for function [" + function.getName() + ']',null);
         }
       }
 
@@ -282,8 +281,7 @@ public final class ExpressionParser {
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
       if (arguments.size() != functionTreeElement.getArity()) {
-        final String text = "Wrong argument number for function \'" + function.getName() + "\', it needs " + function.getArity() + " argument(s)";
-        throw new IllegalArgumentException(text, new PreprocessorException(text, sources, includeStack, null));
+        throw context.makeException("Wrong argument number detected \'" + function.getName() + "\', must be " + function.getArity() + " argument(s)",null);
       }
 
       functionTreeElement.fillArguments(arguments);
@@ -309,7 +307,7 @@ public final class ExpressionParser {
     while (working) {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
-        throw new IllegalStateException("Non-closed function detected");
+        throw context.makeException("Non-closed function detected",null);
       }
       else if (SpecialItem.COMMA == nextItem) {
         result = nextItem;
@@ -318,7 +316,7 @@ public final class ExpressionParser {
       else if (SpecialItem.BRACKET_OPENING == nextItem) {
         final ExpressionTree subExpression = new ExpressionTree(callStack, source);
         if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
-          throw new IllegalStateException("Non-closed bracket inside a function argument detected");
+          throw context.makeException("Non-closed bracket inside a function argument detected", null);
         }
         tree.addTree(subExpression);
       }

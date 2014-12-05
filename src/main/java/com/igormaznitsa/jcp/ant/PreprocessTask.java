@@ -385,7 +385,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Override
   public Value getVariable(final String varName, final PreprocessorContext context) {
     if (antVariables == null) {
-      throw new IllegalStateException("Non-initialized ant property map detected");
+      throw context.makeException("Non-initialized ANT property map detected",null);
     }
     final Value result = antVariables.get(varName);
 
@@ -397,6 +397,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   @Override
   public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
-    throw new UnsupportedOperationException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!");
+    throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!",null);
   }
 }

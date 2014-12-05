@@ -116,7 +116,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     }
   }
 
-  private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException, PreprocessorException {
+  private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException {
     final List<String> parsedText = parseStringForLines(encoding);
     final PreprocessorContext context = new PreprocessorContext();
     context.setFileOutputDisabled(true);

@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.InfoHelper;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -31,13 +32,13 @@ public class JCPSpecialVariableProcessorTest {
     assertNotNull(new JCPSpecialVariableProcessor().getVariable("__timestamp__", null).asString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = PreprocessorException.class)
   public void testReadUnknownVariable() {
-    new JCPSpecialVariableProcessor().getVariable("jcp.version2", null);
+    new JCPSpecialVariableProcessor().getVariable("jcp.version2", new PreprocessorContext());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test(expected = PreprocessorException.class)
   public void testWriteDisallowed() {
-    new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE, null);
+    new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE, new PreprocessorContext());
   }
 }

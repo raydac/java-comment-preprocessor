@@ -30,6 +30,7 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
     assertEquals(Long.valueOf(5), context.getLocalVariable("x").asLong());
     assertEquals(Long.valueOf(10), context.getLocalVariable("y").asLong());
     assertEquals(Long.valueOf(15), context.getLocalVariable("z").asLong());
+    assertEquals("", context.getLocalVariable("l_stringgamesNumber").asString());
   }
 
   @Override
@@ -39,13 +40,13 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Test
   public void testExecution_ExceptionOnExpressionAbsence() {
-    assertPreprocessorException("1\n2\n   //#local \n3", 3, null);
-    assertPreprocessorException("1\n2\n   //#local\n3", 3, null);
+    assertPreprocessorException("1\n2\n   //#local \n3 ", 3, null);
+    assertPreprocessorException("1\n2\n   //#local\n3   ", 3, null);
   }
 
   @Test
   public void testExecution_ExceptionOnWrongExpression() {
-    assertPreprocessorException("1\n2\n   //#local 3\n3", 3, null);
+    assertPreprocessorException("1\n2\n   //#local 3\n3  ", 3, null);
     assertPreprocessorException("1\n2\n   //#local a=\n3", 3, null);
   }
 

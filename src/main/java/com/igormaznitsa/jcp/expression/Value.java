@@ -72,7 +72,7 @@ public final class Value implements ExpressionItem {
   }
 
   public static Value valueOf(final Boolean val) {
-    return val.booleanValue() ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+    return val ? BOOLEAN_TRUE : BOOLEAN_FALSE;
   }
 
   public static Value valueOf(final Float val) {
@@ -123,13 +123,13 @@ public final class Value implements ExpressionItem {
     }
 
     try {
-      return new Value(Long.valueOf(Long.parseLong(str)));
+      return new Value(Long.parseLong(str));
     }
     catch (NumberFormatException ex) {
     }
 
     try {
-      return new Value(Float.valueOf(Float.parseFloat(str)));
+      return new Value(Float.parseFloat(str));
     }
     catch (NumberFormatException ex) {
     }
@@ -160,7 +160,7 @@ public final class Value implements ExpressionItem {
       }
       break;
       default: {
-        throw new IllegalArgumentException("Unknown value [" + str + ']');
+        throw new IllegalArgumentException("Illegal value [" + str + ']');
       }
     }
 
@@ -177,7 +177,6 @@ public final class Value implements ExpressionItem {
           return value.equalsIgnoreCase("true") ? Boolean.TRUE : Boolean.FALSE;
         }
         case INT: {
-          long longValue = -1;
           if (value.length() > 2 && value.charAt(0) == '0' && (value.charAt(1) == 'x' || value.charAt(1) == 'X')) {
             // HEX value
             return Long.valueOf(PreprocessorUtils.extractTail("0x", value), 16);

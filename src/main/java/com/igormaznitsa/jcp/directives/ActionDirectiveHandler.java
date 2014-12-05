@@ -66,12 +66,11 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         if (!context.getPreprocessorExtension().processAction(context, results)) {
-          throw new RuntimeException("Extension can't process the action");
+          throw context.makeException("Extension can't process the action",null);
         }
       }
       catch (IOException ex) {
-        final String text = "Wrong string detected [" + string + ']';
-        throw new IllegalArgumentException(text, context.makeException(text, ex));
+        context.makeException("Unexpected string detected [" + string + ']',ex);
       }
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
@@ -106,8 +105,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
       final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);
 
       if (delimiter != null && ExpressionParser.SpecialItem.COMMA != delimiter) {
-        final String text = "Wrong format of an argument detected";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Wrong argument format detected",null);
       }
 
       if (tree.isEmpty()) {
@@ -115,8 +113,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
           break;
         }
         else {
-          final String text = "Empty argument detected";
-          throw new IllegalArgumentException(text, context.makeException(text, null));
+          throw context.makeException("Empty argument",null);
         }
       }
       else {

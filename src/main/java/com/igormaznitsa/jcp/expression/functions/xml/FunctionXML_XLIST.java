@@ -49,8 +49,7 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
         list = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
       }
       catch (XPathExpressionException ex) {
-        final String text = "Error during XPath compilation [" + pathStr + ']';
-        throw new IllegalStateException(text, context.makeException(text, ex));
+        throw context.makeException("Error during XPath compilation [" + pathStr + ']',ex);
       }
       final NodeContainer container = new NodeContainer(UID_COUNTER.getAndIncrement(), list);
       context.setSharedResource(xpathId, container);

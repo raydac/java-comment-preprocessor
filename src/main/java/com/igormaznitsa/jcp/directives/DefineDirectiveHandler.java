@@ -68,15 +68,13 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       final ExpressionTree nameTree = ExpressionParser.getInstance().parse(name, context);
       
       if (nameTree.isEmpty()){
-        final String text = "Can't find variable name";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Var name is empty",null);
       }
 
       final ExpressionTreeElement root = nameTree.getRoot();
       final ExpressionItem item = root.getItem();
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
-        final String text = "Can't recognize variable name ["+name+']';
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Can't recognize variable name ["+name+']',null);
       }
       
       final Value value;
@@ -90,8 +88,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       process(context, ((Variable) item).getName(), value,context.findVariableForName(name) != null);
     }
     catch (IOException ex) {
-      final String text = "Can't recognize variable name [" + rawTail + ']';
-      throw new IllegalArgumentException(text, context.makeException(text, ex));
+      throw context.makeException("Unexpected exception",ex);
     }
 
 

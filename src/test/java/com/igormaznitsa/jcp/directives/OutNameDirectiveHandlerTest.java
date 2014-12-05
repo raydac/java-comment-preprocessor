@@ -30,7 +30,7 @@ public class OutNameDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
   @Test
   public void testExecution_wrongExpressionResult() {
     assertPreprocessorException("\n//#outname", 2, null);
-    assertPreprocessorException("\n//#outname 882772", 2, null);
+    assertPreprocessorException("\n//#outname 882772  k", 2, null);
   }
 
   @Override

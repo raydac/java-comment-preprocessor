@@ -55,8 +55,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
         file = context.getSourceFile(name);
       }
       catch (IOException unexpected) {
-        final String text = "Can't read \'" + name + '\'';
-        throw new IllegalArgumentException(text, context.makeException(text, unexpected));
+        throw context.makeException("Can't read \'" + name + '\'',null);
       }
 
       final Document document = openFileAndParse(context, file);
@@ -79,16 +78,13 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
       return docBuilderFactory.newDocumentBuilder().parse(file);
     }
     catch (ParserConfigurationException unexpected) {
-      final String text = "XML parser configuration exception";
-      throw new IllegalStateException(text,context.makeException(text, unexpected));
+      throw context.makeException("XML parser configuration exception",unexpected);
     }
     catch (SAXException unexpected) {
-      final String text = "Exception during XML parsing";
-      throw new IllegalStateException(text, context.makeException(text, unexpected));
+      throw context.makeException("Exception during XML parsing",unexpected);
     }
     catch (IOException unexpected) {
-      final String text = "Can't read XML file";
-      throw new IllegalArgumentException(text, context.makeException(text, unexpected));
+      throw context.makeException("Can't read XML file",unexpected);
     }
   }
 

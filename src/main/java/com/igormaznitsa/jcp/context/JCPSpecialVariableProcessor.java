@@ -161,7 +161,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       return Value.valueOf(line);
     }
     else {
-      throw new IllegalArgumentException("Attempting to read unexpected special variable [" + varName + ']');
+      throw context.makeException("Attempting to read unexpected special variable [" + varName + ']',null);
     }
   }
 
@@ -193,10 +193,10 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
             || VAR_TIMESTAMP.equals(varName)
             || VAR_DATE.equals(varName)
             ) {
-      throw new UnsupportedOperationException("The variable \'" + varName + "\' can't be set directly");
+      throw context.makeException("The variable \'" + varName + "\' can't be set directly",null);
     }
     else {
-      throw new IllegalStateException("Attempting to write unexpected special variable [" + varName + ']');
+      throw context.makeException("Attempting to write unexpected special variable [" + varName + ']',null);
     }
   }
 }

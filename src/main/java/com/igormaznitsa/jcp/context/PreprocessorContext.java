@@ -478,11 +478,11 @@ public class PreprocessorContext {
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
     if (normalized.isEmpty()) {
-      throw new IllegalArgumentException("Empty variable name");
+      throw makeException("Not defined variable name", null);
     }
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
-      throw new IllegalArgumentException("Attempting to set either a global variable or a special variable as a local one [" + normalized + ']');
+      throw makeException("Attempting to set either a global variable or a special variable as a local one [" + normalized + ']', null);
     }
 
     localVarTable.put(normalized, value);
@@ -502,11 +502,11 @@ public class PreprocessorContext {
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
     if (normalized.isEmpty()) {
-      throw new IllegalArgumentException("Empty variable name");
+      throw makeException("Empty variable name", null);
     }
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
-      throw new IllegalArgumentException("Attempting to remove either a global variable or a special variable as a local one [" + normalized + ']');
+      throw makeException("Attempting to remove either a global variable or a special variable as a local one [" + normalized + ']', null);
     }
     localVarTable.remove(normalized);
     return this;
@@ -526,11 +526,11 @@ public class PreprocessorContext {
     final String normalized = PreprocessorUtils.normalizeVariableName(name);
 
     if (normalized.isEmpty()) {
-      throw new IllegalArgumentException("Empty variable name");
+      throw makeException("Empty variable name", null);
     }
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized)) {
-      throw new IllegalArgumentException("Attempting to remove a special variable as a global one [" + normalized + ']');
+      throw makeException("Attempting to remove a special variable as a global one [" + normalized + ']', null);
     }
     globalVarTable.remove(normalized);
     return this;
@@ -604,7 +604,7 @@ public class PreprocessorContext {
     final String normalizedName = PreprocessorUtils.normalizeVariableName(name);
 
     if (normalizedName.isEmpty()) {
-      throw new IllegalArgumentException("Name is empty");
+      throw makeException("Name is empty", null);
     }
 
     PreprocessorUtils.assertNotNull("Value is null", value);
@@ -792,7 +792,7 @@ public class PreprocessorContext {
     PreprocessorUtils.assertNotNull("Value is null", characterEncoding);
 
     if (!Charset.isSupported(characterEncoding)) {
-      throw new IllegalArgumentException("Unsupported character encoding [" + characterEncoding + ']');
+      throw makeException("Unsupported character encoding [" + characterEncoding + ']', null);
     }
     this.inCharacterEncoding = characterEncoding;
     return this;
@@ -808,7 +808,7 @@ public class PreprocessorContext {
    */
   public PreprocessorContext setOutCharacterEncoding(final String characterEncoding) {
     if (!Charset.isSupported(characterEncoding)) {
-      throw new IllegalArgumentException("Unsupported character encoding [" + characterEncoding + ']');
+      throw makeException("Unsupported character encoding [" + characterEncoding + ']', null);
     }
     this.outCharacterEncoding = characterEncoding;
     return this;
@@ -843,7 +843,7 @@ public class PreprocessorContext {
     PreprocessorUtils.assertNotNull("Path is null", path);
 
     if (path.isEmpty()) {
-      throw new IllegalArgumentException("File name is an empty string");
+      throw makeException("File name is empty",null);
     }
 
     return new File(getDestinationDirectoryAsFile(), path);
@@ -861,13 +861,11 @@ public class PreprocessorContext {
    */
   public File getSourceFile(final String path) throws IOException {
     if (path == null) {
-      final String text = "Path is null";
-      throw new IllegalArgumentException(text, makeException(text, null));
+      throw makeException("Path is null", null);
     }
 
     if (path.isEmpty()) {
-      final String text = "File name is an empty string";
-      throw new IllegalArgumentException(text, makeException(text, null));
+      throw makeException("Folder path is empty", null);
     }
 
     File result = null;
@@ -897,14 +895,12 @@ public class PreprocessorContext {
         result = null;
       }
       else {
-        final String text = "Found several variants for path \'" + path + "\' in different source roots";
-        throw new IllegalStateException(text, makeException(text, null));
+        throw makeException("Found several variants for path \'" + path + "\' in different source roots",null);
       }
     }
 
     if (result == null || !result.isFile()) {
-      final String text = "The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file";
-      throw new IllegalArgumentException(text, makeException(text, null));
+      throw makeException("The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file",null);
     }
     return result;
   }

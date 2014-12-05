@@ -1,15 +1,20 @@
+//#local l_stringGamesNumber = ""
+  	//#local l_menuID = "hello"    
+	//#local l_menuName = "menu"    
+/*$l_menuID+l_menuName+l_stringGamesNumber$*/
 //#if false
-//#local x=1
+//#local x  =1
 //#endif
     hello
-                //#local x=5
+                //#local x = 5
 world
-           //#local y=10
+           //#local y= 10
 and me
 //#local z=x+y
 //#local test.var = z+"."+x+"."+y
 /*$test.var$*/
 ---START_ETALON---
+hellomenu
     hello
 world
 and me

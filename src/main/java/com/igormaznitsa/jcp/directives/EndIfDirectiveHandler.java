@@ -38,15 +38,14 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "end a " + DIRECTIVE_PREFIX + "if..." + DIRECTIVE_PREFIX + "endif control structure";
+    return "end " + DIRECTIVE_PREFIX + "if..." + DIRECTIVE_PREFIX + "endif control structure";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      final String text = getFullName() + " without " + DIRECTIVE_PREFIX + "if detected";
-      throw new IllegalStateException(text, context.makeException(text, null));
+      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "if",null);
     }
 
     if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {

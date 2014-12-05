@@ -48,17 +48,14 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
         final XPathExpression expression = prepareXPathExpression(pathStr);
         elem = (Element) expression.evaluate(document, XPathConstants.NODE);
         if (elem == null){
-          final String text = "Can't find element for xpath [" + pathStr + ']';
-          throw new IllegalArgumentException(text, context.makeException(text, null));
+          throw context.makeException("Can't find element for xpath [" + pathStr + ']',null);
         }
       }
       catch (XPathExpressionException ex) {
-        final String text = "Error during XPath compilation [" + pathStr + ']';
-        throw new IllegalStateException(text, context.makeException(text, ex));
+        throw context.makeException("Error during XPath compilation [" + pathStr + ']',ex);
       }
       catch (ClassCastException ex){
-        final String text = "Can't get element for XPath [" + pathStr + ']';
-        throw new IllegalArgumentException(text, context.makeException(text, ex));
+        throw context.makeException("Can't get element for XPath [" + pathStr + ']',ex);
       }
       final NodeContainer container = new NodeContainer(UID_COUNTER.getAndIncrement(), elem);
       context.setSharedResource(xpathElementId, container);

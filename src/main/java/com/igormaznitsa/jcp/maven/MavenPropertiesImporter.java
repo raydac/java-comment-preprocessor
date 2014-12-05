@@ -71,7 +71,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
   private void addVariableIntoInsideMap(final PreprocessorContext context, final String name, final Value value) {
     if (insideVarMap.containsKey(name)) {
-      throw new IllegalStateException("Duplicated imported value detected [" + name + ']');
+      throw context.makeException("Duplicated importing value detected [" + name + ']',null);
     }
     insideVarMap.put(name, value);
     printInfoAboutVarIntoLog(context, name, value.asString());

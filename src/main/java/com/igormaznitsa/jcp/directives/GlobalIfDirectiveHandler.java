@@ -36,7 +36,7 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "start a global "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
+    return "start a global "+getFullName() +".."+DIRECTIVE_PREFIX +"_endif control construction";
   }
 
   @Override
@@ -65,11 +65,10 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
       if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
-        final String text = DIRECTIVE_PREFIX + "_if needs a boolean expression";
-        throw new IllegalArgumentException(text, context.makeException(text, null));
+        throw context.makeException("Non boolean argument", null);
       }
       state.pushIf(true);
-      if (!expressionResult.asBoolean().booleanValue()) {
+      if (!expressionResult.asBoolean()) {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
     }

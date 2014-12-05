@@ -55,8 +55,7 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      final String text = DIRECTIVE_PREFIX + "_endif without " + DIRECTIVE_PREFIX + "_if detected";
-      throw new IllegalStateException(text, context.makeException(text, null));
+      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "_if",null);
     }
 
     if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {

@@ -41,8 +41,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isWhileStackEmpty()) {
-      final String text = DIRECTIVE_PREFIX + "end without " + DIRECTIVE_PREFIX + "while detected";
-      throw new IllegalStateException(text, context.makeException(text, null));
+      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "while",null);
     }
 
     if (state.isDirectiveCanBeProcessedIgnoreBreak()) {

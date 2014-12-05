@@ -41,8 +41,7 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
 
     if (state.isWhileStackEmpty()) {
-      final String text = getFullName() + " without " + DIRECTIVE_PREFIX + "while detected";
-      throw new IllegalStateException(text, context.makeException(text, null));
+      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "while",null);
     }
 
     state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);

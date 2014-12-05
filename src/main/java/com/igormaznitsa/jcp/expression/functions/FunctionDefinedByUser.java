@@ -30,7 +30,6 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
   private final String name;
   private final int argsNumber;
-  private final PreprocessorContext configurator;
   private final ValueType[][] argTypes;
 
   public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
@@ -39,12 +38,11 @@ public final class FunctionDefinedByUser extends AbstractFunction {
     PreprocessorUtils.assertNotNull("Context is null", context);
 
     if (argsNumber < 0) {
-      throw new IllegalArgumentException("Argument number is less than zero");
+      throw context.makeException("Unexpected argument number ["+argsNumber+']',null);
     }
 
     this.name = name;
     this.argsNumber = argsNumber;
-    this.configurator = context;
 
     final ValueType[] types = new ValueType[argsNumber];
 

@@ -36,7 +36,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "conditional interruption of current file preprocessing, interrupt if the argument is TRUE";
+    return "abort current file preprocessing if flag is TRUE";
   }
 
   @Override
@@ -52,10 +52,9 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     // To end processing the file processing immediatly if the value is true
     final Value condition = Expression.evalExpression(string, context);
     if (condition == null || condition.getType() != ValueType.BOOLEAN) {
-      final String text = DIRECTIVE_PREFIX + "exitif needs a boolean condition";
-      throw new IllegalArgumentException(text, context.makeException(text, null));
+      throw context.makeException(getFullName() + " needs boolean argument", null);
     }
-    if (((Boolean) condition.getValue()).booleanValue()) {
+    if (((Boolean) condition.getValue())) {
       state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
       result = AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
     }
