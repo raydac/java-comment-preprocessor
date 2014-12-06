@@ -43,7 +43,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "make a call to a preprocessor extension with comma separated arguments";
+    return "call a preprocessor extension, arguments are comma separated";
   }
 
   @Override
@@ -70,7 +70,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
         }
       }
       catch (IOException ex) {
-        context.makeException("Unexpected string detected [" + string + ']',ex);
+        throw context.makeException("Unexpected string detected [" + string + ']',ex);
       }
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;

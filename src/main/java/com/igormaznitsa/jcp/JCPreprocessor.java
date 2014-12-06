@@ -275,7 +275,7 @@ public final class JCPreprocessor {
           processed = true;
           if (processor instanceof HelpHandler) {
             help();
-            System.exit(1);
+            System.exit(2);
           }
           break;
         }

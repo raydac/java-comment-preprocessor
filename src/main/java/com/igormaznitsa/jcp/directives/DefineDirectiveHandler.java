@@ -38,7 +38,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a global(!) variable as TRUE by default (but also allowed expression after a space)";
+    return "define global(!) variable as TRUE by default (but also allowed expression after a space)";
   }
 
   protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){

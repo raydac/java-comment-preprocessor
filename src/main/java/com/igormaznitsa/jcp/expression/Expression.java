@@ -18,10 +18,10 @@ package com.igormaznitsa.jcp.expression;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -311,9 +311,7 @@ public class Expression {
 
     switch (element.getItem().getExpressionItemType()) {
       case VARIABLE: {
-        if (context == null) {
-          throw this.context.makeException("[Expression]Variable can't be used without context [" + element.getItem().toString() + ']',null);
-        }
+        PreprocessorUtils.assertNotNull("[Expression]Variable can't be used without context [" + element.getItem().toString() + ']',context);
 
         final Variable var = (Variable) element.getItem();
         final String name = var.getName();

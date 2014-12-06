@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.expression;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
@@ -28,8 +27,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is a parser allows to parse an expression and make a tree as the
@@ -126,7 +124,8 @@ public final class ExpressionParser {
     }
 
     if (readExpression(reader, result, context, false, false) != null) {
-      throw context.makeException("Unexpected result during parsing ["+expressionStr+']',null);
+      final String text = "Unexpected result during parsing [" + expressionStr + ']';
+      throw context == null ? new IllegalStateException(text) : context.makeException(text,null);
     }
 
     result.postProcess();
@@ -188,7 +187,8 @@ public final class ExpressionParser {
                 result = nextItem;
               }
               else {
-                throw context.makeException("Detected alone closing bracket", null);
+                final String text = "Detected alone closing bracket";
+                throw context == null ? new IllegalStateException(text) :  context.makeException("Detected alone closing bracket", null);
               }
             }
           }
@@ -196,7 +196,8 @@ public final class ExpressionParser {
             final ExpressionTree subExpression;
             subExpression = new ExpressionTree(stack, sourceLine);
             if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
-              throw context.makeException("Detected unclosed bracket", null);
+              final String text = "Detected unclosed bracket";
+              throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
             }
             tree.addTree(subExpression);
           }
@@ -611,7 +612,7 @@ public final class ExpressionParser {
         }
         break;
         case OPERATOR: {
-          final String operatorLC = builder.toString().toLowerCase();
+          final String operatorLC = builder.toString().toLowerCase(Locale.ENGLISH);
           for (final AbstractOperator operator : AbstractOperator.ALL_OPERATORS) {
             if (operator.getKeyword().equals(operatorLC)) {
               result = operator;
@@ -632,9 +633,7 @@ public final class ExpressionParser {
           final String str = builder.toString().toLowerCase();
           if (str.charAt(0) == '$') {
 
-            if (context == null) {
-              throw context.makeException("There is not a preprocessor context to define a user function [" + str + ']',null);
-            }
+            PreprocessorUtils.assertNotNull("There is not a preprocessor context to define a user function [" + str + ']',context);
 
             final PreprocessorExtension extension = context.getPreprocessorExtension();
             if (extension == null) {

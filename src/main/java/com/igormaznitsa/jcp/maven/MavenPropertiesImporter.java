@@ -20,8 +20,7 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.expression.Value;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 
@@ -80,7 +79,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   public MavenPropertiesImporter(final PreprocessorContext context, final MavenProject project) {
     this.project = project;
     for (final String paramName : TO_IMPORT) {
-      final String varName = "mvn." + paramName.toLowerCase();
+      final String varName = "mvn." + paramName.toLowerCase(Locale.ENGLISH);
       final String value = getProperty(this.project, paramName);
       addVariableIntoInsideMap(context, varName, Value.valueOf(value));
     }

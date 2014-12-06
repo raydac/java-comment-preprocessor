@@ -134,7 +134,7 @@ public final class InfoHelper {
         if (i > 0) {
           variants.append(',');
         }
-        variants.append(signature[i].getSignature().toUpperCase());
+        variants.append(signature[i].getSignature().toUpperCase(Locale.ENGLISH));
       }
       variants.append(')');
       variantIndex++;

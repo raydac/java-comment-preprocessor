@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.exceptions;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.*;
 
 /**
@@ -29,7 +28,7 @@ public class PreprocessorException extends RuntimeException {
   private static final long serialVersionUID = 2857499664112391862L;
 
   private final String processingString;
-  private final FilePositionInfo[] includeStack;
+  private transient final FilePositionInfo[] includeStack;
 
   public PreprocessorException(final String message, final String processedText, final FilePositionInfo[] includeStack, final Throwable cause) {
     super(message, cause);

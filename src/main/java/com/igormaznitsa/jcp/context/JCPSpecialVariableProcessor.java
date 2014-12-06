@@ -114,7 +114,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
   @Override
   public Value getVariable(final String varName, final PreprocessorContext context) {
-    final PreprocessingState state = context == null ? null : context.getPreprocessingState();
+    final PreprocessingState state = context == null ? null:context.getPreprocessingState();
 
     if (VAR_DEST_DIR.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationDir());
@@ -161,7 +161,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       return Value.valueOf(line);
     }
     else {
-      throw context.makeException("Attempting to read unexpected special variable [" + varName + ']',null);
+      final String text = "Attempting to read unexpected special variable [" + varName + ']';
+      throw context == null ? new  IllegalStateException(text) : context.makeException(text,null);
     }
   }
 
@@ -193,10 +194,12 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
             || VAR_TIMESTAMP.equals(varName)
             || VAR_DATE.equals(varName)
             ) {
-      throw context.makeException("The variable \'" + varName + "\' can't be set directly",null);
+      final String text = "The variable \'" + varName + "\' can't be set directly";
+      throw context == null ? new IllegalStateException(text) : context.makeException(text,null);
     }
     else {
-      throw context.makeException("Attempting to write unexpected special variable [" + varName + ']',null);
+      final String text = "Attempting to write unexpected special variable [" + varName + ']';
+      throw context == null ? new IllegalArgumentException(text) : context.makeException(text,null);
     }
   }
 }

@@ -19,7 +19,6 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
 import java.io.IOException;
 
