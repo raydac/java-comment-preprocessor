@@ -44,9 +44,8 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
   protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){
     if (exists){
       context.logWarning("Variable \'" + varName + "\' has been already defined");
-    }else{
-      context.setGlobalVariable(varName, value);
     }
+    context.setGlobalVariable(varName, value);
   }
   
   @Override

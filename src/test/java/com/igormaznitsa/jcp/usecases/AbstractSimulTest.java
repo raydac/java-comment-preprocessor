@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.igormaznitsa.jcp.simul;
+package com.igormaznitsa.jcp.usecases;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import org.junit.rules.TemporaryFolder;
 
 public abstract class AbstractSimulTest {
@@ -37,7 +36,7 @@ public abstract class AbstractSimulTest {
 
     final File base = new File(testDir, this.getClass().getName().replace('.', File.separatorChar));
 
-    final File simulfolder = new File(testDir.getParentFile(), "simultests");
+    final File simulfolder = new File(testDir.getParentFile(), "usecase_tests");
     simulfolder.mkdirs();
 
     tmpResultFolder = new TemporaryFolder(simulfolder);
@@ -66,7 +65,15 @@ public abstract class AbstractSimulTest {
   public abstract void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception;
 
   private void assertFolder(final File folder1, final File folder2) throws Exception {
-    for(final File f : folder1.listFiles()){
+    assertTrue("Folder 1 must be folder",folder1.isDirectory());
+    assertTrue("Folder 2 must be folder",folder2.isDirectory());
+    
+    final File [] folder1files = folder1.listFiles();
+    File [] folde2files = folder2.listFiles();
+    assertEquals("Must have the same number of files and folders", folder1files.length, folde2files.length);
+    folde2files = null;
+    
+    for(final File f : folder1files){
       final File f2 = new File(folder2,f.getName());
       if (!f2.exists()){
         fail("Doesn't exist :"+f2.getAbsolutePath());

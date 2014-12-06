@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.igormaznitsa.jcp.simul;
+package com.igormaznitsa.jcp.usecases;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.assertEquals;
 
-public class SimpleTest extends AbstractSimulTest {
-
-  @Override
-  public void check(final PreprocessorContext context, final JCPreprocessor.PreprocessingStatistics stat) throws Exception {
-    assertEquals(1,stat.getNumberOfPreprocessed());
-    assertEquals(0,stat.getNumberOfCopied());
-  }
+public class GenerationTest extends AbstractSimulTest {
   
+  @Override
+  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
+    assertEquals(0,stat.getNumberOfCopied());
+    assertEquals(1,stat.getNumberOfPreprocessed());
+  }
   
 }

@@ -1,0 +1,9 @@
+//#noautoflush
+//#define COUNTER 1
+//#while COUNTER<=3
+file /*$COUNTER$*/
+//#outname "file"+COUNTER+".ttt"
+//#define COUNTER COUNTER+1
+//#msg "Counter is "+COUNTER
+//#flush
+//#end
