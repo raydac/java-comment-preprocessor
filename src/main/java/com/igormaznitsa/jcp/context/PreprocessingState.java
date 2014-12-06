@@ -38,6 +38,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -164,8 +165,10 @@ public final class PreprocessingState {
   public TextFileDataContainer openFile(final File file) throws IOException {
     PreprocessorUtils.assertNotNull("The file is null", file);
 
-    final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding);
-    final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, 0);
+    final AtomicBoolean endedByNextLineContainer = new AtomicBoolean();
+    
+    final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding, endedByNextLineContainer);
+    final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, endedByNextLineContainer.get(), 0);
     includeStack.push(newContainer);
     return newContainer;
   }
@@ -238,6 +241,10 @@ public final class PreprocessingState {
     return whileStack.peek();
   }
 
+  public boolean hasReadLineNextLineInEnd(){
+    return includeStack.peek().isPresentedNextLineOnReadString();
+  }
+  
   public String nextLine() {
     final String result = includeStack.peek().nextLine();
     this.lastReadString = result;

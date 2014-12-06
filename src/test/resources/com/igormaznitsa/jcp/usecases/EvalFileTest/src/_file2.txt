@@ -1,0 +1,2 @@
+//#excludeif TRUE
+File Two /*$SOME_TEXT$*/

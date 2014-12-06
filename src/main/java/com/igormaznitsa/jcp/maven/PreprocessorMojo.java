@@ -119,6 +119,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private boolean clear;
   
   /**
+   * Be precise in processing of the last next line char in files, it will not be added if it is not presented if to turn on the mode..
+   */
+  @Parameter(name = "careForLastNextLine", defaultValue = "false")
+  private boolean careForLastNextLine;
+  
+  /**
    * Disable overriding of the source root folders for maven project after preprocessing.
    */
   @Parameter(name = "keepSrcRoot", defaultValue = "false")
@@ -172,6 +178,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   public boolean getClear() {
     return this.clear;
+  }
+
+  public void setCareForLastNextLine(final boolean flag) {
+    this.careForLastNextLine = flag;
+  }
+
+  public boolean getCarForLastNextLine() {
+    return this.careForLastNextLine;
   }
 
   public void setKeepSrcRoot(final boolean flag) {
@@ -366,6 +380,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     info("Preprocess destination : " + context.getDestinationDirectory());
 
     context.setClearDestinationDirBefore(this.clear);
+    context.setCareForLastNextLine(this.careForLastNextLine);
     context.setRemoveComments(this.removeComments);
     context.setVerbose(this.verbose);
     context.setKeepLines(this.keepLines);

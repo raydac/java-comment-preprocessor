@@ -23,7 +23,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import org.junit.rules.TemporaryFolder;
 
-public abstract class AbstractSimulTest {
+public abstract class AbstractUseCaseTest {
 
   protected TemporaryFolder tmpResultFolder;
   protected File sourceFolder;
@@ -86,10 +86,14 @@ public abstract class AbstractSimulTest {
         fail("Must be file : " + f2.getAbsolutePath());
         else assertFolder(f, f2);
       }else{
-        assertEquals("File size must be the same",f.length(),f2.length());
-        assertEquals("Checksum must be equal",FileUtils.checksumCRC32(f),FileUtils.checksumCRC32(f2));
+        assertEquals("File size must be the same ("+f.getName()+')',f.length(),f2.length());
+        assertEquals("Checksum must be equal ("+f.getName()+')',FileUtils.checksumCRC32(f),FileUtils.checksumCRC32(f2));
       }
     }
+  }
+  
+  protected void tuneContext(final PreprocessorContext context){
+    
   }
   
   @Test
@@ -100,6 +104,9 @@ public abstract class AbstractSimulTest {
     context.setDestinationDirectory(tmpResultFolder.getRoot().getAbsolutePath());
     context.setExcludedFileExtensions("xml");
     context.setVerbose(true);
+    
+    tuneContext(context);
+    
     System.setProperty("jcp.line.separator", "\n");
 
     JCPreprocessor preprocessor = new JCPreprocessor(context);

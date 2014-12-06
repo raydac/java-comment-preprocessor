@@ -48,7 +48,8 @@ public class PreprocessorContext {
   private boolean clearDestinationDirectoryBefore = true;
   private boolean fileOutputDisabled = false;
   private boolean keepNonExecutingLines = false;
-
+  private boolean careForLastNextLine = false;
+  
   private String sourceDirectories;
   private String destinationDirectory;
   private File destinationDirectoryFile;
@@ -85,6 +86,18 @@ public class PreprocessorContext {
   }
 
   /**
+   * Set the flag to care to be precise in processing the last file next line char
+   * @param flag true to turn on the mode, false to turn off
+   */
+  public void setCareForLastNextLine(final boolean flag){
+    this.careForLastNextLine = flag;
+  }
+  
+  public boolean isCareForLastNextLine(){
+    return this.careForLastNextLine;
+  }
+  
+  /**
    * Check that the preprocessor context is a clone of another context.
    *
    * @return true if the context is a clone, false otherwise
@@ -111,6 +124,8 @@ public class PreprocessorContext {
     this.destinationDirectoryFile = context.destinationDirectoryFile;
     this.sourceDirectoryFiles = context.sourceDirectoryFiles.clone();
 
+    this.careForLastNextLine = context.careForLastNextLine;
+    
     this.processingFileExtensions.clear();
     this.processingFileExtensions.addAll(context.processingFileExtensions);
 

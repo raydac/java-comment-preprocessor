@@ -66,7 +66,8 @@ public final class JCPreprocessor {
     new KeepLineHandler(),
     new VerboseHandler(),
     new GlobalVariableDefiningFileHandler(),
-    new GlobalVariableHandler()
+    new GlobalVariableHandler(),
+    new LastNextLineAwarenessHandler()
   };
 
   public static Iterable<CommandLineHandler> getCommandLineHandlers() {
@@ -297,7 +298,7 @@ public final class JCPreprocessor {
   void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
-      final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8");
+      final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8", null);
 
       int readStringIndex = -1;
       for (final String curString : wholeFile) {

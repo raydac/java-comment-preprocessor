@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.igormaznitsa.jcp.usecases;
+package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import static org.junit.Assert.assertEquals;
 
-public class GenerationTest extends AbstractUseCaseTest {
-  
+public class LastNextLineAwarenessHandler implements CommandLineHandler {
+
+  private static final String ARG_NAME = "/N";
+
   @Override
-  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
-    assertEquals(0,stat.getNumberOfCopied());
-    assertEquals(1,stat.getNumberOfPreprocessed());
+  public String getDescription() {
+    return "precise processing the next line char in preprocessed files";
+  }
+
+  @Override
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+    boolean result = false;
+
+    if (ARG_NAME.equalsIgnoreCase(key)) {
+      context.setCareForLastNextLine(true);
+      result = true;
+    }
+
+    return result;
+  }
+
+  @Override
+  public String getKeyName() {
+    return ARG_NAME;
   }
   
 }

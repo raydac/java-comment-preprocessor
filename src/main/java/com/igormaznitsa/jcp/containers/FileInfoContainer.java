@@ -101,7 +101,7 @@ public class FileInfoContainer {
     }
     else {
       destFolder = dstFileName.substring(0, lastDirSeparator);
-      destFileName = dstFileName.substring(lastDirSeparator+1);
+      destFileName = dstFileName.substring(lastDirSeparator + 1);
     }
   }
 
@@ -131,9 +131,13 @@ public class FileInfoContainer {
         }
 
         if (nonTrimmedProcessingString == null) {
-            preprocessingState.popTextContainer();
-            if (preprocessingState.isIncludeStackEmpty())
-            break; else continue;
+          preprocessingState.popTextContainer();
+          if (preprocessingState.isIncludeStackEmpty()) {
+            break;
+          }
+          else {
+            continue;
+          }
         }
 
         leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
@@ -188,24 +192,27 @@ public class FileInfoContainer {
     final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
 
     String leftTrimmedString = null;
-    
+
     TextFileDataContainer lastTextFileDataContainer = null;
-    
+
     try {
       while (true) {
         String rawString = preprocessingState.nextLine();
+        final boolean presentedNextLine = preprocessingState.hasReadLineNextLineInEnd();
+
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
           rawString = null;
         }
 
         if (rawString == null) {
           lastTextFileDataContainer = preprocessingState.popTextContainer();
-          if (preprocessingState.isIncludeStackEmpty())
+          if (preprocessingState.isIncludeStackEmpty()) {
             break;
-          else
+          }
+          else {
             continue;
+          }
         }
-        
 
         leftTrimmedString = PreprocessorUtils.leftTrim(rawString);
 
@@ -226,18 +233,32 @@ public class FileInfoContainer {
 
         String stringToBeProcessed = leftTrimmedString;
 
+        final boolean usePrintLn = presentedNextLine || !context.isCareForLastNextLine();
+        
         if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
           final String extractedDirective = PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
             case PROCESSED:
             case READ_NEXT_LINE: {
               if (context.isKeepLines()) {
-                preprocessingState.getPrinter().println(stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective);
+                final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
+                if (usePrintLn) {
+                  preprocessingState.getPrinter().println(text);
+                }
+                else {
+                  preprocessingState.getPrinter().print(text);
+                }
               }
               continue;
             }
             case SHOULD_BE_COMMENTED: {
-              preprocessingState.getPrinter().println(stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective);
+              final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
+              if (usePrintLn) {
+                preprocessingState.getPrinter().println(text);
+              }
+              else {
+                preprocessingState.getPrinter().print(text);
+              }
               continue;
             }
             default:
@@ -255,12 +276,26 @@ public class FileInfoContainer {
           if (startsWithTwoDollars) {
             // Output the tail of the string to the output stream without comments and macroses
             preprocessingState.getPrinter().print(stringPrefix);
-            preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$$", leftTrimmedString));
+            final String text = PreprocessorUtils.extractTail("//$$", leftTrimmedString);
+            if (usePrintLn) {
+              preprocessingState.getPrinter().println(text);
+            }
+            else {
+              preprocessingState.getPrinter().print(text);
+            }
           }
           else if (stringToBeProcessed.startsWith("//$")) {
             // Output the tail of the string to the output stream without comments
             preprocessingState.getPrinter().print(stringPrefix);
-            preprocessingState.getPrinter().println(PreprocessorUtils.extractTail("//$", stringToBeProcessed));
+            
+            final String text = PreprocessorUtils.extractTail("//$", stringToBeProcessed);
+            
+            if (usePrintLn) {
+              preprocessingState.getPrinter().println(text);
+            }
+            else {
+              preprocessingState.getPrinter().print(text);
+            }
           }
           else {
             // Just string
@@ -272,11 +307,22 @@ public class FileInfoContainer {
             }
 
             preprocessingState.getPrinter().print(stringPrefix);
-            preprocessingState.getPrinter().println(strToOut);
+            if (usePrintLn) {
+              preprocessingState.getPrinter().println(strToOut);
+            }
+            else {
+              preprocessingState.getPrinter().print(strToOut);
+            }
           }
         }
         else if (context.isKeepLines()) {
-          preprocessingState.getPrinter().println(AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString);
+          final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
+          if (usePrintLn) {
+            preprocessingState.getPrinter().println(text);
+          }
+          else {
+            preprocessingState.getPrinter().print(text);
+          }
         }
       }
     }
@@ -296,7 +342,7 @@ public class FileInfoContainer {
               "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled() && lastTextFileDataContainer!=null && lastTextFileDataContainer.isAutoFlush()) {
+    if (!context.isFileOutputDisabled() && lastTextFileDataContainer != null && lastTextFileDataContainer.isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
     }

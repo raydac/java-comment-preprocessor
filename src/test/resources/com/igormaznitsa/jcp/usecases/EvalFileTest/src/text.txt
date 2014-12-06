@@ -1,0 +1,11 @@
+//#noautoflush
+//#definel SOME_TEXT "ODYN"
+/*$evalfile("_file1.txt")$*/
+end
+//#outname "file1.txt"
+//#flush
+//#definel SOME_TEXT "DVA"
+/*$evalfile("_file2.txt")$*/
+end
+//#outname "file2.txt"
+//#flush

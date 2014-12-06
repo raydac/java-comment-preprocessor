@@ -27,6 +27,7 @@ import java.io.File;
 public final class TextFileDataContainer {
 
   private final String[] text;
+  private final boolean fileEndedByNextLine;
   private final File file;
 
   /**
@@ -55,6 +56,10 @@ public final class TextFileDataContainer {
     nextStringIndex = 0;
   }
 
+  public boolean isPresentedNextLineOnReadString(){
+    return this.nextStringIndex<this.text.length ? true : fileEndedByNextLine;
+  }
+  
   public String nextLine() {
     if (nextStringIndex >= text.length) {
       return null;
@@ -80,15 +85,16 @@ public final class TextFileDataContainer {
   }
 
   public TextFileDataContainer(final TextFileDataContainer item, final int stringIndex) {
-    this(item.file, item.text, stringIndex);
+    this(item.file, item.text, item.fileEndedByNextLine, stringIndex);
   }
 
-  public TextFileDataContainer(final File currentFile, final String[] text, final int stringIndex) {
+  public TextFileDataContainer(final File currentFile, final String[] text, final boolean fileEndedByNextLine, final int stringIndex) {
     PreprocessorUtils.assertNotNull("File is null", currentFile);
     PreprocessorUtils.assertNotNull("Text is null", text);
     this.file = currentFile;
     this.text = text;
     setNextStringIndex(stringIndex);
+    this.fileEndedByNextLine = fileEndedByNextLine;
   }
 
   @Override

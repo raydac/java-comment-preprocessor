@@ -103,6 +103,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean clearDstFlag = false;
   private boolean removeComments = false;
   private boolean keepLines = false;
+  private boolean careForLastNextLine = false;
 
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
@@ -116,6 +117,15 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    */
   public void setSource(final File src) {
     this.sourceDirectory = src;
+  }
+
+  /**
+   * Set the "careforlastnextline" attribute, it allows to make precise processing of last next line char
+   *
+   * @param flag shows to turn on or turn off the mode
+   */
+  public void setCareForLastNextLine(final boolean flag) {
+    this.careForLastNextLine = flag;
   }
 
   /**
@@ -299,6 +309,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setRemoveComments(removeComments);
     context.setVerbose(verbose);
     context.setKeepLines(keepLines);
+    context.setCareForLastNextLine(careForLastNextLine);
 
     fillCfgFiles(context);
     fillGlobalVars(context);

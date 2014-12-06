@@ -33,8 +33,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.io.*;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -46,13 +46,13 @@ public enum PreprocessorUtils {
   ;
 
     public static final String LINE_END;
-        
-    static {
-      final String jcpLlineEnd = System.getProperty("jcp.line.separator");
-      LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator","\r\n") : jcpLlineEnd;
-    }
-    
-    public static String getFileExtension(final File file) {
+
+  static {
+    final String jcpLlineEnd = System.getProperty("jcp.line.separator");
+    LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLlineEnd;
+  }
+
+  public static String getFileExtension(final File file) {
     String result = null;
     if (file != null) {
       result = FilenameUtils.getExtension(file.getName());
@@ -204,7 +204,7 @@ public enum PreprocessorUtils {
     }
   }
 
-  public static String[] readWholeTextFileIntoArray(final File file, final String encoding) throws IOException {
+  public static String[] readWholeTextFileIntoArray(final File file, final String encoding, final AtomicBoolean endedByNextLine) throws IOException {
     checkFile(file);
 
     final String enc = encoding == null ? "UTF8" : encoding;
@@ -212,12 +212,50 @@ public enum PreprocessorUtils {
     final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
     final List<String> strContainer = new ArrayList<String>(1024);
     try {
+      final StringBuilder buffer = new StringBuilder();
+
+      boolean stringEndedByNextLine = false;
+
+      boolean meetCR = false;
+
       while (true) {
-        final String nextLine = srcBufferedReader.readLine();
-        if (nextLine == null) {
+        final int chr = srcBufferedReader.read();
+        if (chr < 0) {
           break;
         }
-        strContainer.add(nextLine);
+
+        if (chr == '\n') {
+          stringEndedByNextLine = true;
+          strContainer.add(buffer.toString());
+          buffer.setLength(0);
+          meetCR = false;
+        }
+        else if (chr == '\r') {
+          if (meetCR) {
+            buffer.append((char) chr);
+          }
+          else {
+            stringEndedByNextLine = false;
+            meetCR = true;
+          }
+        }
+        else {
+          if (meetCR) {
+            buffer.append('\r');
+          }
+          meetCR = false;
+          stringEndedByNextLine = false;
+          buffer.append((char) chr);
+        }
+      }
+
+      if (buffer.length() != 0) {
+        strContainer.add(buffer.toString());
+        buffer.setLength(0);
+      }
+
+      if (endedByNextLine != null) {
+        endedByNextLine.set(stringEndedByNextLine);
       }
     }
     finally {
@@ -349,10 +387,12 @@ public enum PreprocessorUtils {
 
   public static String leftTrim(String rawString) {
     int firstNonSpace = 0;
-    for(int i=0;i<rawString.length();i++){
+    for (int i = 0; i < rawString.length(); i++) {
       final char ch = rawString.charAt(i);
-      if (ch>32) break;
-      firstNonSpace ++;
+      if (ch > 32) {
+        break;
+      }
+      firstNonSpace++;
     }
     return rawString.substring(firstNonSpace);
   }

@@ -19,7 +19,7 @@ import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.assertEquals;
 
-public class SimpleTest extends AbstractSimulTest {
+public class SimpleTest extends AbstractUseCaseTest {
 
   @Override
   public void check(final PreprocessorContext context, final JCPreprocessor.PreprocessingStatistics stat) throws Exception {

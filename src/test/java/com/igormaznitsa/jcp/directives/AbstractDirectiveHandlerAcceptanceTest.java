@@ -122,7 +122,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     context.setFileOutputDisabled(true);
 
     final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
-    final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), 0);
+    final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]),false,0);
     final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
     final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
@@ -189,7 +189,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     setGlobalVars(context, globalVariables);
 
     final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
-    final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), 0));
+    final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]),false, 0));
 
     reference.preprocessFile(state, context);
 
