@@ -24,16 +24,9 @@ import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.jcp.logger.SystemOutLogger;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -999,23 +992,15 @@ public class PreprocessorContext {
 
   public void logForVerbose(final String str) {
     if (isVerbose()) {
-      final String stack = makeStackView();
+      final String stack = makeStackView(this.currentState == null ? null : this.currentState.getCurrentIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
   }
 
-  private String makeStackView() {
-    final PreprocessingState state = this.currentState;
-    if (state == null) {
-      return "";
-    }
+  private static String makeStackView(final List<TextFileDataContainer> list) {
+    if (list == null || list.isEmpty()) return "";
     final StringBuilder builder = new StringBuilder();
     int tab = 5;
-    final List<TextFileDataContainer> includeStack = state.getCurrentIncludeStack();
-    if (includeStack.isEmpty()) {
-      return "";
-    }
-
     
     for (int s = 0; s < tab; s++) {
       builder.append(' ');
@@ -1024,8 +1009,8 @@ public class PreprocessorContext {
     tab +=5;
     
     int fileIndex = 1;
-    for (int i = includeStack.size() - 1; i >= 0; i--) {
-      final TextFileDataContainer cur = includeStack.get(i);
+    for (int i = list.size() - 1; i >= 0; i--) {
+      final TextFileDataContainer cur = list.get(i);
       builder.append('\n');
       for (int s = 0; s < tab; s++) {
         builder.append(' ');

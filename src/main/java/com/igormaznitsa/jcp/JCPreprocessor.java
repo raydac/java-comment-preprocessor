@@ -257,13 +257,7 @@ public final class JCPreprocessor {
       preprocessor.execute();
     }
     catch (Exception unexpected) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
-      if (pp!=null){
-        preprocessorContext.logError(pp.toString());
-      }else{
-        preprocessorContext.logError(unexpected.toString());
-        unexpected.printStackTrace();
-      }
+      System.err.println(PreprocessorException.referenceAsString(' ',unexpected));
       System.exit(1);
     }
 

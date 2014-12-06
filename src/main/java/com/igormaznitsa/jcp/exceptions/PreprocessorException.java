@@ -15,7 +15,8 @@
  */
 package com.igormaznitsa.jcp.exceptions;
 
-import java.io.File;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.io.*;
 
 /**
  * The exception allows to save some useful data about preprocessing files like
@@ -26,6 +27,7 @@ import java.io.File;
 public class PreprocessorException extends RuntimeException {
 
   private static final long serialVersionUID = 2857499664112391862L;
+
   private final String processingString;
   private final FilePositionInfo[] includeStack;
 
@@ -89,6 +91,35 @@ public class PreprocessorException extends RuntimeException {
     return result.toString();
   }
   
+  private static String makeStackView(final FilePositionInfo[] list, final char fill) {
+    if (list == null || list.length == 0) {
+      return "";
+    }
+    final StringBuilder builder = new StringBuilder();
+    int tab = 5;
+
+    for (int s = 0; s < tab; s++) {
+      builder.append(fill);
+    }
+    builder.append("{File chain}");
+    tab += 5;
+
+    int fileIndex = 1;
+    for (int i = list.length - 1; i >= 0; i--) {
+      final FilePositionInfo cur = list[i];
+      builder.append('\n');
+      for (int s = 0; s < tab; s++) {
+        builder.append(fill);
+      }
+      builder.append("└>");
+      builder.append(fileIndex++).append(". ");
+      builder.append(cur.getFile().getName()).append(':').append(cur.getStringIndex());
+      tab += 3;
+    }
+
+    return builder.toString();
+  }
+  
   public static PreprocessorException extractPreprocessorException(final Throwable thr){
     if (thr == null) return null;
     Throwable result = thr;
@@ -98,4 +129,26 @@ public class PreprocessorException extends RuntimeException {
     }while(result!=null);
     return null;
   }
+
+  public static String referenceAsString(final char fillChar, final Throwable thr) {
+    if (thr == null) {
+      return "";
+    }
+    final StringWriter buffer = new StringWriter(1024);
+    final PrintWriter out = new PrintWriter(buffer);
+    final PreprocessorException pp = PreprocessorException.extractPreprocessorException(thr);
+    if (pp == null) {
+      out.println(thr.getMessage());
+      thr.printStackTrace(out);
+    }
+    else {
+      out.println(pp.getMessage());
+      out.println(makeStackView(pp.getIncludeChain(),fillChar));
+      if (pp.getCause() != null) {
+        pp.getCause().printStackTrace(out);
+      }
+    }
+    return buffer.toString();
+  }
+
 }

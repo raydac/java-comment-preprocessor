@@ -412,7 +412,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     }
     catch (Exception ex) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      throw new MojoFailureException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
+      throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.',pp), pp == null ? ex : pp);
     }
 
   }
