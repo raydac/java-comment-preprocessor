@@ -71,6 +71,8 @@ public class PreprocessorContext {
   private transient PreprocessingState currentState;
   private final boolean cloned;
 
+  private final TextFileDataContainer currentInCloneSource;
+  
   /**
    * The constructor
    */
@@ -79,6 +81,7 @@ public class PreprocessorContext {
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
+    this.currentInCloneSource = null;
   }
 
   /**
@@ -127,6 +130,7 @@ public class PreprocessorContext {
 
     this.currentState = context.currentState;
     this.cloned = true;
+    this.currentInCloneSource = context.getPreprocessingState() == null ? null : context.getPreprocessingState().peekFile();
   }
 
   /**
@@ -992,12 +996,17 @@ public class PreprocessorContext {
 
   public void logForVerbose(final String str) {
     if (isVerbose()) {
-      final String stack = makeStackView(this.currentState == null ? null : this.currentState.getCurrentIncludeStack());
+      final String stack;
+      if (this.currentState!=null){
+        stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
+      }else{
+        stack = "";
+      }
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
   }
 
-  private static String makeStackView(final List<TextFileDataContainer> list) {
+  private static String makeStackView(final TextFileDataContainer cloneSource, final boolean cloned, final List<TextFileDataContainer> list) {
     if (list == null || list.isEmpty()) return "";
     final StringBuilder builder = new StringBuilder();
     int tab = 5;
@@ -1005,7 +1014,14 @@ public class PreprocessorContext {
     for (int s = 0; s < tab; s++) {
       builder.append(' ');
     }
-    builder.append("{File chain}");
+    
+    builder.append('{');
+    if (cloned){
+      builder.append(cloneSource == null ? "*No src info" : "*" + cloneSource.getFile().getName()+':'+cloneSource.getNextStringIndex());
+    }else{
+      builder.append("File chain");
+    }
+    builder.append('}');
     tab +=5;
     
     int fileIndex = 1;
