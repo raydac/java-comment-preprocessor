@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.*;
 import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;

@@ -15,11 +15,17 @@
  */
 package com.igormaznitsa.jcp.simul;
 
+import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import static org.junit.Assert.assertEquals;
+
 public class SimpleTest extends AbstractSimulTest {
 
   @Override
-  public void check() {
-    System.out.println("Source folder is "+this.sourceFolder.getAbsolutePath());
+  public void check(final PreprocessorContext context, final JCPreprocessor.PreprocessingStatistics stat) throws Exception {
+    assertEquals(1,stat.getNumberOfPreprocessed());
+    assertEquals(0,stat.getNumberOfCopied());
   }
+  
   
 }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<languages>
+		<lang id="rus" text="RUS"/>
+		<lang id="eng" text="ENG"/>
+	</languages>
+
+    <header>
+		<rus>ColdCore</rus>
+        <eng>ColdCore</eng>
+    </header>
+
+	<menu1>
+		<item id="news">
+		  	<rus>&#1053;&#1054;&#1042;&#1054;&#1057;&#1058;&#1048;</rus>
+		  	<eng>NEWS</eng>
+		</item>	
+        <item id="about">
+		  	<rus>&#1054; &#1053;&#1040;&#1057;</rus>
+		  	<eng>ABOUT</eng>
+		</item>	
+        <item id="partnership">
+		  	<rus>&#1055;&#1040;&#1056;&#1058;&#1053;&#1045;&#1056;&#1057;&#1058;&#1042;&#1054;</rus>
+		  	<eng>PARTNERSHIP</eng>
+		</item>	
+        <item id="job">
+		  	<rus>&#1042;&#1040;&#1050;&#1040;&#1053;&#1057;&#1048;&#1048;</rus>
+		  	<eng>JOB</eng>
+		</item>	
+        <item id="contacts">
+		  	<rus>&#1050;&#1054;&#1053;&#1058;&#1040;&#1050;&#1058;&#1067;</rus>
+		  	<eng>CONTACTS</eng>
+		</item>	
+	</menu1>
+
+    <menu2>
+		<textname>
+		  <rus>&#1048;&#1043;&#1056;&#1067;</rus>
+          <eng>GAMES</eng>
+		</textname>
+		<item id="all">
+			<template>gamelist.htm</template>
+		  	<rus>&#1042;&#1057;&#1045;</rus>
+		  	<eng>ALL</eng>
+		</item>	
+        <item id="arcade">
+            <template>gamelist.htm</template>
+		  	<rus>&#1040;&#1056;&#1050;&#1040;&#1044;&#1067;</rus>
+		  	<eng>ARCADE</eng>
+		</item>	
+        <item id="erotic">
+            <template>gamelist.htm</template>
+		  	<rus>&#1069;&#1056;&#1054;&#1058;&#1048;&#1063;&#1045;&#1057;&#1050;&#1048;&#1045;</rus>
+		  	<eng>EROTIC</eng>
+		</item>	
+        <item id="fighting">
+            <template>gamelist.htm</template>
+		  	<rus>&#1044;&#1056;&#1040;&#1050;&#1048;</rus>
+		  	<eng>FIGHTING</eng>
+		</item>	
+        <item id="gambling">
+            <template>gamelist.htm</template>
+		  	<rus>&#1040;&#1047;&#1040;&#1056;&#1058;&#1053;&#1067;&#1045;</rus>
+		  	<eng>GAMBLING</eng>
+		</item>	
+        <item id="logic">
+            <template>gamelist.htm</template>
+		  	<rus>&#1051;&#1054;&#1043;&#1048;&#1063;&#1045;&#1057;&#1050;&#1048;&#1045;</rus>
+		  	<eng>PUZZLE</eng>
+		</item>	
+        <item id="multiplayer">
+            <template>gamelist.htm</template>
+		  	<rus>&#1052;&#1059;&#1051;&#1068;&#1058;&#1048;&#1055;&#1051;&#1045;&#1045;&#1056;</rus>
+		  	<eng>MULTIPLAYER</eng>
+		</item>	
+        <item id="clientserver">
+            <template>gamelist.htm</template>
+		  	<rus>&#1050;&#1051;&#1048;&#1045;&#1053;&#1058;-&#1057;&#1045;&#1056;&#1042;&#1045;&#1056;</rus>
+		  	<eng>CLIENT-SERVER</eng>
+		</item>	
+        <item id="quest">
+            <template>gamelist.htm</template>
+		  	<rus>&#1050;&#1042;&#1045;&#1057;&#1058;&#1067;</rus>
+		  	<eng>QUEST</eng>
+		</item>	
+        <item id="racing">
+            <template>gamelist.htm</template>
+		  	<rus>&#1043;&#1054;&#1053;&#1050;&#1048;</rus>
+		  	<eng>RACING</eng>
+		</item>	
+        <item id="shooter">
+            <template>gamelist.htm</template>
+		  	<rus>&#1057;&#1058;&#1056;&#1045;&#1051;&#1071;&#1051;&#1050;&#1048;</rus>
+		  	<eng>SHOOTER</eng>
+		</item>	
+        <item id="sport">
+            <template>gamelist.htm</template>
+		  	<rus>&#1057;&#1055;&#1054;&#1056;&#1058;</rus>
+		  	<eng>SPORT</eng>
+		</item>	
+	</menu2>
+
+    <menu3>
+		<textname>
+		  <rus>&#1055;&#1056;&#1048;&#1051;&#1054;&#1046;&#1045;&#1053;&#1048;&#1071;</rus>
+          <eng>APPLICATIONS</eng>
+		</textname>
+		<item id="appsall">
+            <template>gamelist.htm</template>
+		  	<rus>&#1042;&#1057;&#1045;</rus>
+		  	<eng>ALL</eng>
+		</item>	
+	</menu3>
+
+	<footer>
+		<rus>Copyright &#169; ColdCore&#174; 2005-2007. &#1057;&#1080;&#1084;&#1074;&#1086;&#1083;&#1099; "&#8482;" &#1080; "&#174;" &#1087;&#1086;&#1082;&#1072;&#1079;&#1099;&#1074;&#1072;&#1102;&#1090; &#1090;&#1086;&#1088;&#1075;&#1086;&#1074;&#1099;&#1077; &#1084;&#1072;&#1088;&#1082;&#1080; &#1080; &#1079;&#1072;&#1088;&#1077;&#1075;&#1080;&#1089;&#1090;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1099;&#1077; &#1090;&#1086;&#1088;&#1075;&#1086;&#1074;&#1099;&#1077; &#1084;&#1072;&#1088;&#1082;&#1080; &#1080;&#1093; &#1087;&#1086;&#1083;&#1085;&#1086;&#1087;&#1088;&#1072;&#1074;&#1085;&#1099;&#1093; &#1074;&#1083;&#1072;&#1076;&#1077;&#1083;&#1100;&#1094;&#1077;&#1074;.</rus>
+        <eng>&#169; 2005-2007 ColdCore&#174;. All rights reserved. "&#8482;" and "&#174;" indicate trademarks or registered trademarks of their respective owners.</eng>
+    </footer>
+</site>

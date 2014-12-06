@@ -34,7 +34,7 @@ import org.apache.commons.io.FileUtils;
  */
 public final class JCPreprocessor {
 
-  private static final class PreprocessingStatistics {
+  public static final class PreprocessingStatistics {
     private final int numberOfPreprocessed;
     private final int numberOfCopied;
 
@@ -82,7 +82,7 @@ public final class JCPreprocessor {
     this.context = context;
   }
 
-  public void execute() throws IOException {
+  public PreprocessingStatistics execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
     
     processCfgFiles();
@@ -100,6 +100,7 @@ public final class JCPreprocessor {
     final long elapsedTime = System.currentTimeMillis()-timeStart;
     this.context.logInfo("-----------------------------------------------------------------");
     this.context.logInfo("Completed, preprocessed "+stat.getNumberOfPreprocessed()+" files, copied "+stat.getNumberOfCopied()+" files, elapsed time "+elapsedTime+"ms");
+    return stat;
   }
 
   private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {

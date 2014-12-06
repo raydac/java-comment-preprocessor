@@ -1,0 +1,12 @@
+//#define MESSAGE "Hello World"
+//#define MSG_NUMBER 10
+//#define SHOW true
+//#if SHOW
+//#definel COUNTER 1
+//#while COUNTER<=MSG_NUMBER
+/*$COUNTER$*/./*$MESSAGE$*/ at line /*$__LINE__$*/
+//#definel COUNTER COUNTER+1
+//#end
+//#endif
+
+
