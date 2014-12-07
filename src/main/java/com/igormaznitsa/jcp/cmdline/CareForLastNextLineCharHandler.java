@@ -23,7 +23,7 @@ public class CareForLastNextLineCharHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "precise processing the next line char in preprocessed files";
+    return "accurate reproduction of the last line end char state (not the next line char!)";
   }
 
   @Override

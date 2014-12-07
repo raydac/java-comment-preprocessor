@@ -81,7 +81,7 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get element by its XPath";
+    return "get element for XPath";
   }
 
   @Override

@@ -30,7 +30,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "set the root source directory for preprocessing files (default is " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
+    return "define the source folder for preprocessing (by default " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
   }
 
   @Override

@@ -29,7 +29,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "to clear sources from commentaries (in Java-C style) after preprocessing";
+    return "remove comments from result files";
   }
 
   @Override

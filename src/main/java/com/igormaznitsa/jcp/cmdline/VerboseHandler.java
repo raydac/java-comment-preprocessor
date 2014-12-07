@@ -29,7 +29,7 @@ public class VerboseHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "switch on the verbose level";
+    return "turn on the verbose level";
   }
 
   @Override

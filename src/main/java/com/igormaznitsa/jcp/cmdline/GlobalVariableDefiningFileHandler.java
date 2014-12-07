@@ -31,7 +31,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "load global parameters from a file defined either by path or expression for @@ case";
+    return "load global variable list from file defined either by path (or expression for @@ case)";
   }
 
   @Override

@@ -30,7 +30,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "set (case insensitive) preprocessing file extension list (with comma) (default is " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ')';
+    return "set (case insensitive) preprocessing file extension list (with comma) (by default " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ')';
   }
 
   @Override
