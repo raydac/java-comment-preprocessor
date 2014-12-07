@@ -67,7 +67,7 @@ public final class JCPreprocessor {
     new VerboseHandler(),
     new GlobalVariableDefiningFileHandler(),
     new GlobalVariableHandler(),
-    new LastNextLineAwarenessHandler()
+    new CareForLastNextLineCharHandler()
   };
 
   public static Iterable<CommandLineHandler> getCommandLineHandlers() {

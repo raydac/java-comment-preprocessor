@@ -17,7 +17,7 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-public class LastNextLineAwarenessHandler implements CommandLineHandler {
+public class CareForLastNextLineCharHandler implements CommandLineHandler {
 
   private static final String ARG_NAME = "/N";
 

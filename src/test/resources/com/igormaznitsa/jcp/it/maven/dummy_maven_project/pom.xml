@@ -49,6 +49,9 @@
             <goals>
               <goal>preprocess</goal>
             </goals>
+            <configuration>
+              <careForLastNextLine>true</careForLastNextLine>
+            </configuration>
           </execution>
           <execution>
             <id>generateTests</id>

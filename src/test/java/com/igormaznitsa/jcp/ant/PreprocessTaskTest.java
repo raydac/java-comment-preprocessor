@@ -63,6 +63,14 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testCareForLastNextLine() throws Exception {
+    antTask.setCareForLastNextLine(true);
+    assertTrue("Must be true", antTask.generatePreprocessorContext().isCareForLastNextLine());
+    antTask.setCareForLastNextLine(false);
+    assertFalse("Must be false", antTask.generatePreprocessorContext().isCareForLastNextLine());
+  }
+
+  @Test
   public void testSetDestination() throws Exception {
     antTask.setDestination(THIS_DIRECTORY);
     assertEquals("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());

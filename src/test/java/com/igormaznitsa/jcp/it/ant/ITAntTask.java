@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class ITAntTask extends BuildFileTest {
 
-  @Before
+  @Override
   public void setUp() throws Exception {
     final File file = new File(this.getClass().getResource("build.xml").toURI());
     configureProject(file.getCanonicalPath(), LogLevel.DEBUG.getLevel());
