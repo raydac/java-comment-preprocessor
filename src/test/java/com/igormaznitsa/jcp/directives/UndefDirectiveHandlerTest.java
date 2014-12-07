@@ -28,7 +28,6 @@ public class UndefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
     final PreprocessorContext context = assertFilePreprocessing("directive_undef.txt", false, null, null, new VariablePair("somevar", "true"));
     assertFalse(context.isGlobalVariable("somevar"));
     assertFalse(context.isLocalVariable("localone"));
-    
   }
 
   @Test

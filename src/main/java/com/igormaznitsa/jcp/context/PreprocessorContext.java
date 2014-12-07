@@ -520,6 +520,10 @@ public class PreprocessorContext {
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
       throw makeException("Attempting to remove either a global variable or a special variable as a local one [" + normalized + ']', null);
     }
+    
+    if (isVerbose()){
+      logForVerbose("Removing local variable '"+normalized+"\'");
+    }
     localVarTable.remove(normalized);
     return this;
   }
@@ -540,10 +544,15 @@ public class PreprocessorContext {
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
     }
-
+                          
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized)) {
       throw makeException("Attempting to remove a special variable as a global one [" + normalized + ']', null);
     }
+    
+    if (isVerbose()) {
+      logForVerbose("Removing global variable '" + normalized + "\'");
+    }
+
     globalVarTable.remove(normalized);
     return this;
   }

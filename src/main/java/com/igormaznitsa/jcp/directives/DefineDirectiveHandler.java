@@ -38,7 +38,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define global(!) variable as TRUE by default (but also allowed expression after a space)";
+    return "define global(!) variable as TRUE by default or by expression result";
   }
 
   protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){
@@ -84,7 +84,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         value = Value.valueOf(Boolean.TRUE);
       }
       
-      process(context, ((Variable) item).getName(), value,context.findVariableForName(name) != null);
+      process(context, ((Variable) item).getName(), value, context.findVariableForName(name) != null);
     }
     catch (IOException ex) {
       throw context.makeException("Unexpected exception",ex);
