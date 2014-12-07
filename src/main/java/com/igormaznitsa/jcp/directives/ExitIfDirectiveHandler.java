@@ -57,6 +57,9 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     if (((Boolean) condition.getValue())) {
       state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
       result = AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
+      if (context.isVerbose()){
+        context.logForVerbose("Activated "+getFullName());
+      }
     }
     return result;
   }

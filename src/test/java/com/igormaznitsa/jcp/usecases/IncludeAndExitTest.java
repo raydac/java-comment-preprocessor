@@ -20,14 +20,9 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.assertEquals;
 
 public class IncludeAndExitTest extends AbstractUseCaseTest {
-
-  @Override
-  public boolean deleteResult() {
-    return false;
-  }
   
   @Override
-  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
+  public void check(final PreprocessorContext context, final JCPreprocessor.PreprocessingStatistics stat) throws Exception {
     assertEquals(0,stat.getNumberOfCopied());
     assertEquals(1,stat.getNumberOfPreprocessed());
   }

@@ -40,6 +40,9 @@ public class ExitDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
+    if (context.isVerbose()) {
+      context.logForVerbose("Activated " + getFullName());
+    }
     return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
   }
 }

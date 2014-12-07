@@ -3,3 +3,5 @@ start
 //#definel HELLO
 //#include "text2.txt"
 end
+//#exit
+unsuspected text
