@@ -38,6 +38,10 @@ public final class InfoHelper {
     return "2003-2014 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
+  public static String getSite() {
+    return "Project page: http://java-comment-preprocessor.googlecode.com/";
+  }
+
   public static String getProductName() {
     return "Java Comment Preprocessor";
   }
@@ -62,9 +66,9 @@ public final class InfoHelper {
     }
     result.add(DELIMITER);
     result.add("Special string directives\n------------");
-    result.add(makeSpecialDirectiveReference("//$", "find and replace macroses inside the line followed by the directive and place in the result file as a non commented line"));
-    result.add(makeSpecialDirectiveReference("//$$", "works like //$ but without macros processing, just the tail will be saved into the result file"));
-    result.add(makeSpecialDirectiveReference("/*-*/", "get id the tail followed by the directive (and the directive too)"));
+    result.add(makeSpecialDirectiveReference("//$", "replace macroses in follows text part and out result without comments"));
+    result.add(makeSpecialDirectiveReference("//$$", "works like //$ but without macros replacement"));
+    result.add(makeSpecialDirectiveReference("/*-*/", "do not out the tail"));
 
     result.add("Operators\n------------");
     for (final AbstractOperator handler : AbstractOperator.ALL_OPERATORS) {
@@ -117,7 +121,7 @@ public final class InfoHelper {
     
     final String directiveName = directive.getFullName();
     final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + activityPasses.toString() + ')';
-    return makeColumns(directiveName, descr, 14);
+    return makeColumns(directiveName, descr, 16);
   }
 
   private static String makeSpecialDirectiveReference(final String name, final String reference) {

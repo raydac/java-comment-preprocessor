@@ -363,6 +363,7 @@ public final class JCPreprocessor {
 
   private static void printHeader() {
     System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
+    System.out.println(InfoHelper.getSite());
     System.out.println(InfoHelper.getCopyright());
   }
 

@@ -33,7 +33,7 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "invert the conditional flag of a global "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
+    return "invert condition result of a global "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
   }
 
   @Override
