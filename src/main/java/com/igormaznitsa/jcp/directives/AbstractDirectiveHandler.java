@@ -86,7 +86,8 @@ public abstract class AbstractDirectiveHandler {
     new WarningDirectiveHandler(),
     new AssertDirectiveHandler(),
     new MsgDirectiveHandler(),
-    new NoAutoFlushHandler()
+    new NoAutoFlushHandler(),
+    new AbortDirectiveHandler()
   };
 
   /**

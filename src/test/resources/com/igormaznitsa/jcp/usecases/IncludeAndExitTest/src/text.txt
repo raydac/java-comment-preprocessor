@@ -2,6 +2,10 @@ start
 //#include "text1.txt"
 //#definel HELLO
 //#include "text2.txt"
+//#if false
+//#exit
+//#else
 end
+//#endif
 //#exit
 unsuspected text

@@ -1,0 +1,4 @@
+//#excludeif true
+3
+//#include "text3.txt"
+4

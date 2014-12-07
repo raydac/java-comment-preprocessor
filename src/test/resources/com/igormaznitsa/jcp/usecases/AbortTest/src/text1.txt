@@ -1,0 +1,4 @@
+//#excludeif true
+1
+//#include "text2.txt"
+2

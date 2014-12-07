@@ -24,7 +24,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>5.4.0</version>
+                <version>6.0.0</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -47,7 +47,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
 
 If you don't want use the maven repository then you can install the plugin manually into your local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-5.4.0.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-6.0.0.jar -DpomFile=./pom.xml
 
 
 Building
@@ -58,8 +58,10 @@ It is a solid project without modules so that its inside testing (especially for
 
 History of changes
 ----------------------
-5.4.0
+6.0.0
 - fixed vanished main class attribute in the manifest
+- fixed //#exit and //#exitif behavior to prevent total exit and return level up on include stack
+- added //#abort directive to provide possobility to stop preprocessing immediately without errors
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
 - added predefined variables '__line__','__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current preprocessing file
 - added predefined variables '__time__','__date__' and '__timestamp__' which work similar C++ predefined macroses

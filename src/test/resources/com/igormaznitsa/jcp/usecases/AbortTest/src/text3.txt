@@ -1,0 +1,4 @@
+//#excludeif true
+5
+//#abort expected
+6

@@ -41,5 +41,9 @@ public enum PreprocessingFlag {
   /**
    * This flag shows that preprocessing must be ended on the next string
    */
-  END_PROCESSING
+  END_PROCESSING,
+  /**
+   * This flag allows to stop preprocessing immediately
+   */
+  ABORT_PROCESSING
 }

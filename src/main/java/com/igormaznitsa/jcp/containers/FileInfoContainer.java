@@ -26,6 +26,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The class is one from the main classes in the preprocessor because it
@@ -126,8 +127,13 @@ public class FileInfoContainer {
     try {
       while (true) {
         String nonTrimmedProcessingString = preprocessingState.nextLine();
-        if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
-          preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
+
+        final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
+
+        if (processFlags.contains(PreprocessingFlag.END_PROCESSING) || processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+          if (!processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+            processFlags.remove(PreprocessingFlag.END_PROCESSING);
+          }
           nonTrimmedProcessingString = null;
         }
 
@@ -201,6 +207,16 @@ public class FileInfoContainer {
         String rawString = preprocessingState.nextLine();
         final boolean presentedNextLine = preprocessingState.hasReadLineNextLineInEnd();
 
+        final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
+
+        if (processFlags.contains(PreprocessingFlag.END_PROCESSING) || processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+          if (!processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+            processFlags.remove(PreprocessingFlag.END_PROCESSING);
+          }
+          rawString = null;
+        }
+
+        
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
           preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
           rawString = null;
@@ -236,7 +252,7 @@ public class FileInfoContainer {
         String stringToBeProcessed = leftTrimmedString;
 
         final boolean usePrintLn = presentedNextLine || !context.isCareForLastNextLine();
-        
+
         if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
           final String extractedDirective = PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
@@ -289,9 +305,9 @@ public class FileInfoContainer {
           else if (stringToBeProcessed.startsWith("//$")) {
             // Output the tail of the string to the output stream without comments
             preprocessingState.getPrinter().print(stringPrefix);
-            
+
             final String text = PreprocessorUtils.extractTail("//$", stringToBeProcessed);
-            
+
             if (usePrintLn) {
               preprocessingState.getPrinter().println(text);
             }
@@ -383,6 +399,9 @@ public class FileInfoContainer {
         }
       }
       break;
+      case TAIL:{
+        result = true;
+      }break;
       default: {
         result = !trimmedRest.isEmpty() && Character.isSpaceChar(rest.charAt(0));
       }

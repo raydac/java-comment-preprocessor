@@ -1,0 +1,5 @@
+//#if false
+//#abort unexpected
+//#endif
+//#include "text1.txt"
+end
