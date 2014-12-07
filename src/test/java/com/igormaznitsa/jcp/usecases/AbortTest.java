@@ -22,13 +22,6 @@ import static org.junit.Assert.*;
 public class AbortTest extends AbstractUseCaseTest {
 
   @Override
-  public boolean deleteResult() {
-    return false;
-  }
-  
-  
-  
-  @Override
   protected void tuneContext(PreprocessorContext context) {
     context.setCareForLastNextLine(true);
   }
