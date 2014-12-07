@@ -49,7 +49,7 @@ public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
  
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String trimmedString, final PreprocessorContext context) {
-    final String message = trimmedString.isEmpty() ? Expression.evalExpression(trimmedString, context).toString() : "Thrown fatal error";
+    final String message = trimmedString.isEmpty() ? "Thrown fatal error" : Expression.evalExpression(trimmedString, context).toString();
     process(context, message);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

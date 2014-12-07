@@ -102,8 +102,21 @@ public final class InfoHelper {
   }
 
   private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
+    final StringBuilder activityPasses = new StringBuilder();
+    int i = 0;
+    if (directive.isGlobalPhaseAllowed()){
+      i++;
+      activityPasses.append("1st");
+    }
+    if (directive.isPreprocessingPhaseAllowed()){
+      if (i>0) activityPasses.append(',');
+      activityPasses.append("2th");
+      i++;
+    }
+    activityPasses.append(i>1 ? "passes" : " pass");
+    
     final String directiveName = directive.getFullName();
-    final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + (directive.isGlobalPhaseAllowed() ? "1st pass" : "2th pass") + ')';
+    final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + activityPasses.toString() + ')';
     return makeColumns(directiveName, descr, 14);
   }
 
