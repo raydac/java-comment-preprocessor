@@ -1,4 +1,5 @@
 //#noautoflush
+//#outdir "newfolder"
 //#definel SOME_TEXT "ODYN"
 /*$evalfile("_file1.txt")$*/
 end
