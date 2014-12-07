@@ -1,0 +1,17 @@
+//#ifdef HELLO_WORLD
+unexpected1
+//#else
+expected1
+//#endif
+//#define HELLO_WORLD "hello world"
+//#ifndef HELLO_WORLD
+unexpected2
+//#else
+expected2
+//#endif
+//#undef HELLO_WORLD
+//#ifdef HELLO_WORLD
+unexpected3
+//#else
+expected3
+//#endif
