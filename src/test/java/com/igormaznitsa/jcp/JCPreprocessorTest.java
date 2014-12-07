@@ -15,10 +15,12 @@
  */
 package com.igormaznitsa.jcp;
 
+import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.*;
+import java.util.*;
 import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -114,6 +116,18 @@ public final class JCPreprocessorTest {
 
     if (differentLine != null) {
       fail("Line " + lineIndex + " There is a different strings [" + differentLine + '[');
+    }
+  }
+
+  @Test
+  public void testCLIHandlerNameConflicts(){
+    final List<String> checked = new ArrayList<String>();
+    for(final CommandLineHandler h : JCPreprocessor.COMMAND_LINE_HANDLERS){
+      final String name = h.getKeyName();
+      for(final String l : checked){
+        if (l.startsWith(name) || name.startsWith(l)) fail("Conflict ["+l+" and "+name+']');
+      }
+      checked.add(name);
     }
   }
 }
