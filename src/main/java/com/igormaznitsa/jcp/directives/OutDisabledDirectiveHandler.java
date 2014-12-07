@@ -32,7 +32,7 @@ public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "turn off preprocess result save into result file";
+    return "turn off text output";
   }
 
   @Override

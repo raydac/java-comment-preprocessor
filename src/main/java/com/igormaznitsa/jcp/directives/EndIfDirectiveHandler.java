@@ -38,7 +38,7 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "end " + DIRECTIVE_PREFIX + "if..." + DIRECTIVE_PREFIX + "endif control structure";
+    return "end of " + DIRECTIVE_PREFIX + "if..." + getFullName() + " control structure";
   }
 
   @Override

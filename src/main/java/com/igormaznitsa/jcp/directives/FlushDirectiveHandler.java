@@ -34,7 +34,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "flush all text buffers to disk under current destination name, then clear the buffers";
+    return "flush text buffers to disk and clear the buffers";
   }
 
   @Override

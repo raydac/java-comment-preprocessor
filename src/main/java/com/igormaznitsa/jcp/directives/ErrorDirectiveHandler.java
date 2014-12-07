@@ -38,7 +38,7 @@ public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "throw fatal preprocessor exception with message";
+    return "throw fatal preprocessor exception with message and stop work";
   }
 
   protected void process(final PreprocessorContext context, final String message) {
@@ -49,13 +49,7 @@ public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
  
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String trimmedString, final PreprocessorContext context) {
-    final String message;
-    if (trimmedString.isEmpty()) {
-      message = "";
-    }
-    else {
-      message = Expression.evalExpression(trimmedString, context).toString();
-    }
+    final String message = trimmedString.isEmpty() ? Expression.evalExpression(trimmedString, context).toString() : "Thrown fatal error";
     process(context, message);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

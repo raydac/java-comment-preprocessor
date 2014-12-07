@@ -1,0 +1,14 @@
+start
+//#-
+ignored section
+at all
+oh my god!
+//#+
+//#prefix+
+the most first start
+//#prefix-
+middle
+//#postfix+
+the end
+//#postfix-
+middle2

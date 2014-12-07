@@ -19,7 +19,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
- * The class implements //#assert directive handler
+ * The class implements //#msg directive handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -37,7 +37,7 @@ public class MsgDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "string tail will be printed as line with macroses and with include chain in verbose case";
+    return "string tail macroses will be replaced and message will be printed as info";
   }
 
   @Override

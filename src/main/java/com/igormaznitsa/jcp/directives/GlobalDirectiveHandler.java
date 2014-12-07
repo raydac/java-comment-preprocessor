@@ -45,7 +45,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define a global variable";
+    return "define global variable";
   }
 
   @Override

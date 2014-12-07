@@ -36,7 +36,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "abort current file preprocessing if flag is TRUE";
+    return "abort current file preprocessing if flag is true and return to previous one in include stack";
   }
 
   @Override

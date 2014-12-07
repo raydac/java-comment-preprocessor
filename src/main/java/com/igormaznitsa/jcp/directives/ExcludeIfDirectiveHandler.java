@@ -32,7 +32,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "check argument as a BOOLEAN flag and if it is TRUE then the file will be excluded from preprocessing file list";
+    return "exclude file from preprocessing if flag is TRUE";
   }
 
   @Override

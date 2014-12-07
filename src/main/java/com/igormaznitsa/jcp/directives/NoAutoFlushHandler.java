@@ -32,13 +32,16 @@ public class NoAutoFlushHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "disable file text buffers autoflush at the end of file preprocessing";
+    return "disable autoflush for text buffers in the end of file processing";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state!=null){
+      if (context.isVerbose()){
+        context.logForVerbose("AutoFlush for file has been disabled");
+      }
       state.peekFile().disableAutoFlush();
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
