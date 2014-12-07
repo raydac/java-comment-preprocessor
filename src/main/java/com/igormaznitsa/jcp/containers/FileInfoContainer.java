@@ -127,6 +127,7 @@ public class FileInfoContainer {
       while (true) {
         String nonTrimmedProcessingString = preprocessingState.nextLine();
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
+          preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
           nonTrimmedProcessingString = null;
         }
 
@@ -201,6 +202,7 @@ public class FileInfoContainer {
         final boolean presentedNextLine = preprocessingState.hasReadLineNextLineInEnd();
 
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
+          preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
           rawString = null;
         }
 

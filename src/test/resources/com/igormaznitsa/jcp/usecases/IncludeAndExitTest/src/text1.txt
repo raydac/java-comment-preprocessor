@@ -1,0 +1,10 @@
+//#excludeif true
+1
+2
+3
+//#exitif false
+4
+5
+//#exitif true
+6
+7

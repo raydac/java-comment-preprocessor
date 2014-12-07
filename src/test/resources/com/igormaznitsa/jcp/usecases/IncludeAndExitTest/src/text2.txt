@@ -1,0 +1,4 @@
+//#excludeif true
+/*$HELLO$*/
+//#exit
+World

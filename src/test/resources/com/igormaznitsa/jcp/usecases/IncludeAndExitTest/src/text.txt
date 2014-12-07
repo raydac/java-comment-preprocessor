@@ -1,0 +1,5 @@
+start
+//#include "text1.txt"
+//#definel HELLO
+//#include "text2.txt"
+end
