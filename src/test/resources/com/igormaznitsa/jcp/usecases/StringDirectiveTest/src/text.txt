@@ -1,0 +1,16 @@
+//#define HELLO "world"
+//#if false
+//$ unexpected /*$HELLO$*/
+//#else
+//$ expected /*$HELLO$*/
+//#endif
+//#if false
+//$$ unexpected /*$HELLO$*/
+//#else
+//$$ expected /*$HELLO$*/
+//#endif
+//#if false
+test /*-*/unexpected
+//#else
+test /*-*/expected
+//#endif

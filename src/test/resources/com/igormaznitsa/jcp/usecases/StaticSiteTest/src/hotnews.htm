@@ -9,16 +9,16 @@
 </head>
 <body>
 //#+
-//#local l_cnewsNewsFile = xml_getroot(xml_open("hotnews.xml"))
-//#local l_cnewsNewsList = xml_getElementsForName(l_cnewsNewsFile,"news") 
+//#local l_cnewsNewsFile = xml_root(xml_open("hotnews.xml"))
+//#local l_cnewsNewsList = xml_list(l_cnewsNewsFile,"news") 
 <table width="100%"  border="0" align="center" cellpadding="4" cellspacing="0">
 //#local l_cnewsIndex = 0
-//#while l_cnewsIndex<xml_elementsNumber(l_cnewsNewsList)
-//#local l_cnewsCurNews = xml_elementAt(l_cnewsNewsList,l_cnewsIndex)
-//#local l_cnewsCurNews = xml_elementAt(xml_getElementsForName(l_cnewsCurNews,curLangID),0)
-//#local l_cnewsName = xml_getElementText(xml_elementAt(xml_getElementsForName(l_cnewsCurNews,"name"),0))
-//#local l_cnewsContent = xml_getElementText(xml_elementAt(xml_getElementsForName(l_cnewsCurNews,"content"),0))
-//#local l_cnewsRef = xml_getElementText(xml_elementAt(xml_getElementsForName(l_cnewsCurNews,"href"),0))
+//#while l_cnewsIndex<xml_size(l_cnewsNewsList)
+//#local l_cnewsCurNews = xml_get(l_cnewsNewsList,l_cnewsIndex)
+//#local l_cnewsCurNews = xml_get(xml_list(l_cnewsCurNews,curLangID),0)
+//#local l_cnewsName = xml_text(xml_get(xml_list(l_cnewsCurNews,"name"),0))
+//#local l_cnewsContent = xml_text(xml_get(xml_list(l_cnewsCurNews,"content"),0))
+//#local l_cnewsRef = xml_text(xml_get(xml_list(l_cnewsCurNews,"href"),0))
 <tr> 
 <td class="rightnews" ><div align="center"><span class="rightnewsHdr">/*$l_cnewsName$*/</span><br>
 </div>

@@ -1,19 +1,19 @@
-//#local site_file = xml_getroot(xml_open("site.xml"))
-//#local games_file = xml_getroot(xml_open("games.xml"))
-//#local games_list = xml_getElementsForName(xml_elementAt(xml_getElementsForName(games_file,"games"),0),"game")
+//#local site_file = xml_root(xml_open("site.xml"))
+//#local games_file = xml_root(xml_open("games.xml"))
+//#local games_list = xml_list(xml_get(xml_list(games_file,"games"),0),"game")
 
-//#local languages= xml_getElementsForName(xml_elementAt(xml_getElementsForName(site_file,"languages"),0),"lang")
-//#local langsNumber = xml_elementsNumber(languages)
+//#local languages= xml_list(xml_get(xml_list(site_file,"languages"),0),"lang")
+//#local langsNumber = xml_size(languages)
 
 //#local langIndex = 0
 
 //#while langIndex<langsNumber
-//#local curLangID = xml_getAttribute(xml_elementAt(languages,langIndex),"id")
-//#local curLangText = xml_getAttribute(xml_elementAt(languages,langIndex),"text")
+//#local curLangID = xml_attr(xml_get(languages,langIndex),"id")
+//#local curLangText = xml_attr(xml_get(languages,langIndex),"text")
 
 //#local outFileName = "index.htm"
 
-//#assert Language /*$curLangText$*/
+//#echo Language /*$curLangText$*/
 //#outdir curLangID
 
 //#local menuMainIndex = 1
@@ -22,41 +22,41 @@
 
 //#while menuMainIndex>0
 
-//#local menuList = xml_getElementsForName(site_file,"menu"+menuMainIndex)
-//#if xml_elementsNumber(menuList)==0
+//#local menuList = xml_list(site_file,"menu"+menuMainIndex)
+//#if xml_size(menuList)==0
 	//#local menuList=-1
 	//#local menuMainIndex = -1
 	//#continue
 //#endif	
-//#local menuList = xml_elementAt(menuList,0)
+//#local menuList = xml_get(menuList,0)
 
 //#local menuSubIndex = 0
-//#local submenuList = xml_getElementsForName(menuList,"item")
-//#local rootMenuNameText = xml_getElementsForName(menuList,"textname")
+//#local submenuList = xml_list(menuList,"item")
+//#local rootMenuNameText = xml_list(menuList,"textname")
 //#local rootMenuNameID = "menu"+menuMainIndex
-//#if xml_elementsNumber(rootMenuNameText)==0
+//#if xml_size(rootMenuNameText)==0
 	//#local rootMenuNameText=""
 //#else
-	//#local rootMenuNameText = xml_elementAt(rootMenuNameText,0)
-	//#local rootMenuNameText=str2web(xml_getElementText(xml_elementAt(xml_getElementsForName(rootMenuNameText,curLangID),0)))
+	//#local rootMenuNameText = xml_get(rootMenuNameText,0)
+	//#local rootMenuNameText=str2web(xml_text(xml_get(xml_list(rootMenuNameText,curLangID),0)))
 //#endif
 
-//#local submenuItemsNumber = xml_elementsNumber(submenuList)
-//#assert SUBITEMS: /*$submenuItemsNumber$*/
+//#local submenuItemsNumber = xml_size(submenuList)
+//#echo SUBITEMS: /*$submenuItemsNumber$*/
 //#while menuSubIndex<submenuItemsNumber
 
-//#local currentItem = xml_elementAt(submenuList,menuSubIndex)
-//#local currentItemID = xml_getAttribute(currentItem,"id")
+//#local currentItem = xml_get(submenuList,menuSubIndex)
+//#local currentItemID = xml_attr(currentItem,"id")
 
-//#local currentItemText = str2web(xml_getElementText(xml_elementAt(xml_getElementsForName(currentItem,curLangID),0)))
+//#local currentItemText = str2web(xml_text(xml_get(xml_list(currentItem,curLangID),0)))
 //#outname rootMenuNameID+"_"+currentItemID + ".htm"
-//#assert making file /*$rootMenuNameID+"_"+currentItemID + ".htm"$*/
+//#echo making file /*$rootMenuNameID+"_"+currentItemID + ".htm"$*/
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 
-//#local pageHeader = str2web(xml_getElementText(xml_elementAt(xml_getElementsForName(xml_elementAt(xml_getElementsForName(site_file,"header"),0),curLangID),0)))
+//#local pageHeader = str2web(xml_text(xml_get(xml_list(xml_get(xml_list(site_file,"header"),0),curLangID),0)))
 //#if strlen(rootMenuNameText)==0
 //#local rootMenuNameText2="/"
 //#else
@@ -108,39 +108,39 @@
                   
 //#local l_menuIndex = 1
 //#while true 
-//#local l_mainMenuList = xml_getElementsForName(site_file,"menu"+l_menuIndex)
-//#if xml_elementsNumber(l_mainMenuList)==0
+//#local l_mainMenuList = xml_list(site_file,"menu"+l_menuIndex)
+//#if xml_size(l_mainMenuList)==0
 //#break
 //#endif
 
-//#local l_curMenu = xml_elementAt(l_mainMenuList,0)
-//#local l_subelementsMenu = xml_getElementsForName(l_curMenu,"item")
-//#local l_menuName = xml_getElementsForName(l_curMenu,"textname")
-//#if xml_elementsNumber(l_menuName)==0
+//#local l_curMenu = xml_get(l_mainMenuList,0)
+//#local l_subelementsMenu = xml_list(l_curMenu,"item")
+//#local l_menuName = xml_list(l_curMenu,"textname")
+//#if xml_size(l_menuName)==0
   //#local l_spacer = ""
   //#local l_menuName = ""
 //#else
   //#local l_spacer = "&nbsp;&nbsp;&nbsp;"
-  //#local l_menuName = xml_getElementText(xml_elementAt(xml_getElementsForName(xml_elementAt(l_menuName,0),curLangID),0))
+  //#local l_menuName = xml_text(xml_get(xml_list(xml_get(l_menuName,0),curLangID),0))
 //#endif
 <div>
 //#if strlen(l_menuName)>0
 /*$l_menuName$*/<br>
 //#endif
 //#local l_subMenuItem = 0
-//#while l_subMenuItem<xml_elementsNumber(l_subelementsMenu)           
-  //#local l_curSubItem = xml_elementAt(l_subelementsMenu,l_subMenuItem)
- 	//#local l_menuName = xml_getElementText(xml_elementAt(xml_getElementsForName(l_curSubItem,curLangID),0))       
-	//#local l_menuID = xml_getAttribute(l_curSubItem,"id")
+//#while l_subMenuItem<xml_size(l_subelementsMenu)           
+  //#local l_curSubItem = xml_get(l_subelementsMenu,l_subMenuItem)
+ 	//#local l_menuName = xml_text(xml_get(xml_list(l_curSubItem,curLangID),0))       
+	//#local l_menuID = xml_attr(l_curSubItem,"id")
 
     //#local l_appsNumber = -1
     
     //#if l_menuIndex>1
     	//#local l_appsNumber = 0
     	//#local l_gIndex = 0
-    	//#while l_gIndex<xml_elementsNumber(games_list)
-    		//#local l_curGame = xml_elementAt(games_list,l_gIndex)
-    		//#if xml_elementsNumber(xml_getElementsForName(l_curGame,l_menuID))>0
+    	//#while l_gIndex<xml_size(games_list)
+    		//#local l_curGame = xml_get(games_list,l_gIndex)
+    		//#if xml_size(xml_list(l_curGame,l_menuID))>0
 	    		//#local l_appsNumber = l_appsNumber+1
     		//#endif
     		//#local l_gIndex = l_gIndex+1
@@ -169,8 +169,8 @@
 <tr class="langtxt"> 
 //#local li = 0
 //#while li<langsNumber
-	//#local locLangID = xml_getAttribute(xml_elementAt(languages,li),"id")
-	//#local locLangText = xml_getAttribute(xml_elementAt(languages,li),"text")
+	//#local locLangID = xml_attr(xml_get(languages,li),"id")
+	//#local locLangText = xml_attr(xml_get(languages,li),"text")
 
 	//#if li==langIndex
     	<td bgcolor="#3E0072"> <div align="center"><font color="#00FF00">/*$locLangText$*/</font></div></td>
@@ -189,9 +189,9 @@
             <div>
               <div align="center" class="menuheader"><strong>/*$currentItemText$*/</strong></div>
             </div>
-//#local l_templateID = xml_getElementsForName(currentItem,"template")
-//#if xml_elementsNumber(l_templateID)>0
-	//#local l_templateID = xml_getElementText(xml_elementAt(l_templateID,0))
+//#local l_templateID = xml_list(currentItem,"template")
+//#if xml_size(l_templateID)>0
+	//#local l_templateID = xml_text(xml_get(l_templateID,0))
 	//#include l_templateID
 //#else
 	//#include "./"+currentItemID+".htm"  
@@ -206,7 +206,7 @@
   <tr>
     <td><hr align="center" width="100%%" noshade>
 
-//#local footer = xml_getElementText(xml_elementAt(xml_getElementsForName(xml_elementAt(xml_getElementsForName(site_file,"footer"),0),curLangID),0))
+//#local footer = xml_text(xml_get(xml_list(xml_get(xml_list(site_file,"footer"),0),curLangID),0))
 <div align="justify" class="footer">/*$footer$*/</div>
 </td>
 </tr>

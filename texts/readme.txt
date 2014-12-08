@@ -59,7 +59,18 @@ It is a solid project without modules so that its inside testing (especially for
 History of changes
 ----------------------
 6.0.0
+- NB! //#assert renamed to appropriate name //#echo
+- NB! renamed XML functions to appropriate ones
+  * xml_getRoot to xml_root
+  * xml_elementAt to xml_get
+  * xml_elementsNumber to xml_size
+  * xml_getAttribute to xml_attr
+  * xml_getElementName to xml_name
+  * xml_getElementsForName to xml_list
+  * xml_getElementText to xml_text
+
 - fixed vanished main class attribute in the manifest
+- fixed behaviour for unknown function
 - fixed //#exit and //#exitif behavior to prevent total exit and return level up on include stack
 - added //#abort directive to provide possobility to stop preprocessing immediately without errors
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string

@@ -18,28 +18,30 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import org.w3c.dom.Element;
 
 /**
- * The class implements the xml_elementat function handler
+ * The class implements the xml_name function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
+public final class FunctionXML_NAME extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.INT}};
+  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
   public String getName() {
-    return "xml_elementat";
+    return "xml_name";
   }
 
-  public Value executeStrInt(final PreprocessorContext context, final Value elementListId, final Value elementIndex) {
-    return Value.valueOf(findElementForIndex(context, elementListId.asString(), elementIndex.asLong().intValue()));
+  public Value executeStr(final PreprocessorContext context, final Value elementId) {
+    final Element cachedelement = getCachedElement(context, elementId.asString());
+    return Value.valueOf(cachedelement.getTagName());
   }
 
   @Override
   public int getArity() {
-    return 2;
+    return 1;
   }
 
   @Override
@@ -49,11 +51,12 @@ public final class FunctionXML_ELEMENTAT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get element from element list by its index (first 0)";
+    return "get element name (tag)";
   }
 
   @Override
   public ValueType getResultType() {
     return ValueType.STRING;
   }
+
 }

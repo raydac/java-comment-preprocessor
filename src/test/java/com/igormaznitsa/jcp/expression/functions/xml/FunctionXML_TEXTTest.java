@@ -21,9 +21,9 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_GETELEMENTTEXTTest extends AbstractFunctionXMLTest {
+public class FunctionXML_TEXTTest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_GETELEMENTTEXT HANDLER = new FunctionXML_GETELEMENTTEXT();
+  private static final FunctionXML_TEXT HANDLER = new FunctionXML_TEXT();
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_IncompatibleCachedObjectId() throws Exception {
@@ -38,7 +38,7 @@ public class FunctionXML_GETELEMENTTEXTTest extends AbstractFunctionXMLTest {
 
   @Override
   public void testName() {
-    assertEquals("xml_getelementtext", HANDLER.getName());
+    assertEquals("xml_text", HANDLER.getName());
   }
 
   @Override

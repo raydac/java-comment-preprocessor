@@ -34,14 +34,14 @@ public class FunctionXML_XLISTTest extends AbstractFunctionXMLTest {
   public void testExecution_NonExistElement() throws Exception {
     final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/nonexist"));
     assertNotNull(value);
-    assertEquals(0,new FunctionXML_ELEMENTSNUMBER().executeStr(SPY_CONTEXT, value).asLong().intValue());
+    assertEquals(0,new FunctionXML_SIZE().executeStr(SPY_CONTEXT, value).asLong().intValue());
   }
 
   @Test
   public void testExecution_ForExistElements() throws Exception {
     final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
     assertNotNull(value);
-    assertEquals(4, new FunctionXML_ELEMENTSNUMBER().executeStr(SPY_CONTEXT, value).asLong().intValue());
+    assertEquals(4, new FunctionXML_SIZE().executeStr(SPY_CONTEXT, value).asLong().intValue());
   }
 
   @Override

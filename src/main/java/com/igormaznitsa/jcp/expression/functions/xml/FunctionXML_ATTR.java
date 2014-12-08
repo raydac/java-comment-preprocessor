@@ -18,36 +18,23 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
- * The class implements the xml_getelementsforname function handler
+ * The class implements the xml_attr function
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
+public final class FunctionXML_ATTR extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
 
   @Override
   public String getName() {
-    return "xml_getelementsforname";
+    return "xml_attr";
   }
 
-  public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value elementTag) {
-    final String tagName = elementTag.asString();
-    final Element element = getCachedElement(context, elementId.asString());
-    final String listId = makeElementListId(element, tagName);
-    
-    NodeContainer container = (NodeContainer) context.getSharedResource(listId);
-    if (container == null) {
-      final NodeList list = element.getElementsByTagName(tagName);
-      container = new NodeContainer(UID_COUNTER.getAndIncrement(), list);
-      context.setSharedResource(listId, container);
-    }
-
-    return Value.valueOf(listId);
+  public Value executeStrStr(final PreprocessorContext context, final Value elementId, final Value attributeName) {
+    return Value.valueOf(getAttribute(context, elementId.asString(), attributeName.asString()));
   }
 
   @Override
@@ -62,11 +49,12 @@ public final class FunctionXML_GETELEMENTSFORNAME extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get element list by element tag";
+    return "get named attribute from element, nonexisting attribute returns empty string";
   }
 
   @Override
   public ValueType getResultType() {
     return ValueType.STRING;
   }
+
 }

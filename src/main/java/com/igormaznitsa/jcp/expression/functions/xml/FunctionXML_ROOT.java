@@ -18,25 +18,29 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.w3c.dom.Element;
 
 /**
- * The class implements the xml_getelementtext function handler
+ * The class implements the xml_getroot function handler
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
+public final class FunctionXML_ROOT extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
   public String getName() {
-    return "xml_getelementtext";
+    return "xml_root";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value elementid) {
-    final Element element = getCachedElement(context, elementid.asString());
-    return Value.valueOf(element.getTextContent());
+  public Value executeStr(final PreprocessorContext context, final Value documentId) {
+    final String documentRootId = makeDocumentRootId(documentId.asString());
+    
+    final NodeContainer root = (NodeContainer) context.getSharedResource(documentRootId);
+    if (root == null){
+      throw context.makeException("Can't find any root for document ["+documentId+']',null);
+    }
+    return Value.valueOf(documentRootId);
   }
 
   @Override
@@ -51,12 +55,11 @@ public final class FunctionXML_GETELEMENTTEXT extends AbstractXMLFunction {
 
   @Override
   public String getReference() {
-    return "get element text content, text of children also included";
+    return "get the document root element";
   }
 
   @Override
   public ValueType getResultType() {
     return ValueType.STRING;
   }
-
 }

@@ -1,40 +1,40 @@
 //#noautoflush
-//#local gref_langs = xml_getroot(xml_open("site.xml"))
-//#local gref_devices = xml_getroot(xml_open("devices.xml"))
-//#local gref_footer = xml_elementAt(xml_getElementsForName(xml_getroot(xml_open("site.xml")),"footer"),0)
-//#local gref_langs = xml_getElementsForName(xml_elementAt(xml_getElementsForName(gref_langs,"languages"),0),"lang")
+//#local gref_langs = xml_root(xml_open("site.xml"))
+//#local gref_devices = xml_root(xml_open("devices.xml"))
+//#local gref_footer = xml_get(xml_list(xml_root(xml_open("site.xml")),"footer"),0)
+//#local gref_langs = xml_list(xml_get(xml_list(gref_langs,"languages"),0),"lang")
 
-//#local gref_docRoot = xml_getroot(xml_open("games.xml"))
-//#local gref_gamesList = xml_getElementsForName(xml_elementAt(xml_getElementsForName(gref_docRoot,"games"),0),"game")
-//#local gref_channelsList = xml_elementAt(xml_getElementsForName(gref_docRoot,"channels"),0)
-//#local gref_ownersList = xml_elementAt(xml_getElementsForName(gref_docRoot,"owners"),0)
+//#local gref_docRoot = xml_root(xml_open("games.xml"))
+//#local gref_gamesList = xml_list(xml_get(xml_list(gref_docRoot,"games"),0),"game")
+//#local gref_channelsList = xml_get(xml_list(gref_docRoot,"channels"),0)
+//#local gref_ownersList = xml_get(xml_list(gref_docRoot,"owners"),0)
 
 //#local gref_langIndex = 0
-//#while gref_langIndex<xml_elementsNumber(gref_langs)
-//#local gref_curLangID = xml_getAttribute(xml_elementAt(gref_langs,gref_langIndex),"id") 
-//#local gref_curLangFooter = xml_getElementText(xml_elementAt(xml_getElementsForName(gref_footer,gref_curLangID),0))
+//#while gref_langIndex<xml_size(gref_langs)
+//#local gref_curLangID = xml_attr(xml_get(gref_langs,gref_langIndex),"id") 
+//#local gref_curLangFooter = xml_text(xml_get(xml_list(gref_footer,gref_curLangID),0))
 
 //#outdir gref_curLangID
 
 //#local gref_curGameIndex = 0
-//#while gref_curGameIndex<xml_elementsNumber(gref_gamesList)
+//#while gref_curGameIndex<xml_size(gref_gamesList)
 
-//#local gref_currentGameElement = xml_elementAt(gref_gamesList,gref_curGameIndex)
-//#local gref_currentGameScreens = xml_getAttribute(gref_currentGameElement,"screens")
-//#local gref_currentGameID = xml_getAttribute(gref_currentGameElement,"id")
-//#local gref_currentGameTitle = xml_getAttribute(gref_currentGameElement,"title")
-//#local gref_currentGameYear = xml_getAttribute(gref_currentGameElement,"year")
+//#local gref_currentGameElement = xml_get(gref_gamesList,gref_curGameIndex)
+//#local gref_currentGameScreens = xml_attr(gref_currentGameElement,"screens")
+//#local gref_currentGameID = xml_attr(gref_currentGameElement,"id")
+//#local gref_currentGameTitle = xml_attr(gref_currentGameElement,"title")
+//#local gref_currentGameYear = xml_attr(gref_currentGameElement,"year")
 
-//#local gref_currentGameDevices = xml_getElementsForName(xml_elementAt(xml_getElementsForName(gref_currentGameElement,"devices"),0),"*")
+//#local gref_currentGameDevices = xml_list(xml_get(xml_list(gref_currentGameElement,"devices"),0),"*")
 
-//#local gref_currentGameReference =xml_getElementText(xml_elementAt(xml_getElementsForName(xml_elementAt(xml_getElementsForName(gref_currentGameElement,"reference"),0),gref_curLangID),0))
+//#local gref_currentGameReference =xml_text(xml_get(xml_list(xml_get(xml_list(gref_currentGameElement,"reference"),0),gref_curLangID),0))
 
-//#local gref_currentOwnerElement = xml_elementAt(xml_getElementsForName(gref_ownersList,xml_getAttribute(xml_elementAt(xml_getElementsForName(gref_currentGameElement,"owner"),0),"id")),0)
-//#local gref_currentSalesList = xml_getElementsForName(xml_elementAt(xml_getElementsForName(gref_currentGameElement,"sales"),0),"*")
+//#local gref_currentOwnerElement = xml_get(xml_list(gref_ownersList,xml_attr(xml_get(xml_list(gref_currentGameElement,"owner"),0),"id")),0)
+//#local gref_currentSalesList = xml_list(xml_get(xml_list(gref_currentGameElement,"sales"),0),"*")
 
 //#local gref_pageName = "gpage_"+gref_currentGameID+".htm"
 //#outname gref_pageName
-//#assert Making game reference file /*$gref_pageName$*/
+//#echo Making game reference file /*$gref_pageName$*/
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -59,7 +59,7 @@
 //#else
         <div class="gameinfoheadermin">OWNER:</div>
 //#endif
-        <div><a href="/*$xml_getAttribute(gref_currentOwnerElement,"link")$*/" target="_new" class="gameinfoheadermin">/*$str2web(xml_getElementText(gref_currentOwnerElement))$*/</a></div>
+        <div><a href="/*$xml_attr(gref_currentOwnerElement,"link")$*/" target="_new" class="gameinfoheadermin">/*$str2web(xml_text(gref_currentOwnerElement))$*/</a></div>
          <br>
 //#if gref_curLangID=="rus"
          <div class="gameinfoheadermin">&#1043;&#1054;&#1044;&nbsp;&#1042;&#1067;&#1055;&#1059;&#1057;&#1050;&#1040;:</div>
@@ -81,13 +81,13 @@
 
 //#local gref_curDeviceIndex = 0
 //#local gref_curDeviceName = ""
-//#while gref_curDeviceIndex<xml_elementsNumber(gref_currentGameDevices)
-//#local gref_curDeviceElement = xml_elementAt(gref_currentGameDevices,gref_curDeviceIndex)
-//#local gref_curDeviceElementName = xml_getElementName(gref_curDeviceElement)
-//#local gref_curDeviceFamily = xml_getAttribute(gref_curDeviceElement,"family")
-//#local gref_curDeviceElementName = xml_elementAt(xml_getElementsForName(gref_devices,gref_curDeviceElementName),0)
-//#local gref_curDeviceFamily = xml_getElementText(xml_elementAt(xml_getElementsForName(gref_curDeviceElementName,gref_curDeviceFamily),0))
-//#local gref_curDeviceElementName = xml_getAttribute(gref_curDeviceElementName,"name")
+//#while gref_curDeviceIndex<xml_size(gref_currentGameDevices)
+//#local gref_curDeviceElement = xml_get(gref_currentGameDevices,gref_curDeviceIndex)
+//#local gref_curDeviceElementName = xml_name(gref_curDeviceElement)
+//#local gref_curDeviceFamily = xml_attr(gref_curDeviceElement,"family")
+//#local gref_curDeviceElementName = xml_get(xml_list(gref_devices,gref_curDeviceElementName),0)
+//#local gref_curDeviceFamily = xml_text(xml_get(xml_list(gref_curDeviceElementName,gref_curDeviceFamily),0))
+//#local gref_curDeviceElementName = xml_attr(gref_curDeviceElementName,"name")
 //#if gref_curDeviceElementName!=gref_curDeviceName
 //#local gref_curDeviceName = gref_curDeviceElementName
 //#if gref_curDeviceIndex!=0
@@ -197,14 +197,14 @@ Message:
       <tr>
         <td bgcolor="#6698FF"><div align="center"><BR>
 //#local gref_curSalesIndex=0
-//#while gref_curSalesIndex<xml_elementsNumber(gref_currentSalesList)
-//#local gref_curSalesItem = xml_elementAt(gref_currentSalesList,gref_curSalesIndex)
-//#local gref_curChannel = xml_getElementName(gref_curSalesItem)
-//#local gref_curSalesCost = xml_getAttribute(gref_curSalesItem,"cost")
-//#local gref_curSalesProductpage = xml_getAttribute(gref_curSalesItem,"productpage")
-//#local gref_curChannelLogo = xml_elementAt(xml_getElementsForName(gref_channelsList,gref_curChannel),0)
-//#local gref_curChannelName = xml_getAttribute(gref_curChannelLogo,"name")
-//#local gref_curChannelLogo = xml_getAttribute(gref_curChannelLogo,"logo")
+//#while gref_curSalesIndex<xml_size(gref_currentSalesList)
+//#local gref_curSalesItem = xml_get(gref_currentSalesList,gref_curSalesIndex)
+//#local gref_curChannel = xml_name(gref_curSalesItem)
+//#local gref_curSalesCost = xml_attr(gref_curSalesItem,"cost")
+//#local gref_curSalesProductpage = xml_attr(gref_curSalesItem,"productpage")
+//#local gref_curChannelLogo = xml_get(xml_list(gref_channelsList,gref_curChannel),0)
+//#local gref_curChannelName = xml_attr(gref_curChannelLogo,"name")
+//#local gref_curChannelLogo = xml_attr(gref_curChannelLogo,"logo")
 <a href="/*$gref_curSalesProductpage$*/" target="_new">
 <img src="/*$gref_curChannelLogo$*/" border="0" alt="/*$gref_curSalesCost$*/">
 </a>

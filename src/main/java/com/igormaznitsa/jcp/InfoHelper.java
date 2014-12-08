@@ -55,7 +55,7 @@ public final class InfoHelper {
     result.add("Command line directives\n------------");
     result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes allowed\n");
     result.add(makeColumns("@cfg_file", "file contains global definition list", 14));
-    for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
+    for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {    
       result.add(makeCommandLineKeyReference(handler));
     }
     result.add(DELIMITER);
@@ -66,9 +66,9 @@ public final class InfoHelper {
     }
     result.add(DELIMITER);
     result.add("Special string directives\n------------");
-    result.add(makeSpecialDirectiveReference("//$", "replace macroses in follows text part and out result without comments"));
+    result.add(makeSpecialDirectiveReference("//$", "replace macroses in following text and out result"));
     result.add(makeSpecialDirectiveReference("//$$", "works like //$ but without macros replacement"));
-    result.add(makeSpecialDirectiveReference("/*-*/", "do not out the tail"));
+    result.add(makeSpecialDirectiveReference("/*-*/", "get rid the following text "));
 
     result.add("Operators\n------------");
     for (final AbstractOperator handler : AbstractOperator.ALL_OPERATORS) {

@@ -167,6 +167,8 @@ public final class ExpressionParser {
       sourceLine = state == null ? null : state.getLastReadString();
     }
 
+    ExpressionItem prev = null;
+    
     while (working) {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
@@ -176,7 +178,7 @@ public final class ExpressionParser {
       else {
 
         if (nextItem.getExpressionItemType() == null) {
-          if (nextItem == SpecialItem.BRACKET_CLOSING) {
+            if (nextItem == SpecialItem.BRACKET_CLOSING) {
             if (insideBracket) {
               working = false;
               result = nextItem;
@@ -193,6 +195,11 @@ public final class ExpressionParser {
             }
           }
           else if (nextItem == SpecialItem.BRACKET_OPENING) {
+            if (prev != null && prev.getExpressionItemType() == ExpressionItemType.VARIABLE){
+              final String text = "Unknown function detected ["+prev.toString()+']';
+              throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+            }
+            
             final ExpressionTree subExpression;
             subExpression = new ExpressionTree(stack, sourceLine);
             if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
@@ -216,6 +223,7 @@ public final class ExpressionParser {
           }
         }
       }
+      prev = nextItem;
     }
     return result;
   }

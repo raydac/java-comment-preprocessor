@@ -17,7 +17,7 @@ package com.igormaznitsa.jcp.expression;
 
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionABS;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETATTRIBUTE;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ATTR;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorADD;
 import com.igormaznitsa.jcp.expression.operators.OperatorDIV;
@@ -113,10 +113,10 @@ public class ExpressionParserTest {
   @Test
   public void testNextItem_complexExpression() throws Exception {
 
-    final PushbackReader reader = new PushbackReader(new StringReader("xml_getattribute(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
+    final PushbackReader reader = new PushbackReader(new StringReader("xml_attr(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
 
     final ExpressionItem[] items = new ExpressionItem[]{
-      AbstractFunction.findForClass(FunctionXML_GETATTRIBUTE.class),
+      AbstractFunction.findForClass(FunctionXML_ATTR.class),
       ExpressionParser.SpecialItem.BRACKET_OPENING,
       Value.valueOf(Float.valueOf(1.3f)),
       AbstractOperator.findForClass(OperatorMOD.class),
@@ -181,7 +181,7 @@ public class ExpressionParserTest {
   @Test
   public void testParsing_complexExpression() throws Exception {
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("(var1+1)*xml_getattribute(\"first\",\"hello\"+\"world\")", null);
+    final ExpressionTree tree = parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", null);
 
     final ExpressionTreeElement root = tree.getRoot();
 
@@ -191,7 +191,7 @@ public class ExpressionParserTest {
     final ExpressionTreeElement right = root.getChildForIndex(1);
 
     assertEquals("Left must be ADD", AbstractOperator.findForClass(OperatorADD.class), left.getItem());
-    assertEquals("Right must be Function", AbstractFunction.findForClass(FunctionXML_GETATTRIBUTE.class), right.getItem());
+    assertEquals("Right must be Function", AbstractFunction.findForClass(FunctionXML_ATTR.class), right.getItem());
   }
 
   @Test
@@ -209,19 +209,19 @@ public class ExpressionParserTest {
   @Test
   public void testParsing_insideFunctionCall() throws Exception {
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("xml_elementAt(xml_elementAt(1,2),3)", null);
+    final ExpressionTree tree = parser.parse("xml_get(xml_get(1,2),3)", null);
 
-    final AbstractFunction xmlElementAt = AbstractFunction.findForName("xml_elementat");
+    final AbstractFunction xmlElementAt = AbstractFunction.findForName("xml_get");
     assertNotNull(xmlElementAt);
 
     final ExpressionTreeElement root = tree.getRoot();
-    assertEquals("Must be xml_elementAt", xmlElementAt, root.getItem());
+    assertEquals("Must be xml_get", xmlElementAt, root.getItem());
 
     final ExpressionTreeElement left = root.getChildForIndex(0);
     final ExpressionTreeElement right = root.getChildForIndex(1);
 
     assertEquals("Must be 3", Value.INT_THREE, right.getItem());
-    assertEquals("Must be xml_elementAt", xmlElementAt, left.getItem());
+    assertEquals("Must be xml_get", xmlElementAt, left.getItem());
     assertEquals("Must be 1", Value.INT_ONE, left.getChildForIndex(0).getItem());
     assertEquals("Must be 2", Value.INT_TWO, left.getChildForIndex(1).getItem());
   }

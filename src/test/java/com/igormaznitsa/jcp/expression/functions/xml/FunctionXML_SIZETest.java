@@ -21,23 +21,31 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_GETROOTTest extends AbstractFunctionXMLTest {
+public class FunctionXML_SIZETest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_GETROOT HANDLER = new FunctionXML_GETROOT();
+  private static final FunctionXML_SIZE HANDLER = new FunctionXML_SIZE();
 
   @Test(expected = PreprocessorException.class)
-  public void testExecution_WrongDocId() throws Exception {
-    HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("jlskjlasjdsa123213213"));
+  public void testExecution_WrongElementListID() throws Exception {
+    HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("ieqoidqoiuoiq"));
+  }
+
+  @Test(expected = PreprocessorException.class)
+  public void testExecution_WrongElementType() throws Exception {
+    HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID);
   }
 
   @Test
   public void testExecution() throws Exception {
-    assertEquals(OPENED_DOCUMENT_ID.asString() + "_#root", HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID).asString());
+    final Value languageElement = new FunctionXML_GET().executeStrInt(SPY_CONTEXT, new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("languages")), Value.valueOf(0L));
+    final Value elementList = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, languageElement, Value.valueOf("language"));
+    assertNotNull(elementList);
+    assertEquals(6L, HANDLER.executeStr(SPY_CONTEXT, elementList).asLong().longValue());
   }
 
   @Override
   public void testName() {
-    assertEquals("xml_getroot", HANDLER.getName());
+    assertEquals("xml_size", HANDLER.getName());
   }
 
   @Override
@@ -57,7 +65,7 @@ public class FunctionXML_GETROOTTest extends AbstractFunctionXMLTest {
 
   @Override
   public void testResultType() {
-    assertEquals(ValueType.STRING, HANDLER.getResultType());
+    assertEquals(ValueType.INT, HANDLER.getResultType());
   }
 
 }

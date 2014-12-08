@@ -19,20 +19,20 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import org.mockito.Mockito;
 import static org.junit.Assert.*;
 
-public class AssertDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class EchoDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final AssertDirectiveHandler HANDLER = new AssertDirectiveHandler();
+  private static final EchoDirectiveHandler HANDLER = new EchoDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {
     final PreprocessorLogger mock = Mockito.mock(PreprocessorLogger.class);
-    assertFilePreprocessing("directive_assert.txt", false, null, mock);
+    assertFilePreprocessing("directive_echo.txt", false, null, mock);
     Mockito.verify(mock).info("string 2 ok");
   }
 
   @Override
   public void testKeyword() throws Exception {
-    assertEquals("assert", HANDLER.getName());
+    assertEquals("echo", HANDLER.getName());
   }
 
   @Override

@@ -1,0 +1,3 @@
+ expected world
+ expected /*$HELLO$*/
+test 

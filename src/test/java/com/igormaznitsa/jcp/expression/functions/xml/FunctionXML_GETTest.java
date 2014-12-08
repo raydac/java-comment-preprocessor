@@ -21,10 +21,10 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
+public class FunctionXML_GETTest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_ELEMENTAT HANDLER = new FunctionXML_ELEMENTAT();
-  private static final FunctionXML_GETELEMENTTEXT GETTEXT = new FunctionXML_GETELEMENTTEXT();
+  private static final FunctionXML_GET HANDLER = new FunctionXML_GET();
+  private static final FunctionXML_TEXT GETTEXT = new FunctionXML_TEXT();
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_WrongElementId() throws Exception {
@@ -33,18 +33,18 @@ public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_WrongIndex() throws Exception {
-    final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
+    final Value elementList = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
     HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.valueOf(Long.valueOf(-1)));
   }
 
   @Test
   public void testExecution() throws Exception {
-    final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
+    final Value elementList = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
     assertEquals("elem1", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_ZERO)).asString());
     assertEquals("elem2", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_ONE)).asString());
     assertEquals("elem3", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_TWO)).asString());
     assertEquals("<test>", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList, Value.INT_THREE)).asString());
-    final Value elementList2 = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
+    final Value elementList2 = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element"));
     assertEquals("elem1", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_ZERO)).asString());
     assertEquals("elem2", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_ONE)).asString());
     assertEquals("elem3", GETTEXT.executeStr(SPY_CONTEXT, HANDLER.executeStrInt(SPY_CONTEXT, elementList2, Value.INT_TWO)).asString());
@@ -53,7 +53,7 @@ public class FunctionXML_ELEMENTATTest extends AbstractFunctionXMLTest {
 
   @Override
   public void testName() {
-    assertEquals("xml_elementat", HANDLER.getName());
+    assertEquals("xml_get", HANDLER.getName());
   }
 
   @Override

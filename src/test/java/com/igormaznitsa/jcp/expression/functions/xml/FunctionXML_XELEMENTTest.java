@@ -39,7 +39,7 @@ public class FunctionXML_XELEMENTTest extends AbstractFunctionXMLTest {
   public void testExecution_ForExistElements() throws Exception {
     final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
     assertNotNull(value);
-    assertEquals("first", new FunctionXML_GETATTRIBUTE().executeStrStr(SPY_CONTEXT, value, Value.valueOf("attr")).asString());
+    assertEquals("first", new FunctionXML_ATTR().executeStrStr(SPY_CONTEXT, value, Value.valueOf("attr")).asString());
   }
 
   @Override

@@ -24,13 +24,13 @@ import com.igormaznitsa.jcp.expression.ValueType;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class FunctionXML_ELEMENTSNUMBER extends AbstractXMLFunction {
+public final class FunctionXML_SIZE extends AbstractXMLFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
   public String getName() {
-    return "xml_elementsnumber";
+    return "xml_size";
   }
 
   public Value executeStr(final PreprocessorContext context, final Value elementListId) {

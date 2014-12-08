@@ -23,11 +23,11 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class AssertDirectiveHandler extends AbstractDirectiveHandler {
+public class EchoDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getName() {
-    return "assert";
+    return "echo";
   }
 
   @Override
@@ -37,17 +37,12 @@ public class AssertDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "just print text into log as info, text can contain macroses ( better to use //#msg instead)";
+    return "macroses will be replaced in the text tail and the result will be out as info";
   }
 
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
     context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));
     return AfterDirectiveProcessingBehaviour.PROCESSED;
-  }
-
-  @Override
-  public boolean isDeprecated() {
-    return true;
   }
 }

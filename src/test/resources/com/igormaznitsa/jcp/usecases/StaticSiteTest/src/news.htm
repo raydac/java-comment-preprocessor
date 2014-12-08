@@ -9,14 +9,14 @@
 </head>
 <body>
 //#+
-//#local l_newsList = xml_getElementsForName(xml_getroot(xml_open("news.xml")),"news")
+//#local l_newsList = xml_list(xml_root(xml_open("news.xml")),"news")
 //#local l_newsIndex = 0
-//#while l_newsIndex<xml_elementsNumber(l_newsList)
-//#local l_newsCurrentNews = xml_elementAt(l_newsList,l_newsIndex)
-//#local l_newsCurrentLink = xml_getAttribute(l_newsCurrentNews,"link")
-//#local l_newsCurrentNewsContent = xml_getElementText(xml_elementAt(xml_getElementsForName(l_newsCurrentNews,curLangID),0))
+//#while l_newsIndex<xml_size(l_newsList)
+//#local l_newsCurrentNews = xml_get(l_newsList,l_newsIndex)
+//#local l_newsCurrentLink = xml_attr(l_newsCurrentNews,"link")
+//#local l_newsCurrentNewsContent = xml_text(xml_get(xml_list(l_newsCurrentNews,curLangID),0))
 
-//#local l_newsDate = xml_getAttribute(l_newsCurrentNews,"date")
+//#local l_newsDate = xml_attr(l_newsCurrentNews,"date")
 <table width="100%%"  border="0" cellspacing="0" cellpadding="5">
    <tr> 
      <td width="105" bgcolor="#E6E6FF" class="menuheader"><div align="center" class="newdata">/*$l_newsDate$*/</div></td>
@@ -26,11 +26,11 @@
 	<td colspan="2">
 //#local l_newsScreen=1
 //#while true
-//#local l_newsCurScreen = xml_getElementsForName(l_newsCurrentNews,"scr"+l_newsScreen)
-//#if xml_elementsNumber(l_newsCurScreen)==0
+//#local l_newsCurScreen = xml_list(l_newsCurrentNews,"scr"+l_newsScreen)
+//#if xml_size(l_newsCurScreen)==0
 //#break
 //#endif
-//#local l_newsScreenHREF = xml_getElementText(xml_elementAt(l_newsCurScreen,0))
+//#local l_newsScreenHREF = xml_text(xml_get(l_newsCurScreen,0))
 <img src="../news//*$l_newsScreenHREF$*/" alt="/*$"scr"+l_newsScreen$*/">
 //#local l_newsScreen = l_newsScreen + 1
 //#end

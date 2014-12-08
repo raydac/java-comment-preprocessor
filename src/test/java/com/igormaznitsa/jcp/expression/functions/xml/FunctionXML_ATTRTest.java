@@ -21,23 +21,33 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_GETELEMENTNAMETest extends AbstractFunctionXMLTest {
+public class FunctionXML_ATTRTest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_GETELEMENTNAME HANDLER = new FunctionXML_GETELEMENTNAME();
+  private static final FunctionXML_ATTR HANDLER = new FunctionXML_ATTR();
+
+  @Test(expected = PreprocessorException.class)
+  public void testExecution_WrongAttributeName() throws Exception {
+    HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("lasjdlksajdlksajdlksad"));
+  }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_WrongElementId() throws Exception {
-    HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("nonexistelementaaaaaaaaaaa"));
+    HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("kajshdjksaoiqweqwjdsa"), Value.valueOf("test"));
   }
 
   @Test
-  public void testExecution_RootElement() throws Exception {
-    assertEquals("root", HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT).asString());
+  public void testExecution_ExistsAttribute() throws Exception {
+    assertEquals("hello", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("attr")).asString());
+  }
+
+  @Test
+  public void testExecution_nonExistsAttribute() throws Exception {
+    assertEquals("", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("hhhmattr")).asString());
   }
 
   @Override
   public void testName() {
-    assertEquals("xml_getelementname", HANDLER.getName());
+    assertEquals("xml_attr", HANDLER.getName());
   }
 
   @Override
@@ -47,12 +57,12 @@ public class FunctionXML_GETELEMENTNAMETest extends AbstractFunctionXMLTest {
 
   @Override
   public void testArity() {
-    assertEquals(1, HANDLER.getArity());
+    assertEquals(2, HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING}});
+    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING, ValueType.STRING}});
   }
 
   @Override

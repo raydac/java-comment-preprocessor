@@ -44,6 +44,6 @@ public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
     }).when(SPY_CONTEXT).getSourceFile(any(String.class));
 
     OPENED_DOCUMENT_ID = new FunctionXML_OPEN().executeStr(SPY_CONTEXT, Value.valueOf("test.xml"));
-    OPENED_DOCUMENT_ROOT = new FunctionXML_GETROOT().executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID);
+    OPENED_DOCUMENT_ROOT = new FunctionXML_ROOT().executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID);
   }
 }

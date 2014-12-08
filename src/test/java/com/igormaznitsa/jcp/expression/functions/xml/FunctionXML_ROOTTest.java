@@ -21,31 +21,23 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_ELEMENTSNUMBERTest extends AbstractFunctionXMLTest {
+public class FunctionXML_ROOTTest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_ELEMENTSNUMBER HANDLER = new FunctionXML_ELEMENTSNUMBER();
-
-  @Test(expected = PreprocessorException.class)
-  public void testExecution_WrongElementListID() throws Exception {
-    HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("ieqoidqoiuoiq"));
-  }
+  private static final FunctionXML_ROOT HANDLER = new FunctionXML_ROOT();
 
   @Test(expected = PreprocessorException.class)
-  public void testExecution_WrongElementType() throws Exception {
-    HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID);
+  public void testExecution_WrongDocId() throws Exception {
+    HANDLER.executeStr(SPY_CONTEXT, Value.valueOf("jlskjlasjdsa123213213"));
   }
 
   @Test
   public void testExecution() throws Exception {
-    final Value languageElement = new FunctionXML_ELEMENTAT().executeStrInt(SPY_CONTEXT, new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("languages")), Value.valueOf(0L));
-    final Value elementList = new FunctionXML_GETELEMENTSFORNAME().executeStrStr(SPY_CONTEXT, languageElement, Value.valueOf("language"));
-    assertNotNull(elementList);
-    assertEquals(6L, HANDLER.executeStr(SPY_CONTEXT, elementList).asLong().longValue());
+    assertEquals(OPENED_DOCUMENT_ID.asString() + "_#root", HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID).asString());
   }
 
   @Override
   public void testName() {
-    assertEquals("xml_elementsnumber", HANDLER.getName());
+    assertEquals("xml_root", HANDLER.getName());
   }
 
   @Override
@@ -65,7 +57,7 @@ public class FunctionXML_ELEMENTSNUMBERTest extends AbstractFunctionXMLTest {
 
   @Override
   public void testResultType() {
-    assertEquals(ValueType.INT, HANDLER.getResultType());
+    assertEquals(ValueType.STRING, HANDLER.getResultType());
   }
 
 }

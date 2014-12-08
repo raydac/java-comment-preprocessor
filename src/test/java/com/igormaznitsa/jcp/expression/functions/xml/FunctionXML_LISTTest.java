@@ -21,9 +21,9 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionXML_GETELEMENTSFORNAMETest extends AbstractFunctionXMLTest {
+public class FunctionXML_LISTTest extends AbstractFunctionXMLTest {
 
-  private static final FunctionXML_GETELEMENTSFORNAME HANDLER = new FunctionXML_GETELEMENTSFORNAME();
+  private static final FunctionXML_LIST HANDLER = new FunctionXML_LIST();
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_ForWrongElement() throws Exception {
@@ -42,7 +42,7 @@ public class FunctionXML_GETELEMENTSFORNAMETest extends AbstractFunctionXMLTest 
 
   @Override
   public void testName() {
-    assertEquals("xml_getelementsforname", HANDLER.getName());
+    assertEquals("xml_list", HANDLER.getName());
   }
 
   @Override

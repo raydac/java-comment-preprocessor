@@ -11,14 +11,14 @@
 <br>
 //#local gl_curGameIndex = 0
 //#local gl_counterOutGames = 0
-//#while gl_curGameIndex<xml_elementsNumber(games_list)
-//#local gl_currentGameElement = xml_elementAt(games_list,gl_curGameIndex)
-//#if xml_elementsNumber(xml_getElementsForName(gl_currentGameElement,currentItemID))>0
-//#local gl_gameID = xml_getAttribute(gl_currentGameElement,"id")
+//#while gl_curGameIndex<xml_size(games_list)
+//#local gl_currentGameElement = xml_get(games_list,gl_curGameIndex)
+//#if xml_size(xml_list(gl_currentGameElement,currentItemID))>0
+//#local gl_gameID = xml_attr(gl_currentGameElement,"id")
 //#local gl_gamePageLink = "gpage_"+gl_gameID+".htm"
-//#local gl_gameReference = xml_elementAt(xml_getElementsForName(gl_currentGameElement,"shortreference"),0)
-//#local gl_gameReferenceName = str2web(xml_getAttribute(gl_currentGameElement,"title"))
-//#local gl_gameReferenceText = xml_getElementText(xml_elementAt(xml_getElementsForName(gl_gameReference,curLangID),0))
+//#local gl_gameReference = xml_get(xml_list(gl_currentGameElement,"shortreference"),0)
+//#local gl_gameReferenceName = str2web(xml_attr(gl_currentGameElement,"title"))
+//#local gl_gameReferenceText = xml_text(xml_get(xml_list(gl_gameReference,curLangID),0))
 //#if gl_counterOutGames!=0
 <hr align="center" noshade>
 //#endif

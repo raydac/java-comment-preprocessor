@@ -15,14 +15,14 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETELEMENTTEXT;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETATTRIBUTE;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETELEMENTSFORNAME;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ELEMENTAT;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ELEMENTSNUMBER;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_TEXT;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ATTR;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_LIST;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GET;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_SIZE;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_OPEN;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETROOT;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GETELEMENTNAME;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ROOT;
+import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_NAME;
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
@@ -58,13 +58,13 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionSTRLEN(),
     new FunctionISSUBSTR(),
     new FunctionEVALFILE(),
-    new FunctionXML_ELEMENTAT(),
-    new FunctionXML_ELEMENTSNUMBER(),
-    new FunctionXML_GETATTRIBUTE(),
-    new FunctionXML_GETROOT(),
-    new FunctionXML_GETELEMENTNAME(),
-    new FunctionXML_GETELEMENTSFORNAME(),
-    new FunctionXML_GETELEMENTTEXT(),
+    new FunctionXML_GET(),
+    new FunctionXML_SIZE(),
+    new FunctionXML_ATTR(),
+    new FunctionXML_ROOT(),
+    new FunctionXML_NAME(),
+    new FunctionXML_LIST(),
+    new FunctionXML_TEXT(),
     new FunctionXML_OPEN(),
     new FunctionXML_XLIST(),
     new FunctionXML_XELEMENT()
