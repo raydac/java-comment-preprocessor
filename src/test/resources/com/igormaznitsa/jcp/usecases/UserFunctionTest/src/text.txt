@@ -1,0 +1,3 @@
+//#action 1000,"hello",123
+hello /*$"test:"+$testfunc(1,"hry",3)$*/
+//#action 1000,"hello",123

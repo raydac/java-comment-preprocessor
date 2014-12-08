@@ -66,7 +66,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         if (!context.getPreprocessorExtension().processAction(context, results)) {
-          throw context.makeException("Extension can't process the action",null);
+          throw context.makeException("Extension can't process action ",null);
         }
       }
       catch (IOException ex) {
