@@ -31,7 +31,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "load global variable list from file defined either by path (or expression for @@ case)";
+    return "load global variable list from file defined by either path or expression (last one needs @@)";
   }
 
   @Override
@@ -51,17 +51,17 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
 
         if (context.isVerbose()){
-          context.logForVerbose("Global parameter file defined as an expression \'"+stringRest+'\'');
+          context.logForVerbose("Global parameter file defined through expression \'"+stringRest+'\'');
         }
         
         final Value resultValue = Expression.evalExpression(stringRest, context);
 
-        if (resultValue != null && resultValue.getType() == ValueType.STRING) {
-          final String fileName = resultValue.asString();
+        if (resultValue != null) {
+          final String fileName = resultValue.toString();
           file = new File(fileName);
         }
         else {
-          throw context.makeException("Wrong global variable file name expression [" + stringRest + ']',null);
+          throw context.makeException("Can't recognize expression to get global definition file [" + stringRest + ']',null);
         }
       }
       else {

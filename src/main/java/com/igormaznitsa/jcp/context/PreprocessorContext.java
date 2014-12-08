@@ -952,15 +952,20 @@ public class PreprocessorContext {
    *
    * @param fileContainer a file container which will be using the preprocessor
    * state, it must not be null
+   * @param  phaseIndex  index of phase (0 - global, 1 - preprocessing)
    * @return new generated preprocessor state
    * @throws IOException it will be throws if there is any error in opening and
    * reading operations
    */
-  public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer) throws IOException {
+  public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer, final int phaseIndex) throws IOException {
     PreprocessorUtils.assertNotNull("File container is null", fileContainer);
 
     if (verbose) {
-      logInfo("Start preprocessing for [" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + ']');
+      if (phaseIndex == 0){
+      logInfo("Start search global definitions in '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
+      }else{
+        logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
+      }
     }
     this.currentState = new PreprocessingState(fileContainer, getInCharacterEncoding(), getOutCharacterEncoding());
     return this.currentState;

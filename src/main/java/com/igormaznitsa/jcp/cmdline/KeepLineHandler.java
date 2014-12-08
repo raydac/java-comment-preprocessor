@@ -29,7 +29,7 @@ public class KeepLineHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "keep non-executing lines as commented ones";
+    return "keep line numeration in result files, print non-processed strings as commented ones";
   }
 
   @Override

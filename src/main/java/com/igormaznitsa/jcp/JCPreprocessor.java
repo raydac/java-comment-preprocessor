@@ -90,6 +90,7 @@ public final class JCPreprocessor {
 
     final File[] srcDirs = context.getSourceDirectoryAsFiles();
     final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
+    
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
     processFileExclusion(excludedIf);
@@ -141,7 +142,12 @@ public final class JCPreprocessor {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
+        final long startTime = System.currentTimeMillis();
         result.addAll(fileRef.processGlobalDirectives(null, context));
+        final long elapsedTime = System.currentTimeMillis() - startTime;
+        if (context.isVerbose()) {
+          context.logForVerbose("Global search completed for file '" + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + "', elapsed time " + elapsedTime + "ms");
+        }
       }
     }
     return result;
@@ -168,7 +174,7 @@ public final class JCPreprocessor {
         fileRef.preprocessFile(null, context);
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (context.isVerbose()){
-          context.logForVerbose("Completed file preprocessing ["+PreprocessorUtils.getFilePath(fileRef.getSourceFile())+"], elapsed time "+elapsedTime+"ms");
+          context.logForVerbose("File preprocessing completed  '"+PreprocessorUtils.getFilePath(fileRef.getSourceFile())+"', elapsed time "+elapsedTime+"ms");
         }
         prepFileCounter++;
       }

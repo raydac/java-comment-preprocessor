@@ -1,0 +1,3 @@
+hello /*$var1$*/
+see on /*$var2$*/
+end

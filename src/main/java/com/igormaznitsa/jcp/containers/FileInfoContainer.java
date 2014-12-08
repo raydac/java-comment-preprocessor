@@ -121,7 +121,7 @@ public class FileInfoContainer {
   }
 
   public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws IOException {
-    final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this) : state;
+    final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this,0) : state;
 
     String leftTrimmedString = null;
     try {
@@ -196,7 +196,7 @@ public class FileInfoContainer {
       context.clearLocalVariables();
     }
 
-    final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this);
+    final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this,1);
 
     String leftTrimmedString = null;
 

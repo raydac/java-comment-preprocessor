@@ -30,7 +30,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "set (case insensitive) file extensions which will be be excluded from preprocessing, they won't be both preprocessed and copied (default is " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ')';
+    return "set (case insensitive) file extensions which will be be excluded from preprocessing, they won't be both preprocessed and copied (by default " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ')';
   }
 
   @Override
