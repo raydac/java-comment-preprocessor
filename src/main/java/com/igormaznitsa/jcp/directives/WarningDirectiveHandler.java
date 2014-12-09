@@ -38,5 +38,8 @@ public class WarningDirectiveHandler extends ErrorDirectiveHandler {
   @Override
   protected void process(final PreprocessorContext context, final String message) {
     context.logWarning(PreprocessorUtils.processMacroses(message, context));
+    if (context.isVerbose()){
+      context.logForVerbose("Detected warning : "+message);
+    }
   }
 }

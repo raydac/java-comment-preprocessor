@@ -38,7 +38,7 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "end a global "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
+    return "end "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
   }
 
   @Override

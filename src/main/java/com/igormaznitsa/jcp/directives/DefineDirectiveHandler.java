@@ -38,7 +38,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define global(!) variable as TRUE by default or by expression result";
+    return "define global(!) variable as true (by default) or initialize it by expression result (if presented)";
   }
 
   protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){

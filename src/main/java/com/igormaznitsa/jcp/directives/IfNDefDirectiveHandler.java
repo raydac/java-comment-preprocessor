@@ -34,6 +34,6 @@ public class IfNDefDirectiveHandler extends IfDefinedDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "works like "+DIRECTIVE_PREFIX+super.getName()+" but active if a variable is not defined";
+    return "works like "+DIRECTIVE_PREFIX+super.getName()+" but active if variable is not defined";
   }
 }

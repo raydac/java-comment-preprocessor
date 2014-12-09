@@ -40,7 +40,7 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "make local definition which is visilble only in the context of the current file";
+    return "make local definition which is visilble only in the current file context";
   }
 
   @Override

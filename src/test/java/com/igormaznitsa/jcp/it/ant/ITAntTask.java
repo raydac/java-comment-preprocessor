@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.it.ant;
 import java.io.File;
 import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.types.LogLevel;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ITAntTask extends BuildFileTest {

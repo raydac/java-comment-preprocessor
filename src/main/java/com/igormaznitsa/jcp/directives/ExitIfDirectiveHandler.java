@@ -36,7 +36,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "abort current file preprocessing if flag is true and return to previous one in include stack";
+    return "return to previous one in include stack if flag is true";
   }
 
   @Override
@@ -58,7 +58,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
       state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
       result = AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
       if (context.isVerbose()){
-        context.logForVerbose("Activated "+getFullName());
+        context.logForVerbose("Detected "+getFullName()+" with active flag");
       }
     }
     return result;

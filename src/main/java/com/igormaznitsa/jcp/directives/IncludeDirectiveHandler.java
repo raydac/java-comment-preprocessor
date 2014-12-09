@@ -36,7 +36,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "include file and preprocess the file in the current context";
+    return "include file and preprocess in the current file context";
   }
 
   @Override

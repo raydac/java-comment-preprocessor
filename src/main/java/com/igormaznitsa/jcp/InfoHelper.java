@@ -68,7 +68,7 @@ public final class InfoHelper {
     result.add("Special string directives\n------------");
     result.add(makeSpecialDirectiveReference("//$", "replace macroses in following text and out result"));
     result.add(makeSpecialDirectiveReference("//$$", "works like //$ but without macros replacement"));
-    result.add(makeSpecialDirectiveReference("/*-*/", "get rid the following text "));
+    result.add(makeSpecialDirectiveReference("/*-*/", "discard the following text tail"));
 
     result.add("Operators\n------------");
     for (final AbstractOperator handler : AbstractOperator.ALL_OPERATORS) {

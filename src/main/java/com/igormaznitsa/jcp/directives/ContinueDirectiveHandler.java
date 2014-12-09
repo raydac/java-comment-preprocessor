@@ -33,7 +33,7 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "continue active " + DIRECTIVE_PREFIX + "while loop";
+    return "jump to current active " + DIRECTIVE_PREFIX + "while";
   }
 
   @Override

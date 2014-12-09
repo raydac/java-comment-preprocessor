@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
@@ -34,7 +33,7 @@ public class AbortDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "abort preprocessing and show line tail as message";
+    return "abort preprocessing and show the line tail as message (allows macroses)";
   }
 
   @Override

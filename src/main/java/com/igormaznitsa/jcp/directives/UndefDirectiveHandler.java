@@ -32,7 +32,7 @@ public class UndefDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "undefine local or global variable if it is defined";
+    return "undefine either local or global variable if it is defined";
   }
 
   @Override

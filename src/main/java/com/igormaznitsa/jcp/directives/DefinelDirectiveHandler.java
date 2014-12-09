@@ -32,7 +32,7 @@ public class DefinelDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "define local(!) variable as TRUE by default (but also allowed expression after a space)";
+    return "define local(!) variable as true (by default) or initialize it by expression result (if presented)";
   }
 
   @Override

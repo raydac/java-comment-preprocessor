@@ -33,7 +33,7 @@ public class ExitDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "abort current file preprocessing and return to previous one in include stack";
+    return "return to previous one in include stack";
   }
 
   @Override
@@ -41,7 +41,7 @@ public class ExitDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
     if (context.isVerbose()) {
-      context.logForVerbose("Activated " + getFullName());
+      context.logForVerbose("Detected " + getFullName());
     }
     return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
   }
