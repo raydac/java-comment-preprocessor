@@ -3,12 +3,13 @@ JCPreprocessor
 
 Author: Igor Maznitsa (http://www.igormaznitsa.com)
 
-It is a multi-pass preprocessor with very powerful features (like loops and global definitions accessible in all preprocessed files). The Initial version was developed in 2002 by Igor Maznitsa to make easier the development for the J2ME platform because it was very hard to support multi-variants of the same sources for different J2ME API usage variants provided in devices of different vendors. To keep the preprocessor compatible with IDE and regular Java development chain, commented directives were chosen what doesn't make any effect in the regular java development process and IDEs but allows to make changes related to external definitions.
-In 2011 the preprocessor was totaly refactored and published as an OSS project, it can be downloaded from https://code.google.com/p/java-comment-preprocessor/
-Now the preprocessor supports work by different ways:
- - as a maven plugin
- - as an ant task
- - as a standalone application called through CLI (command line interface)
+It is a multi-pass preprocessor with very powerful features (like loops and global and local definitions). The Initial version was developed in 2002 by Igor Maznitsa to make easier the development for the J2ME platform because it was very hard to support multi-variants of the same sources for different J2ME API usage variants provided in devices of different vendors. To keep the preprocessor compatible with IDE and regular Java development chain, commented directives were chosen what doesn't make any effect in the regular java development process and IDEs but allows to make changes related to external definitions.
+In 2011 the preprocessor was totally reworked and published as an OSS project on Google Code https://code.google.com/p/java-comment-preprocessor/
+Now the preprocessor supports work as :
+ - a maven plugin
+ - an ant task
+ - a standalone application called through CLI (command line interface)
+ - a Java library with direct call to JCPreprocessor class
 
 Licensing
 -----------
@@ -59,8 +60,8 @@ It is a solid project without modules so that its inside testing (especially for
 History of changes
 ----------------------
 6.0.0
-- NB! //#assert renamed to appropriate name //#echo
-- NB! renamed XML functions to appropriate ones
+- RENAMED! //#assert renamed to appropriate name //#echo
+- RENAMED! renamed XML functions to appropriate ones
   * xml_getRoot to xml_root
   * xml_elementAt to xml_get
   * xml_elementsNumber to xml_size
@@ -70,9 +71,9 @@ History of changes
   * xml_getElementText to xml_text
 
 - fixed vanished main class attribute in the manifest
-- fixed behaviour for unknown function
-- fixed //#exit and //#exitif behavior to prevent total exit and return level up on include stack
-- added //#abort directive to provide possobility to stop preprocessing immediately without errors
+- fixed unknown function notification
+- fixed //#exit and //#exitif behavior to prevent total exit and return level up in include stack
+- added //#abort directive to provide possibility to stop preprocessing immediately without errors
 - added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
 - added predefined variables '__line__','__filename__','__filefolder__' and '__file__' which allow to get name and path parameters for the current preprocessing file
 - added predefined variables '__time__','__date__' and '__timestamp__' which work similar C++ predefined macroses
@@ -86,7 +87,7 @@ History of changes
 - added '//#undefl NAME' to remove a local (!) variable from the current context, and '//#undef NAME' to remove a global definition
 - //#define and //#definel can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
 - added '//#error EXPR' and '//#warning EXPR' directives to throw exception and log warnings
-- added support of custom line end trhoug property 'jcp.line.separator'
+- added support of custom line end through property 'jcp.line.separator'
 - added '//#noautoflush' to prevent auto saving text buffers after file preprocessing
 
 5.3.4
