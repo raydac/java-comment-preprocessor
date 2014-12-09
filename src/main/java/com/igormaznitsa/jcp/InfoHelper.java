@@ -35,7 +35,7 @@ public final class InfoHelper {
   }
 
   public static String getCopyright() {
-    return "2003-2014 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+    return "2003-2015 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
   public static String getSite() {

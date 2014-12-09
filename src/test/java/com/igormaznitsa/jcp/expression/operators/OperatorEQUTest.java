@@ -31,6 +31,8 @@ public class OperatorEQUTest extends AbstractOperatorTest {
     assertExecution(Value.BOOLEAN_FALSE, "1==0");
     assertExecution(Value.BOOLEAN_TRUE, "2==2");
     assertExecution(Value.BOOLEAN_TRUE, "2.4==2.4");
+    assertExecution(Value.BOOLEAN_TRUE, "0x443==1091");
+    assertExecution(Value.BOOLEAN_TRUE, "1091==0x443");
     assertExecution(Value.BOOLEAN_TRUE, "\"test\"==\"test\"");
     assertExecution(Value.BOOLEAN_FALSE, "\"test\"==\"test2\"");
     assertExecution(Value.BOOLEAN_TRUE, "1==1.0");
