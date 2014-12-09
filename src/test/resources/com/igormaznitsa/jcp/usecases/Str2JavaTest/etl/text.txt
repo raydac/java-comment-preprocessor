@@ -13,7 +13,7 @@ public class Test {
           "System.out.println(\"Hello World\");\n"
 +"System.out.println(\"Hello World2\");\n"
         );
-        System.out.println("Just some string\n");
+        System.out.println("Just some string");
         Class c = cc.toClass();
         Hello h = (Hello)c.newInstance();
         h.say();

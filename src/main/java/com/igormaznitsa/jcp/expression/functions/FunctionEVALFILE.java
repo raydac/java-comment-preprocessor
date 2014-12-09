@@ -65,6 +65,7 @@ public class FunctionEVALFILE extends AbstractFunction {
     clonedContext.setKeepLines(false);
     clonedContext.setClearDestinationDirBefore(false);
     clonedContext.setRemoveComments(true);
+    clonedContext.setCareForLastNextLine(true);
 
     final String filePath = strfilePath.asString();
 
