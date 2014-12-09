@@ -21,6 +21,7 @@
               <include>*.pom.asc</include>
             </includes>
             <excludes>
+              <exclude>original*.*</exclude>
               <exclude>*.zip</exclude>
             </excludes>
         </fileSet>

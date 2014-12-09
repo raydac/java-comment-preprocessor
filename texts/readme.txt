@@ -25,7 +25,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.0.0</version>
+                <version>6.0.1</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -48,7 +48,7 @@ Since version 5.3.2 I public the plugin in the central Maven repository:
 
 If you don't want use the maven repository then you can install the plugin manually into your local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-6.0.0.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-6.0.1.jar -DpomFile=./pom.xml
 
 
 Building
@@ -59,6 +59,9 @@ It is a solid project without modules so that its inside testing (especially for
 
 History of changes
 ----------------------
+6.0.1
+-
+
 6.0.0
 - RENAMED! //#assert renamed to appropriate name //#echo
 - RENAMED! renamed XML functions to appropriate ones
