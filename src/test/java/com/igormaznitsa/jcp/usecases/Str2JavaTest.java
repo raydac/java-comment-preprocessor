@@ -22,11 +22,6 @@ import static org.junit.Assert.assertEquals;
 public class Str2JavaTest extends AbstractUseCaseTest {
 
   @Override
-  public boolean deleteResult() {
-    return false; //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
   public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
     assertEquals(0,stat.getNumberOfCopied());
     assertEquals(1,stat.getNumberOfPreprocessed());
