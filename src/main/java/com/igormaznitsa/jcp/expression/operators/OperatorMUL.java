@@ -32,7 +32,7 @@ public final class OperatorMUL extends AbstractOperator {
 
   @Override
   public String getReference() {
-    return "yields the product of its operands";
+    return "multiplication operator";
   }
 
   @Override
@@ -41,21 +41,22 @@ public final class OperatorMUL extends AbstractOperator {
   }
 
   public Value executeIntInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Long.valueOf(arg1.asLong().longValue() * arg2.asLong().longValue()));
+    return Value.valueOf(arg1.asLong() * arg2.asLong());
   }
 
   public Value executeIntFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asLong().floatValue() * arg2.asFloat().floatValue()));
+    return Value.valueOf(arg1.asLong().floatValue() * arg2.asFloat());
   }
 
   public Value executeFloatInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() * arg2.asLong().floatValue()));
+    return Value.valueOf(arg1.asFloat() * arg2.asLong().floatValue());
   }
 
   public Value executeFloatFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() * arg2.asFloat().floatValue()));
+    return Value.valueOf(arg1.asFloat() * arg2.asFloat());
   }
 
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.ARITHMETIC_MUL_DIV_MOD;
   }

@@ -32,7 +32,7 @@ public final class OperatorOR extends AbstractOperator {
 
   @Override
   public String getReference() {
-    return "makes OR operation over two operands, bitwise OR over numeric operands and logical OR over boolean ones";
+    return "conditional-OR and bitwise inclusive OR";
   }
 
   @Override
@@ -41,13 +41,14 @@ public final class OperatorOR extends AbstractOperator {
   }
 
   public Value executeIntInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Long.valueOf(arg1.asLong().longValue() | arg2.asLong().longValue()));
+    return Value.valueOf(arg1.asLong() | arg2.asLong());
   }
 
   public Value executeBoolBool(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(arg1.asBoolean().booleanValue() || arg2.asBoolean().booleanValue()));
+    return Value.valueOf(arg1.asBoolean() || arg2.asBoolean());
   }
 
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.LOGICAL;
   }

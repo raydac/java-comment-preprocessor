@@ -46,7 +46,7 @@ public abstract class AbstractOperatorTest {
     final String reference = operator.getReference();
     assertNotNull("The reference must not be null", reference);
     assertFalse("The reference must not be empty", reference.isEmpty());
-    assertTrue("The reference must be longer that 10 chars", reference.length() > 10);
+    assertTrue("The reference must be longer that 7 chars", reference.length() > 7);
   }
 
   public PreprocessorContext assertExecution(final Value expectedResult, final String expression) throws Exception {

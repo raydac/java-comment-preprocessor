@@ -32,7 +32,7 @@ public class OperatorNOT extends AbstractOperator {
 
   @Override
   public String getReference() {
-    return "makes NOT operation over an operand, bitwise NOT over a numeric operand and logical NOT over a boolean one";
+    return "logical complement operator and unary bitwise complement";
   }
 
   @Override
@@ -41,13 +41,14 @@ public class OperatorNOT extends AbstractOperator {
   }
 
   public Value executeInt(final Value arg1) {
-    return Value.valueOf(Long.valueOf(0xFFFFFFFFFFFFFFFFL ^ arg1.asLong().longValue()));
+    return Value.valueOf(0xFFFFFFFFFFFFFFFFL ^ arg1.asLong());
   }
 
   public Value executeBool(final Value arg1) {
-    return Value.valueOf(Boolean.valueOf(!arg1.asBoolean().booleanValue()));
+    return Value.valueOf(!arg1.asBoolean());
   }
 
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;
   }

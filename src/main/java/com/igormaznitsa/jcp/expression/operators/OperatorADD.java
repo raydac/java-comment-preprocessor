@@ -32,7 +32,7 @@ public final class OperatorADD extends AbstractOperator {
 
   @Override
   public String getReference() {
-    return "yields the sum of its operands";
+    return "additive operator (also used for string concatenation)";
   }
 
   @Override
@@ -41,19 +41,19 @@ public final class OperatorADD extends AbstractOperator {
   }
 
   public Value executeIntInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Long.valueOf(arg1.asLong().longValue() + arg2.asLong().longValue()));
+    return Value.valueOf(arg1.asLong() + arg2.asLong());
   }
 
   public Value executeFloatFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() + arg2.asFloat().floatValue()));
+    return Value.valueOf(arg1.asFloat() + arg2.asFloat());
   }
 
   public Value executeIntFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asLong().floatValue() + arg2.asFloat().floatValue()));
+    return Value.valueOf(arg1.asLong().floatValue() + arg2.asFloat());
   }
 
   public Value executeFloatInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Float.valueOf(arg1.asFloat().floatValue() + arg2.asLong().floatValue()));
+    return Value.valueOf(arg1.asFloat() + arg2.asLong().floatValue());
   }
 
   public Value executeStrAny(final Value arg1, final Value arg2) {
@@ -64,6 +64,7 @@ public final class OperatorADD extends AbstractOperator {
     return Value.valueOf(arg1.toString() + arg2.asString());
   }
 
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.ARITHMETIC_ADD_SUB;
   }

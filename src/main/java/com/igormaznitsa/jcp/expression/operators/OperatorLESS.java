@@ -32,7 +32,7 @@ public final class OperatorLESS extends AbstractOperator {
 
   @Override
   public String getReference() {
-    return "indicates whether the value of the left operand is less than the value of the right operand";
+    return "less than";
   }
 
   @Override
@@ -41,25 +41,26 @@ public final class OperatorLESS extends AbstractOperator {
   }
 
   public Value executeIntInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(arg1.asLong().longValue() < arg2.asLong().longValue()));
+    return Value.valueOf(arg1.asLong() < arg2.asLong());
   }
 
   public Value executeFloatInt(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(Float.compare(arg1.asFloat().floatValue(), arg2.asLong().floatValue()) < 0));
+    return Value.valueOf(Float.compare(arg1.asFloat(), arg2.asLong().floatValue()) < 0);
   }
 
   public Value executeIntFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(Float.compare(arg1.asLong().floatValue(), arg2.asFloat().floatValue()) < 0));
+    return Value.valueOf(Float.compare(arg1.asLong().floatValue(), arg2.asFloat()) < 0);
   }
 
   public Value executeFloatFloat(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(Float.compare(arg1.asFloat().floatValue(), arg2.asFloat().floatValue()) < 0));
+    return Value.valueOf(Float.compare(arg1.asFloat(), arg2.asFloat()) < 0);
   }
 
   public Value executeStrStr(final Value arg1, final Value arg2) {
-    return Value.valueOf(Boolean.valueOf(arg1.asString().compareTo(arg2.asString()) < 0));
+    return Value.valueOf(arg1.asString().compareTo(arg2.asString()) < 0);
   }
 
+  @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.COMPARISON;
   }
