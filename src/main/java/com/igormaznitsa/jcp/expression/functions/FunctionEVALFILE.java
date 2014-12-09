@@ -80,6 +80,10 @@ public class FunctionEVALFILE extends AbstractFunction {
       throw context.makeException("Can't find any file for path \'" + filePath + "\' in defined source folders",null);
     }
 
+    if (context.isVerbose()){
+      context.logForVerbose("Eval file '"+theFile+'\'');
+    }
+    
     try {
       final FileInfoContainer fileContainer = new FileInfoContainer(theFile, theFile.getName(), false);
       final PreprocessingState state = fileContainer.preprocessFile(null, clonedContext);

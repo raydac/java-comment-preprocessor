@@ -1,0 +1,14 @@
+//#excludeif true
+//#-
+import some.package;
+
+public class Body {
+
+public void main(){
+//#+
+System.out.println("Hello World");
+System.out.println("Hello World2");
+//#-
+  }
+}
+//#+

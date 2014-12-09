@@ -1,0 +1,19 @@
+public class Hello {
+    public void say() {
+        System.out.println("Hello");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) throws Exception {
+        ClassPool cp = ClassPool.getDefault();
+        CtClass cc = cp.get("Hello");
+        CtMethod m = cc.getDeclaredMethod("say");
+        m.insertBefore(
+          /*$str2java(evalfile("body.txt"),true)$*//*-*/""
+        );
+        Class c = cc.toClass();
+        Hello h = (Hello)c.newInstance();
+        h.say();
+    }
+}
