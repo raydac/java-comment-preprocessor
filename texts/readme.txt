@@ -93,7 +93,7 @@ History of changes
 5.3.4
 - added support of test source folder preprocessing for maven projects
 - added the "clear" maven goal to clear created preprocessing folders or any defined folders and files
-- by default the maven plugin trying to keep numeration of lines in preprocessed files (the keepLines is true by default)
+- by default the maven plugin trying to keep numeration of lines in preprocessed files (the 'keepLines' is true by default)
 
 5.3.3
 - fixed the bug in the comment removing (multiple stars before closing slash)
