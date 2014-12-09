@@ -1,0 +1,2 @@
+//#excludeif true
+Just some string

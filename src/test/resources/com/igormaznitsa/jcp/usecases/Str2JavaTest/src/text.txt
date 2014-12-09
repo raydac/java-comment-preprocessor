@@ -12,6 +12,7 @@ public class Test {
         m.insertBefore(
           /*$str2java(evalfile("body.txt"),true)$*//*-*/""
         );
+        System.out.println("/*$str2java(evalfile("str.txt"),false)$*/");
         Class c = cc.toClass();
         Hello h = (Hello)c.newInstance();
         h.say();
