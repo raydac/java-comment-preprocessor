@@ -87,7 +87,7 @@ History of changes
 - added the short variant '//#ifdef BOOL' for '//#ifdefined BOOL'
 - added '//#ifndef BOOL' to check that a variable is undefined
 - added '//#definel NAME' to define a local (!) variable as TRUE (just //#define defines a global(!) variable)
-- added '//#undefl NAME' to remove a local (!) variable from the current context, and '//#undef NAME' to remove a global definition
+- added '//#undef NAME' to remove a variable definition from context
 - //#define and //#definel can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
 - added '//#error EXPR' and '//#warning EXPR' directives to throw exception and log warnings
 - added support of custom line end through property 'jcp.line.separator'
