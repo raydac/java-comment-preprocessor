@@ -96,9 +96,8 @@ java -jar jcp-6.0.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 
 The Main idea
 ==============
-The Java language was born without any preprocessor in creator's mind and even now there are not any plans to include preprocessing into Java. It was good until mass usage Java on mobile and TV devices where we have bunches of half-compatible devices with (sometime) very bizarre standard framework implementations. In the case, preprocessing allows to decrease support of sources dramatically.
-
-    The only possible way to include preprocessing directives into Java and to not break standard processes and Java tool chain is to inject them into comments, take a look at the example below:
+The Java language was born without any preprocessor in creator's mind and even now there are not any plans to include preprocessing into Java. It was good until mass usage Java on mobile and TV devices where we have bunches of half-compatible devices with (sometime) very bizarre standard framework implementations. In the case, preprocessing allows to decrease support of sources dramatically.  
+The only possible way to include preprocessing directives into Java and to not break standard processes and Java tool chain is to inject them into comments, take a look at the example below:
 ```Java
 //#local TESTVAR="TEST LOCAL VARIABLE"
 //#echo TESTVAR=/*$TESTVAR$*/
