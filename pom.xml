@@ -9,7 +9,7 @@
 
   <name>Java Comment Preprocessor</name>
   <description>A Multi-pass java based preprocessor which directives can be injected as Java comments</description>
-  <url>http://java-comment-preprocessor.googlecode.com/</url>
+  <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,8 +18,8 @@
   </properties>
 
   <issueManagement>
-    <system>code.google.com</system>
-    <url>http://code.google.com/p/java-comment-preprocessor/issues/list</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/raydac/java-comment-preprocessor/issues</url>
   </issueManagement>
   <inceptionYear>2011</inceptionYear>
   <developers>
@@ -41,10 +41,9 @@
   </prerequisites>
    
   <scm>
-    <connection>https://java-comment-preprocessor.googlecode.com/hg/</connection>
-    <developerConnection>https://java-comment-preprocessor.googlecode.com/hg/</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://java-comment-preprocessor.googlecode.com/</url>
+    <url>https://github.com/raydac/java-comment-preprocessor</url>
+    <connection>scm:git:git://github.com/raydac/java-comment-preprocessor.git</connection>
+    <developerConnection>scm:git:git@github.com:raydac/java-comment-preprocessor.git</developerConnection>
   </scm>
     
   <organization>
