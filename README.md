@@ -41,6 +41,7 @@ How to use
 The Preprocessor can be used by different ways:
   - as ANT task, and with Android SDK
   - as Maven plugin
+  - [with Gradle through ANT task](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
   - as Java framework with direct class calls
   - as external utility through CLI (command line interface) 
 The Preprocessor is published in the Maven Central so that can be added in Maven projects without any problems
