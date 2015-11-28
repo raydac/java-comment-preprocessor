@@ -41,6 +41,7 @@ How to use
 The Preprocessor can be used by different ways:
   - as ANT task, and with Android SDK
   - as Maven plugin
+  - [with Gradle through ANT task](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
   - as Java framework with direct class calls
   - as external utility through CLI (command line interface) 
 The Preprocessor is published in the Maven Central so that can be added in Maven projects without any problems
@@ -140,3 +141,7 @@ Sometime it is very useful to remove all comments from my sources at all, JCP ha
 ```
 java -jar ./jcp-6.0.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
+Donation
+=========
+If you like the software you can make some donation to the author   
+[![https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)
