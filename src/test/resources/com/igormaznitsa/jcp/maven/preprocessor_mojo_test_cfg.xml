@@ -32,6 +32,7 @@
                     <removeComments>true</removeComments>
                     <disableOut>true</disableOut>
                     <verbose>true</verbose>
+                    <compareDestination>true</compareDestination>
                     <clear>true</clear>
                     <keepLines>true</keepLines>
                     <careForLastNextLine>true</careForLastNextLine>

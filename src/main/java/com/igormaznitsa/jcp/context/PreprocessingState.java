@@ -23,11 +23,15 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
@@ -39,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -51,6 +56,8 @@ public final class PreprocessingState {
 
   public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
 
+  public static final int MAX_WRITE_BUFFER_SIZE = 65536;
+  
   public static class ExcludeIfInfo {
 
     private final FileInfoContainer fileInfoContainer;
@@ -93,17 +100,19 @@ public final class PreprocessingState {
   private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
   private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
+  private final boolean overrideOnlyIfContentChanged;
   private ResetablePrinter currentPrinter;
   private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
   private String lastReadString;
   
-  PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding) throws IOException {
+  PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) throws IOException {
     PreprocessorUtils.assertNotNull("The root file is null", rootFile);
     PreprocessorUtils.assertNotNull("InEncoding is null",inEncoding);
     PreprocessorUtils.assertNotNull("OutEncoding is null",outEncoding);
 
+    this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
 
@@ -112,13 +121,14 @@ public final class PreprocessingState {
     rootReference = openFile(rootFile.getSourceFile());
   }
 
-  PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding) {
+  PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) {
     PreprocessorUtils.assertNotNull("The root file is null", rootFile);
     PreprocessorUtils.assertNotNull("InEncoding is null", inEncoding);
 
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
-
+    this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
+    
     this.rootFileInfo = rootFile;
     init();
     rootReference = rootContainer;
@@ -368,35 +378,57 @@ public final class PreprocessingState {
     postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
   }
 
-  public void saveBuffersToFile(final File outFile, final boolean removeComments) throws IOException {
+  public boolean saveBuffersToFile(final File outFile, final boolean removeComments) throws IOException {
     final File path = outFile.getParentFile();
 
     if (path != null && !path.exists() && !path.mkdirs()) {
       throw new IOException("Can't make directory [" + PreprocessorUtils.getFilePath(path) + ']');
     }
 
-    Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), 16384), globalOutCharacterEncoding);
+    Writer writer = null;
 
     try {
-      if (removeComments) {
-        writer = new StringWriter(prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize());
-        writePrinterBuffers(writer);
-        final String source = writer.toString();
-
-        writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), 16384), globalOutCharacterEncoding);
-        new JavaCommentsRemover(new StringReader(source), writer).process();
+      final int totatBufferedChars = prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize();
+      final int BUFFER_SIZE = Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE);
+      
+      boolean wasSaved = false;
+      
+      if (this.overrideOnlyIfContentChanged){
+        String content = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();
+        if (removeComments){
+          content = ((StringWriter)new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process()).toString();
+        }
+        
+        if (outFile.isFile()){
+          final byte [] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
+          final InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile),Math.max(16384, (int)outFile.length()));
+          if (!IOUtils.contentEquals(currentFileInputStream,new ByteArrayInputStream(contentInBinaryForm))){
+            currentFileInputStream.close();
+            FileUtils.writeByteArrayToFile(outFile, contentInBinaryForm, false);
+            wasSaved = true;
+          }
+        }
+      }else{
+        if (removeComments) {
+          final String joinedBufferContent = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();
+          writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
+          new JavaCommentsRemover(new StringReader(joinedBufferContent), writer).process();
+          wasSaved = true;
+        }
+        else {
+          writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
+          writePrinterBuffers(writer);
+          wasSaved = true;
+        }
       }
-      else {
-        writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), 16384), globalOutCharacterEncoding);
-        writePrinterBuffers(writer);
-      }
+      return wasSaved;
     }
     finally {
       IOUtils.closeQuietly(writer);
     }
   }
 
-  public void writePrinterBuffers(final Writer writer) throws IOException {
+  public Writer writePrinterBuffers(final Writer writer) throws IOException {
     if (!prefixPrinter.isEmpty()) {
       prefixPrinter.writeBufferTo(writer);
     }
@@ -408,6 +440,8 @@ public final class PreprocessingState {
     if (!postfixPrinter.isEmpty()) {
       postfixPrinter.writeBufferTo(writer);
     }
+    
+    return writer;
   }
 
   public PreprocessorException makeException(final String message, final String causeString, final Throwable cause) {

@@ -71,6 +71,14 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testCompareDestination() throws Exception {
+    antTask.setCompareDestiation(true);
+    assertTrue("Must be true", antTask.generatePreprocessorContext().isCompareDestination());
+    antTask.setCompareDestiation(false);
+    assertFalse("Must be false", antTask.generatePreprocessorContext().isCompareDestination());
+  }
+
+  @Test
   public void testSetDestination() throws Exception {
     antTask.setDestination(THIS_DIRECTORY);
     assertEquals("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());

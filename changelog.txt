@@ -1,0 +1,65 @@
+6.0.1
+- added --z option ('compareDestination' in MAVEN and ANT) to check content of existing result file and to not replace it if content equals (issue #1), by default turned off because makes some overhead
+- fixed --c argument usage in CLI, now by default the preprocessor started in CLI doesn't clear its output folder, use --c to turn it on
+- improved tests
+- minor bug-fixing
+
+6.0.0
+- bugfixing and log improvement
+- RENAMED DIRECTIVE! //#assert renamed to appropriate name //#echo
+- RENAMED FUNCTIONS! renamed XML functions to more appropriate and short names
+- xml_getRoot to xml_root
+- xml_elementAt to xml_get
+- xml_elementsNumber to xml_size
+- xml_getAttribute to xml_attr
+- xml_getElementName to xml_name
+- xml_getElementsForName to xml_list
+- xml_getElementText to xml_text
+- fixed //#exit and //#exitif behavior to prevent total exit and return level up in include stack
+- added //#abort directive to provide possibility to stop preprocessing immediately without errors
+- added function 'STR evalfile(STR)' for local preprocessing of a file body and return it as a string
+- added predefined variables 'line','filename','filefolder' and 'file' which allow to get name and path parameters for the current preprocessing file path
+- added predefined variables 'time','date' and 'timestamp' which work similar C++ predefined macroses
+- added function 'STR str2java(STR,BOOL)' to escape and split string to be presented as java sources
+- added functions 'STR str2js(STR)', 'STR str2json(STR)','STR str2xml(STR)' and 'STR str2csv(STR)'
+- added functions 'STR xml_xlist(STR,STR)' and 'STR xml_xelement(STR,STR)' which allow to use xpath to get element lists an elements
+- apache common-io and common-lang libraries have been packed into the jar and hidden
+- added the short variant '//#ifdef BOOL' for '//#ifdefined BOOL'
+- added '//#ifndef BOOL' to check that a variable is undefined
+- added '//#definel NAME' and '//#define NAME' to define local and global variables, they can use not only the default TRUE value for defined variables, but also result of expression (example: //#define ten 2*5)
+- added '//#undef NAME' to remove a variable definition from context
+- added '//#error EXPR' and '//#warning EXPR' directives to throw exception and log warnings
+- added support of custom line separator through the 'jcp.line.separator' system property
+- added '//#noautoflush' to prevent auto saving text buffers after file preprocessing
+
+5.3.4
+- added support of test source folder preprocessing for maven projects
+- added the "clear" maven goal to clear created preprocessing folders or any defined folders and files
+- by default the maven plugin trying to keep numeration of lines in preprocessed files (the 'keepLines' is true by default)
+
+5.3.3
+- fixed the bug in the comment removing (multiple stars before closing slash)
+- fixed the exception if there is not any organization tag in a project pom.xml
+- added support for '-' and '--' prefixes in CLI arguments
+- improved CLI argument error messaging
+- the license has been changed to Apache 2.0
+
+5.3.2
+- very minor refactoring.
+- fixed issue (ID 5) "Removing strings contain only spaces"
+- the first version published in the maven central
+
+5.3.1
+- very minor bug-fixing, added the main-class attribute in the preprocessor JAR Manifest 
+
+5.3
+- Added feature to keep non-executing lines as commented ones (/k command line key), all non-executing lines will be saved in the output as commented ones
+
+5.2
+- Fixed issue (ID 3). The default charset was used to read text files.
+
+5.1
+- Fixed issue (ID 1). Inaccessible functionality both "load a file with global variables" and "define global variable" through a command line call. 
+
+5.0 
+- The initial published version of totally reworked preprocessor

@@ -76,7 +76,7 @@ public class JavaCommentsRemover {
     }
   }
 
-  public void process() throws IOException {
+  public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
     final int STATE_INSIDE_STRING = 1;
     final int STATE_NEXT_SPECIAL_CHAR = 2;
@@ -150,7 +150,7 @@ public class JavaCommentsRemover {
         }
         break;
       }
-
     }
+    return dstWriter;
   }
 }

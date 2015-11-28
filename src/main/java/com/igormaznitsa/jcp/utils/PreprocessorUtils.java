@@ -20,17 +20,20 @@ import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,7 +55,7 @@ public enum PreprocessorUtils {
     LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLlineEnd;
   }
 
-  public static String getFileExtension(final File file) {
+  public static String getFileExtension (final File file) {
     String result = null;
     if (file != null) {
       result = FilenameUtils.getExtension(file.getName());
@@ -60,7 +63,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] splitExtensionCommaList(final String extensions) {
+  public static String[] splitExtensionCommaList (final String extensions) {
     PreprocessorUtils.assertNotNull("String of extensions is null", extensions);
 
     final String trimmed = extensions.trim();
@@ -80,13 +83,13 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static void assertNotNull(final String message, final Object obj) {
+  public static void assertNotNull (final String message, final Object obj) {
     if (obj == null) {
       throw new NullPointerException(message);
     }
   }
 
-  public static BufferedReader makeFileReader(final File file, final String charset, final int bufferSize) throws IOException {
+  public static BufferedReader makeFileReader (final File file, final String charset, final int bufferSize) throws IOException {
     PreprocessorUtils.assertNotNull("File is null", file);
     PreprocessorUtils.assertNotNull("Charset is null", charset);
 
@@ -106,7 +109,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] replaceChar(final String[] source, final char toBeReplaced, final char replacement) {
+  public static String[] replaceChar (final String[] source, final char toBeReplaced, final char replacement) {
     final String[] result = new String[source.length];
     int index = 0;
     for (final String curStr : source) {
@@ -115,11 +118,11 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String extractTrimmedTail(final String prefix, final String value) {
+  public static String extractTrimmedTail (final String prefix, final String value) {
     return extractTail(prefix, value).trim();
   }
 
-  public static String extractTail(final String prefix, final String value) {
+  public static String extractTail (final String prefix, final String value) {
     PreprocessorUtils.assertNotNull("Prefix is null", prefix);
     PreprocessorUtils.assertNotNull("Value is null", value);
 
@@ -130,7 +133,7 @@ public enum PreprocessorUtils {
     return value.substring(prefix.length());
   }
 
-  public static void copyFile(final File source, final File dest) throws IOException {
+  public static void copyFile (final File source, final File dest) throws IOException {
     PreprocessorUtils.assertNotNull("Source is null", source);
     PreprocessorUtils.assertNotNull("Destination file is null", dest);
 
@@ -166,7 +169,7 @@ public enum PreprocessorUtils {
     }
   }
 
-  public static String processMacroses(final String processingString, final PreprocessorContext context) {
+  public static String processMacroses (final String processingString, final PreprocessorContext context) {
     int position;
     String result = processingString;
 
@@ -196,7 +199,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  private static void checkFile(final File file) throws IOException {
+  private static void checkFile (final File file) throws IOException {
     PreprocessorUtils.assertNotNull("File is null", file);
 
     if (!file.isFile()) {
@@ -204,7 +207,7 @@ public enum PreprocessorUtils {
     }
   }
 
-  public static String[] readWholeTextFileIntoArray(final File file, final String encoding, final AtomicBoolean endedByNextLine) throws IOException {
+  public static String[] readWholeTextFileIntoArray (final File file, final String encoding, final AtomicBoolean endedByNextLine) throws IOException {
     checkFile(file);
 
     final String enc = encoding == null ? "UTF8" : encoding;
@@ -265,7 +268,7 @@ public enum PreprocessorUtils {
     return strContainer.toArray(new String[strContainer.size()]);
   }
 
-  public static byte[] readFileAsByteArray(final File file) throws IOException {
+  public static byte[] readFileAsByteArray (final File file) throws IOException {
     checkFile(file);
 
     int len = (int) file.length();
@@ -289,7 +292,7 @@ public enum PreprocessorUtils {
     return buffer.array();
   }
 
-  public static String[] splitForEqualChar(final String string) {
+  public static String[] splitForEqualChar (final String string) {
     final int index = string.indexOf('=');
 
     final String[] result;
@@ -304,7 +307,7 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] splitForChar(final String string, final char delimiter) {
+  public static String[] splitForChar (final String string, final char delimiter) {
     final char[] array = string.toCharArray();
     final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
 
@@ -329,7 +332,7 @@ public enum PreprocessorUtils {
     return tokens.toArray(new String[tokens.size()]);
   }
 
-  public static String normalizeVariableName(final String name) {
+  public static String normalizeVariableName (final String name) {
     if (name == null) {
       return null;
     }
@@ -337,7 +340,7 @@ public enum PreprocessorUtils {
     return name.trim().toLowerCase(Locale.ENGLISH);
   }
 
-  public static String getFilePath(final File file) {
+  public static String getFilePath (final File file) {
     String result = "";
     if (file != null) {
       try {
@@ -350,11 +353,11 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static void throwPreprocessorException(final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) {
+  public static void throwPreprocessorException (final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) {
     throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
   }
 
-  public static String[] replaceStringPrefix(final String[] allowedPrefixesToBeReplaced, final String replacement, final String[] strings) {
+  public static String[] replaceStringPrefix (final String[] allowedPrefixesToBeReplaced, final String replacement, final String[] strings) {
     final String[] result = new String[strings.length];
 
     for (int i = 0; i < strings.length; i++) {
@@ -381,11 +384,11 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String getNextLineCodes() {
+  public static String getNextLineCodes () {
     return System.getProperty("line.separator", "\r\n");
   }
 
-  public static String leftTrim(String rawString) {
+  public static String leftTrim (String rawString) {
     int firstNonSpace = 0;
     for (int i = 0; i < rawString.length(); i++) {
       final char ch = rawString.charAt(i);
@@ -395,5 +398,50 @@ public enum PreprocessorUtils {
       firstNonSpace++;
     }
     return rawString.substring(firstNonSpace);
+  }
+
+  public static boolean isFileContentEquals (final File src, final File dst) throws IOException {
+    if (src == null && dst == null) {
+      return true;
+    }
+    if (src == null || dst == null) {
+      return false;
+    }
+    if (src.isDirectory() && dst.isDirectory()) {
+      return true;
+    }
+    if (src.isDirectory() || dst.isDirectory()) {
+      return false;
+    }
+
+    if (src.length() != dst.length()) {
+      return false;
+    }
+
+    final int bufferSize = Math.min((int) src.length(), 65536);
+
+    final byte[] srcBuffer = new byte[bufferSize];
+    final byte[] dstBuffer = new byte[bufferSize];
+
+    final InputStream srcIn = new BufferedInputStream(new FileInputStream(src),bufferSize);
+    final InputStream dstIn = new BufferedInputStream(new FileInputStream(dst),bufferSize);
+    try {
+      while (true) {
+        final int readSrc = IOUtils.read(srcIn, srcBuffer);
+        final int readDst = IOUtils.read(dstIn, dstBuffer);
+
+        if (readDst != readSrc) return false;
+        if (readSrc == 0) break;
+        
+        if (!Arrays.equals(srcBuffer, dstBuffer)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    finally {
+      IOUtils.closeQuietly(srcIn);
+      IOUtils.closeQuietly(dstIn);
+    }
   }
 }

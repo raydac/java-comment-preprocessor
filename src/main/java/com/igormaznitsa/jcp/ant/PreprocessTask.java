@@ -104,11 +104,21 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean removeComments = false;
   private boolean keepLines = false;
   private boolean careForLastNextLine = false;
+  private boolean compareDestination = false;
 
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
   private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
 
+  /**
+   * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same content.
+   * 
+   * @param flag true if to compare destination file content, false otherwise
+   */
+  public void setCompareDestiation(final boolean flag){
+    this.compareDestination = flag;
+  }
+  
   /**
    * Set the "source" attribute, it allows to define the source directory to be
    * preprocessed
@@ -277,39 +287,40 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setPreprocessorLogger(this);
     context.registerSpecialVariableProcessor(this);
 
-    if (destinationDirectory != null) {
-      context.setDestinationDirectory(destinationDirectory.getAbsolutePath());
+    if (this.destinationDirectory != null) {
+      context.setDestinationDirectory(this.destinationDirectory.getAbsolutePath());
     }
 
-    if (sourceDirectory != null) {
-      context.setSourceDirectories(sourceDirectory.getAbsolutePath());
+    if (this.sourceDirectory != null) {
+      context.setSourceDirectories(this.sourceDirectory.getAbsolutePath());
     }
     else {
       context.setSourceDirectories(getProject().getBaseDir().getAbsolutePath());
     }
 
-    if (excludedExtensions != null) {
-      context.setExcludedFileExtensions(excludedExtensions);
+    if (this.excludedExtensions != null) {
+      context.setExcludedFileExtensions(this.excludedExtensions);
     }
 
-    if (processing != null) {
-      context.setProcessingFileExtensions(processing);
+    if (this.processing != null) {
+      context.setProcessingFileExtensions(this.processing);
     }
 
-    if (inCharSet != null) {
-      context.setInCharacterEncoding(inCharSet);
+    if (this.inCharSet != null) {
+      context.setInCharacterEncoding(this.inCharSet);
     }
 
     if (outCharSet != null) {
-      context.setOutCharacterEncoding(outCharSet);
+      context.setOutCharacterEncoding(this.outCharSet);
     }
 
-    context.setClearDestinationDirBefore(clearDstFlag);
-    context.setFileOutputDisabled(disableOut);
-    context.setRemoveComments(removeComments);
-    context.setVerbose(verbose);
-    context.setKeepLines(keepLines);
-    context.setCareForLastNextLine(careForLastNextLine);
+    context.setCompareDestination(this.compareDestination);
+    context.setClearDestinationDirBefore(this.clearDstFlag);
+    context.setFileOutputDisabled(this.disableOut);
+    context.setRemoveComments(this.removeComments);
+    context.setVerbose(this.verbose);
+    context.setKeepLines(this.keepLines);
+    context.setCareForLastNextLine(this.careForLastNextLine);
 
     fillCfgFiles(context);
     fillGlobalVars(context);

@@ -160,6 +160,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   @Parameter(name="useTestSources", defaultValue = "false")
   private boolean useTestSources;
 
+  /**
+   * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
+   */
+  @Parameter(name="compareDestination", defaultValue = "false")
+  private boolean compareDestination;
+  
   public PreprocessorMojo() {
     super();
   }
@@ -212,6 +218,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.cfgFiles;
   }
 
+  public void setCompareDestination(final boolean flag){
+    this.compareDestination = flag;
+  }
+  
+  public boolean isCompareDestination(){
+    return this.compareDestination;
+  }
+  
   public void setSource(final String source) {
     this.source = source;
   }
@@ -379,6 +393,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     info("Preprocess sources : " + context.getSourceDirectories());
     info("Preprocess destination : " + context.getDestinationDirectory());
 
+    context.setCompareDestination(this.compareDestination);
     context.setClearDestinationDirBefore(this.clear);
     context.setCareForLastNextLine(this.careForLastNextLine);
     context.setRemoveComments(this.removeComments);

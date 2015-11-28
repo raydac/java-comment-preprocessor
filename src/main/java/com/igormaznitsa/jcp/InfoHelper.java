@@ -39,7 +39,7 @@ public final class InfoHelper {
   }
 
   public static String getSite() {
-    return "Project page: http://java-comment-preprocessor.googlecode.com/";
+    return "Project page: https://github.com/raydac/java-comment-preprocessor";
   }
 
   public static String getProductName() {
@@ -53,7 +53,7 @@ public final class InfoHelper {
     result.add("");
 
     result.add("Command line directives\n------------");
-    result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes allowed\n");
+    result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes are allowed\n");
     result.add(makeColumns("@cfg_file", "file contains global definition list", 14));
     for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {    
       result.add(makeCommandLineKeyReference(handler));

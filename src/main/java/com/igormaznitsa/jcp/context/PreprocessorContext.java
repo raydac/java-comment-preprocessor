@@ -45,10 +45,11 @@ public class PreprocessorContext {
 
   private boolean verbose = false;
   private boolean removeComments = false;
-  private boolean clearDestinationDirectoryBefore = true;
+  private boolean clearDestinationDirectoryBefore = false;
   private boolean fileOutputDisabled = false;
   private boolean keepNonExecutingLines = false;
   private boolean careForLastNextLine = false;
+  private boolean compareDestination = false;
   
   private String sourceDirectories;
   private String destinationDirectory;
@@ -135,7 +136,8 @@ public class PreprocessorContext {
     this.preprocessorExtension = context.preprocessorExtension;
     this.inCharacterEncoding = context.inCharacterEncoding;
     this.outCharacterEncoding = context.outCharacterEncoding;
-
+    this.compareDestination = context.compareDestination;
+    
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
     this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
@@ -756,6 +758,24 @@ public class PreprocessorContext {
   }
 
   /**
+   * Set the flag to check before saving if the content changed.
+   * @param flag true if to check, false otherwise
+   * @return the preprocessor context
+   */
+  public PreprocessorContext setCompareDestination(final boolean flag){
+    this.compareDestination = flag;
+    return this;
+  }
+  
+  /**
+   * Check the flag to check content of existing file before saving.
+   * @return true if the content should be checked and new content must not be replaced if it is the same
+   */
+  public boolean isCompareDestination(){
+    return this.compareDestination;
+  }
+  
+  /**
    * Set the flag to keep lines as commented ones
    *
    * @param flag true if the preprocessor must keep non-executing lines,
@@ -967,7 +987,7 @@ public class PreprocessorContext {
         logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
       }
     }
-    this.currentState = new PreprocessingState(fileContainer, getInCharacterEncoding(), getOutCharacterEncoding());
+    this.currentState = new PreprocessingState(fileContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
     return this.currentState;
   }
 
@@ -983,7 +1003,7 @@ public class PreprocessorContext {
    * @return new generated preprocessing state
    */
   public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer, final TextFileDataContainer textContainer) {
-    this.currentState = new PreprocessingState(fileContainer, textContainer, getInCharacterEncoding(), getOutCharacterEncoding());
+    this.currentState = new PreprocessingState(fileContainer, textContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
     return this.currentState;
   }
 
