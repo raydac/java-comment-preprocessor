@@ -21,6 +21,7 @@ import com.igormaznitsa.jcp.expression.Value;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 
@@ -32,6 +33,8 @@ import org.apache.maven.project.MavenProject;
  */
 public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
+  private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO = Pattern.compile(".*key.*|.*pass.*", Pattern.CASE_INSENSITIVE);
+  
   private static final String[] TO_IMPORT = {
     "project.name",
     "project.version",
@@ -65,7 +68,9 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   private final MavenProject project;
 
   private void printInfoAboutVarIntoLog(final PreprocessorContext context, final String varName, final String value) {
-    context.logInfo("Added MAVEN property " + varName + '=' + value);
+    final boolean possibleContainsPrivateInfo = PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
+    final String textValue = possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
+    context.logInfo("Added MAVEN property " + varName + '=' + textValue);
   }
 
   private void addVariableIntoInsideMap(final PreprocessorContext context, final String name, final Value value) {

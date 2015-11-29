@@ -88,7 +88,9 @@ public class ITPreprocessorMojo {
     verifier.verifyTextInLog("Scanning for deletable directories");
     verifier.verifyTextInLog("Deleting directory:");
     verifier.verifyTextInLog("Cleaning has been completed");
-
+    verifier.verifyTextInLog(" mvn.project.property.some.datapass.base=***** ");
+    verifier.verifyTextInLog(" mvn.project.property.some.private.key=***** ");
+    
     final JarAnalyzer jarAnalyzer = new JarAnalyzer(resultJar);
     List<JarEntry> classEntries;
     try {

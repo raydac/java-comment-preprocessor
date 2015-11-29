@@ -61,7 +61,44 @@
 
   <profiles>
     <profile>
-      <id>MakeDistributive</id>
+      <id>integration-tests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.19</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <encoding>UTF-8</encoding>
+              <systemProperties>
+                <property>
+                  <!-- Unfortunately there is not any legal way to get the maven home -->
+                  <name>maven.home</name>
+                  <value>${maven.home}</value>
+                </property>
+                <property>
+                  <name>plugin.jar</name>
+                  <value>${project.build.directory}/${project.build.finalName}.jar</value>
+                </property>
+                <property>
+                  <name>project.pom</name>
+                  <value>${basedir}/pom.xml</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>prepare-distributive</id>
       <build>
         <plugins>
           <plugin>
@@ -312,37 +349,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <encoding>UTF-8</encoding>
-          <systemProperties>
-            <property>
-              <!-- Unfortunately there is not any legal way to get the maven home -->
-              <name>maven.home</name>
-              <value>${maven.home}</value>
-            </property>
-            <property>
-              <name>plugin.jar</name>
-              <value>${project.build.directory}/${project.build.finalName}.jar</value>
-            </property>
-            <property>
-              <name>project.pom</name>
-              <value>${basedir}/pom.xml</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-            
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>

@@ -13,6 +13,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <some.private.key>worldUniverse</some.private.key>
+    <some.dataPass.base>helloBase</some.dataPass.base>
   </properties>
 
   <prerequisites>
