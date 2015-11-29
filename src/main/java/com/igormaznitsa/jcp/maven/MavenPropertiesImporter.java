@@ -33,7 +33,7 @@ import org.apache.maven.project.MavenProject;
  */
 public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
-  private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO = Pattern.compile(".*key.*|.*pass.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO = Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
   
   private static final String[] TO_IMPORT = {
     "project.name",
