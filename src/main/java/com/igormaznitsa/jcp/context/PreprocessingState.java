@@ -399,14 +399,21 @@ public final class PreprocessingState {
           content = ((StringWriter)new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process()).toString();
         }
         
-        if (outFile.isFile()){
-          final byte [] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
-          final InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile),Math.max(16384, (int)outFile.length()));
-          if (!IOUtils.contentEquals(currentFileInputStream,new ByteArrayInputStream(contentInBinaryForm))){
-            currentFileInputStream.close();
-            FileUtils.writeByteArrayToFile(outFile, contentInBinaryForm, false);
-            wasSaved = true;
+        boolean needWrite = true; // better write than not
+        final byte [] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
+        if (outFile.isFile() && outFile.length() == contentInBinaryForm.length) {
+          // If file exists and has the same content, then skip overwriting it
+          InputStream currentFileInputStream = null;
+          try {
+            currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile),Math.max(16384, (int)outFile.length()));
+            needWrite = !IOUtils.contentEquals(currentFileInputStream,new ByteArrayInputStream(contentInBinaryForm));
+          } finally {
+            IOUtils.closeQuietly(currentFileInputStream);
           }
+        }
+        if (needWrite) {
+          FileUtils.writeByteArrayToFile(outFile, contentInBinaryForm, false);
+          wasSaved = true;
         }
       }else{
         if (removeComments) {
