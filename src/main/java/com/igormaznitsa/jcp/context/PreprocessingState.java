@@ -106,12 +106,15 @@ public final class PreprocessingState {
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
   private String lastReadString;
+  private final PreprocessorContext context;
   
-  PreprocessingState(final FileInfoContainer rootFile, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) throws IOException {
+  PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) throws IOException {
     PreprocessorUtils.assertNotNull("The root file is null", rootFile);
     PreprocessorUtils.assertNotNull("InEncoding is null",inEncoding);
     PreprocessorUtils.assertNotNull("OutEncoding is null",outEncoding);
 
+    this.context = context;
+    
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
@@ -121,10 +124,12 @@ public final class PreprocessingState {
     rootReference = openFile(rootFile.getSourceFile());
   }
 
-  PreprocessingState(final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) {
+  PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile, final TextFileDataContainer rootContainer, final String inEncoding, final String outEncoding, final boolean overrideOnlyIfContentChanged) {
     PreprocessorUtils.assertNotNull("The root file is null", rootFile);
     PreprocessorUtils.assertNotNull("InEncoding is null", inEncoding);
 
+    this.context = context;
+    
     this.globalInCharacterEncoding = inEncoding;
     this.globalOutCharacterEncoding = outEncoding;
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
@@ -402,6 +407,7 @@ public final class PreprocessingState {
         if (outFile.isFile()){
           final byte [] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
           final InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile),Math.max(16384, (int)outFile.length()));
+          
           if (!IOUtils.contentEquals(currentFileInputStream,new ByteArrayInputStream(contentInBinaryForm))){
             currentFileInputStream.close();
             FileUtils.writeByteArrayToFile(outFile, contentInBinaryForm, false);

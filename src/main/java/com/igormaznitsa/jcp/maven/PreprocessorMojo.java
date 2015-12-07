@@ -397,7 +397,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setClearDestinationDirBefore(this.clear);
     context.setCareForLastNextLine(this.careForLastNextLine);
     context.setRemoveComments(this.removeComments);
-    context.setVerbose(this.verbose);
+    context.setVerbose(getLog().isDebugEnabled() || this.verbose);
     context.setKeepLines(this.keepLines);
     context.setFileOutputDisabled(this.disableOut);
 
@@ -453,12 +453,17 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   }
 
   @Override
-  public void info(String message) {
+  public void info(final String message) {
     getLog().info(message);
   }
 
   @Override
-  public void warning(String message) {
+  public void warning(final String message) {
     getLog().warn(message);
+  }
+
+  @Override
+  public void debug(final String message) {
+    getLog().debug(message);
   }
 }

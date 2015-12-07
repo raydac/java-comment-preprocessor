@@ -21,7 +21,14 @@ package com.igormaznitsa.jcp.logger;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class SystemOutLogger implements PreprocessorLogger {
+  
+  /**
+   * Name of system property to enable debug level logging.
+   */
+  public static final String PROPERTY_DEBUG_FLAG = "jcp.log.debug";
 
+  private static final boolean FLAG_DEBUG_LEVEL = Boolean.parseBoolean(System.getProperty(PROPERTY_DEBUG_FLAG));
+  
   @Override
   public void error(final String text) {
     if (text != null) {
@@ -42,6 +49,14 @@ public class SystemOutLogger implements PreprocessorLogger {
   public void warning(final String text) {
     if (text != null) {
       final String out = "[JCP.WARN] " + text;
+      System.out.println(out);
+    }
+  }
+
+  @Override
+  public void debug(final String text) {
+    if (FLAG_DEBUG_LEVEL && text != null) {
+      final String out = "[JCP.DEBUG] " + text;
       System.out.println(out);
     }
   }

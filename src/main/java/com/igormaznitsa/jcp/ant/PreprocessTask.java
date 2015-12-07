@@ -363,6 +363,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
+  public void debug(final String message) {
+    log(message, Project.MSG_DEBUG);
+  }
+
+  @Override
   public void warning(final String message) {
     log(message, Project.MSG_WARN);
   }

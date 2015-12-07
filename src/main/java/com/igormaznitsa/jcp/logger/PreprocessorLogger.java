@@ -37,6 +37,13 @@ public interface PreprocessorLogger {
   void info(String message);
 
   /**
+   * Log a debug message
+   *
+   * @param message the text to be output into the information log
+   */
+  void debug(String message);
+
+  /**
    * Log a warning message
    *
    * @param message the text to be output into the warning log

@@ -987,7 +987,7 @@ public class PreprocessorContext {
         logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
       }
     }
-    this.currentState = new PreprocessingState(fileContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
+    this.currentState = new PreprocessingState(this, fileContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
     return this.currentState;
   }
 
@@ -1003,7 +1003,7 @@ public class PreprocessorContext {
    * @return new generated preprocessing state
    */
   public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer, final TextFileDataContainer textContainer) {
-    this.currentState = new PreprocessingState(fileContainer, textContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
+    this.currentState = new PreprocessingState(this, fileContainer, textContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
     return this.currentState;
   }
 
