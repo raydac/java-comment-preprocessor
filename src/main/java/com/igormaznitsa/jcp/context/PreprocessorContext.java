@@ -184,12 +184,9 @@ public class PreprocessorContext {
    * @param text a String to be printed into the information log, it can be null
    */
   public void logInfo(final String text) {
-
-    if (text == null || preprocessorLogger == null) {
-      return;
+    if (text != null && this.preprocessorLogger != null) {
+      this.preprocessorLogger.info(text);
     }
-
-    preprocessorLogger.info(text);
   }
 
   /**
@@ -198,22 +195,32 @@ public class PreprocessorContext {
    * @param text a String to be printed into the error log, it can be null
    */
   public void logError(final String text) {
-    if (text == null || preprocessorLogger == null) {
-      return;
+    if (text != null && this.preprocessorLogger != null) {
+      this.preprocessorLogger.error(text);
     }
-    preprocessorLogger.error(text);
   }
 
+  /**
+   * Print some debug info into the current log
+   *
+   * @param text a String to be printed into the error log, it can be null
+   * @since 6.0.1
+   */
+  public void logDebug(final String text){
+    if (text != null && this.preprocessorLogger != null) {
+      this.preprocessorLogger.debug(text);
+    }
+  }
+  
   /**
    * Print an information about a warning situation into the current log
    *
    * @param text a String to be printed into the warning log, it can be null
    */
   public void logWarning(final String text) {
-    if (text == null || preprocessorLogger == null) {
-      return;
+    if (text != null || this.preprocessorLogger != null) {
+      this.preprocessorLogger.warning(text);
     }
-    preprocessorLogger.warning(text);
   }
 
   /**

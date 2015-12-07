@@ -40,6 +40,7 @@ public interface PreprocessorLogger {
    * Log a debug message
    *
    * @param message the text to be output into the information log
+   * @since 6.0.1
    */
   void debug(String message);
 
