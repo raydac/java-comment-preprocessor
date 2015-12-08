@@ -1,3 +1,5 @@
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|6.0.1|jar)
+
 Introduction
 =============
 It is the most powerful multi-pass preprocessor for Java but also it can be used everywhere for text processing if the destination technology supports Java like comment definitions. The Initial version was developed in 2002 by Igor Maznitsa to make easier development for J2ME platform to avoid bunch of repeated class sources for different devices, so that the preprocessor is a powerful tool to avoid DRY (Don't Repeat Yourself) problems. Injection of preprocessor directives into Java comments allows to keep full compatibility with standard Java development chain and make transparent usage in all Java IDEs. 
@@ -8,6 +10,13 @@ The Latest prebuilt version
 
 Changelog
 ==========
+- **6.0.1**
+  - improved the MAVEN plugin to hide content of potentially sensitive properties from printing into Maven log (issue #2)
+  - added --z option ('compareDestination' in MAVEN and ANT) to check content of existing result file and to not replace it if content equals (issue #1), by default turned off because makes some overhead
+  - fixed --c argument usage in CLI, now by default the preprocessor started in CLI doesn't clear its output folder, use --c to turn it on
+  - improved tests
+  - minor bug-fixing
+
 - **6.0.0**
   - bugfixing and log improvement
   - RENAMED DIRECTIVE! //#assert renamed to appropriate name //#echo
@@ -52,7 +61,7 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.0.0</version>
+                <version>6.0.1</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -78,13 +87,13 @@ How to use from command line
 =============================
 The Preprocessor jar can be started under Java as a console application. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
 ```
-java -jar jcp-6.0.0.jar  --i:./test --o:./result
+java -jar jcp-6.0.1.jar  --i:./test --o:./result
 ```
 The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions) 
 
 More complex example:
 ```
-java -jar jcp-6.0.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-6.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -94,6 +103,7 @@ java -jar jcp-6.0.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - --i use ./test as source folder
 - --o use ./result as destination folder
 - --p define named global variable HelloWorld? with the 'Hello world' content 
+- --z turn on checking of file content before replacement, if the same content then preprocessor will not replace the file  
 
 The Main idea
 ==============
