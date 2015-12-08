@@ -25,7 +25,7 @@ Since version 5.3.2 I public the released plugin versions in the central Maven r
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.0.1</version>
+                <version>6.0.2</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -48,7 +48,7 @@ Since version 5.3.2 I public the released plugin versions in the central Maven r
 
 If you don't want use the maven repository then you can install the plugin manually into your local maven repository with the install:install-file goal:
 
-    mvn install:install-file -Dfile=./jcp-6.0.1.jar -DpomFile=./pom.xml
+    mvn install:install-file -Dfile=./jcp-6.0.2.jar -DpomFile=./pom.xml
 
 
 Building
