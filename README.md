@@ -4,10 +4,6 @@ Introduction
 =============
 It is the most powerful multi-pass preprocessor for Java but also it can be used everywhere for text processing if the destination technology supports Java like comment definitions. The Initial version was developed in 2002 by Igor Maznitsa to make easier development for J2ME platform to avoid bunch of repeated class sources for different devices, so that the preprocessor is a powerful tool to avoid DRY (Don't Repeat Yourself) problems. Injection of preprocessor directives into Java comments allows to keep full compatibility with standard Java development chain and make transparent usage in all Java IDEs. 
 
-The Latest prebuilt version
-============================
-[The Version 6.0.0](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|6.0.0|maven-plugin)
-
 Changelog
 ==========
 - **6.0.1**
