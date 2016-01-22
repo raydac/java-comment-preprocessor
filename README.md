@@ -44,6 +44,8 @@ Changelog
   
 How to use
 ===========
+[The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
+
 The Preprocessor can be used by different ways:
   - as ANT task, and with Android SDK
   - as Maven plugin
