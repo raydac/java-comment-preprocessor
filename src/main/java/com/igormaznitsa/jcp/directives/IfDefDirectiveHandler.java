@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 /**
  * The class implements short synonym for the //#ifdefined directive 
  *
@@ -23,11 +25,13 @@ package com.igormaznitsa.jcp.directives;
 public class IfDefDirectiveHandler extends IfDefinedDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "ifdef";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "the short variant of "+ DIRECTIVE_PREFIX + super.getName();
   }
@@ -38,6 +42,7 @@ public class IfDefDirectiveHandler extends IfDefinedDirectiveHandler {
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.VARNAME;
   }

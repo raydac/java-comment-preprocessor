@@ -15,10 +15,15 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import org.w3c.dom.Element;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the xml_getelementtext function handler
@@ -30,11 +35,13 @@ public final class FunctionXML_TEXT extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "xml_text";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value elementid) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value elementid) {
     final Element element = getCachedElement(context, elementid.asString());
     return Value.valueOf(element.getTextContent());
   }
@@ -45,16 +52,20 @@ public final class FunctionXML_TEXT extends AbstractXMLFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "get element text content, text of children also included";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

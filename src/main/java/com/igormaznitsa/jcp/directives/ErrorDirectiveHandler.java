@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
@@ -27,28 +29,32 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "error";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.EXPRESSTION;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "throw fatal preprocessor exception with message and stop work";
   }
 
-  protected void process(final PreprocessorContext context, final String message) {
+  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String message) {
     final String text = PreprocessorUtils.processMacroses(message, context);
     context.logError(text);
     throw context.makeException(text, null);
   }
  
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String trimmedString, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String trimmedString, @Nonnull final PreprocessorContext context) {
     final String message = trimmedString.isEmpty() ? "Thrown fatal error" : Expression.evalExpression(trimmedString, context).toString();
     process(context, message);
     return AfterDirectiveProcessingBehaviour.PROCESSED;

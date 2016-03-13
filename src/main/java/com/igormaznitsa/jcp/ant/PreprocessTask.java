@@ -21,6 +21,7 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +29,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+
+import com.igormaznitsa.meta.annotation.ImplementationNote;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * The class implements an ANT task to allow calls for preprocessing from ANT
@@ -48,14 +57,16 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    *
    * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
    */
+  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
   public static class CfgFile {
 
     private File file;
 
-    public void setFile(final File file) {
-      this.file = file;
+    public void setFile(@Nonnull final File file) {
+      this.file = Assertions.assertNotNull(file);
     }
 
+    @Nullable
     public File getFile() {
       return this.file;
     }
@@ -69,23 +80,26 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    *
    * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
    */
+  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
   public static class Global {
 
     private String name;
     private String value;
 
-    public void setName(final String name) {
-      this.name = name;
+    public void setName(@Nonnull final String name) {
+      this.name = Assertions.assertNotNull(name);
     }
-
+  
+    @Nullable
     public String getName() {
       return this.name;
     }
 
-    public void setValue(final String value) {
-      this.value = value;
+    public void setValue(@Nonnull final String value) {
+      this.value = Assertions.assertNotNull(value);
     }
 
+    @Nullable
     public String getValue() {
       return this.value;
     }
@@ -125,7 +139,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    *
    * @param src a directory to be used as the source one, must not be null
    */
-  public void setSource(final File src) {
+  public void setSource(@Nonnull final File src) {
     this.sourceDirectory = src;
   }
 
@@ -144,7 +158,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    *
    * @param dst a directory to be used as the destination one, must not be null
    */
-  public void setDestination(final File dst) {
+  public void setDestination(@Nonnull final File dst) {
     this.destinationDirectory = dst;
   }
 
@@ -155,7 +169,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    * @param charSet the character set to be used to decode read texts, must not
    * be null
    */
-  public void setInCharset(final String charSet) {
+  public void setInCharset(@Nonnull final String charSet) {
     this.inCharSet = charSet;
   }
 
@@ -166,7 +180,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    * @param charSet the character set to be used to encode written texts, must
    * not be null
    */
-  public void setOutCharset(final String charSet) {
+  public void setOutCharset(@Nonnull final String charSet) {
     this.outCharSet = charSet;
   }
 
@@ -177,7 +191,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    *
    * @param ext the list of ignored file extensions, must not be null
    */
-  public void setExcluded(final String ext) {
+  public void setExcluded(@Nonnull final String ext) {
     this.excludedExtensions = ext;
   }
 
@@ -188,7 +202,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    * @param ext the list of file extensions which should be preprocessed, must
    * not be null
    */
-  public void setProcessing(final String ext) {
+  public void setProcessing(@Nonnull final String ext) {
     this.processing = ext;
   }
 
@@ -246,40 +260,35 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     this.disableOut = flag;
   }
 
+  @Nonnull
+  @ImplementationNote("Do not change because for ANT!")
   public Global createGlobal() {
     final Global result = new Global();
     globalVariables.add(result);
     return result;
   }
 
+  @Nonnull
+  @ImplementationNote("Do not change because for ANT!")
   public CfgFile createCfgFile() {
     final CfgFile result = new CfgFile();
     configFiles.add(result);
     return result;
   }
 
-  private void fillCfgFiles(final PreprocessorContext context) {
+  private void fillCfgFiles(@Nonnull final PreprocessorContext context) {
     for (final CfgFile f : configFiles) {
-      if (f.getFile() != null) {
-        context.addConfigFile(f.getFile());
-      }
-      else {
-        throw context.makeException("A Config file record doesn't contain the 'file' attribute",null);
-      }
+       context.addConfigFile(f.getFile());
     }
   }
 
-  private void fillGlobalVars(final PreprocessorContext context) {
+  private void fillGlobalVars(@Nonnull final PreprocessorContext context) {
     for (final Global g : globalVariables) {
-      if (g.getName() != null && g.getValue() != null) {
-        context.setGlobalVariable(g.getName(), Value.recognizeRawString(g.getValue()));
-      }
-      else {
-        throw context.makeException("Wrong global definition, may be there is neither 'name' nor 'value' attribute",null);
-      }
+      context.setGlobalVariable(g.getName(), Value.recognizeRawString(g.getValue()));
     }
   }
 
+  @Nonnull
   PreprocessorContext generatePreprocessorContext() {
     fillAntVariables();
 
@@ -353,22 +362,22 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  public void error(final String message) {
+  public void error(@Nullable final String message) {
     log(message, Project.MSG_ERR);
   }
 
   @Override
-  public void info(final String message) {
+  public void info(@Nullable final String message) {
     log(message, Project.MSG_INFO);
   }
 
   @Override
-  public void debug(final String message) {
+  public void debug(@Nullable final String message) {
     log(message, Project.MSG_DEBUG);
   }
 
   @Override
-  public void warning(final String message) {
+  public void warning(@Nullable final String message) {
     log(message, Project.MSG_WARN);
   }
 
@@ -396,6 +405,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public String[] getVariableNames() {
     String[] result;
 
@@ -410,7 +421,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  public Value getVariable(final String varName, final PreprocessorContext context) {
+  @Nonnull
+  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     if (antVariables == null) {
       throw context.makeException("Non-initialized ANT property map detected",null);
     }
@@ -423,7 +435,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
     throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!",null);
   }
 }

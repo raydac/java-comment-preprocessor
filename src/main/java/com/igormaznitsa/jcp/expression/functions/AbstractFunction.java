@@ -28,7 +28,13 @@ import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.xml.*;
+
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The abstract class is the base for each function handler in the preprocessor
@@ -79,7 +85,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-  public static <E extends AbstractFunction> E findForClass(final Class<E> functionClass) {
+  @Nullable
+  public static <E extends AbstractFunction> E findForClass(@Nonnull final Class<E> functionClass) {
     E result = null;
     for (final AbstractFunction function : ALL_FUNCTIONS) {
       if (function.getClass() == functionClass) {
@@ -102,7 +109,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-  public static AbstractFunction findForName(final String str) {
+  @Nullable
+  public static AbstractFunction findForName(@Nonnull final String str) {
     AbstractFunction result = null;
     for (final AbstractFunction func : ALL_FUNCTIONS) {
       if (func.getName().equals(str)) {
@@ -118,6 +126,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function name in lower case, must not be null
    */
+  @Nonnull
   public abstract String getName();
 
   /**
@@ -125,6 +134,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function information as a String, must not be null
    */
+  @Nonnull
   public abstract String getReference();
 
   /**
@@ -140,6 +150,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the array of argument type combinations allowed by the function
    * handler, must not be null
    */
+  @Nonnull
+  @MustNotContainNull
   public abstract ValueType[][] getAllowedArgumentTypes();
 
   /**
@@ -147,6 +159,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the result type of the function, must not be null
    */
+  @Nonnull
   public abstract ValueType getResultType();
 
   /**
@@ -155,6 +168,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the expression item priority for the function, must not be null
    */
   @Override
+  @Nonnull
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;
   }
@@ -166,11 +180,13 @@ public abstract class AbstractFunction implements ExpressionItem {
    * ExpressionItemType.FUNCTION
    */
   @Override
+  @Nonnull
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.FUNCTION;
   }
 
   @Override
+  @Nullable
   public String toString() {
     return "FUNCTION: " + getName();
   }

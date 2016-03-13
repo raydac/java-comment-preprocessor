@@ -17,6 +17,10 @@ package com.igormaznitsa.jcp.exceptions;
 
 import java.io.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+
 /**
  * The exception allows to save some useful data about preprocessing files like
  * the current include stack and the error string index
@@ -30,13 +34,14 @@ public class PreprocessorException extends RuntimeException {
   private final String processingString;
   private transient final FilePositionInfo[] includeStack;
 
-  public PreprocessorException(final String message, final String processedText, final FilePositionInfo[] includeStack, final Throwable cause) {
+  public PreprocessorException(@Nullable final String message, @Nullable final String processedText, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final Throwable cause) {
     super(message, cause);
 
     this.processingString = processedText;
     this.includeStack = includeStack == null ? new FilePositionInfo[0] : includeStack.clone();
   }
 
+  @Nullable
   public File getRootFile() {
     if (includeStack.length == 0) {
       return null;
@@ -46,6 +51,7 @@ public class PreprocessorException extends RuntimeException {
     }
   }
 
+  @Nullable
   public File getProcessingFile() {
     if (includeStack.length == 0) {
       return null;
@@ -64,10 +70,12 @@ public class PreprocessorException extends RuntimeException {
     }
   }
 
+  @Nullable
   public String getProcessingString() {
     return processingString;
   }
 
+  @Nullable
   private String convertIncludeStackToString() {
     final StringBuilder result = new StringBuilder();
     for (int i = 0; i < this.includeStack.length; i++) {
@@ -79,18 +87,22 @@ public class PreprocessorException extends RuntimeException {
     return result.toString();
   }
 
+  @Nonnull
+  @MustNotContainNull
   public FilePositionInfo[] getIncludeChain() {
     return this.includeStack.clone();
   }
 
   @Override
+  @Nonnull
   public String toString() {
     final StringBuilder result = new StringBuilder();
     result.append(getMessage()).append(", include stack: ").append(convertIncludeStackToString()).append(", source line: ").append(this.processingString);
     return result.toString();
   }
   
-  private static String makeStackView(final FilePositionInfo[] list, final char fill) {
+  @Nonnull
+  private static String makeStackView(@Nullable @MustNotContainNull final FilePositionInfo[] list, final char fill) {
     if (list == null || list.length == 0) {
       return "";
     }
@@ -119,7 +131,8 @@ public class PreprocessorException extends RuntimeException {
     return builder.toString();
   }
   
-  public static PreprocessorException extractPreprocessorException(final Throwable thr){
+  @Nullable
+  public static PreprocessorException extractPreprocessorException(@Nullable final Throwable thr){
     if (thr == null) return null;
     Throwable result = thr;
     do{
@@ -129,7 +142,8 @@ public class PreprocessorException extends RuntimeException {
     return null;
   }
 
-  public static String referenceAsString(final char fillChar, final Throwable thr) {
+  @Nonnull
+  public static String referenceAsString(final char fillChar, @Nullable final Throwable thr) {
     if (thr == null) {
       return "";
     }

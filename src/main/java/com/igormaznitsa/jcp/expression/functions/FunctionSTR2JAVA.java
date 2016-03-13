@@ -15,11 +15,16 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements escape function handler to escape strings to be used in java.
@@ -31,11 +36,13 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.BOOLEAN}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "str2java";
   }
 
-  public Value executeStrBool(final PreprocessorContext context, final Value source, final Value splitAndQuoteLines) {
+  @Nonnull
+  public Value executeStrBool(@Nonnull final PreprocessorContext context, @Nonnull final Value source, @Nonnull final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()){
       final boolean endsWithNextLine = source.asString().endsWith("\n");
       final String [] splitted = source.asString().split("\\n");
@@ -67,16 +74,20 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "escapes a string to be compatible with java";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

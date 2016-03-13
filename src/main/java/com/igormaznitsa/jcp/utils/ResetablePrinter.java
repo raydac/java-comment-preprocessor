@@ -19,6 +19,8 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.annotation.Nonnull;
+
 /**
  * The class implements a resetable char printer
  *
@@ -36,7 +38,7 @@ public class ResetablePrinter {
     return outStream.size() == 0;
   }
 
-  public void writeBufferTo(final Writer writer) throws IOException {
+  public void writeBufferTo(@Nonnull final Writer writer) throws IOException {
     outStream.flush();
     writer.write(outStream.toCharArray());
     writer.flush();
@@ -50,13 +52,13 @@ public class ResetablePrinter {
     outStream.reset();
   }
 
-  public void print(final String text) throws IOException {
+  public void print(@Nonnull final String text) throws IOException {
     for (final char chr : text.toCharArray()) {
       outStream.write(chr);
     }
   }
 
-  public void println(final String text) throws IOException {
+  public void println(@Nonnull final String text) throws IOException {
     for (final char chr : text.toCharArray()) {
       outStream.write(chr);
     }

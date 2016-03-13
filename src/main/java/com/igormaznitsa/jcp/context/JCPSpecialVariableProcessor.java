@@ -20,8 +20,14 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the special variable processor interface and allows to
@@ -55,20 +61,24 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     private final String name;
     private final String reference;
     
-    private NameReferencePair(final String name, final String reference){
+    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference){
       this.name = name;
       this.reference = reference;
     }
     
+    @Nonnull
     public String getName(){
       return this.name;
     }
     
+    @Nonnull
     public String getReference(){
       return this.reference;
     }
   }
   
+  @Nonnull
+  @MustNotContainNull
   public static List<NameReferencePair> getReference(){
     final List<NameReferencePair> result = new ArrayList<NameReferencePair>();
     
@@ -93,6 +103,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
   
   @Override
+  @Nonnull
+  @MustNotContainNull
   public String[] getVariableNames() {
     return new String[]{
       VAR_DEST_DIR,
@@ -113,7 +125,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public Value getVariable(final String varName, final PreprocessorContext context) {
+  @Nullable
+  public Value getVariable(@Nonnull final String varName, @Nullable final PreprocessorContext context) {
     final PreprocessingState state = context == null ? null:context.getPreprocessingState();
 
     if (VAR_DEST_DIR.equals(varName)) {
@@ -167,7 +180,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nullable final PreprocessorContext context) {
     final PreprocessingState state = context == null ? null : context.getPreprocessingState();
     if (VAR_DEST_DIR.equals(varName)) {
       if (value.getType() != ValueType.STRING) {

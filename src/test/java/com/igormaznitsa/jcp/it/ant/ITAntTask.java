@@ -31,7 +31,6 @@ public class ITAntTask extends BuildFileTest {
 
   @Test
   public void testPreprocess() {
-
     executeTarget("preprocess");
   }
 }

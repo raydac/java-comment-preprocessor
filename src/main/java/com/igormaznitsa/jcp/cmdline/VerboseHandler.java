@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.cmdline;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -28,12 +30,13 @@ public class VerboseHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/V";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "turn on verbose logging, verbose messages printed in info stream";
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
@@ -45,6 +48,7 @@ public class VerboseHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

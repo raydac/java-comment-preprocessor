@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
@@ -27,22 +28,26 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class AbortDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "abort";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "abort preprocessing and show the line tail as message (allows macroses)";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String rawTail, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
     final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
     final String message = "ABORT: "+PreprocessorUtils.processMacroses(normal, context);
     if (context.isVerbose()) {

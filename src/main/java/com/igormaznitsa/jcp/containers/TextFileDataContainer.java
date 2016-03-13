@@ -15,8 +15,11 @@
  */
 package com.igormaznitsa.jcp.containers;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import java.io.File;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class contains text data of a file and the string position index for the
@@ -44,10 +47,13 @@ public final class TextFileDataContainer {
     return this.autoFlush;
   }
   
+  @Nonnull
+  @MustNotContainNull
   public String[] getText() {
     return text.clone();
   }
 
+  @Nonnull
   public File getFile() {
     return file;
   }
@@ -60,6 +66,7 @@ public final class TextFileDataContainer {
     return this.nextStringIndex<this.text.length ? true : fileEndedByNextLine;
   }
   
+  @Nullable
   public String nextLine() {
     if (nextStringIndex >= text.length) {
       return null;
@@ -84,13 +91,13 @@ public final class TextFileDataContainer {
     return nextStringIndex;
   }
 
-  public TextFileDataContainer(final TextFileDataContainer item, final int stringIndex) {
+  public TextFileDataContainer(@Nonnull final TextFileDataContainer item, final int stringIndex) {
     this(item.file, item.text, item.fileEndedByNextLine, stringIndex);
   }
 
-  public TextFileDataContainer(final File currentFile, final String[] text, final boolean fileEndedByNextLine, final int stringIndex) {
-    PreprocessorUtils.assertNotNull("File is null", currentFile);
-    PreprocessorUtils.assertNotNull("Text is null", text);
+  public TextFileDataContainer(@Nonnull final File currentFile, @Nonnull @MustNotContainNull final String[] text, final boolean fileEndedByNextLine, final int stringIndex) {
+    assertNotNull("File is null", currentFile);
+    assertNotNull("Text is null", text);
     this.file = currentFile;
     this.text = text;
     setNextStringIndex(stringIndex);
@@ -103,7 +110,7 @@ public final class TextFileDataContainer {
   }
 
   @Override
-  public boolean equals(final Object that) {
+  public boolean equals(@Nullable final Object that) {
     if (that == null) {
       return false;
     }

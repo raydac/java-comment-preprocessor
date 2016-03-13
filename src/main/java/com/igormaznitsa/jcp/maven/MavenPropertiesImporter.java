@@ -18,12 +18,19 @@ package com.igormaznitsa.jcp.maven;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class imports some properties from the maven which can be accessible from
@@ -67,13 +74,13 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   private final Map<String, Value> insideVarMap = new HashMap<String, Value>();
   private final MavenProject project;
 
-  private void printInfoAboutVarIntoLog(final PreprocessorContext context, final String varName, final String value) {
+  private void printInfoAboutVarIntoLog(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final String value) {
     final boolean possibleContainsPrivateInfo = PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
     final String textValue = possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
     context.logInfo("Added MAVEN property " + varName + '=' + textValue);
   }
 
-  private void addVariableIntoInsideMap(final PreprocessorContext context, final String name, final Value value) {
+  private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value) {
     if (insideVarMap.containsKey(name)) {
       throw context.makeException("Duplicated importing value detected [" + name + ']',null);
     }
@@ -81,7 +88,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     printInfoAboutVarIntoLog(context, name, value.asString());
   }
 
-  public MavenPropertiesImporter(final PreprocessorContext context, final MavenProject project) {
+  public MavenPropertiesImporter(@Nonnull final PreprocessorContext context, @Nonnull final MavenProject project) {
     this.project = project;
     for (final String paramName : TO_IMPORT) {
       final String varName = "mvn." + paramName.toLowerCase(Locale.ENGLISH);
@@ -107,7 +114,8 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     }
   }
 
-  static String getProperty(final MavenProject project, final String name) {
+  @Nonnull
+  static String getProperty(@Nonnull final MavenProject project, @Nonnull final String name) {
     final String[] splitted = name.split("\\.");
 
     Object root = null;
@@ -145,17 +153,21 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     }
   }
 
-  static String normalizeGetter(final String str) {
+  @Nonnull
+  static String normalizeGetter(@Nonnull final String str) {
     return "get" + Character.toUpperCase(str.charAt(0)) + str.substring(1);
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public String[] getVariableNames() {
     return insideVarMap.keySet().toArray(new String[insideVarMap.size()]);
   }
 
   @Override
-  public Value getVariable(final String varName, final PreprocessorContext context) {
+  @Nullable
+  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     if (!insideVarMap.containsKey(varName)) {
       throw new IllegalArgumentException("Unsupported property request detected [" + varName + ']');
     }
@@ -163,7 +175,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
     throw new UnsupportedOperationException("An attempt to change a maven property detected, those properties are accessible only for reading [" + varName + ']');
   }
 }

@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.containers;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -23,10 +25,17 @@ import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * The class is one from the main classes in the preprocessor because it
@@ -63,6 +72,7 @@ public class FileInfoContainer {
    */
   private String destFileName;
 
+  @Nonnull
   public File getSourceFile() {
     return sourceFile;
   }
@@ -75,17 +85,19 @@ public class FileInfoContainer {
     return forCopyOnly;
   }
 
+  @Nonnull
   public String getDestinationDir() {
     return destFolder;
   }
 
+  @Nonnull
   public String getDestinationName() {
     return destFileName;
   }
 
-  public FileInfoContainer(final File srcFile, final String dstFileName, final boolean copyOnly) {
-    PreprocessorUtils.assertNotNull("The source file is null", srcFile);
-    PreprocessorUtils.assertNotNull("The destination file name is null", dstFileName);
+  public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String dstFileName, final boolean copyOnly) {
+    assertNotNull("The source file is null", srcFile);
+    assertNotNull("The destination file name is null", dstFileName);
 
     forCopyOnly = copyOnly;
     excludedFromPreprocessing = false;
@@ -106,6 +118,7 @@ public class FileInfoContainer {
     }
   }
 
+  @Nonnull
   public String getDestinationFilePath() {
     String dir = this.destFolder;
     if (!dir.isEmpty() && dir.charAt(dir.length() - 1) != File.separatorChar) {
@@ -116,11 +129,14 @@ public class FileInfoContainer {
   }
 
   @Override
+  @Nonnull
   public String toString() {
     return "FileInfoContainer: source=" + PreprocessorUtils.getFilePath(sourceFile) + " destFolder=" + destFolder + " destFile=" + destFileName;
   }
 
-  public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(final PreprocessingState state, final PreprocessorContext context) throws IOException {
+  @Nonnull
+  @MustNotContainNull
+  public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nullable final PreprocessingState state, @Nonnull final PreprocessorContext context) throws IOException {
     final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this,0) : state;
 
     String leftTrimmedString = null;
@@ -172,7 +188,7 @@ public class FileInfoContainer {
     }
 
     if (!preprocessingState.isIfStackEmpty()) {
-      final TextFileDataContainer lastIf = preprocessingState.peekIf();
+      final TextFileDataContainer lastIf = assertNotNull(preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
               "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
@@ -190,7 +206,8 @@ public class FileInfoContainer {
    * @throws IOException
    * @throws PreprocessorException
    */
-  public PreprocessingState preprocessFile(final PreprocessingState state, final PreprocessorContext context) throws IOException {
+  @Nonnull
+  public PreprocessingState preprocessFile(@Nullable final PreprocessingState state, @Nonnull final PreprocessorContext context) throws IOException {
     // do not clear local variables for cloned context to keep them in the new context
     if (!context.isCloned()) {
       context.clearLocalVariables();
@@ -360,7 +377,7 @@ public class FileInfoContainer {
               "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled() && lastTextFileDataContainer != null && lastTextFileDataContainer.isAutoFlush()) {
+    if (!context.isFileOutputDisabled() && lastTextFileDataContainer.isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
       
@@ -371,7 +388,8 @@ public class FileInfoContainer {
     return preprocessingState;
   }
 
-  private static String processStringForTailRemover(final String str) {
+  @Nonnull
+  private static String processStringForTailRemover(@Nonnull final String str) {
     final int tailRemoverStart = str.indexOf("/*-*/");
     if (tailRemoverStart >= 0) {
       return str.substring(0, tailRemoverStart);
@@ -379,7 +397,7 @@ public class FileInfoContainer {
     return str;
   }
 
-  private boolean checkDirectiveArgumentRoughly(final AbstractDirectiveHandler directive, final String rest) {
+  private boolean checkDirectiveArgumentRoughly(@Nonnull final AbstractDirectiveHandler directive, @Nonnull final String rest) {
     final DirectiveArgumentType argument = directive.getArgumentType();
 
     boolean result;
@@ -415,7 +433,8 @@ public class FileInfoContainer {
     return result;
   }
 
-  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state, final String directiveString, final PreprocessorContext context, final boolean firstPass) throws IOException {
+  @Nonnull
+  protected AfterDirectiveProcessingBehaviour processDirective(@Nonnull final PreprocessingState state, @Nonnull final String directiveString, @Nonnull final PreprocessorContext context, final boolean firstPass) throws IOException {
     final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
@@ -444,13 +463,13 @@ public class FileInfoContainer {
     throw context.makeException("Unknown preprocessor directive [" + directiveString + ']', null);
   }
 
-  public void setDestinationDir(final String destDir) {
-    PreprocessorUtils.assertNotNull("String is null", destDir);
+  public void setDestinationDir(@Nonnull final String destDir) {
+    assertNotNull("String is null", destDir);
     destFolder = destDir;
   }
 
-  public void setDestinationName(final String destName) {
-    PreprocessorUtils.assertNotNull("String is null", destName);
+  public void setDestinationName(@Nonnull final String destName) {
+    assertNotNull("String is null", destName);
     destFileName = destName;
   }
 

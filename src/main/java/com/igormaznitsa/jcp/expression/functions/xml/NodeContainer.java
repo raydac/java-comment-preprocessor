@@ -15,7 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import javax.annotation.Nonnull;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -31,24 +32,26 @@ public class NodeContainer {
   private final NodeList nodeList;
   private final long id;
 
-  public NodeContainer(final long id, final Node node) {
-    PreprocessorUtils.assertNotNull("Node is null", node);
+  public NodeContainer(final long id, @Nonnull final Node node) {
+    assertNotNull("Node is null", node);
     this.id = id;
     this.node = node;
     this.nodeList = null;
   }
 
-  public NodeContainer(final long id, final NodeList list) {
-    PreprocessorUtils.assertNotNull("NodeList is null", list);
+  public NodeContainer(final long id, @Nonnull final NodeList list) {
+    assertNotNull("NodeList is null", list);
     this.id = id;
     this.node = null;
     this.nodeList = list;
   }
 
+  @Nonnull
   public NodeList getNodeList() {
     return this.nodeList;
   }
 
+  @Nonnull
   public Node getNode() {
     return this.node;
   }

@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
@@ -26,11 +28,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "excludeif";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "exclude file from preprocessing if flag is true";
   }
@@ -46,12 +50,14 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     state.pushExcludeIfData(state.getRootFileInfo(), string, state.peekFile().getLastReadStringIndex());
     return AfterDirectiveProcessingBehaviour.PROCESSED;

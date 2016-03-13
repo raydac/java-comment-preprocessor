@@ -19,8 +19,11 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.io.File;
 import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 /**
  * The class implements the //#include directive handler
@@ -30,22 +33,26 @@ import java.io.IOException;
 public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "include";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "include file and preprocess in the current file context";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     final Value includingFilePath = Expression.evalExpression(string, context);
 

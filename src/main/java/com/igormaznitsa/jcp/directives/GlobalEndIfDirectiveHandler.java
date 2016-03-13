@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -27,6 +29,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "_endif";
   }
@@ -37,6 +40,7 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "end "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
   }
@@ -52,7 +56,8 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
       throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "_if",null);

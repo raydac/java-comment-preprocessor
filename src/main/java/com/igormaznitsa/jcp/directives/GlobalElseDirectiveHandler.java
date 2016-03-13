@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -27,11 +29,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "_else";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "invert condition result for "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
   }
@@ -47,7 +51,8 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
       throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "_if",null);

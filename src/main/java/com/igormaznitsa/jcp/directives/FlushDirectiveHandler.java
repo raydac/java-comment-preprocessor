@@ -17,8 +17,11 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+
 import java.io.File;
 import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 /**
  * The class implements the //#flush directive handler
@@ -28,17 +31,20 @@ import java.io.IOException;
 public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "flush";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "flush text buffers to disk and clear the buffers";
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (!context.isFileOutputDisabled()) {
       final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());

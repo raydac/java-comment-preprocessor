@@ -15,7 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import javax.annotation.Nonnull;
 
 /**
  * The class describes an expression variable
@@ -34,8 +35,8 @@ public final class Variable implements ExpressionItem {
    *
    * @param varName the variable name, it must not be null
    */
-  public Variable(final String varName) {
-    PreprocessorUtils.assertNotNull("Var name is null", varName);
+  public Variable(@Nonnull final String varName) {
+    assertNotNull("Var name is null", varName);
     this.variableName = varName;
   }
 
@@ -44,6 +45,7 @@ public final class Variable implements ExpressionItem {
    *
    * @return the name saved by the object
    */
+  @Nonnull
   public String getName() {
     return this.variableName;
   }
@@ -54,6 +56,7 @@ public final class Variable implements ExpressionItem {
    * @return it returns only ExpressionItemType.VARIABLE
    */
   @Override
+  @Nonnull
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VARIABLE;
   }
@@ -64,11 +67,13 @@ public final class Variable implements ExpressionItem {
    * @return it returns only ExpressionItemPriority.VALUE
    */
   @Override
+  @Nonnull
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.VALUE;
   }
 
   @Override
+  @Nonnull
   public String toString(){
     return this.variableName;
   }

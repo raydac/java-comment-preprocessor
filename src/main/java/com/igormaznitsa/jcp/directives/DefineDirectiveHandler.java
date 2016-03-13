@@ -17,7 +17,10 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
+
 import java.io.IOException;
+
+import javax.annotation.Nonnull;
 
 /**
  * The class implements the //#define directive handler
@@ -27,21 +30,24 @@ import java.io.IOException;
 public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "define";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "define global(!) variable as true (by default) or initialize it by expression result (if presented)";
   }
 
-  protected void process(final PreprocessorContext context, final String varName, final Value value, final boolean exists){
+  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists){
     if (exists){
       context.logWarning("Variable \'" + varName + "\' has been already defined");
     }
@@ -49,7 +55,8 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
   }
   
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String rawTail, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
     try {
       final String trimmedTail = rawTail.trim();
       final int spaceIndex = trimmedTail.indexOf(' ');

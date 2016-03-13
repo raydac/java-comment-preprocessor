@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -28,22 +31,26 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public final class FunctionSTR2CSV extends AbstractStrConverter {
 
   @Override
+  @Nonnull
   public String getName() {
     return "str2csv";
   }
 
   @Override
-  public Value executeStr(final PreprocessorContext context, final Value value) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
     final String escaped = StringEscapeUtils.escapeCsv(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "escape string for Comma Separated Values";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

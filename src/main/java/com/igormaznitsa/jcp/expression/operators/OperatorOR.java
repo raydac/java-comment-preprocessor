@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.operators;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
@@ -31,24 +33,29 @@ public final class OperatorOR extends AbstractOperator {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "conditional-OR and bitwise inclusive OR";
   }
 
   @Override
+  @Nonnull
   public String getKeyword() {
     return "||";
   }
 
-  public Value executeIntInt(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeIntInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asLong() | arg2.asLong());
   }
 
-  public Value executeBoolBool(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeBoolBool(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asBoolean() || arg2.asBoolean());
   }
 
   @Override
+  @Nonnull
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.LOGICAL;
   }

@@ -32,7 +32,6 @@ public class ExcludedFileExtensionsHandlerTest extends AbstractCommandLineHandle
   public void testExecution() throws Exception {
     final PreprocessorContext mock = mock(PreprocessorContext.class);
 
-    assertFalse(HANDLER.processCommandLineKey(null, mock));
     assertFalse(HANDLER.processCommandLineKey("", mock));
     assertFalse(HANDLER.processCommandLineKey("/ef:", mock));
     assertFalse(HANDLER.processCommandLineKey("/ef", mock));

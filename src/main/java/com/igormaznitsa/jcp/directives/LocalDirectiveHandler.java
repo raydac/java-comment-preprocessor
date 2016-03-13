@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
@@ -28,27 +30,31 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "local";
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     processLocalDefinition(string, context);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "make local definition which is visilble only in the current file context";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.SET;
   }
 
-  private void processLocalDefinition(final String string, final PreprocessorContext context) {
+  private void processLocalDefinition(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
 
     if (splitted.length != 2) {

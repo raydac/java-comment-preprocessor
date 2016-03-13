@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.cmdline;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -28,17 +30,19 @@ public class CompareDestinationContentHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/Z";
   
   @Override
+  @Nonnull
   public String getKeyName () {
     return ARG_NAME;
   }
 
   @Override
+  @Nonnull
   public String getDescription () {
     return "to compare destination file content if it is detected and to not override if the content the same (makes overhead)";
   }
 
   @Override
-  public boolean processCommandLineKey (final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey (@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {

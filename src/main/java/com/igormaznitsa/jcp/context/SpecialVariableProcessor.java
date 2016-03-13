@@ -15,7 +15,11 @@
  */
 package com.igormaznitsa.jcp.context;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The interface describes a special variable processor which will be called for
@@ -31,6 +35,8 @@ public interface SpecialVariableProcessor {
    *
    * @return allowed variable names as a String array
    */
+  @Nonnull
+  @MustNotContainNull
   String[] getVariableNames();
 
   /**
@@ -41,7 +47,8 @@ public interface SpecialVariableProcessor {
    * @return the value, it must not return null because it will notified
    * preprocessor that it supports the variable
    */
-  Value getVariable(String varName, PreprocessorContext context);
+  @Nonnull
+  Value getVariable(@Nonnull String varName, @Nullable PreprocessorContext context);
 
   /**
    * Set a value to the variable
@@ -50,6 +57,6 @@ public interface SpecialVariableProcessor {
    * @param value the value to be set to the variable, must not be null
    * @param context the preprocessor context, it can be null
    */
-  void setVariable(String varName, Value value, PreprocessorContext context);
+  void setVariable(@Nonnull String varName, @Nonnull Value value, @Nullable PreprocessorContext context);
 
 }

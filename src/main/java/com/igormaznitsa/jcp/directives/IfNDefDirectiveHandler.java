@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 /**
  * The class implements the //#ifndef directive handler
  *
@@ -23,6 +25,7 @@ package com.igormaznitsa.jcp.directives;
 public class IfNDefDirectiveHandler extends IfDefinedDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "ifndef";
   }
@@ -33,6 +36,7 @@ public class IfNDefDirectiveHandler extends IfDefinedDirectiveHandler {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "works like "+DIRECTIVE_PREFIX+super.getName()+" but active if variable is not defined";
   }

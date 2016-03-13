@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.cmdline;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -28,12 +30,13 @@ public class RemoveCommentsHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/R";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "remove comments from result files";
   }
 
   @Override
-  public boolean processCommandLineKey(final String argument, final PreprocessorContext configurator) {
+  public boolean processCommandLineKey(@Nonnull final String argument, @Nonnull final PreprocessorContext configurator) {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(argument)) {
@@ -45,6 +48,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

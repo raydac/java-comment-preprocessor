@@ -12,6 +12,7 @@
   <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
+    <meta.version>1.0.3-SNAPSHOT</meta.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
@@ -172,6 +173,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.igormaznitsa</groupId>
+      <artifactId>meta-common</artifactId>
+      <version>${meta.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <version>3.3</version>
@@ -252,6 +258,25 @@
   
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>meta-checker</artifactId>
+        <version>${meta.version}</version>
+        <configuration>
+          <restrictClassFormat>6</restrictClassFormat>
+          <failForNonMarkedParams>true</failForNonMarkedParams>
+          <ignoreClasses>
+            <class>*.HelpMojo</class>
+          </ignoreClasses>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>

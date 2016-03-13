@@ -15,19 +15,26 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
-import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * This class is a parser allows to parse an expression and make a tree as the
@@ -62,19 +69,21 @@ public final class ExpressionParser {
    */
   public enum SpecialItem implements ExpressionItem {
 
-    BRACKET_OPENING('('),
-    BRACKET_CLOSING(')'),
-    COMMA(',');
-    private final char chr;
+    BRACKET_OPENING,
+    BRACKET_CLOSING,
+    COMMA;
 
-    private SpecialItem(final char chr) {
-      this.chr = chr;
+    private SpecialItem() {
     }
 
+    @Override
+    @Nullable
     public ExpressionItemPriority getExpressionItemPriority() {
       return null;
     }
 
+    @Override
+    @Nullable
     public ExpressionItemType getExpressionItemType() {
       return null;
     }
@@ -85,11 +94,7 @@ public final class ExpressionParser {
    */
   private static final ExpressionParser INSTANCE = new ExpressionParser();
 
-  /**
-   * The constant has been added to avoid repeating operations
-   */
-  private static final OperatorSUB OPERATOR_SUB = AbstractOperator.findForClass(OperatorSUB.class);
-
+  @Nonnull
   public static ExpressionParser getInstance() {
     return INSTANCE;
   }
@@ -104,8 +109,9 @@ public final class ExpressionParser {
    * @throws IOException it will be thrown if there is a problem to read the
    * expression string
    */
-  public ExpressionTree parse(final String expressionStr, final PreprocessorContext context) throws IOException {
-    PreprocessorUtils.assertNotNull("Expression is null",expressionStr);
+  @Nonnull
+  public ExpressionTree parse(@Nonnull final String expressionStr, @Nullable final PreprocessorContext context) throws IOException {
+    assertNotNull("Expression is null",expressionStr);
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
 
@@ -149,7 +155,8 @@ public final class ExpressionParser {
    * @throws IOException it will be thrown if there is a problem in reading from
    * the reader
    */
-  public ExpressionItem readExpression(final PushbackReader reader, final ExpressionTree tree, final PreprocessorContext context, final boolean insideBracket, final boolean argument) throws IOException {
+  @Nullable
+  public ExpressionItem readExpression(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, final boolean insideBracket, final boolean argument) throws IOException {
     boolean working = true;
 
     ExpressionItem result = null;
@@ -242,7 +249,8 @@ public final class ExpressionParser {
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
-  private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader, final PreprocessorContext context, final FilePositionInfo[] includeStack, final String sources) throws IOException {
+  @Nonnull
+  private ExpressionTree readFunction(@Nonnull final AbstractFunction function, @Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
       throw context.makeException("Detected function without params [" + function.getName() + ']',null);
@@ -310,7 +318,8 @@ public final class ExpressionParser {
    * @throws IOException it will be thrown if there is any error during char
    * reading from the reader
    */
-  ExpressionItem readFunctionArgument(final PushbackReader reader, final ExpressionTree tree, final PreprocessorContext context, final FilePositionInfo[] callStack, final String source) throws IOException {
+  @Nonnull
+  ExpressionItem readFunctionArgument(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String source) throws IOException {
     boolean working = true;
     ExpressionItem result = null;
     while (working) {
@@ -391,8 +400,9 @@ public final class ExpressionParser {
    * @throws IOException it will be thrown if there is any error during a char
    * reading
    */
-  ExpressionItem nextItem(final PushbackReader reader, final PreprocessorContext context) throws IOException {
-    PreprocessorUtils.assertNotNull("Reader is null", reader);
+  @Nullable
+  ExpressionItem nextItem(@Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context) throws IOException {
+    assertNotNull("Reader is null", reader);
 
     ParserState state = ParserState.WAIT;
     final StringBuilder builder = new StringBuilder(12);
@@ -641,7 +651,7 @@ public final class ExpressionParser {
           final String str = builder.toString().toLowerCase();
           if (str.charAt(0) == '$') {
 
-            PreprocessorUtils.assertNotNull("There is not a preprocessor context to define a user function [" + str + ']',context);
+            assertNotNull("There is not a preprocessor context to define a user function [" + str + ']',context);
 
             final PreprocessorExtension extension = context.getPreprocessorExtension();
             if (extension == null) {

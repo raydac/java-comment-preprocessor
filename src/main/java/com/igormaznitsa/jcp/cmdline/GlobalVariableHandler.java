@@ -18,7 +18,10 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 /**
  * The handler for global variables, it adds met global variables into the
@@ -31,15 +34,16 @@ public class GlobalVariableHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/P:";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "define global variable, for instance /P:DEBUG=true (in command line use $ instead \" char)";
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
-    if (key != null && !key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+    if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
 
       final String nameAndExpression = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
@@ -66,6 +70,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -27,21 +29,25 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2INT extends AbstractStrConverter {
 
   @Override
+  @Nonnull
   public String getName() {
     return "str2int";
   }
 
   @Override
-  public Value executeStr(final PreprocessorContext context, final Value value) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
     return Value.valueOf(Long.parseLong(value.asString().trim()));
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "convert string into integet number";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.INT;
   }

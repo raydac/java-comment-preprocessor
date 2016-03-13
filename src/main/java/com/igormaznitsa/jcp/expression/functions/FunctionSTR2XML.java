@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -28,22 +31,26 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public final class FunctionSTR2XML extends AbstractStrConverter {
 
   @Override
+  @Nonnull
   public String getName() {
     return "str2xml";
   }
 
   @Override
-  public Value executeStr(final PreprocessorContext context, final Value value) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
     final String escaped = StringEscapeUtils.escapeXml10(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "escape string for XML 1.0";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

@@ -18,12 +18,18 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import java.io.File;
 import java.io.IOException;
+
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the xml_open function handler
@@ -38,11 +44,13 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "xml_open";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value filePath) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value filePath) {
     final String name = filePath.asString();
 
     final String documentId = makeDocumentId(name);
@@ -68,7 +76,8 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
     return Value.valueOf(documentId);
   }
 
-  private Document openFileAndParse(final PreprocessorContext context, final File file) {
+  @Nonnull
+  private Document openFileAndParse(@Nonnull final PreprocessorContext context, @Nonnull final File file) {
     final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     docBuilderFactory.setIgnoringComments(true);
     docBuilderFactory.setCoalescing(true);
@@ -94,16 +103,20 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "open XML file and parse as DOM";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

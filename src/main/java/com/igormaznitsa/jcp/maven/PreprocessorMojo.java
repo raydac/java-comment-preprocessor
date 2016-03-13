@@ -15,22 +15,29 @@
  */
 package com.igormaznitsa.jcp.maven;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven project to use the preprocessed sources.
@@ -202,18 +209,21 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.keepSrcRoot;
   }
 
-  public void setGlobalVars(final Properties vars) {
+  public void setGlobalVars(@Nonnull final Properties vars) {
     this.globalVars = vars;
   }
 
+  @Nonnull
   public Properties getGlobalVars() {
     return this.globalVars;
   }
 
-  public void setCfgFiles(final File[] files) {
+  public void setCfgFiles(@Nonnull @MustNotContainNull final File[] files) {
     this.cfgFiles = files;
   }
 
+  @Nonnull
+  @MustNotContainNull
   public File[] getCfgFiles() {
     return this.cfgFiles;
   }
@@ -226,58 +236,65 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.compareDestination;
   }
   
-  public void setSource(final String source) {
+  public void setSource(@Nonnull final String source) {
     this.source = source;
   }
 
+  @Nonnull
   public String getSource() {
     return this.source;
   }
 
-  public void setDestination(final File destination) {
+  public void setDestination(@Nonnull final File destination) {
     this.destination = destination;
   }
 
+  @Nonnull
   public File getDestination() {
     return this.destination;
   }
 
-  public void setTestDestination(final File destination) {
+  public void setTestDestination(@Nonnull final File destination) {
     this.testDestination = destination;
   }
 
+  @Nonnull
   public File getTestDestination() {
     return this.testDestination;
   }
 
-  public void setInEncoding(final String value) {
+  public void setInEncoding(@Nonnull final String value) {
     this.inEncoding = value;
   }
 
+  @Nonnull
   public String getInEncoding() {
     return this.inEncoding;
   }
 
-  public void setOutEncoding(final String value) {
+  public void setOutEncoding(@Nonnull final String value) {
     this.outEncoding = value;
   }
 
+  @Nonnull
   public String getOutEncoding() {
     return this.outEncoding;
   }
 
-  public void setExcluded(final String excluded) {
+  public void setExcluded(@Nullable final String excluded) {
     this.excluded = excluded;
   }
 
+  @Nullable
   public String getExcluded() {
     return this.excluded;
   }
 
-  public void setProcessing(final String processing) {
+  public void setProcessing(@Nullable final String processing) {
     this.processing = processing;
   }
 
+  @Nullable
   public String getProcessing() {
     return this.processing;
   }
@@ -314,6 +331,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.removeComments;
   }
 
+  @Nullable
   private String makeSourceRootList() {
     String result = null;
     if (this.source != null && !this.source.isEmpty()) {
@@ -333,7 +351,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return result;
   }
 
-  private void replaceSourceRootByPreprocessingDestinationFolder(final PreprocessorContext context) throws IOException {
+  private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
     if (this.project != null) {
       final String sourceDirectories = context.getSourceDirectories();
       final String[] splitted = sourceDirectories.split(";");
@@ -365,6 +383,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     }
   }
 
+  @Nonnull
   PreprocessorContext makePreprocessorContext() throws IOException {
     final PreprocessorContext context = new PreprocessorContext();
     context.setPreprocessorLogger(this);
@@ -404,7 +423,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {
       for (final File file : this.cfgFiles) {
-        PreprocessorUtils.assertNotNull("Detected null where a config file was expected", file);
+        assertNotNull("Detected null where a config file was expected", file);
         context.addConfigFile(file);
       }
     }
@@ -413,7 +432,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     if (this.globalVars != null && !this.globalVars.isEmpty()) {
       for (final String key : this.globalVars.stringPropertyNames()) {
         final String value = this.globalVars.getProperty(key);
-        PreprocessorUtils.assertNotNull("Can't find defined value for '" + key + "' global variable",value);
+        assertNotNull("Can't find defined value for '" + key + "' global variable",value);
         context.setGlobalVariable(key, Value.recognizeRawString(value));
       }
     }
@@ -448,22 +467,22 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   }
 
   @Override
-  public void error(final String message) {
+  public void error(@Nonnull final String message) {
     getLog().error(message);
   }
 
   @Override
-  public void info(final String message) {
+  public void info(@Nonnull final String message) {
     getLog().info(message);
   }
 
   @Override
-  public void warning(final String message) {
+  public void warning(@Nonnull final String message) {
     getLog().warn(message);
   }
 
   @Override
-  public void debug(final String message) {
+  public void debug(@Nonnull final String message) {
     getLog().debug(message);
   }
 }

@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
@@ -26,17 +28,19 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class WarningDirectiveHandler extends ErrorDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "warning";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "log warning message";
   }
 
   @Override
-  protected void process(final PreprocessorContext context, final String message) {
+  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String message) {
     context.logWarning(PreprocessorUtils.processMacroses(message, context));
     if (context.isVerbose()){
       context.logForVerbose("Detected warning : "+message);

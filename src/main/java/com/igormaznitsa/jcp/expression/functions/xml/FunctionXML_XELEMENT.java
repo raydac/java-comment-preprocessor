@@ -15,11 +15,17 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import javax.xml.xpath.*;
+
 import org.w3c.dom.*;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the xml_xpathelement function handler
@@ -31,11 +37,13 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING,ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "xml_xelement";
   }
 
-  public Value executeStrStr(final PreprocessorContext context, final Value documentId, final Value xPath) {
+  @Nonnull
+  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value documentId, @Nonnull final Value xPath) {
     final String documentIdStr = documentId.asString();
     final String pathStr = xPath.asString();
 
@@ -63,7 +71,8 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
     return Value.valueOf(xpathElementId);
   }
 
-  private XPathExpression prepareXPathExpression(final String path) throws XPathExpressionException {
+  @Nonnull
+  private XPathExpression prepareXPathExpression(@Nonnull final String path) throws XPathExpressionException {
     final XPathFactory factory = XPathFactory.newInstance();
     final XPath xpath = factory.newXPath();
     return xpath.compile(path);
@@ -75,16 +84,20 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "get element for XPath";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

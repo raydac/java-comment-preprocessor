@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.operators;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
@@ -31,40 +33,49 @@ public final class OperatorADD extends AbstractOperator {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "additive operator (also used for string concatenation)";
   }
 
   @Override
+  @Nonnull
   public String getKeyword() {
     return "+";
   }
 
-  public Value executeIntInt(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeIntInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asLong() + arg2.asLong());
   }
 
-  public Value executeFloatFloat(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeFloatFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asFloat() + arg2.asFloat());
   }
 
-  public Value executeIntFloat(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeIntFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asLong().floatValue() + arg2.asFloat());
   }
 
-  public Value executeFloatInt(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeFloatInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asFloat() + arg2.asLong().floatValue());
   }
 
-  public Value executeStrAny(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeStrAny(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asString() + arg2.toString());
   }
 
-  public Value executeAnyStr(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeAnyStr(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.toString() + arg2.asString());
   }
 
   @Override
+  @Nonnull
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.ARITHMETIC_ADD_SUB;
   }

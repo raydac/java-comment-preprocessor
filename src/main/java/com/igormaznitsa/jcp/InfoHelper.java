@@ -21,7 +21,12 @@ import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
+
 import java.util.*;
+
+import javax.annotation.Nonnull;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 public final class InfoHelper {
 
@@ -30,22 +35,28 @@ public final class InfoHelper {
 
   public static final String DELIMITER = "-------------------------------------------------";
 
+  @Nonnull
   public static String getVersion() {
     return "v6.0.2";
   }
 
+  @Nonnull
   public static String getCopyright() {
     return "2003-2015 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
+  @Nonnull
   public static String getSite() {
     return "Project page: https://github.com/raydac/java-comment-preprocessor";
   }
 
+  @Nonnull
   public static String getProductName() {
     return "Java Comment Preprocessor";
   }
 
+  @Nonnull
+  @MustNotContainNull
   public static List<String> makeTextForHelpInfo() {
     final List<String> result = new ArrayList<String>();
 
@@ -93,19 +104,22 @@ public final class InfoHelper {
     return result;
   }
 
-  private static String makeSpecialVariableReference(final JCPSpecialVariableProcessor.NameReferencePair p) {
+  @Nonnull
+  private static String makeSpecialVariableReference(@Nonnull final JCPSpecialVariableProcessor.NameReferencePair p) {
     final String name = p.getName();
     final String ref = p.getReference();
     return makeColumns(name, ref, 24);
   }
 
-  private static String makeCommandLineKeyReference(final CommandLineHandler handler) {
+  @Nonnull
+  private static String makeCommandLineKeyReference(@Nonnull final CommandLineHandler handler) {
     final String key = handler.getKeyName();
     final String descr = handler.getDescription();
     return makeColumns(key, descr, 14);
   }
 
-  private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
+  @Nonnull
+  private static String makeDirectiveReference(@Nonnull final AbstractDirectiveHandler directive) {
     final StringBuilder activityPasses = new StringBuilder();
     int i = 0;
     if (directive.isGlobalPhaseAllowed()){
@@ -124,17 +138,20 @@ public final class InfoHelper {
     return makeColumns(directiveName, descr, 16);
   }
 
-  private static String makeSpecialDirectiveReference(final String name, final String reference) {
+  @Nonnull
+  private static String makeSpecialDirectiveReference(@Nonnull final String name, @Nonnull final String reference) {
     return makeColumns(name, reference, 14);
   }
 
-  private static String makeOperatorReference(final AbstractOperator operator) {
+  @Nonnull
+  private static String makeOperatorReference(@Nonnull final AbstractOperator operator) {
     final String operatorName = operator.getKeyword();
     final String descr = operator.getReference();
     return makeColumns(operatorName, descr, 14);
   }
 
-  private static String makeFunctionReference(final AbstractFunction func) {
+  @Nonnull
+  private static String makeFunctionReference(@Nonnull final AbstractFunction func) {
     final String funcName = func.getName();
     final String descr = func.getReference();
 
@@ -160,7 +177,8 @@ public final class InfoHelper {
     return makeColumns(funcName, descr, 24) + variants.toString();
   }
 
-  private static String makeColumns(final String name, final String reference, final int firstColumnWidth) {
+  @Nonnull
+  private static String makeColumns(@Nonnull final String name, @Nonnull final String reference, final int firstColumnWidth) {
     final int spaces = firstColumnWidth - name.length();
     final StringBuilder result = new StringBuilder(name);
     for (int i = 0; i < spaces; i++) {

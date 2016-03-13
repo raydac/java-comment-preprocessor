@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -30,28 +32,32 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "exitif";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "return to previous one in include stack if flag is true";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     AfterDirectiveProcessingBehaviour result = AfterDirectiveProcessingBehaviour.PROCESSED;
 
     // To end processing the file processing immediatly if the value is true
     final Value condition = Expression.evalExpression(string, context);
-    if (condition == null || condition.getType() != ValueType.BOOLEAN) {
+    if (condition.getType() != ValueType.BOOLEAN) {
       throw context.makeException(getFullName() + " needs boolean argument", null);
     }
     if (((Boolean) condition.getValue())) {

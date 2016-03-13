@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.cmdline;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -30,6 +32,7 @@ public interface CommandLineHandler {
    *
    * @return the key name as a String, must not be null
    */
+  @Nonnull
   String getKeyName();
 
   /**
@@ -37,6 +40,7 @@ public interface CommandLineHandler {
    *
    * @return the description as a String
    */
+  @Nonnull
   String getDescription();
 
   /**
@@ -46,5 +50,5 @@ public interface CommandLineHandler {
    * @param context the preprocessor context, must not be null
    * @return true if the key has been recognized and processed else false
    */
-  boolean processCommandLineKey(String key, PreprocessorContext context);
+  boolean processCommandLineKey(@Nonnull String key, @Nonnull PreprocessorContext context);
 }

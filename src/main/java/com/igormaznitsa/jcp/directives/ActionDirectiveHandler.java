@@ -23,11 +23,16 @@ import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the //#action directive handler
@@ -37,22 +42,26 @@ import java.util.List;
 public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "action";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "call preprocessor user extension, arguments are comma separated";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.MULTIEXPRESSION;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     if (context.getPreprocessorExtension() != null) {
 
       try {
@@ -76,7 +85,9 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 
-  private List<ExpressionTree> parseString(final String str, final PreprocessorContext context) throws IOException {
+  @Nonnull
+  @MustNotContainNull
+  private List<ExpressionTree> parseString(@Nonnull final String str, @Nonnull final PreprocessorContext context) throws IOException {
     final ExpressionParser parser = ExpressionParser.getInstance();
 
     final PushbackReader reader = new PushbackReader(new StringReader(str));

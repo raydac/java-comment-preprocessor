@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
@@ -26,17 +27,20 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "//";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "comment the next line (just after the directive)";
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

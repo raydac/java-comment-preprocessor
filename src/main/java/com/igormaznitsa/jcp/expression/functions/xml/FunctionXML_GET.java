@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the xml_get function handler
@@ -29,11 +32,13 @@ public final class FunctionXML_GET extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.INT}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "xml_get";
   }
 
-  public Value executeStrInt(final PreprocessorContext context, final Value elementListId, final Value elementIndex) {
+  @Nonnull
+  public Value executeStrInt(@Nonnull final PreprocessorContext context, @Nonnull final Value elementListId, @Nonnull final Value elementIndex) {
     return Value.valueOf(findElementForIndex(context, elementListId.asString(), elementIndex.asLong().intValue()));
   }
 
@@ -43,16 +48,20 @@ public final class FunctionXML_GET extends AbstractXMLFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "get element from element list by its index (first 0)";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

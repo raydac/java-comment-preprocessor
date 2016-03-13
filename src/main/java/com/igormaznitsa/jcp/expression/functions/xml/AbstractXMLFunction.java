@@ -15,37 +15,48 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
+
 import org.w3c.dom.*;
 
 public abstract class AbstractXMLFunction extends AbstractFunction {
 
-  public static String makeElementListId(final Element parentName, final String elementName) {
+  @Nonnull
+  public static String makeElementListId(@Nonnull final Element parentName, @Nonnull final String elementName) {
     return buildPathForElement(parentName) + "_#list_" + elementName;
   }
 
-  public static String makeDocumentId(final String fileName) {
+  @Nonnull
+  public static String makeDocumentId(@Nonnull final String fileName) {
     return "xmlDocument_" + fileName;
   }
 
-  public static String makeDocumentRootId(final String documentId) {
+  @Nonnull
+  public static String makeDocumentRootId(@Nonnull final String documentId) {
     return documentId + "_#root";
   }
 
-  public static String makeElementId(final String elementListId, final int elementIndex) {
+  @Nonnull
+  public static String makeElementId(@Nonnull final String elementListId, @Nonnull final int elementIndex) {
     return elementListId + '_' + elementIndex;
   }
 
-  public static String makeXPathListId(final String documentId, final String xpath) {
+  @Nonnull
+  public static String makeXPathListId(@Nonnull final String documentId, @Nonnull final String xpath) {
     return documentId + "_#xpath_" + xpath;
   }
 
-  public static String makeXPathElementId(final String documentId, final String xpath) {
+  @Nonnull
+  public static String makeXPathElementId(@Nonnull final String documentId, @Nonnull final String xpath) {
     return documentId + "_#xpathelement_" + xpath;
   }
 
-  public String getAttribute(final PreprocessorContext context, final String elementId, final String attributeName) {
+  @Nonnull
+  public String getAttribute(@Nonnull final PreprocessorContext context, @Nonnull final String elementId, @Nonnull final String attributeName) {
     final NodeContainer container = (NodeContainer) context.getSharedResource(elementId);
     if (container == null) {
       throw context.makeException("Can't find any active element with the \'" + elementId + "\' id", null);
@@ -58,7 +69,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
   }
 
-  public Document getCachedDocument(final PreprocessorContext context, final String documentId) {
+  @Nonnull
+  public Document getCachedDocument(@Nonnull final PreprocessorContext context, @Nonnull final String documentId) {
     final NodeContainer container = (NodeContainer) context.getSharedResource(documentId);
     if (container == null) {
       throw context.makeException("Can't find any document for the \'" + documentId + "\' id",null);
@@ -72,7 +84,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
   }
 
-  public Element findCachedElement(final PreprocessorContext context, final String elementId) {
+  @Nullable
+  public Element findCachedElement(@Nonnull final PreprocessorContext context, @Nonnull final String elementId) {
     final NodeContainer container = (NodeContainer) context.getSharedResource(elementId);
     if (container == null) {
       return null;
@@ -86,7 +99,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
   }
 
-  public Element getCachedElement(final PreprocessorContext context, final String elementId) {
+  @Nonnull
+  public Element getCachedElement(@Nonnull final PreprocessorContext context, @Nonnull final String elementId) {
     final Element element = findCachedElement(context, elementId);
     if (element == null) {
       throw context.makeException("Can't find any active element for the \'" + elementId + "\' id",null);
@@ -94,7 +108,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     return element;
   }
 
-  public NodeList findCachedElementList(final PreprocessorContext context, final String elementListId) {
+  @Nullable
+  public NodeList findCachedElementList(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId) {
     final NodeContainer container = (NodeContainer) context.getSharedResource(elementListId);
     if (container == null) {
       return null;
@@ -107,7 +122,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
   }
 
-  public NodeList getCachedElementList(final PreprocessorContext context, final String elementListId) {
+  @Nonnull
+  public NodeList getCachedElementList(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId) {
     final NodeList result = findCachedElementList(context, elementListId);
     if (result == null) {
       throw context.makeException("Can't find any active element list for the \'" + elementListId + "\' id",null);
@@ -115,11 +131,12 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     return result;
   }
 
-  public int getElementListSize(final PreprocessorContext context, final String elementListId) {
+  public int getElementListSize(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId) {
     return getCachedElementList(context, elementListId).getLength();
   }
 
-  public static String buildPathForElement(final Element element) {
+  @Nonnull
+  public static String buildPathForElement(@Nonnull final Element element) {
     final StringBuilder result = new StringBuilder();
 
     Node thenode = element;
@@ -139,7 +156,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     return result.toString();
   }
 
-  public static String getFirstLevelTextContent(final Node node) {
+  @Nonnull
+  public static String getFirstLevelTextContent(@Nonnull final Node node) {
     final NodeList list = node.getChildNodes();
     final StringBuilder textContent = new StringBuilder(128);
     for (int i = 0; i < list.getLength(); ++i) {
@@ -151,7 +169,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     return textContent.toString();
   }
   
-  public String findElementForIndex(final PreprocessorContext context, final String elementListId, final int elementIndex) {
+  @Nonnull
+  public String findElementForIndex(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId, final int elementIndex) {
     final String elementCacheId = makeElementId(elementListId, elementIndex);
     NodeContainer container = (NodeContainer) context.getSharedResource(elementCacheId);
     if (container == null) {

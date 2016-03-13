@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.operators;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
@@ -31,23 +33,28 @@ public class OperatorNOT extends AbstractOperator {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "logical complement operator and unary bitwise complement";
   }
 
   @Override
+  @Nonnull
   public String getKeyword() {
     return "!";
   }
 
-  public Value executeInt(final Value arg1) {
+  @Nonnull
+  public Value executeInt(@Nonnull final Value arg1) {
     return Value.valueOf(0xFFFFFFFFFFFFFFFFL ^ arg1.asLong());
   }
 
-  public Value executeBool(final Value arg1) {
+  @Nonnull
+  public Value executeBool(@Nonnull final Value arg1) {
     return Value.valueOf(!arg1.asBoolean());
   }
 
+  @Nonnull
   @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;

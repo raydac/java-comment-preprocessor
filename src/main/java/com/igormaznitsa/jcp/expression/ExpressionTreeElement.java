@@ -15,13 +15,19 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class describes a wrapper around an expression item to be saved into an
@@ -84,7 +90,7 @@ public class ExpressionTreeElement {
    *
    * @param item an expression item to be wrapped, must not be null
    */
-  ExpressionTreeElement(final ExpressionItem item, final FilePositionInfo [] callStack, final String sourceString) {
+  ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo [] callStack, @Nullable final String sourceString) {
     this.sourceString = sourceString;
     this.includeStack = callStack;
     
@@ -116,6 +122,7 @@ public class ExpressionTreeElement {
    *
    * @return the item to be wrapped by the object
    */
+  @Nonnull
   public ExpressionItem getItem() {
     return this.savedItem;
   }
@@ -134,6 +141,7 @@ public class ExpressionTreeElement {
    *
    * @return the parent for the element or null if the element is the tree root
    */
+  @Nullable
   public ExpressionTreeElement getParent() {
     return parentTreeElement;
   }
@@ -153,7 +161,8 @@ public class ExpressionTreeElement {
    * @param tree a tree to be added as a child, must not be null
    * @return it returns this
    */
-  public ExpressionTreeElement addSubTree(final ExpressionTree tree) {
+  @Nonnull
+  public ExpressionTreeElement addSubTree(@Nonnull final ExpressionTree tree) {
     final ExpressionTreeElement root = tree.getRoot();
     if (root != null) {
       root.makeMaxPriority();
@@ -170,7 +179,7 @@ public class ExpressionTreeElement {
    * (must not be null)
    * @return true if the element was found and replaced, else false
    */
-  public boolean replaceElement(final ExpressionTreeElement oldOne, final ExpressionTreeElement newOne) {
+  public boolean replaceElement(@Nonnull final ExpressionTreeElement oldOne, @Nonnull final ExpressionTreeElement newOne) {
     if (oldOne == null) {
       throw new PreprocessorException("[Expression]The old element is null", this.sourceString, this.includeStack, null);
     }
@@ -203,6 +212,7 @@ public class ExpressionTreeElement {
    * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible
    * index is being used
    */
+  @Nullable
   public ExpressionTreeElement getChildForIndex(final int index) {
     return childElements[index];
   }
@@ -213,8 +223,9 @@ public class ExpressionTreeElement {
    * @param element the element to be added, must not be null
    * @return the element which should be used as the last for the current tree
    */
-  public ExpressionTreeElement addTreeElement(final ExpressionTreeElement element) {
-    PreprocessorUtils.assertNotNull("The element is null", element);
+  @Nullable
+  public ExpressionTreeElement addTreeElement(@Nonnull final ExpressionTreeElement element) {
+    assertNotNull("The element is null", element);
 
     final int newElementPriority = element.getPriority();
 
@@ -280,7 +291,7 @@ public class ExpressionTreeElement {
    *
    * @param arguments the list containing trees to be used as children
    */
-  public void fillArguments(final List<ExpressionTree> arguments) {
+  public void fillArguments(@Nonnull @MustNotContainNull final List<ExpressionTree> arguments) {
     if (arguments == null) {
       throw new PreprocessorException("[Expression]Argument list is null",this.sourceString, this.includeStack, null);
     }
@@ -315,7 +326,7 @@ public class ExpressionTreeElement {
    *
    * @param element an element to be added, must not be null
    */
-  private void addElementToNextFreeSlot(final ExpressionTreeElement element) {
+  private void addElementToNextFreeSlot(@Nonnull final ExpressionTreeElement element) {
     if (element == null) {
       throw new PreprocessorException("[Expression]Element is null", this.sourceString, this.includeStack, null);
     }

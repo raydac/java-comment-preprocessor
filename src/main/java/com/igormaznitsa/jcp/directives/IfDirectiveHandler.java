@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -30,16 +32,19 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public class IfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "if";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "check flag and start " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
@@ -50,11 +55,12 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
-      if (expressionResult == null || expressionResult.getType() != ValueType.BOOLEAN) {
+      if (expressionResult.getType() != ValueType.BOOLEAN) {
         throw context.makeException("Non boolean flag",null);
       }
       state.pushIf(true);

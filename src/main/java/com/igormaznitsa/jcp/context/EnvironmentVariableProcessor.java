@@ -16,11 +16,17 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class allows to get access to environment variables from preprocessor
@@ -47,12 +53,15 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public String[] getVariableNames() {
     return environmentVars.keySet().toArray(new String[environmentVars.size()]);
   }
 
   @Override
-  public Value getVariable(final String varName, final PreprocessorContext context) {
+  @Nullable
+  public Value getVariable(@Nonnull final String varName, @Nullable final PreprocessorContext context) {
     final Value result = environmentVars.get(varName);
     if (result == null) {
       if (context==null){
@@ -65,7 +74,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(final String varName, final Value value, final PreprocessorContext context) {
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nullable final PreprocessorContext context) {
     if (context!=null){
       throw context.makeException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!",null);
     }else{

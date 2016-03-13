@@ -15,8 +15,13 @@
  */
 package com.igormaznitsa.jcp.exceptions;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.io.File;
+
+import javax.annotation.Nonnull;
 
 /**
  * The class implements a file data storage where an exception can store a
@@ -36,12 +41,13 @@ public class FilePositionInfo {
    */
   private final int stringIndex;
 
-  public FilePositionInfo(final File file, final int stringIndex) {
-    PreprocessorUtils.assertNotNull("File is null", file);
+  public FilePositionInfo(@Nonnull final File file, final int stringIndex) {
+    assertNotNull("File is null", file);
     this.file = file;
     this.stringIndex = stringIndex;
   }
 
+  @Nonnull
   public File getFile() {
     return this.file;
   }
@@ -51,6 +57,7 @@ public class FilePositionInfo {
   }
 
   @Override
+  @Nonnull
   public String toString() {
     final String filePath = PreprocessorUtils.getFilePath(this.file);
     return filePath + ':' + Integer.toString(stringIndex + 1);

@@ -17,7 +17,10 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 /**
  * The handler for the excluded extension list (with comma)
@@ -29,15 +32,16 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/EF:";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "set (case insensitive) file extensions which will be be excluded from preprocessing, they won't be both preprocessed and copied (by default " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
-    if (key != null && !key.isEmpty()) {
+    if (!key.isEmpty()) {
       if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
         final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
         if (!extensions.isEmpty()) {
@@ -50,6 +54,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

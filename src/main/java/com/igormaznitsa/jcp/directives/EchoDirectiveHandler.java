@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
@@ -26,22 +28,26 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class EchoDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "echo";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "macroses will be replaced in the text tail and the result will be out as info";
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

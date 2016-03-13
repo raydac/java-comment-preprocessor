@@ -15,11 +15,14 @@
  */
 package com.igormaznitsa.jcp.utils;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,25 +40,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.*;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 
 /**
  * It is an auxiliary class contains some useful methods
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public enum PreprocessorUtils {
+public final class PreprocessorUtils {
 
-  ;
+  private PreprocessorUtils() {
+  }
 
-    public static final String LINE_END;
+  public static final String LINE_END;
 
   static {
     final String jcpLlineEnd = System.getProperty("jcp.line.separator");
     LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLlineEnd;
   }
 
-  public static String getFileExtension (final File file) {
+  @Nullable
+  public static String getFileExtension(@Nullable final File file) {
     String result = null;
     if (file != null) {
       result = FilenameUtils.getExtension(file.getName());
@@ -63,8 +75,11 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] splitExtensionCommaList (final String extensions) {
-    PreprocessorUtils.assertNotNull("String of extensions is null", extensions);
+  @Nonnull
+  @MustNotContainNull
+  @ThrowsRuntimeException(value = NullPointerException.class,reference = "if extensions are null")
+  public static String[] splitExtensionCommaList(@Nonnull final String extensions) {
+    assertNotNull("String of extensions is null", extensions);
 
     final String trimmed = extensions.trim();
 
@@ -83,15 +98,10 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static void assertNotNull (final String message, final Object obj) {
-    if (obj == null) {
-      throw new NullPointerException(message);
-    }
-  }
-
-  public static BufferedReader makeFileReader (final File file, final String charset, final int bufferSize) throws IOException {
-    PreprocessorUtils.assertNotNull("File is null", file);
-    PreprocessorUtils.assertNotNull("Charset is null", charset);
+  @Nonnull
+  public static BufferedReader makeFileReader(@Nonnull final File file, @Nonnull final String charset, final int bufferSize) throws IOException {
+    assertNotNull("File is null", file);
+    assertNotNull("Charset is null", charset);
 
     if (!Charset.isSupported(charset)) {
       throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
@@ -109,7 +119,9 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] replaceChar (final String[] source, final char toBeReplaced, final char replacement) {
+  @Nonnull
+  @MustNotContainNull
+  public static String[] replaceChar(@Nonnull @MustNotContainNull final String[] source, final char toBeReplaced, final char replacement) {
     final String[] result = new String[source.length];
     int index = 0;
     for (final String curStr : source) {
@@ -118,13 +130,15 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String extractTrimmedTail (final String prefix, final String value) {
+  @Nonnull
+  public static String extractTrimmedTail(@Nonnull final String prefix, @Nonnull final String value) {
     return extractTail(prefix, value).trim();
   }
 
-  public static String extractTail (final String prefix, final String value) {
-    PreprocessorUtils.assertNotNull("Prefix is null", prefix);
-    PreprocessorUtils.assertNotNull("Value is null", value);
+  @Nonnull
+  public static String extractTail(@Nonnull final String prefix, @Nonnull final String value) {
+    assertNotNull("Prefix is null", prefix);
+    assertNotNull("Value is null", value);
 
     if (prefix.length() > value.length()) {
       throw new IllegalArgumentException("Prefix is taller than the value");
@@ -133,9 +147,9 @@ public enum PreprocessorUtils {
     return value.substring(prefix.length());
   }
 
-  public static void copyFile (final File source, final File dest) throws IOException {
-    PreprocessorUtils.assertNotNull("Source is null", source);
-    PreprocessorUtils.assertNotNull("Destination file is null", dest);
+  public static void copyFile(@Nonnull final File source, @Nonnull final File dest) throws IOException {
+    assertNotNull("Source is null", source);
+    assertNotNull("Destination file is null", dest);
 
     if (source.isDirectory()) {
       throw new IllegalArgumentException("Source file is directory");
@@ -169,7 +183,8 @@ public enum PreprocessorUtils {
     }
   }
 
-  public static String processMacroses (final String processingString, final PreprocessorContext context) {
+  @Nonnull
+  public static String processMacroses(@Nonnull final String processingString, @Nonnull final PreprocessorContext context) {
     int position;
     String result = processingString;
 
@@ -199,15 +214,17 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  private static void checkFile (final File file) throws IOException {
-    PreprocessorUtils.assertNotNull("File is null", file);
+  private static void checkFile(@Nonnull final File file) throws IOException {
+    assertNotNull("File is null", file);
 
     if (!file.isFile()) {
       throw new FileNotFoundException("File " + getFilePath(file) + " doesn't exist");
     }
   }
 
-  public static String[] readWholeTextFileIntoArray (final File file, final String encoding, final AtomicBoolean endedByNextLine) throws IOException {
+  @Nonnull
+  @MustNotContainNull
+  public static String[] readWholeTextFileIntoArray(@Nonnull final File file, @Nullable final String encoding, @Nullable final AtomicBoolean endedByNextLine) throws IOException {
     checkFile(file);
 
     final String enc = encoding == null ? "UTF8" : encoding;
@@ -268,7 +285,8 @@ public enum PreprocessorUtils {
     return strContainer.toArray(new String[strContainer.size()]);
   }
 
-  public static byte[] readFileAsByteArray (final File file) throws IOException {
+  @Nonnull
+  public static byte[] readFileAsByteArray(@Nonnull final File file) throws IOException {
     checkFile(file);
 
     int len = (int) file.length();
@@ -292,7 +310,9 @@ public enum PreprocessorUtils {
     return buffer.array();
   }
 
-  public static String[] splitForEqualChar (final String string) {
+  @Nonnull
+  @MustNotContainNull
+  public static String[] splitForEqualChar(@Nonnull final String string) {
     final int index = string.indexOf('=');
 
     final String[] result;
@@ -307,7 +327,9 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String[] splitForChar (final String string, final char delimiter) {
+  @Nonnull
+  @MustNotContainNull
+  public static String[] splitForChar(@Nonnull final String string, final char delimiter) {
     final char[] array = string.toCharArray();
     final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
 
@@ -332,7 +354,8 @@ public enum PreprocessorUtils {
     return tokens.toArray(new String[tokens.size()]);
   }
 
-  public static String normalizeVariableName (final String name) {
+  @Nullable
+  public static String normalizeVariableName(@Nullable final String name) {
     if (name == null) {
       return null;
     }
@@ -340,7 +363,8 @@ public enum PreprocessorUtils {
     return name.trim().toLowerCase(Locale.ENGLISH);
   }
 
-  public static String getFilePath (final File file) {
+  @Nonnull
+  public static String getFilePath(@Nullable final File file) {
     String result = "";
     if (file != null) {
       try {
@@ -353,11 +377,13 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static void throwPreprocessorException (final String msg, final String processingString, final File srcFile, final int nextStringIndex, final Throwable cause) {
+  public static void throwPreprocessorException(@Nullable final String msg, @Nullable final String processingString, @Nonnull final File srcFile, final int nextStringIndex, @Nullable final Throwable cause) {
     throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
   }
 
-  public static String[] replaceStringPrefix (final String[] allowedPrefixesToBeReplaced, final String replacement, final String[] strings) {
+  @Nonnull
+  @MustNotContainNull
+  public static String[] replaceStringPrefix(@Nonnull @MustNotContainNull final String[] allowedPrefixesToBeReplaced, @Nonnull final String replacement, @Nonnull @MustNotContainNull final String[] strings) {
     final String[] result = new String[strings.length];
 
     for (int i = 0; i < strings.length; i++) {
@@ -384,11 +410,13 @@ public enum PreprocessorUtils {
     return result;
   }
 
-  public static String getNextLineCodes () {
+  @Nonnull
+  public static String getNextLineCodes() {
     return System.getProperty("line.separator", "\r\n");
   }
 
-  public static String leftTrim (String rawString) {
+  @Nonnull
+  public static String leftTrim(@Nonnull String rawString) {
     int firstNonSpace = 0;
     for (int i = 0; i < rawString.length(); i++) {
       final char ch = rawString.charAt(i);
@@ -400,7 +428,7 @@ public enum PreprocessorUtils {
     return rawString.substring(firstNonSpace);
   }
 
-  public static boolean isFileContentEquals (final File src, final File dst) throws IOException {
+  public static boolean isFileContentEquals(@Nullable final File src, @Nullable final File dst) throws IOException {
     if (src == null && dst == null) {
       return true;
     }
@@ -423,16 +451,20 @@ public enum PreprocessorUtils {
     final byte[] srcBuffer = new byte[bufferSize];
     final byte[] dstBuffer = new byte[bufferSize];
 
-    final InputStream srcIn = new BufferedInputStream(new FileInputStream(src),bufferSize);
-    final InputStream dstIn = new BufferedInputStream(new FileInputStream(dst),bufferSize);
+    final InputStream srcIn = new BufferedInputStream(new FileInputStream(src), bufferSize);
+    final InputStream dstIn = new BufferedInputStream(new FileInputStream(dst), bufferSize);
     try {
       while (true) {
         final int readSrc = IOUtils.read(srcIn, srcBuffer);
         final int readDst = IOUtils.read(dstIn, dstBuffer);
 
-        if (readDst != readSrc) return false;
-        if (readSrc == 0) break;
-        
+        if (readDst != readSrc) {
+          return false;
+        }
+        if (readSrc == 0) {
+          break;
+        }
+
         if (!Arrays.equals(srcBuffer, dstBuffer)) {
           return false;
         }

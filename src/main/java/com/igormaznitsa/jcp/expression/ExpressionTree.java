@@ -15,10 +15,14 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class describes an object contains an expression tree
@@ -36,7 +40,7 @@ public class ExpressionTree {
     this(null, null);
   }
 
-  public ExpressionTree(final FilePositionInfo[] callStack, final String sources) {
+  public ExpressionTree(@Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sources) {
     this.includeStack = callStack == null ? PreprocessingState.EMPTY_STACK : callStack;
     this.sources = sources == null ? "" : sources;
   }
@@ -55,7 +59,7 @@ public class ExpressionTree {
    *
    * @param item an item to be added, must not be null
    */
-  public void addItem(final ExpressionItem item) {
+  public void addItem(@Nonnull final ExpressionItem item) {
     if (item == null) {
       throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack, null);
     }
@@ -74,8 +78,8 @@ public class ExpressionTree {
    *
    * @param tree a tree to be added as an item, must not be null
    */
-  public void addTree(final ExpressionTree tree) {
-    PreprocessorUtils.assertNotNull("Tree is null", tree);
+  public void addTree(@Nonnull final ExpressionTree tree) {
+    assertNotNull("Tree is null", tree);
     if (last == null) {
       final ExpressionTreeElement thatTreeRoot = tree.getRoot();
       if (thatTreeRoot != null) {
@@ -93,6 +97,7 @@ public class ExpressionTree {
    *
    * @return the root of the tree or null if the tree is empty
    */
+  @Nullable
   public ExpressionTreeElement getRoot() {
     if (last == null) {
       return null;

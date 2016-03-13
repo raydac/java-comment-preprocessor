@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.cmdline;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -28,12 +30,13 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/C";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "clear destination folder before processing";
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
     if (ARG_NAME.equalsIgnoreCase(key)) {
       context.setClearDestinationDirBefore(true);
@@ -43,6 +46,7 @@ public class ClearDstDirectoryHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

@@ -18,7 +18,10 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.io.File;
+
+import javax.annotation.Nonnull;
 
 /**
  * The handler for '@' prefixed files in the command string
@@ -30,22 +33,23 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
   private static final String ARG_NAME = "@";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "load global variable list from file defined by either path or expression (last one needs @@)";
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
-    if (key != null && !key.isEmpty() && key.charAt(0) == '@') {
+    if (!key.isEmpty() && key.charAt(0) == '@') {
       String stringRest = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (stringRest.isEmpty()) {
         throw context.makeException("Empty string",null);
       }
 
-      File file = null;
+      File file;
 
       if (stringRest.charAt(0) == '@') {
         stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
@@ -56,13 +60,8 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         
         final Value resultValue = Expression.evalExpression(stringRest, context);
 
-        if (resultValue != null) {
-          final String fileName = resultValue.toString();
-          file = new File(fileName);
-        }
-        else {
-          throw context.makeException("Can't recognize expression to get global definition file [" + stringRest + ']',null);
-        }
+        final String fileName = resultValue.toString();
+        file = new File(fileName);
       }
       else {
         file = new File(stringRest);
@@ -84,6 +83,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

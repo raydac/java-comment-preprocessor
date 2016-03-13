@@ -17,7 +17,10 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 /**
  * The handler processing the key to set the source directory
@@ -29,15 +32,16 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/I:";
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "define the source folder for preprocessing (by default " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
-    if (key != null && !key.isEmpty()) {
+    if (!key.isEmpty()) {
       if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
         final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
         if (!tail.isEmpty()) {
@@ -51,6 +55,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   }
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

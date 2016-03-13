@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.cmdline.*;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.*;
@@ -22,9 +24,16 @@ import com.igormaznitsa.jcp.directives.*;
 import com.igormaznitsa.jcp.exceptions.*;
 import com.igormaznitsa.jcp.expression.*;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.io.*;
 import java.util.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
@@ -72,19 +81,22 @@ public final class JCPreprocessor {
     new CareForLastNextLineCharHandler()
   };
 
+  @Nonnull
   public static Iterable<CommandLineHandler> getCommandLineHandlers () {
     return Arrays.asList(COMMAND_LINE_HANDLERS);
   }
 
+  @Nonnull
   public PreprocessorContext getContext () {
     return context;
   }
 
-  public JCPreprocessor (final PreprocessorContext context) {
-    PreprocessorUtils.assertNotNull("Configurator is null", context);
+  public JCPreprocessor (@Nonnull final PreprocessorContext context) {
+    assertNotNull("Configurator is null", context);
     this.context = context;
   }
 
+  @Nonnull
   public PreprocessingStatistics execute () throws IOException {
     final long timeStart = System.currentTimeMillis();
 
@@ -107,7 +119,7 @@ public final class JCPreprocessor {
     return stat;
   }
 
-  private void processFileExclusion (final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
+  private void processFileExclusion (@Nonnull @MustNotContainNull final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
     final String DIRECTIVE_NAME = new ExcludeIfDirectiveHandler().getFullName();
 
     for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
@@ -140,7 +152,9 @@ public final class JCPreprocessor {
     }
   }
 
-  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives (final Collection<FileInfoContainer> files) throws IOException {
+  @Nonnull
+  @MustNotContainNull
+  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives (@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
@@ -155,7 +169,8 @@ public final class JCPreprocessor {
     return result;
   }
 
-  private PreprocessingStatistics preprocessFiles (final Collection<FileInfoContainer> files) throws IOException {
+  @Nonnull
+  private PreprocessingStatistics preprocessFiles (@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
     int prepFileCounter = 0;
     int copFileCounter = 0;
     for (final FileInfoContainer fileRef : files) {
@@ -223,7 +238,9 @@ public final class JCPreprocessor {
     }
   }
 
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed (final File[] srcDirs) throws IOException {
+  @Nonnull
+  @MustNotContainNull
+  private Collection<FileInfoContainer> findAllFilesToBePreprocessed (@Nonnull @MustNotContainNull final File[] srcDirs) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
 
     for (final File dir : srcDirs) {
@@ -248,7 +265,8 @@ public final class JCPreprocessor {
     return result;
   }
 
-  private Set<File> findAllFiles (final File dir) {
+  @Nonnull
+  private Set<File> findAllFiles (@Nonnull final File dir) {
     final Set<File> result = new HashSet<File>();
     final File[] allowedFiles = dir.listFiles();
     for (final File file : allowedFiles) {
@@ -262,7 +280,7 @@ public final class JCPreprocessor {
     return result;
   }
 
-  public static void main (final String... args) {
+  public static void main (@Nonnull @MustNotContainNull final String... args) {
     printHeader();
 
     final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[]{"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
@@ -291,7 +309,8 @@ public final class JCPreprocessor {
     System.exit(0);
   }
 
-  private static PreprocessorContext processCommandString (final PreprocessorContext context, final String[] originalStrings, final String[] normalizedStrings) throws IOException {
+  @Nonnull
+  private static PreprocessorContext processCommandString (@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
     final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
 
     for (int i = 0; i < normalizedStrings.length; i++) {

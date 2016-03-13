@@ -15,14 +15,18 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the user defined function handler (a function which name
- * begins with $)
+ * starts with $)
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -32,10 +36,10 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   private final int argsNumber;
   private final ValueType[][] argTypes;
 
-  public FunctionDefinedByUser(final String name, final int argsNumber, final PreprocessorContext context) {
+  public FunctionDefinedByUser(@Nonnull final String name, final int argsNumber, @Nonnull final PreprocessorContext context) {
     super();
-    PreprocessorUtils.assertNotNull("Name is null", name);
-    PreprocessorUtils.assertNotNull("Context is null", context);
+    assertNotNull("Name is null", name);
+    assertNotNull("Context is null", context);
 
     if (argsNumber < 0) {
       throw context.makeException("Unexpected argument number ["+argsNumber+']',null);
@@ -53,6 +57,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   }
 
   @Override
+  @Nonnull
   public String getName() {
     return name;
   }
@@ -62,21 +67,26 @@ public final class FunctionDefinedByUser extends AbstractFunction {
     return argsNumber;
   }
 
-  public Value execute(final PreprocessorContext context, final Value[] values) {
+  @Nonnull
+  public Value execute(@Nonnull final PreprocessorContext context, @Nonnull @MustNotContainNull final Value[] values) {
     return context.getPreprocessorExtension().processUserFunction(name, values);
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return argTypes;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "it's a user defined function";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.ANY;
   }

@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the STRLEN function handler
@@ -29,11 +32,13 @@ public final class FunctionSTRLEN extends AbstractFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "strlen";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value value) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
     return Value.valueOf(Long.valueOf(value.asString().length()));
   }
 
@@ -43,16 +48,20 @@ public final class FunctionSTRLEN extends AbstractFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "get string length";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.INT;
   }

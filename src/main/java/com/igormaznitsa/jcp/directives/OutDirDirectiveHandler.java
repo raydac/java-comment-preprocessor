@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
@@ -28,22 +30,26 @@ import com.igormaznitsa.jcp.expression.Value;
 public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
+  @Nonnull
   public String getName() {
     return "outdir";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "change result file folder (works like change \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
   }
 
   @Override
+  @Nonnull
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-  public AfterDirectiveProcessingBehaviour execute(final String string, final PreprocessorContext context) {
+  @Nonnull
+  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final Value name = Expression.evalExpression(string, context);
     final String nameAsString = name.toString();
     if (context.isVerbose()) {

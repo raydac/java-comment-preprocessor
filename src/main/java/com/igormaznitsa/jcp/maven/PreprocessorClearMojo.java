@@ -18,6 +18,9 @@ package com.igormaznitsa.jcp.maven;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugin.logging.Log;
@@ -25,6 +28,8 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The Mojo allows to delete preprocessed folders.
@@ -65,7 +70,7 @@ public class PreprocessorClearMojo extends AbstractMojo {
   @Parameter(name = "fileSets", required = false)
   private List<FileSet> fileSets;
 
-  private void processPredefinedFolders(final Log log) throws MojoFailureException {
+  private void processPredefinedFolders(@Nonnull final Log log) throws MojoFailureException {
     if (this.preprocessedSources != null) {
       final String path = preprocessedSources.getAbsolutePath();
       log.info("Removing preprocessed source folder '" + path + '\'');
@@ -113,7 +118,7 @@ public class PreprocessorClearMojo extends AbstractMojo {
     log.info("Cleaning has been completed");
   }
 
-  private void processFileSet(final List<FileSet> fileSets, final Log log) throws MojoExecutionException {
+  private void processFileSet(@Nonnull @MustNotContainNull final List<FileSet> fileSets, @Nonnull final Log log) throws MojoExecutionException {
     final FileSetManager manager = new FileSetManager(log,true);
     for (final FileSet fs : fileSets) {
       try {

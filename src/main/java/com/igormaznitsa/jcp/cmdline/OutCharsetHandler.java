@@ -17,7 +17,10 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 /**
  * To set the output text character encoding
@@ -29,21 +32,23 @@ public class OutCharsetHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/TT:";
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "set the output encoding for text files (by default " + PreprocessorContext.DEFAULT_CHARSET + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
 
     boolean result = false;
 
-    if (key != null && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+    if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!value.isEmpty()) {

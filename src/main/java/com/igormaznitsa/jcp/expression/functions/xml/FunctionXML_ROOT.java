@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The class implements the xml_getroot function handler
@@ -29,11 +32,13 @@ public final class FunctionXML_ROOT extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "xml_root";
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value documentId) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value documentId) {
     final String documentRootId = makeDocumentRootId(documentId.asString());
     
     final NodeContainer root = (NodeContainer) context.getSharedResource(documentRootId);
@@ -49,16 +54,20 @@ public final class FunctionXML_ROOT extends AbstractXMLFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "get the document root element";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

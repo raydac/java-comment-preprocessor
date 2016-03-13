@@ -17,7 +17,10 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+
 import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 /**
  * To set the input text character encoding
@@ -29,28 +32,28 @@ public class InCharsetHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/T:";
 
   @Override
+  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }
 
   @Override
+  @Nonnull
   public String getDescription() {
     return "set the input encoding for text files (by default " + PreprocessorContext.DEFAULT_CHARSET + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
+  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
 
     boolean result = false;
 
-    if (key != null) {
-      if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
-        final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
+    if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+      final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-        if (!value.isEmpty()) {
-          context.setInCharacterEncoding(value);
-          result = true;
-        }
+      if (!value.isEmpty()) {
+        context.setInCharacterEncoding(value);
+        result = true;
       }
     }
     return result;

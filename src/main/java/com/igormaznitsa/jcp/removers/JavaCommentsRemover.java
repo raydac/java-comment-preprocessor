@@ -15,10 +15,11 @@
  */
 package com.igormaznitsa.jcp.removers;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import javax.annotation.Nonnull;
 
 /**
  * A remover allows to cut off all Java like comments from a reader and write
@@ -31,9 +32,9 @@ public class JavaCommentsRemover {
   private final Reader srcReader;
   private final Writer dstWriter;
 
-  public JavaCommentsRemover(final Reader src, final Writer dst) {
-    PreprocessorUtils.assertNotNull("The reader is null", src);
-    PreprocessorUtils.assertNotNull("The writer is null", dst);
+  public JavaCommentsRemover(@Nonnull final Reader src, @Nonnull final Writer dst) {
+    assertNotNull("The reader is null", src);
+    assertNotNull("The writer is null", dst);
     this.srcReader = src;
     this.dstWriter = dst;
   }
@@ -76,6 +77,7 @@ public class JavaCommentsRemover {
     }
   }
 
+  @Nonnull
   public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
     final int STATE_INSIDE_STRING = 1;

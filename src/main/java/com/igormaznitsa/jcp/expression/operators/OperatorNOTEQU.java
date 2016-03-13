@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression.operators;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
@@ -31,40 +33,49 @@ public final class OperatorNOTEQU extends AbstractOperator {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "not equal to";
   }
 
   @Override
+  @Nonnull
   public String getKeyword() {
     return "!=";
   }
 
-  public Value executeIntInt(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeIntInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asLong() != arg2.asLong().longValue());
   }
 
-  public Value executeFloatInt(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeFloatInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(Float.compare(arg1.asFloat(), arg2.asLong().floatValue()) != 0);
   }
 
-  public Value executeIntFloat(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeIntFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(Float.compare(arg1.asLong().floatValue(), arg2.asFloat()) != 0);
   }
 
-  public Value executeFloatFloat(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeFloatFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(Float.compare(arg1.asFloat(), arg2.asFloat()) != 0);
   }
 
-  public Value executeStrStr(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeStrStr(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(!arg1.asString().equals(arg2.asString()));
   }
 
-  public Value executeBoolBool(final Value arg1, final Value arg2) {
+  @Nonnull
+  public Value executeBoolBool(@Nonnull final Value arg1, @Nonnull final Value arg2) {
     return Value.valueOf(arg1.asBoolean() != arg2.asBoolean().booleanValue());
   }
 
   @Override
+  @Nonnull
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.COMPARISON;
   }

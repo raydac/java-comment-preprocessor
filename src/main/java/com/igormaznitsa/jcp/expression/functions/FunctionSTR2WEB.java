@@ -15,9 +15,12 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import javax.annotation.Nonnull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -29,12 +32,14 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public final class FunctionSTR2WEB extends AbstractStrConverter {
 
   @Override
+  @Nonnull
   public String getName() {
     return "str2web";
   }
 
   @Override
-  public Value executeStr(final PreprocessorContext context, final Value value) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
     final String escaped = StringEscapeUtils.escapeHtml3(value.asString());
     
     final StringBuilder result = new StringBuilder(escaped.length()*2);
@@ -51,11 +56,13 @@ public final class FunctionSTR2WEB extends AbstractStrConverter {
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "escape string for HTML3";
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }

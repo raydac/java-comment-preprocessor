@@ -20,8 +20,14 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+
 import java.io.*;
+
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.IOUtils;
+
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
  * The Function makes preprocessing of a file and return result as a string
@@ -35,11 +41,13 @@ public class FunctionEVALFILE extends AbstractFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING}};
 
   @Override
+  @Nonnull
   public String getName() {
     return "evalfile";
   }
 
   @Override
+  @Nonnull
   public String getReference() {
     return "load and preprocess file and return text result as string";
   }
@@ -50,16 +58,20 @@ public class FunctionEVALFILE extends AbstractFunction {
   }
 
   @Override
+  @Nonnull
+  @MustNotContainNull
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
+  @Nonnull
   public ValueType getResultType() {
     return ValueType.STRING;
   }
 
-  public Value executeStr(final PreprocessorContext context, final Value strfilePath) {
+  @Nonnull
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath) {
     final PreprocessorContext clonedContext = new PreprocessorContext(context);
     clonedContext.setFileOutputDisabled(true);
     clonedContext.setKeepLines(false);
@@ -75,10 +87,6 @@ public class FunctionEVALFILE extends AbstractFunction {
     }
     catch (IOException ex) {
       throw context.makeException("Can't get get source file '" + filePath + '\'',null);
-    }
-
-    if (theFile == null) {
-      throw context.makeException("Can't find any file for path \'" + filePath + "\' in defined source folders",null);
     }
 
     if (context.isVerbose()){

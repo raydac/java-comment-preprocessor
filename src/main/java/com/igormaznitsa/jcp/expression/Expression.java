@@ -15,17 +15,21 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The main class to calculate expressions
@@ -60,6 +64,7 @@ public class Expression {
    *
    * @return the result as a Value object, it can't be null
    */
+  @Nonnull
   public Value eval() {
     return this.eval(null);
   }
@@ -68,11 +73,11 @@ public class Expression {
    * Evaluate expression
    *
    * @param expression the expression as a String, must not be null
-   * @param context a preprocessor context to be used for expression operations,
-   * it can be null
+   * @param context a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
-  public static Value evalExpression(final String expression, final PreprocessorContext context) {
+  @Nonnull
+  public static Value evalExpression(@Nonnull final String expression, @Nonnull final PreprocessorContext context) {
     try {
       final ExpressionTree tree = ExpressionParser.getInstance().parse(expression, context);
       return evalTree(tree, context);
@@ -86,16 +91,16 @@ public class Expression {
    * Evaluate an expression tree
    *
    * @param tree an expression tree, it must not be null
-   * @param context a preprocessor context to be used for expression operations,
-   * it can be null
+   * @param context a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
-  public static Value evalTree(final ExpressionTree tree, final PreprocessorContext context) {
+  @Nonnull
+  public static Value evalTree(@Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context) {
     final Expression exp = new Expression(context, tree);
     return exp.eval(context == null ? null : context.getPreprocessingState());
   }
 
-  private Expression(final PreprocessorContext context, final ExpressionTree tree) {
+  private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {
     if (tree == null) {
       throw context.makeException("[Expression]The expression tree is null",null);
     }
@@ -103,7 +108,8 @@ public class Expression {
     this.expressionTree = tree;
   }
 
-  private ExpressionTreeElement evalFunction(final ExpressionTreeElement functionElement, final PreprocessingState state) {
+  @Nonnull
+  private ExpressionTreeElement evalFunction(@Nonnull final ExpressionTreeElement functionElement, @Nullable final PreprocessingState state) {
     final AbstractFunction function = (AbstractFunction) functionElement.getItem();
 
     final int arity = function.getArity();
@@ -130,10 +136,6 @@ public class Expression {
 
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement item = calculateTreeElement(functionElement.getChildForIndex(i), state);
-
-      if (item == null) {
-        throw this.context.makeException("[Expression]There is not needed argument for the \'" + function.getName() + "\' function",null);
-      }
 
       final ExpressionItem itemValue = item.getItem();
 
@@ -206,7 +208,8 @@ public class Expression {
     }
   }
 
-  private ExpressionTreeElement evalOperator(final ExpressionTreeElement operatorElement, final PreprocessingState state) {
+  @Nonnull
+  private ExpressionTreeElement evalOperator(@Nonnull final ExpressionTreeElement operatorElement, @Nullable final PreprocessingState state) {
     final AbstractOperator operator = (AbstractOperator) operatorElement.getItem();
 
     final int arity = operator.getArity();
@@ -306,12 +309,13 @@ public class Expression {
     }
   }
 
-  private ExpressionTreeElement calculateTreeElement(final ExpressionTreeElement element, final PreprocessingState state) {
+  @Nonnull
+  private ExpressionTreeElement calculateTreeElement(@Nonnull final ExpressionTreeElement element, @Nonnull final PreprocessingState state) {
     ExpressionTreeElement treeElement = element;
 
     switch (element.getItem().getExpressionItemType()) {
       case VARIABLE: {
-        PreprocessorUtils.assertNotNull("[Expression]Variable can't be used without context [" + element.getItem().toString() + ']',context);
+        assertNotNull("[Expression]Variable can't be used without context [" + element.getItem().toString() + ']',context);
 
         final Variable var = (Variable) element.getItem();
         final String name = var.getName();
@@ -336,7 +340,8 @@ public class Expression {
     return treeElement;
   }
 
-  private Value eval(final PreprocessingState state) {
+  @Nonnull
+  private Value eval(@Nullable final PreprocessingState state) {
     if (expressionTree.isEmpty()) {
       throw this.context.makeException("[Expression]The expression is empty",null);
     }

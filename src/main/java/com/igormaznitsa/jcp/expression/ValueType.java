@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.expression;
 
+import javax.annotation.Nonnull;
+
 /**
  * The enumeration contains all allowed types for expression values and their
  * signatures
@@ -30,11 +32,12 @@ public enum ValueType {
    */
   private final String signature;
 
+  @Nonnull
   public String getSignature() {
     return this.signature;
   }
 
-  private ValueType(final String signature) {
+  private ValueType(@Nonnull final String signature) {
     this.signature = signature;
   }
 
@@ -44,7 +47,7 @@ public enum ValueType {
    * @param type the type to be checked, must not be null
    * @return true if the type is compatible else false
    */
-  public boolean isCompatible(final ValueType type) {
+  public boolean isCompatible(@Nonnull final ValueType type) {
     if (this == type) {
       return true;
     }
