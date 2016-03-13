@@ -21,7 +21,7 @@ import java.io.File;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class PreprocessorExceptionTest {
+public final class PreprocessorExceptionTest {
 
   @Test
   public void testExceptionStringIndex_WrongBracket() throws Exception {

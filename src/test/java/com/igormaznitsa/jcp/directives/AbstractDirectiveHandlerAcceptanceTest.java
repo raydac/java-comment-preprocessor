@@ -24,7 +24,6 @@ import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -122,7 +121,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     context.setFileOutputDisabled(true);
 
     final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
-    final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]),false,0);
+    final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[parsedText.size()]), false, 0);
     final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
     final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
@@ -189,7 +188,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     setGlobalVars(context, globalVariables);
 
     final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
-    final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]),false, 0));
+    final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[preprocessingText.size()]), false, 0));
 
     reference.preprocessFile(state, context);
 
@@ -213,20 +212,18 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       }
     }
     catch (Exception unexpected) {
-      if (etalonList != null) {
-        int index = 1;
-        for (final String str : etalonList) {
-          System.out.print(index++);
-          System.out.print('\t');
-          println(str, true);
-        }
-        System.out.println("---------------------");
-        index = 1;
-        for (final String str : result) {
-          System.out.print(index++);
-          System.out.print('\t');
-          println(str, true);
-        }
+      int index = 1;
+      for (final String str : etalonList) {
+        System.out.print(index++);
+        System.out.print('\t');
+        println(str, true);
+      }
+      System.out.println("---------------------");
+      index = 1;
+      for (final String str : result) {
+        System.out.print(index++);
+        System.out.print('\t');
+        println(str, true);
       }
       throw unexpected;
     }

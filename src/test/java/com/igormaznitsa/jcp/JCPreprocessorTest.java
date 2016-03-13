@@ -15,15 +15,16 @@
  */
 package com.igormaznitsa.jcp;
 
+import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.*;
 import java.util.*;
-import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import com.igormaznitsa.meta.common.utils.Deferrers;
 
 public final class JCPreprocessorTest {
 
@@ -89,10 +90,10 @@ public final class JCPreprocessorTest {
 
     BufferedReader resultReader = null;
     BufferedReader etalonReader = null;
-    try {
-      resultReader = new BufferedReader(new FileReader(resultFile));
-      etalonReader = new BufferedReader(new FileReader(etalonFile));
-
+    try{
+      resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile),"UTF-8")));
+      etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile),"UTF-8")));
+      
       while (true) {
         final String resultStr = resultReader.readLine();
         final String etalonStr = etalonReader.readLine();
@@ -110,8 +111,7 @@ public final class JCPreprocessorTest {
 
     }
     finally {
-      IOUtils.closeQuietly(etalonReader);
-      IOUtils.closeQuietly(resultReader);
+      Deferrers.processDeferredActions();
     }
 
     if (differentLine != null) {

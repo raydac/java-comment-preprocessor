@@ -20,7 +20,7 @@ import org.apache.tools.ant.BuildFileTest;
 import org.apache.tools.ant.types.LogLevel;
 import org.junit.Test;
 
-public class ITAntTask extends BuildFileTest {
+public final class ITAntTask extends BuildFileTest {
 
   @Override
   public void setUp() throws Exception {

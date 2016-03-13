@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PreprocessorMojoTest extends AbstractMojoTestCase {
+public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
   private static void assertArrayEqualsWithoutOrders(final Object[] array1, final Object[] array2) {
     final List<Object> list1 = new ArrayList<Object>(Arrays.asList(array1));

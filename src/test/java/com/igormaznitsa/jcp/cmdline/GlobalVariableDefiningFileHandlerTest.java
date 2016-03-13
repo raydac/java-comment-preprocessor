@@ -22,7 +22,7 @@ import java.io.File;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHandlerTest {
+public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHandlerTest {
 
   private static final GlobalVariableDefiningFileHandler HANDLER = new GlobalVariableDefiningFileHandler();
 

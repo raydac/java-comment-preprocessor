@@ -37,7 +37,9 @@ public abstract class AbstractUseCaseTest {
     final File base = new File(testDir, this.getClass().getName().replace('.', File.separatorChar));
 
     final File simulfolder = new File(testDir.getParentFile(), "usecase_tests");
-    simulfolder.mkdirs();
+    if (!simulfolder.isDirectory()){
+      assertTrue("Can't make folders for simulation",simulfolder.mkdirs());
+    }
 
     tmpResultFolder = new TemporaryFolder(simulfolder);
     tmpResultFolder.create();
@@ -71,7 +73,6 @@ public abstract class AbstractUseCaseTest {
     final File [] folder1files = folder1.listFiles();
     File [] folde2files = folder2.listFiles();
     assertEquals("Must have the same number of files and folders", folder1files.length, folde2files.length);
-    folde2files = null;
     
     for(final File f : folder1files){
       final File f2 = new File(folder2,f.getName());
