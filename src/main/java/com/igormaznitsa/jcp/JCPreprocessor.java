@@ -36,8 +36,7 @@ import org.apache.commons.io.FileUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The main class implements the Java Comment Preprocessor, it has the main
- * method and can be started from a command string
+ * The main class implements the Java Comment Preprocessor, it has the main method and can be started from a command string
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -48,16 +47,16 @@ public final class JCPreprocessor {
     private final int numberOfPreprocessed;
     private final int numberOfCopied;
 
-    public PreprocessingStatistics (final int numberOfPreprocessed, final int numberOfCopied) {
+    public PreprocessingStatistics(final int numberOfPreprocessed, final int numberOfCopied) {
       this.numberOfPreprocessed = numberOfPreprocessed;
       this.numberOfCopied = numberOfCopied;
     }
 
-    public int getNumberOfCopied () {
+    public int getNumberOfCopied() {
       return this.numberOfCopied;
     }
 
-    public int getNumberOfPreprocessed () {
+    public int getNumberOfPreprocessed() {
       return this.numberOfPreprocessed;
     }
   }
@@ -82,22 +81,22 @@ public final class JCPreprocessor {
   };
 
   @Nonnull
-  public static Iterable<CommandLineHandler> getCommandLineHandlers () {
+  public static Iterable<CommandLineHandler> getCommandLineHandlers() {
     return Arrays.asList(COMMAND_LINE_HANDLERS);
   }
 
   @Nonnull
-  public PreprocessorContext getContext () {
+  public PreprocessorContext getContext() {
     return context;
   }
 
-  public JCPreprocessor (@Nonnull final PreprocessorContext context) {
+  public JCPreprocessor(@Nonnull final PreprocessorContext context) {
     assertNotNull("Configurator is null", context);
     this.context = context;
   }
 
   @Nonnull
-  public PreprocessingStatistics execute () throws IOException {
+  public PreprocessingStatistics execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
 
     processCfgFiles();
@@ -119,7 +118,7 @@ public final class JCPreprocessor {
     return stat;
   }
 
-  private void processFileExclusion (@Nonnull @MustNotContainNull final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
+  private void processFileExclusion(@Nonnull @MustNotContainNull final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
     final String DIRECTIVE_NAME = new ExcludeIfDirectiveHandler().getFullName();
 
     for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
@@ -154,7 +153,7 @@ public final class JCPreprocessor {
 
   @Nonnull
   @MustNotContainNull
-  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives (@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
+  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
@@ -170,7 +169,7 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private PreprocessingStatistics preprocessFiles (@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
+  private PreprocessingStatistics preprocessFiles(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
     int prepFileCounter = 0;
     int copFileCounter = 0;
     for (final FileInfoContainer fileRef : files) {
@@ -184,12 +183,10 @@ public final class JCPreprocessor {
 
           boolean doCopy = true;
 
-          if (this.context.isCompareDestination()) {
-            if (PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)){
-              doCopy = false;
-              if (context.isVerbose()) {
-                context.logForVerbose("Ignore copying because exists with the same content : " + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + " -> {dst}" + fileRef.getDestinationFilePath());
-              }
+          if (this.context.isCompareDestination() && PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
+            doCopy = false;
+            if (context.isVerbose()) {
+              context.logForVerbose("Ignore copying because exists with the same content : " + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + " -> {dst}" + fileRef.getDestinationFilePath());
             }
           }
 
@@ -216,31 +213,28 @@ public final class JCPreprocessor {
     return stat;
   }
 
-  private void createDestinationDirectory () throws IOException {
+  private void createDestinationDirectory() throws IOException {
     final File destination = context.getDestinationDirectoryAsFile();
 
     final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
 
-    if (context.doesClearDestinationDirBefore()) {
-      if (destinationExistsAndDirectory) {
-        try {
-          FileUtils.cleanDirectory(destination);
-        }
-        catch (IOException ex) {
-          throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
-        }
+    if (context.doesClearDestinationDirBefore() && destinationExistsAndDirectory) {
+      try {
+        FileUtils.cleanDirectory(destination);
+      }
+      catch (IOException ex) {
+        throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
       }
     }
-    if (!destinationExistsAndDirectory) {
-      if (!destination.mkdirs()) {
-        throw new IOException("I can't make the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
-      }
+
+    if (!destinationExistsAndDirectory && !destination.mkdirs()) {
+      throw new IOException("I can't make the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
     }
   }
 
   @Nonnull
   @MustNotContainNull
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed (@Nonnull @MustNotContainNull final File[] srcDirs) throws IOException {
+  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final File[] srcDirs) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
 
     for (final File dir : srcDirs) {
@@ -266,7 +260,7 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private Set<File> findAllFiles (@Nonnull final File dir) {
+  private Set<File> findAllFiles(@Nonnull final File dir) {
     final Set<File> result = new HashSet<File>();
     final File[] allowedFiles = dir.listFiles();
     for (final File file : allowedFiles) {
@@ -280,7 +274,7 @@ public final class JCPreprocessor {
     return result;
   }
 
-  public static void main (@Nonnull @MustNotContainNull final String... args) {
+  public static void main(@Nonnull @MustNotContainNull final String... args) {
     printHeader();
 
     final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[]{"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
@@ -310,7 +304,7 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private static PreprocessorContext processCommandString (@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
+  private static PreprocessorContext processCommandString(@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
     final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
 
     for (int i = 0; i < normalizedStrings.length; i++) {
@@ -339,7 +333,7 @@ public final class JCPreprocessor {
     return result;
   }
 
-  void processCfgFiles () throws IOException {
+  void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
       final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8", null);
@@ -405,13 +399,13 @@ public final class JCPreprocessor {
     }
   }
 
-  private static void printHeader () {
+  private static void printHeader() {
     System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
     System.out.println(InfoHelper.getSite());
     System.out.println(InfoHelper.getCopyright());
   }
 
-  private static void help () {
+  private static void help() {
     System.out.println();
 
     for (final String str : InfoHelper.makeTextForHelpInfo()) {

@@ -88,7 +88,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension, final VariablePair... globalVars) {
     try {
-      final PreprocessorContext context = preprocessString(preprocessingText, null, extension, globalVars);
+      preprocessString(preprocessingText, null, extension, globalVars);
       fail("Must throw PreprocessorException");
     }
     catch (PreprocessorException expected) {

@@ -63,7 +63,7 @@ public final class TextFileDataContainer {
   }
 
   public boolean isPresentedNextLineOnReadString(){
-    return this.nextStringIndex<this.text.length ? true : fileEndedByNextLine;
+    return this.nextStringIndex<this.text.length || fileEndedByNextLine;
   }
   
   @Nullable

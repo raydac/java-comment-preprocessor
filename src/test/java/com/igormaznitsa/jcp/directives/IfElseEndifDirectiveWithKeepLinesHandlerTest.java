@@ -15,14 +15,16 @@
  */
 package com.igormaznitsa.jcp.directives;
 
-public class IfElseEndifDirectiveWithKeepLinesHandlerTest extends IfElseEndifDirectiveHandlerTest {
+import static org.junit.Assert.assertNotNull;
 
-  private static final IfDirectiveHandler IF_HANDLER = new IfDirectiveHandler();
-  private static final ElseDirectiveHandler ELSE_HANDLER = new ElseDirectiveHandler();
-  private static final EndIfDirectiveHandler ENDIF_HANDLER = new EndIfDirectiveHandler();
+public class IfElseEndifDirectiveWithKeepLinesHandlerTest extends IfElseEndifDirectiveHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
+    assertNotNull(new IfDirectiveHandler());
+    assertNotNull(new ElseDirectiveHandler());
+    assertNotNull(new EndIfDirectiveHandler());
+    
     assertFilePreprocessing("directive_if_else_endif_with_keptlines.txt", true, null, null);
   }
 }

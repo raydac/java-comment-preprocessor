@@ -41,17 +41,15 @@ public class FileExtensionsHandler implements CommandLineHandler {
   public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
 
-    if (!key.isEmpty()) {
+    if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+      final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-      if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
-        final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
-
-        if (!extensions.isEmpty()) {
-          context.setProcessingFileExtensions(extensions);
-          result = true;
-        }
+      if (!extensions.isEmpty()) {
+        context.setProcessingFileExtensions(extensions);
+        result = true;
       }
     }
+
     return result;
   }
 

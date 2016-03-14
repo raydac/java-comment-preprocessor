@@ -77,7 +77,7 @@ public final class PreprocessorUtils {
 
   @Nonnull
   @MustNotContainNull
-  @ThrowsRuntimeException(value = NullPointerException.class,reference = "if extensions are null")
+  @ThrowsRuntimeException(value = NullPointerException.class, reference = "if extensions are null")
   public static String[] splitExtensionCommaList(@Nonnull final String extensions) {
     assertNotNull("String of extensions is null", extensions);
 
@@ -392,10 +392,8 @@ public final class PreprocessorUtils {
       String detectedPrefix = null;
 
       for (final String prefix : allowedPrefixesToBeReplaced) {
-        if (str.startsWith(prefix)) {
-          if (detectedPrefix == null || detectedPrefix.length() < prefix.length()) {
-            detectedPrefix = prefix;
-          }
+        if (str.startsWith(prefix) && (detectedPrefix == null || detectedPrefix.length() < prefix.length())) {
+          detectedPrefix = prefix;
         }
       }
 

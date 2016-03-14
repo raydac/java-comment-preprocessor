@@ -38,7 +38,7 @@ public interface PreprocessorExtension {
    * @return true if the action has been processed successfully or false, if it
    * is false then exception will be thrown and preprocessing will be stopped
    */
-  public boolean processAction(@Nonnull PreprocessorContext context, @Nonnull @MustNotContainNull Value[] parameters);
+  boolean processAction(@Nonnull PreprocessorContext context, @Nonnull @MustNotContainNull Value[] parameters);
 
   /**
    * Call to process a user function (the function starts with $)
@@ -49,7 +49,7 @@ public interface PreprocessorExtension {
    * @return a calculated value, it must not be null
    */
   @Nonnull
-  public Value processUserFunction(@Nonnull String functionName, @Nonnull @MustNotContainNull Value[] arguments);
+  Value processUserFunction(@Nonnull String functionName, @Nonnull @MustNotContainNull Value[] arguments);
 
   /**
    * When a preprocessor meets a user defined function (the function starts with
@@ -59,5 +59,5 @@ public interface PreprocessorExtension {
    * be null
    * @return the function arity (the argument number), zero or a great value
    */
-  public int getUserFunctionArity(@Nonnull String functionName);
+  int getUserFunctionArity(@Nonnull String functionName);
 }

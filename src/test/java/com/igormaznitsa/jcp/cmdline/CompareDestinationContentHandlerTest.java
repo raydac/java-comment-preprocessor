@@ -17,11 +17,8 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 public class CompareDestinationContentHandlerTest extends AbstractCommandLineHandlerTest {
   private static final CompareDestinationContentHandler HANDLER = new CompareDestinationContentHandler();
