@@ -76,7 +76,7 @@ public abstract class AbstractOperator implements ExpressionItem {
    * @return for operators it is always ExpressionItemType.OPERATOR
    */
   @Override
-  @Nonnull
+  @Nullable
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.OPERATOR;
   }

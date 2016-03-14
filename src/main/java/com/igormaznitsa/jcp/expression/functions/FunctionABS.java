@@ -39,12 +39,12 @@ public final class FunctionABS extends AbstractFunction {
 
   @Nonnull
   public Value executeInt(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
-    return Value.valueOf(Long.valueOf((Math.abs(value.asLong().longValue()))));
+    return Value.valueOf(Math.abs(value.asLong()));
   }
 
   @Nonnull
   public Value executeFloat(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
-    return Value.valueOf(Float.valueOf((Math.abs(value.asFloat().floatValue()))));
+    return Value.valueOf(Math.abs(value.asFloat()));
   }
 
   @Override

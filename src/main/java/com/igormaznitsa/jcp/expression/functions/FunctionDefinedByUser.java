@@ -69,7 +69,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
   @Nonnull
   public Value execute(@Nonnull final PreprocessorContext context, @Nonnull @MustNotContainNull final Value[] values) {
-    return context.getPreprocessorExtension().processUserFunction(name, values);
+    return assertNotNull("Preprocessor extension must not be null", context.getPreprocessorExtension()).processUserFunction(name, values);
   }
 
   @Override

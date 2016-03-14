@@ -318,7 +318,7 @@ public final class ExpressionParser {
    * @throws IOException it will be thrown if there is any error during char
    * reading from the reader
    */
-  @Nonnull
+  @Nullable
   ExpressionItem readFunctionArgument(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String source) throws IOException {
     boolean working = true;
     ExpressionItem result = null;

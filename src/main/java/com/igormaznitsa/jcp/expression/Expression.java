@@ -97,7 +97,7 @@ public class Expression {
   @Nonnull
   public static Value evalTree(@Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context) {
     final Expression exp = new Expression(context, tree);
-    return exp.eval(context == null ? null : context.getPreprocessingState());
+    return exp.eval(context.getPreprocessingState());
   }
 
   private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {

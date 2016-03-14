@@ -393,7 +393,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    context.setSourceDirectories(makeSourceRootList());
+    context.setSourceDirectories(assertNotNull("Source root list must not be null", makeSourceRootList()));
     context.setDestinationDirectory(this.useTestSources ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath());
 
     if (this.inEncoding != null) {

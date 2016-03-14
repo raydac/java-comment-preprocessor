@@ -16,7 +16,9 @@
 package com.igormaznitsa.jcp.expression;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The class describes an expression variable
@@ -56,7 +58,7 @@ public final class Variable implements ExpressionItem {
    * @return it returns only ExpressionItemType.VARIABLE
    */
   @Override
-  @Nonnull
+  @Nullable
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VARIABLE;
   }

@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.expression;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The interface describes an object which can be used during expression
@@ -28,9 +29,9 @@ public interface ExpressionItem {
   /**
    * Get the type of the item
    *
-   * @return the item type, must not be null
+   * @return the item type
    */
-  @Nonnull
+  @Nullable
   ExpressionItemType getExpressionItemType();
 
   /**

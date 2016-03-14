@@ -39,7 +39,7 @@ import org.apache.tools.ant.Task;
 
 import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.common.utils.Assertions;
+import static com.igormaznitsa.meta.common.utils.Assertions.*;
 
 /**
  * The class implements an ANT task to allow calls for preprocessing from ANT
@@ -63,7 +63,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private File file;
 
     public void setFile(@Nonnull final File file) {
-      this.file = Assertions.assertNotNull(file);
+      this.file = assertNotNull(file);
     }
 
     @Nullable
@@ -87,7 +87,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     private String value;
 
     public void setName(@Nonnull final String name) {
-      this.name = Assertions.assertNotNull(name);
+      this.name = assertNotNull(name);
     }
   
     @Nullable
@@ -96,7 +96,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     public void setValue(@Nonnull final String value) {
-      this.value = Assertions.assertNotNull(value);
+      this.value = assertNotNull(value);
     }
 
     @Nullable
@@ -278,13 +278,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   private void fillCfgFiles(@Nonnull final PreprocessorContext context) {
     for (final CfgFile f : configFiles) {
-       context.addConfigFile(f.getFile());
+       context.addConfigFile(assertNotNull("File must not be null",f.getFile()));
     }
   }
 
   private void fillGlobalVars(@Nonnull final PreprocessorContext context) {
     for (final Global g : globalVariables) {
-      context.setGlobalVariable(g.getName(), Value.recognizeRawString(g.getValue()));
+      context.setGlobalVariable(assertNotNull("Name must not be null",g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null",g.getValue())));
     }
   }
 

@@ -41,7 +41,7 @@ public final class FunctionISSUBSTR extends AbstractFunction {
   public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value subStrValue, @Nonnull final Value strValue) {
     final String str = strValue.asString().toLowerCase();
     final String subStr = subStrValue.asString().toLowerCase();
-    return Value.valueOf(Boolean.valueOf(str.indexOf(subStr) >= 0));
+    return Value.valueOf(str.contains(subStr));
   }
 
   @Override

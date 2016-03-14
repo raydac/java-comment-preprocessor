@@ -15,6 +15,8 @@
  */
 package com.igormaznitsa.jcp.context;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
 import com.igormaznitsa.jcp.InfoHelper;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
@@ -53,9 +55,9 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static final String VAR_TIME = "__time__";
   public static final String VAR_TIMESTAMP = "__timestamp__";
 
-  static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
-  static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-  static final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
+  final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
+  final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+  final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
   
   public static final class NameReferencePair{
     private final String name;
@@ -160,7 +162,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       if (state == null){
         return Value.valueOf("<no file>");
       }else{
-        return Value.valueOf(timestampFormat.format(new Date(state.peekFile().getFile().lastModified())));
+        return Value.valueOf(timestampFormat.format(new Date(assertNotNull("File must be presented on stack",state.peekFile()).getFile().lastModified())));
       }
     }
     else if (VAR_LINE.equals(varName)) {

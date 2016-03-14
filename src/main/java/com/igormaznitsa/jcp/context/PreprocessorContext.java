@@ -36,6 +36,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
@@ -44,6 +45,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
+@ImplementationNote("Must not be final to be mocked in tests")
 public class PreprocessorContext {
 
   public static final String DEFAULT_SOURCE_DIRECTORY = "." + File.separatorChar;

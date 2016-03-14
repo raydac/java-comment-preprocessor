@@ -365,7 +365,7 @@ public class ExpressionTreeElement {
               }
               else if (val.getType() == ValueType.FLOAT) {
                 childElements = EMPTY;
-                savedItem = Value.valueOf(Float.valueOf(0 - val.asFloat()));
+                savedItem = Value.valueOf(0.0f - val.asFloat());
                 makeMaxPriority();
               }
               else {

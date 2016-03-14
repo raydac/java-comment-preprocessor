@@ -256,16 +256,16 @@ public final class Value implements ExpressionItem {
   public String toStringDetail() {
     switch (type) {
       case BOOLEAN: {
-        return "Boolean : " + ((Boolean) value).booleanValue();
+        return "Boolean : " + (Boolean) value;
       }
       case INT: {
-        return "Integer : " + ((Long) value).longValue();
+        return "Integer : " + (Long) value;
       }
       case UNKNOWN: {
         return "Unknown : -";
       }
       case FLOAT: {
-        return "Float : " + ((Float) value).floatValue();
+        return "Float : " + (Float) value;
       }
       case STRING: {
         return "String : " + (String) value;
@@ -298,7 +298,7 @@ public final class Value implements ExpressionItem {
   }
 
   @Override
-  @Nonnull
+  @Nullable
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VALUE;
   }
