@@ -45,14 +45,13 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "if",null);
+      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "if", null);
     }
 
     if (state.isAtActiveIf()) {
       if (state.getPreprocessingFlags().contains(PreprocessingFlag.IF_CONDITION_FALSE)) {
         state.getPreprocessingFlags().remove(PreprocessingFlag.IF_CONDITION_FALSE);
-      }
-      else {
+      } else {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
     }

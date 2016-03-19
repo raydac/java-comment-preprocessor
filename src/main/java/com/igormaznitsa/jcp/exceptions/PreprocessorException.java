@@ -22,8 +22,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The exception allows to save some useful data about preprocessing files like
- * the current include stack and the error string index
+ * The exception allows to save some useful data about preprocessing files like the current include stack and the error string index
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -45,8 +44,7 @@ public class PreprocessorException extends RuntimeException {
   public File getRootFile() {
     if (includeStack.length == 0) {
       return null;
-    }
-    else {
+    } else {
       return includeStack[includeStack.length - 1].getFile();
     }
   }
@@ -55,8 +53,7 @@ public class PreprocessorException extends RuntimeException {
   public File getProcessingFile() {
     if (includeStack.length == 0) {
       return null;
-    }
-    else {
+    } else {
       return includeStack[0].getFile();
     }
   }
@@ -64,8 +61,7 @@ public class PreprocessorException extends RuntimeException {
   public int getStringIndex() {
     if (includeStack.length == 0) {
       return -1;
-    }
-    else {
+    } else {
       return includeStack[0].getStringIndex() + 1;
     }
   }
@@ -100,7 +96,7 @@ public class PreprocessorException extends RuntimeException {
     result.append(getMessage()).append(", include stack: ").append(convertIncludeStackToString()).append(", source line: ").append(this.processingString);
     return result.toString();
   }
-  
+
   @Nonnull
   private static String makeStackView(@Nullable @MustNotContainNull final FilePositionInfo[] list, final char fill) {
     if (list == null || list.length == 0) {
@@ -130,15 +126,19 @@ public class PreprocessorException extends RuntimeException {
 
     return builder.toString();
   }
-  
+
   @Nullable
-  public static PreprocessorException extractPreprocessorException(@Nullable final Throwable thr){
-    if (thr == null) return null;
+  public static PreprocessorException extractPreprocessorException(@Nullable final Throwable thr) {
+    if (thr == null) {
+      return null;
+    }
     Throwable result = thr;
-    do{
-      if (result instanceof PreprocessorException) return (PreprocessorException)result;
+    do {
+      if (result instanceof PreprocessorException) {
+        return (PreprocessorException) result;
+      }
       result = result.getCause();
-    }while(result!=null);
+    } while (result != null);
     return null;
   }
 
@@ -153,10 +153,9 @@ public class PreprocessorException extends RuntimeException {
     if (pp == null) {
       out.println(thr.getMessage());
       thr.printStackTrace(out);
-    }
-    else {
+    } else {
       out.println(pp.getMessage());
-      out.println(makeStackView(pp.getIncludeChain(),fillChar));
+      out.println(makeStackView(pp.getIncludeChain(), fillChar));
       if (pp.getCause() != null) {
         pp.getCause().printStackTrace(out);
       }

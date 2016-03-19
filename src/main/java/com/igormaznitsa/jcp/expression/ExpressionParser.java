@@ -37,8 +37,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * This class is a parser allows to parse an expression and make a tree as the
- * output
+ * This class is a parser allows to parse an expression and make a tree as the output
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -62,8 +61,7 @@ public final class ExpressionParser {
   }
 
   /**
-   * The enumeration describes some special items which can be met in the
-   * expression
+   * The enumeration describes some special items which can be met in the expression
    *
    * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
    */
@@ -103,35 +101,31 @@ public final class ExpressionParser {
    * To parse an expression represented as a string and get a tree
    *
    * @param expressionStr the expression string to be parsed, must not be null
-   * @param context a preprocessor context to be used to get variable values, it
-   * can be null
+   * @param context a preprocessor context to be used to get variable values, it can be null
    * @return a tree containing parsed expression
-   * @throws IOException it will be thrown if there is a problem to read the
-   * expression string
+   * @throws IOException it will be thrown if there is a problem to read the expression string
    */
   @Nonnull
   public ExpressionTree parse(@Nonnull final String expressionStr, @Nullable final PreprocessorContext context) throws IOException {
-    assertNotNull("Expression is null",expressionStr);
+    assertNotNull("Expression is null", expressionStr);
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
 
     final ExpressionTree result;
     if (context == null) {
       result = new ExpressionTree();
-    }
-    else {
+    } else {
       final PreprocessingState state = context.getPreprocessingState();
       if (state == null) {
         result = new ExpressionTree();
-      }
-      else {
+      } else {
         result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
       }
     }
 
     if (readExpression(reader, result, context, false, false) != null) {
       final String text = "Unexpected result during parsing [" + expressionStr + ']';
-      throw context == null ? new IllegalStateException(text) : context.makeException(text,null);
+      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
     }
 
     result.postProcess();
@@ -142,18 +136,13 @@ public final class ExpressionParser {
   /**
    * It reads an expression from a reader and fill a tree
    *
-   * @param reader the reader to be used as the character source, must not be
-   * null
+   * @param reader the reader to be used as the character source, must not be null
    * @param tree the result tree to be filled by read items, must not be null
-   * @param context a preprocessor context to be used for variables, it can be
-   * null
-   * @param insideBracket the flag shows that the expression can be ended by a
-   * bracket
+   * @param context a preprocessor context to be used for variables, it can be null
+   * @param insideBracket the flag shows that the expression can be ended by a bracket
    * @param argument the flag shows that the expression can be ended by a comma
-   * @return the last read expression item (a comma or a bracket for instance),
-   * it can be null
-   * @throws IOException it will be thrown if there is a problem in reading from
-   * the reader
+   * @return the last read expression item (a comma or a bracket for instance), it can be null
+   * @throws IOException it will be thrown if there is a problem in reading from the reader
    */
   @Nullable
   public ExpressionItem readExpression(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, final boolean insideBracket, final boolean argument) throws IOException {
@@ -167,68 +156,53 @@ public final class ExpressionParser {
     if (context == null) {
       stack = PreprocessingState.EMPTY_STACK;
       sourceLine = "";
-    }
-    else {
+    } else {
       final PreprocessingState state = context.getPreprocessingState();
       stack = state == null ? null : state.makeIncludeStack();
       sourceLine = state == null ? null : state.getLastReadString();
     }
 
     ExpressionItem prev = null;
-    
+
     while (working) {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
         working = false;
         result = null;
-      }
-      else {
+      } else if (nextItem.getExpressionItemType() == null) {
+        if (nextItem == SpecialItem.BRACKET_CLOSING) {
+          if (insideBracket) {
+            working = false;
+            result = nextItem;
+          } else if (argument) {
+            working = false;
+            result = nextItem;
+          } else {
+            final String text = "Detected alone closing bracket";
+            throw context == null ? new IllegalStateException(text) : context.makeException("Detected alone closing bracket", null);
+          }
+        } else if (nextItem == SpecialItem.BRACKET_OPENING) {
+          if (prev != null && prev.getExpressionItemType() == ExpressionItemType.VARIABLE) {
+            final String text = "Unknown function detected [" + prev.toString() + ']';
+            throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+          }
 
-        if (nextItem.getExpressionItemType() == null) {
-            if (nextItem == SpecialItem.BRACKET_CLOSING) {
-            if (insideBracket) {
-              working = false;
-              result = nextItem;
-            }
-            else {
-              if (argument) {
-                working = false;
-                result = nextItem;
-              }
-              else {
-                final String text = "Detected alone closing bracket";
-                throw context == null ? new IllegalStateException(text) :  context.makeException("Detected alone closing bracket", null);
-              }
-            }
+          final ExpressionTree subExpression;
+          subExpression = new ExpressionTree(stack, sourceLine);
+          if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
+            final String text = "Detected unclosed bracket";
+            throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
           }
-          else if (nextItem == SpecialItem.BRACKET_OPENING) {
-            if (prev != null && prev.getExpressionItemType() == ExpressionItemType.VARIABLE){
-              final String text = "Unknown function detected ["+prev.toString()+']';
-              throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
-            }
-            
-            final ExpressionTree subExpression;
-            subExpression = new ExpressionTree(stack, sourceLine);
-            if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
-              final String text = "Detected unclosed bracket";
-              throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
-            }
-            tree.addTree(subExpression);
-          }
-          else if (nextItem == SpecialItem.COMMA) {
-            return nextItem;
-          }
+          tree.addTree(subExpression);
+        } else if (nextItem == SpecialItem.COMMA) {
+          return nextItem;
         }
-        else {
-          if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
-            final AbstractFunction function = (AbstractFunction) nextItem;
-            ExpressionTree functionTree = readFunction(function, reader, context, stack, sourceLine);
-            tree.addTree(functionTree);
-          }
-          else {
-            tree.addItem(nextItem);
-          }
-        }
+      } else if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
+        final AbstractFunction function = (AbstractFunction) nextItem;
+        ExpressionTree functionTree = readFunction(function, reader, context, stack, sourceLine);
+        tree.addTree(functionTree);
+      } else {
+        tree.addItem(nextItem);
       }
       prev = nextItem;
     }
@@ -238,12 +212,9 @@ public final class ExpressionParser {
   /**
    * The auxiliary method allows to form a function and its arguments as a tree
    *
-   * @param function the function which arguments will be read from the stream,
-   * must not be null
-   * @param reader the reader to be used as the character source, must not be
-   * null
-   * @param context a preprocessor context, it will be used for a user functions
-   * and variables, it can be null
+   * @param function the function which arguments will be read from the stream, must not be null
+   * @param reader the reader to be used as the character source, must not be null
+   * @param context a preprocessor context, it will be used for a user functions and variables, it can be null
    * @param includeStack the current file include stack, can be null
    * @param sources the current source line, can be null
    * @return an expression tree containing parsed function arguments
@@ -253,7 +224,7 @@ public final class ExpressionParser {
   private ExpressionTree readFunction(@Nonnull final AbstractFunction function, @Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
-      throw context.makeException("Detected function without params [" + function.getName() + ']',null);
+      throw context.makeException("Detected function without params [" + function.getName() + ']', null);
     }
 
     final int arity = function.getArity();
@@ -264,17 +235,14 @@ public final class ExpressionParser {
       final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
       final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);
       if (SpecialItem.BRACKET_CLOSING != lastItem) {
-        throw context.makeException("There is not closing bracket for function [" + function.getName() + ']',null);
-      }
-      else if (subExpression.getRoot() != null) {
-        throw context.makeException("The function \'" + function.getName() + "\' doesn't need arguments",null);
-      }
-      else {
+        throw context.makeException("There is not closing bracket for function [" + function.getName() + ']', null);
+      } else if (subExpression.getRoot() != null) {
+        throw context.makeException("The function \'" + function.getName() + "\' doesn't need arguments", null);
+      } else {
         functionTree = new ExpressionTree(includeStack, sources);
         functionTree.addItem(function);
       }
-    }
-    else {
+    } else {
 
       final List<ExpressionTree> arguments = new ArrayList<ExpressionTree>(arity);
       for (int i = 0; i < function.getArity(); i++) {
@@ -284,12 +252,10 @@ public final class ExpressionParser {
         if (SpecialItem.BRACKET_CLOSING == lastItem) {
           arguments.add(subExpression);
           break;
-        }
-        else if (SpecialItem.COMMA == lastItem) {
+        } else if (SpecialItem.COMMA == lastItem) {
           arguments.add(subExpression);
-        }
-        else {
-         throw context.makeException("Wrong argument for function [" + function.getName() + ']',null);
+        } else {
+          throw context.makeException("Wrong argument for function [" + function.getName() + ']', null);
         }
       }
 
@@ -298,7 +264,7 @@ public final class ExpressionParser {
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
       if (arguments.size() != functionTreeElement.getArity()) {
-        throw context.makeException("Wrong argument number detected \'" + function.getName() + "\', must be " + function.getArity() + " argument(s)",null);
+        throw context.makeException("Wrong argument number detected \'" + function.getName() + "\', must be " + function.getArity() + " argument(s)", null);
       }
 
       functionTreeElement.fillArguments(arguments);
@@ -315,8 +281,7 @@ public final class ExpressionParser {
    * @param callStack the current file call stack, can be null
    * @param source the current source line, can be null
    * @return the last read expression item (a comma or a bracket)
-   * @throws IOException it will be thrown if there is any error during char
-   * reading from the reader
+   * @throws IOException it will be thrown if there is any error during char reading from the reader
    */
   @Nullable
   ExpressionItem readFunctionArgument(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String source) throws IOException {
@@ -325,32 +290,25 @@ public final class ExpressionParser {
     while (working) {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
-        throw context.makeException("Non-closed function detected",null);
-      }
-      else if (SpecialItem.COMMA == nextItem) {
+        throw context.makeException("Non-closed function detected", null);
+      } else if (SpecialItem.COMMA == nextItem) {
         result = nextItem;
         working = false;
-      }
-      else if (SpecialItem.BRACKET_OPENING == nextItem) {
+      } else if (SpecialItem.BRACKET_OPENING == nextItem) {
         final ExpressionTree subExpression = new ExpressionTree(callStack, source);
         if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
           throw context.makeException("Non-closed bracket inside a function argument detected", null);
         }
         tree.addTree(subExpression);
-      }
-      else if (SpecialItem.BRACKET_CLOSING == nextItem) {
+      } else if (SpecialItem.BRACKET_CLOSING == nextItem) {
         result = nextItem;
         working = false;
-      }
-      else {
-        if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
-          final AbstractFunction function = (AbstractFunction) nextItem;
-          ExpressionTree functionTree = readFunction(function, reader, context, callStack, source);
-          tree.addTree(functionTree);
-        }
-        else {
-          tree.addItem(nextItem);
-        }
+      } else if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
+        final AbstractFunction function = (AbstractFunction) nextItem;
+        ExpressionTree functionTree = readFunction(function, reader, context, callStack, source);
+        tree.addTree(functionTree);
+      } else {
+        tree.addItem(nextItem);
       }
     }
     return result;
@@ -397,8 +355,7 @@ public final class ExpressionParser {
    * @param reader a reader to be used as the char source, must not be null
    * @param context a preprocessor context, it can be null
    * @return a read expression item, it can be null if the end is reached
-   * @throws IOException it will be thrown if there is any error during a char
-   * reading
+   * @throws IOException it will be thrown if there is any error during a char reading
    */
   @Nullable
   ExpressionItem nextItem(@Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context) throws IOException {
@@ -425,41 +382,31 @@ public final class ExpressionParser {
         case WAIT: {
           if (Character.isWhitespace(chr)) {
             // do nothing
-          }
-          else if (chr == ',') {
+          } else if (chr == ',') {
             return SpecialItem.COMMA;
-          }
-          else if (chr == '(') {
+          } else if (chr == '(') {
             return SpecialItem.BRACKET_OPENING;
-          }
-          else if (chr == ')') {
+          } else if (chr == ')') {
             return SpecialItem.BRACKET_CLOSING;
-          }
-          else if (Character.isDigit(chr)) {
+          } else if (Character.isDigit(chr)) {
             builder.append(chr);
             if (chr == '0') {
               state = ParserState.HEX_NUMBER;
-            }
-            else {
+            } else {
               state = ParserState.NUMBER;
             }
-          }
-          else if (chr == '.') {
+          } else if (chr == '.') {
             builder.append('.');
             state = ParserState.FLOAT_NUMBER;
-          }
-          else if (Character.isLetter(chr) || chr == '$' || chr == '_') {
+          } else if (Character.isLetter(chr) || chr == '$' || chr == '_') {
             builder.append(chr);
             state = ParserState.VALUE_OR_FUNCTION;
-          }
-          else if (chr == '\"') {
+          } else if (chr == '\"') {
             state = ParserState.STRING;
-          }
-          else if (isOperatorChar(chr)) {
+          } else if (isOperatorChar(chr)) {
             builder.append(chr);
             state = ParserState.OPERATOR;
-          }
-          else {
+          } else {
             throw context.makeException("Unsupported token character detected \'" + chr + '\'', null);
           }
         }
@@ -468,8 +415,7 @@ public final class ExpressionParser {
           if (!isOperatorChar(chr) || isDelimiter(chr)) {
             reader.unread(data);
             found = true;
-          }
-          else {
+          } else {
             builder.append(chr);
           }
         }
@@ -477,8 +423,7 @@ public final class ExpressionParser {
         case FLOAT_NUMBER: {
           if (Character.isDigit(chr)) {
             builder.append(chr);
-          }
-          else {
+          } else {
             found = true;
             reader.unread(data);
           }
@@ -488,48 +433,33 @@ public final class ExpressionParser {
           if (builder.length() == 1) {
             if (chr == 'X' || chr == 'x') {
               builder.append(chr);
-            }
-            else {
-              if (chr == '.') {
-                builder.append(chr);
-                state = ParserState.FLOAT_NUMBER;
-              }
-              else {
-                if (Character.isDigit(chr)) {
-                  state = ParserState.NUMBER;
-                }
-                else {
-                  state = ParserState.NUMBER;
-                  found = true;
-                  reader.unread(data);
-                }
-              }
-            }
-          }
-          else {
-            if (Character.isDigit(chr) || (chr >= 'a' && chr <= 'f') || (chr >= 'A' && chr <= 'F')) {
+            } else if (chr == '.') {
               builder.append(chr);
-            }
-            else {
+              state = ParserState.FLOAT_NUMBER;
+            } else if (Character.isDigit(chr)) {
+              state = ParserState.NUMBER;
+            } else {
+              state = ParserState.NUMBER;
               found = true;
               reader.unread(data);
             }
+          } else if (Character.isDigit(chr) || (chr >= 'a' && chr <= 'f') || (chr >= 'A' && chr <= 'F')) {
+            builder.append(chr);
+          } else {
+            found = true;
+            reader.unread(data);
           }
         }
         break;
         case NUMBER: {
           if (Character.isDigit(chr)) {
             builder.append(chr);
-          }
-          else {
-            if (chr == '.') {
-              builder.append(chr);
-              state = ParserState.FLOAT_NUMBER;
-            }
-            else {
-              reader.unread(data);
-              found = true;
-            }
+          } else if (chr == '.') {
+            builder.append(chr);
+            state = ParserState.FLOAT_NUMBER;
+          } else {
+            reader.unread(data);
+            found = true;
           }
         }
         break;
@@ -537,8 +467,7 @@ public final class ExpressionParser {
           if (Character.isWhitespace(chr) || isDelimiterOrOperatorChar(chr)) {
             reader.unread(data);
             found = true;
-          }
-          else {
+          } else {
             builder.append(chr);
           }
         }
@@ -569,8 +498,8 @@ public final class ExpressionParser {
             case '\'':
               builder.append('\'');
               break;
-            default:{
-              throw context.makeException("Unsupported special char detected \'\\" + chr + '\'',null);
+            default: {
+              throw context.makeException("Unsupported special char detected \'\\" + chr + '\'', null);
             }
           }
           state = ParserState.STRING;
@@ -600,14 +529,13 @@ public final class ExpressionParser {
     if (!found) {
       switch (state) {
         case SPECIAL_CHAR:
-        case STRING:{
+        case STRING: {
           throw context.makeException("Unclosed string has been detected", null);
         }
         default:
           return null;
       }
-    }
-    else {
+    } else {
       ExpressionItem result = null;
       switch (state) {
         case FLOAT_NUMBER: {
@@ -618,8 +546,7 @@ public final class ExpressionParser {
           final String text = builder.toString();
           if ("0".equals(text)) {
             result = Value.INT_ZERO;
-          }
-          else {
+          } else {
             final String str = PreprocessorUtils.extractTail("0x", text);
             result = Value.valueOf(Long.parseLong(str, 16));
           }
@@ -639,7 +566,7 @@ public final class ExpressionParser {
           }
 
           if (result == null) {
-            throw context.makeException("Unknown operator detected \'" + operatorLC + '\'',null);
+            throw context.makeException("Unknown operator detected \'" + operatorLC + '\'', null);
           }
         }
         break;
@@ -651,33 +578,27 @@ public final class ExpressionParser {
           final String str = builder.toString().toLowerCase();
           if (str.charAt(0) == '$') {
 
-            assertNotNull("There is not a preprocessor context to define a user function [" + str + ']',context);
+            assertNotNull("There is not a preprocessor context to define a user function [" + str + ']', context);
 
             final PreprocessorExtension extension = context.getPreprocessorExtension();
             if (extension == null) {
-              throw context.makeException("There is not any defined preprocessor extension to get data about user functions [" + str + ']',null);
+              throw context.makeException("There is not any defined preprocessor extension to get data about user functions [" + str + ']', null);
             }
 
             final String userFunctionName = PreprocessorUtils.extractTail("$", str);
 
             // user defined
             result = new FunctionDefinedByUser(userFunctionName, extension.getUserFunctionArity(userFunctionName), context);
-          }
-          else {
-            if ("true".equals(str)) {
-              result = Value.BOOLEAN_TRUE;
-            }
-            else if ("false".equals(str)) {
-              result = Value.BOOLEAN_FALSE;
-            }
-            else {
-              final AbstractFunction function = AbstractFunction.findForName(str);
-              if (function == null) {
-                result = new Variable(str);
-              }
-              else {
-                result = function;
-              }
+          } else if ("true".equals(str)) {
+            result = Value.BOOLEAN_TRUE;
+          } else if ("false".equals(str)) {
+            result = Value.BOOLEAN_FALSE;
+          } else {
+            final AbstractFunction function = AbstractFunction.findForName(str);
+            if (function == null) {
+              result = new Variable(str);
+            } else {
+              result = function;
             }
           }
         }

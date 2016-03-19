@@ -40,8 +40,7 @@ import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The preprocessor context class is a main class which contains all options of
- * the preprocessor and allows to work with variables in expressions
+ * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -61,7 +60,7 @@ public class PreprocessorContext {
   private boolean keepNonExecutingLines = false;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
-  
+
   private String sourceDirectories;
   private String destinationDirectory;
   private File destinationDirectoryFile;
@@ -85,7 +84,7 @@ public class PreprocessorContext {
   private final boolean cloned;
 
   private final TextFileDataContainer currentInCloneSource;
-  
+
   /**
    * The constructor
    */
@@ -99,16 +98,17 @@ public class PreprocessorContext {
 
   /**
    * Set the flag to care to be precise in processing the last file next line char
+   *
    * @param flag true to turn on the mode, false to turn off
    */
-  public void setCareForLastNextLine(final boolean flag){
+  public void setCareForLastNextLine(final boolean flag) {
     this.careForLastNextLine = flag;
   }
-  
-  public boolean isCareForLastNextLine(){
+
+  public boolean isCareForLastNextLine() {
     return this.careForLastNextLine;
   }
-  
+
   /**
    * Check that the preprocessor context is a clone of another context.
    *
@@ -137,7 +137,7 @@ public class PreprocessorContext {
     this.sourceDirectoryFiles = context.sourceDirectoryFiles.clone();
 
     this.careForLastNextLine = context.careForLastNextLine;
-    
+
     this.processingFileExtensions.clear();
     this.processingFileExtensions.addAll(context.processingFileExtensions);
 
@@ -148,7 +148,7 @@ public class PreprocessorContext {
     this.inCharacterEncoding = context.inCharacterEncoding;
     this.outCharacterEncoding = context.outCharacterEncoding;
     this.compareDestination = context.compareDestination;
-    
+
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
     this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
@@ -171,8 +171,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * It allows to register a special variable processor which can process some
-   * special global variables
+   * It allows to register a special variable processor which can process some special global variables
    *
    * @param processor a variable processor to be registered, it must not be null
    * @see SpecialVariableProcessor
@@ -217,12 +216,12 @@ public class PreprocessorContext {
    * @param text a String to be printed into the error log, it can be null
    * @since 6.0.1
    */
-  public void logDebug(@Nullable final String text){
+  public void logDebug(@Nullable final String text) {
     if (text != null && this.preprocessorLogger != null) {
       this.preprocessorLogger.debug(text);
     }
   }
-  
+
   /**
    * Print an information about a warning situation into the current log
    *
@@ -237,8 +236,7 @@ public class PreprocessorContext {
   /**
    * Set the remove comments flag
    *
-   * @param removingComments the flag to set, true if comments must be removed
-   * from the result files, otherwise else
+   * @param removingComments the flag to set, true if comments must be removed from the result files, otherwise else
    * @return the preprocessor context instance
    */
   @Nonnull
@@ -259,8 +257,7 @@ public class PreprocessorContext {
   /**
    * It allows to disable all writing operations of the preprocessor
    *
-   * @param flag true if preprocessor must not make any writing operations,
-   * otherwise false
+   * @param flag true if preprocessor must not make any writing operations, otherwise false
    */
   public void setFileOutputDisabled(final boolean flag) {
     fileOutputDisabled = flag;
@@ -278,8 +275,7 @@ public class PreprocessorContext {
   /**
    * Set source directories
    *
-   * @param directories semi separated list of source directories, must not be
-   * null
+   * @param directories semi separated list of source directories, must not be null
    * @return this preprocessor context instance
    */
   @Nonnull
@@ -351,8 +347,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Inside auxiliary method to parse the source directories list into file
-   * array
+   * Inside auxiliary method to parse the source directories list into file array
    *
    * @return parsed file list, each file must exist and be a directory
    */
@@ -409,11 +404,9 @@ public class PreprocessorContext {
   }
 
   /**
-   * Set file extensions of files to be preprocessed, it is a comma separated
-   * list
+   * Set file extensions of files to be preprocessed, it is a comma separated list
    *
-   * @param extensions comma separated extensions list of file extensions to be
-   * preprocessed, must not be null
+   * @param extensions comma separated extensions list of file extensions to be preprocessed, must not be null
    * @return this preprocessor context
    */
   @Nonnull
@@ -458,19 +451,16 @@ public class PreprocessorContext {
     final boolean result;
     if (file != null && file.isFile()) {
       result = excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
-    }
-    else {
+    } else {
       result = false;
     }
     return result;
   }
 
   /**
-   * Set comma separated list of file extensions to be excluded from
-   * preprocessing
+   * Set comma separated list of file extensions to be excluded from preprocessing
    *
-   * @param extensions a comma separated file extension list, it must not be
-   * null
+   * @param extensions a comma separated file extension list, it must not be null
    * @return this preprocessor context
    */
   @Nonnull
@@ -483,8 +473,7 @@ public class PreprocessorContext {
   /**
    * Get excluded file extension list as a string array
    *
-   * @return a string array contains file extensions to be excluded from
-   * preprocessing act
+   * @return a string array contains file extensions to be excluded from preprocessing act
    */
   @Nonnull
   @MustNotContainNull
@@ -516,8 +505,7 @@ public class PreprocessorContext {
   /**
    * Set a local variable value
    *
-   * @param name the variable name, must not be null, remember that the name
-   * will be normalized and will be entirely in lower case
+   * @param name the variable name, must not be null, remember that the name will be normalized and will be entirely in lower case
    * @param value the value for the variable, it must not be null
    * @return this preprocessor context
    * @see Value
@@ -544,8 +532,7 @@ public class PreprocessorContext {
   /**
    * Remove a local variable value from the context.
    *
-   * @param name the variable name, must not be null, remember that the name
-   * will be normalized and will be entirely in lower case
+   * @param name the variable name, must not be null, remember that the name will be normalized and will be entirely in lower case
    * @return this preprocessor context
    * @see Value
    */
@@ -561,9 +548,9 @@ public class PreprocessorContext {
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) || globalVarTable.containsKey(normalized)) {
       throw makeException("Attempting to remove either a global variable or a special variable as a local one [" + normalized + ']', null);
     }
-    
-    if (isVerbose()){
-      logForVerbose("Removing local variable '"+normalized+"\'");
+
+    if (isVerbose()) {
+      logForVerbose("Removing local variable '" + normalized + "\'");
     }
     localVarTable.remove(normalized);
     return this;
@@ -572,8 +559,7 @@ public class PreprocessorContext {
   /**
    * Remove a global variable value from the context.
    *
-   * @param name the variable name, must not be null, remember that the name
-   * will be normalized and will be entirely in lower case
+   * @param name the variable name, must not be null, remember that the name will be normalized and will be entirely in lower case
    * @return this preprocessor context
    * @see Value
    */
@@ -586,11 +572,11 @@ public class PreprocessorContext {
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
     }
-                          
+
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalized)) {
       throw makeException("Attempting to remove a special variable as a global one [" + normalized + ']', null);
     }
-    
+
     if (isVerbose()) {
       logForVerbose("Removing global variable '" + normalized + "\'");
     }
@@ -602,10 +588,8 @@ public class PreprocessorContext {
   /**
    * Get a local variable value
    *
-   * @param name the name for the variable, it can be null. The name will be
-   * normalized to allowed one.
-   * @return null either if the name is null or the variable is not found,
-   * otherwise its value
+   * @param name the name for the variable, it can be null. The name will be normalized to allowed one.
+   * @return null either if the name is null or the variable is not found, otherwise its value
    */
   @Nullable
   public Value getLocalVariable(@Nullable final String name) {
@@ -625,10 +609,8 @@ public class PreprocessorContext {
   /**
    * Check that a local variable for a name is presented
    *
-   * @param name the checking name, it will be normalized to the support format
-   * and can be null
-   * @return false either if the name is null or there is not any local variable
-   * for the name, otherwise true
+   * @param name the checking name, it will be normalized to the support format and can be null
+   * @return false either if the name is null or there is not any local variable for the name, otherwise true
    */
   public boolean containsLocalVariable(@Nullable final String name) {
     if (name == null) {
@@ -658,8 +640,7 @@ public class PreprocessorContext {
   /**
    * Set a global variable value
    *
-   * @param name the variable name, it must not be null and will be normalized
-   * to the supported format
+   * @param name the variable name, it must not be null and will be normalized to the supported format
    * @param value the variable value, it must not be null
    * @return this preprocessor context
    */
@@ -677,14 +658,12 @@ public class PreprocessorContext {
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
       mapVariableNameToSpecialVarProcessor.get(normalizedName).setVariable(normalizedName, value, this);
-    }
-    else {
+    } else {
       if (isVerbose()) {
         final String valueAsStr = value.toString();
         if (globalVarTable.containsKey(normalizedName)) {
           logForVerbose("Replacing global variable [" + normalizedName + '=' + valueAsStr + ']');
-        }
-        else {
+        } else {
           logForVerbose("Defining new global variable [" + normalizedName + '=' + valueAsStr + ']');
         }
       }
@@ -696,10 +675,8 @@ public class PreprocessorContext {
   /**
    * Check that there is a named global variable in the inside storage
    *
-   * @param name the checking name, it will be normalized to the supported
-   * format, it can be null
-   * @return true if such variable is presented for its name in the inside
-   * storage, otherwise false (also it is false if the name is null)
+   * @param name the checking name, it will be normalized to the supported format, it can be null
+   * @return true if such variable is presented for its name in the inside storage, otherwise false (also it is false if the name is null)
    */
   public boolean containsGlobalVariable(@Nullable final String name) {
     if (name == null) {
@@ -715,13 +692,10 @@ public class PreprocessorContext {
   }
 
   /**
-   * Find value among local and global variables for a name. It finds in the
-   * order: special processors, local variables, global variables
+   * Find value among local and global variables for a name. It finds in the order: special processors, local variables, global variables
    *
-   * @param name the name for the needed variable, it will be normalized to the
-   * supported format
-   * @return false if either the variable is not found or the name is null,
-   * otherwise the variable value
+   * @param name the name for the needed variable, it will be normalized to the supported format
+   * @return false if either the variable is not found or the name is null, otherwise the variable value
    */
   @Nullable
   public Value findVariableForName(@Nullable final String name) {
@@ -753,8 +727,7 @@ public class PreprocessorContext {
    * Check that there is a global variable with such name.
    *
    * @param variableName a name to be checked, can be null
-   * @return false if there is not such variable or it is null, true if such
-   * global or special variable exists
+   * @return false if there is not such variable or it is null, true if such global or special variable exists
    */
   public boolean isGlobalVariable(@Nullable final String variableName) {
     boolean result = false;
@@ -769,8 +742,7 @@ public class PreprocessorContext {
    * Check that there is a local variable with such name.
    *
    * @param variableName a name to be checked, can be null
-   * @return false if there is not such variable or it is null, true if such
-   * local variable exists
+   * @return false if there is not such variable or it is null, true if such local variable exists
    */
   public boolean isLocalVariable(@Nullable final String variableName) {
     boolean result = false;
@@ -804,28 +776,29 @@ public class PreprocessorContext {
 
   /**
    * Set the flag to check before saving if the content changed.
+   *
    * @param flag true if to check, false otherwise
    * @return the preprocessor context
    */
   @Nonnull
-  public PreprocessorContext setCompareDestination(final boolean flag){
+  public PreprocessorContext setCompareDestination(final boolean flag) {
     this.compareDestination = flag;
     return this;
   }
-  
+
   /**
    * Check the flag to check content of existing file before saving.
+   *
    * @return true if the content should be checked and new content must not be replaced if it is the same
    */
-  public boolean isCompareDestination(){
+  public boolean isCompareDestination() {
     return this.compareDestination;
   }
-  
+
   /**
    * Set the flag to keep lines as commented ones
    *
-   * @param flag true if the preprocessor must keep non-executing lines,
-   * otherwise false
+   * @param flag true if the preprocessor must keep non-executing lines, otherwise false
    * @return this preprocessor context
    */
   @Nonnull
@@ -844,12 +817,9 @@ public class PreprocessorContext {
   }
 
   /**
-   * Set a preprocessor extension, it is a module implements the
-   * PreprocessorExtension interface which can process and get some calls from a
-   * preprocessor during its work
+   * Set a preprocessor extension, it is a module implements the PreprocessorExtension interface which can process and get some calls from a preprocessor during its work
    *
-   * @param extension an object implements the PreprocessorExtension interface,
-   * it can be null
+   * @param extension an object implements the PreprocessorExtension interface, it can be null
    * @return this preprocessor context
    * @see PreprocessorExtension
    */
@@ -871,11 +841,9 @@ public class PreprocessorContext {
   }
 
   /**
-   * Set the character encoding for reading texts, it must be supported by the
-   * Java platform else an exception will be thrown
+   * Set the character encoding for reading texts, it must be supported by the Java platform else an exception will be thrown
    *
-   * @param characterEncoding a character encoding as a String, it must not be
-   * null and must be supported by the Java platform
+   * @param characterEncoding a character encoding as a String, it must not be null and must be supported by the Java platform
    * @return this preprocessor context
    */
   @Nonnull
@@ -890,11 +858,9 @@ public class PreprocessorContext {
   }
 
   /**
-   * Set the output texts character encoding, it must be supported by the Java
-   * platform else an exception will be thrown
+   * Set the output texts character encoding, it must be supported by the Java platform else an exception will be thrown
    *
-   * @param characterEncoding a character encoding as a String, it must not be
-   * null and must be supported by the Java platform
+   * @param characterEncoding a character encoding as a String, it must not be null and must be supported by the Java platform
    * @return this preprocessor context
    */
   @Nonnull
@@ -927,8 +893,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * It allows to create a File object for its path subject to the destination
-   * directory path
+   * It allows to create a File object for its path subject to the destination directory path
    *
    * @param path the path to the file, it must not be null
    * @return a generated File object for the path
@@ -938,21 +903,18 @@ public class PreprocessorContext {
     assertNotNull("Path is null", path);
 
     if (path.isEmpty()) {
-      throw makeException("File name is empty",null);
+      throw makeException("File name is empty", null);
     }
 
     return new File(getDestinationDirectoryAsFile(), path);
   }
 
   /**
-   * It returns a File object for a path to a source file subject to the source
-   * directory path
+   * It returns a File object for a path to a source file subject to the source directory path
    *
-   * @param path the path to the needed source file, it must not be null and the
-   * file must exist and be a file
+   * @param path the path to the needed source file, it must not be null and the file must exist and be a file
    * @return a generated File object for the path
-   * @throws IOException it will be thrown for problem to create the File or to
-   * find it on the disk
+   * @throws IOException it will be thrown for problem to create the File or to find it on the disk
    */
   @Nonnull
   public File getSourceFile(@Nonnull final String path) throws IOException {
@@ -974,8 +936,7 @@ public class PreprocessorContext {
     if (FilenameUtils.getPrefixLength(path) <= 0 && parentDir != null) {
       // relative path
       result = new File(parentDir, path);
-    }
-    else {
+    } else {
       final List<File> findFiles = new ArrayList<File>();
       for (final File root : getSourceDirectoryAsFiles()) {
         final File variant = new File(root, path);
@@ -986,24 +947,21 @@ public class PreprocessorContext {
 
       if (findFiles.size() == 1) {
         result = findFiles.get(0);
-      }
-      else if (findFiles.isEmpty()) {
+      } else if (findFiles.isEmpty()) {
         result = null;
-      }
-      else {
-        throw makeException("Found several variants for path \'" + path + "\' in different source roots",null);
+      } else {
+        throw makeException("Found several variants for path \'" + path + "\' in different source roots", null);
       }
     }
 
     if (result == null || !result.isFile()) {
-      throw makeException("The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file",null);
+      throw makeException("The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file", null);
     }
     return result;
   }
 
   /**
-   * Add a configuration file, it is a file which contains directives and global
-   * variable definitions
+   * Add a configuration file, it is a file which contains directives and global variable definitions
    *
    * @param file a file, it must not be null
    */
@@ -1024,24 +982,21 @@ public class PreprocessorContext {
   }
 
   /**
-   * Generate new preprocessing state object, also the new preprocessing state
-   * will be saved as the current one in the context
+   * Generate new preprocessing state object, also the new preprocessing state will be saved as the current one in the context
    *
-   * @param fileContainer a file container which will be using the preprocessor
-   * state, it must not be null
-   * @param  phaseIndex  index of phase (0 - global, 1 - preprocessing)
+   * @param fileContainer a file container which will be using the preprocessor state, it must not be null
+   * @param phaseIndex index of phase (0 - global, 1 - preprocessing)
    * @return new generated preprocessor state
-   * @throws IOException it will be throws if there is any error in opening and
-   * reading operations
+   * @throws IOException it will be throws if there is any error in opening and reading operations
    */
   @Nonnull
   public PreprocessingState produceNewPreprocessingState(@Nonnull final FileInfoContainer fileContainer, final int phaseIndex) throws IOException {
     assertNotNull("File container is null", fileContainer);
 
     if (verbose) {
-      if (phaseIndex == 0){
-      logInfo("Start search global definitions in '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
-      }else{
+      if (phaseIndex == 0) {
+        logInfo("Start search global definitions in '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
+      } else {
         logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
       }
     }
@@ -1050,14 +1005,10 @@ public class PreprocessorContext {
   }
 
   /**
-   * Generate new preprocessing state for a file container and a text container,
-   * also the new preprocessing state will be saved as the current one in the
-   * context
+   * Generate new preprocessing state for a file container and a text container, also the new preprocessing state will be saved as the current one in the context
    *
-   * @param fileContainer the file container to be used to create the new
-   * preprocessing state, it must not be null
-   * @param textContainer the text container to be used to create the new
-   * preprocessing state, it must not be null
+   * @param fileContainer the file container to be used to create the new preprocessing state, it must not be null
+   * @param textContainer the text container to be used to create the new preprocessing state, it must not be null
    * @return new generated preprocessing state
    */
   @Nonnull
@@ -1069,8 +1020,7 @@ public class PreprocessorContext {
   /**
    * Get the last generated preprocessing state, it is the current one
    *
-   * @return the last generated preprocessing state or null if there is not
-   * anyone
+   * @return the last generated preprocessing state or null if there is not anyone
    */
   @Nullable
   public PreprocessingState getPreprocessingState() {
@@ -1078,8 +1028,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Prepare exception with message and cause, or return cause if it is a
-   * preprocessor exception
+   * Prepare exception with message and cause, or return cause if it is a preprocessor exception
    *
    * @param text the message text, must not be null
    * @param cause the cause, it can be null
@@ -1096,8 +1045,7 @@ public class PreprocessorContext {
     if (this.currentState == null) {
       includeStack = PreprocessingState.EMPTY_STACK;
       sourceLine = "";
-    }
-    else {
+    } else {
       includeStack = this.currentState.makeIncludeStack();
       sourceLine = this.currentState.getLastReadString();
     }
@@ -1107,9 +1055,9 @@ public class PreprocessorContext {
   public void logForVerbose(@Nonnull final String str) {
     if (isVerbose()) {
       final String stack;
-      if (this.currentState!=null){
+      if (this.currentState != null) {
         stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
-      }else{
+      } else {
         stack = "";
       }
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
@@ -1118,23 +1066,25 @@ public class PreprocessorContext {
 
   @Nonnull
   private static String makeStackView(@Nullable final TextFileDataContainer cloneSource, final boolean cloned, @Nullable @MustNotContainNull final List<TextFileDataContainer> list) {
-    if (list == null || list.isEmpty()) return "";
+    if (list == null || list.isEmpty()) {
+      return "";
+    }
     final StringBuilder builder = new StringBuilder();
     int tab = 5;
-    
+
     for (int s = 0; s < tab; s++) {
       builder.append(' ');
     }
-    
+
     builder.append('{');
-    if (cloned){
-      builder.append(cloneSource == null ? "*No src info" : "*" + cloneSource.getFile().getName()+':'+cloneSource.getNextStringIndex());
-    }else{
+    if (cloned) {
+      builder.append(cloneSource == null ? "*No src info" : "*" + cloneSource.getFile().getName() + ':' + cloneSource.getNextStringIndex());
+    } else {
       builder.append("File chain");
     }
     builder.append('}');
-    tab +=5;
-    
+    tab += 5;
+
     int fileIndex = 1;
     for (int i = list.size() - 1; i >= 0; i--) {
       final TextFileDataContainer cur = list.get(i);
@@ -1146,7 +1096,7 @@ public class PreprocessorContext {
       builder.append(fileIndex++).append(". ");
       builder.append(cur.getFile().getName()).append(':').append(cur.getLastReadStringIndex() + 1);
       tab += 3;
-   }
+    }
 
     return builder.toString();
   }

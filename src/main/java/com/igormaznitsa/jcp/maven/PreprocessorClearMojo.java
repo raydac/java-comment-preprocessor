@@ -40,15 +40,13 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 public class PreprocessorClearMojo extends AbstractMojo {
 
   /**
-   * The Destination folder where generated sources can be placed in non-test
-   * mode and which will be removed.
+   * The Destination folder where generated sources can be placed in non-test mode and which will be removed.
    */
   @Parameter(name = "preprocessedSources", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
   private File preprocessedSources;
 
   /**
-   * Destination folder where generated sources can be placed in test-mode and
-   * which will be removed.
+   * Destination folder where generated sources can be placed in test-mode and which will be removed.
    */
   @Parameter(name = "preprocessedTestSources", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
   private File preprocessedTestSources;
@@ -65,6 +63,7 @@ public class PreprocessorClearMojo extends AbstractMojo {
    *    &lt;/fileSet&gt;
    *  &lt;/fileSets&gt;
    * </pre>
+   *
    * @see <a href="http://maven.apache.org/shared/file-management/apidocs/org/apache/maven/shared/model/fileset/FileSet.html">FileSet javadoc</a>
    */
   @Parameter(name = "fileSets", required = false)
@@ -77,12 +76,10 @@ public class PreprocessorClearMojo extends AbstractMojo {
       if (this.preprocessedSources.isDirectory()) {
         try {
           FileUtils.deleteDirectory(this.preprocessedSources);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
           throw new MojoFailureException("Can't delete preprocessed source folder", ex);
         }
-      }
-      else {
+      } else {
         log.info("Preprocessed Source folder '" + path + "' doesn't exist");
       }
     }
@@ -93,12 +90,10 @@ public class PreprocessorClearMojo extends AbstractMojo {
       if (this.preprocessedTestSources.isDirectory()) {
         try {
           FileUtils.deleteDirectory(this.preprocessedTestSources);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
           throw new MojoFailureException("Can't delete preprocessed test source folder", ex);
         }
-      }
-      else {
+      } else {
         log.info("Preprocessed Test Source folder '" + path + "' doesn't exist");
       }
     }
@@ -111,20 +106,18 @@ public class PreprocessorClearMojo extends AbstractMojo {
     log.info("Cleaning has been started");
     if (this.fileSets == null) {
       processPredefinedFolders(log);
-    }
-    else {
+    } else {
       processFileSet(this.fileSets, log);
     }
     log.info("Cleaning has been completed");
   }
 
   private void processFileSet(@Nonnull @MustNotContainNull final List<FileSet> fileSets, @Nonnull final Log log) throws MojoExecutionException {
-    final FileSetManager manager = new FileSetManager(log,true);
+    final FileSetManager manager = new FileSetManager(log, true);
     for (final FileSet fs : fileSets) {
       try {
         manager.delete(fs, true);
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         throw new MojoExecutionException("Exception during cleaning", ex);
       }
     }

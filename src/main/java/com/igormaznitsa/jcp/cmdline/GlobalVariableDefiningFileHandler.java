@@ -46,7 +46,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       String stringRest = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (stringRest.isEmpty()) {
-        throw context.makeException("Empty string",null);
+        throw context.makeException("Empty string", null);
       }
 
       File file;
@@ -54,16 +54,15 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       if (stringRest.charAt(0) == '@') {
         stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
 
-        if (context.isVerbose()){
-          context.logForVerbose("Global parameter file defined through expression \'"+stringRest+'\'');
+        if (context.isVerbose()) {
+          context.logForVerbose("Global parameter file defined through expression \'" + stringRest + '\'');
         }
-        
+
         final Value resultValue = Expression.evalExpression(stringRest, context);
 
         final String fileName = resultValue.toString();
         file = new File(fileName);
-      }
-      else {
+      } else {
         file = new File(stringRest);
       }
 
@@ -72,9 +71,8 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       }
       if (file.isFile()) {
         context.addConfigFile(file);
-      }
-      else {
-        throw context.makeException("Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'',null);
+      } else {
+        throw context.makeException("Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'', null);
       }
 
       result = true;

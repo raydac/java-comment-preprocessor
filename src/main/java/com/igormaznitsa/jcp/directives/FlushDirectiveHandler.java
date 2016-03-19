@@ -49,17 +49,16 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
     if (!context.isFileOutputDisabled()) {
       final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());
       try {
-        if (context.isVerbose()){
-          context.logForVerbose("Flush buffers into file '"+outFile+'\'');
+        if (context.isVerbose()) {
+          context.logForVerbose("Flush buffers into file '" + outFile + '\'');
         }
         final boolean saved = state.saveBuffersToFile(outFile, context.isRemoveComments());
         if (context.isVerbose()) {
-          context.logForVerbose("Content was "+(saved? "saved" : "not saved")+" into file '"+outFile+"\'");
+          context.logForVerbose("Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "\'");
         }
 
         state.resetPrinters();
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         throw context.makeException("Can't flush text buffers", ex);
       }
     }

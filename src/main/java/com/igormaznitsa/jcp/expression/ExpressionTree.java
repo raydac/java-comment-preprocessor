@@ -66,15 +66,13 @@ public class ExpressionTree {
 
     if (last == null) {
       last = new ExpressionTreeElement(item, this.includeStack, this.sources);
-    }
-    else {
+    } else {
       last = last.addTreeElement(new ExpressionTreeElement(item, this.includeStack, this.sources));
     }
   }
 
   /**
-   * Add whole tree as a tree element, also it sets the maximum priority to the
-   * new element
+   * Add whole tree as a tree element, also it sets the maximum priority to the new element
    *
    * @param tree a tree to be added as an item, must not be null
    */
@@ -86,8 +84,7 @@ public class ExpressionTree {
         last = thatTreeRoot;
         last.makeMaxPriority();
       }
-    }
-    else {
+    } else {
       last = last.addSubTree(tree);
     }
   }
@@ -101,15 +98,13 @@ public class ExpressionTree {
   public ExpressionTreeElement getRoot() {
     if (last == null) {
       return null;
-    }
-    else {
+    } else {
       ExpressionTreeElement element = last;
       while (true) {
         final ExpressionTreeElement next = element.getParent();
         if (next == null) {
           return element;
-        }
-        else {
+        } else {
           element = next;
         }
       }
@@ -117,8 +112,7 @@ public class ExpressionTree {
   }
 
   /**
-   * It can be called after the tree has been formed to optimize inside
-   * structures
+   * It can be called after the tree has been formed to optimize inside structures
    */
   public void postProcess() {
     final ExpressionTreeElement root = getRoot();

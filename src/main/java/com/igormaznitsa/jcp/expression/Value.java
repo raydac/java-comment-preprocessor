@@ -23,8 +23,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
- * The class describes an expression value i.e. an atomic constant expression
- * item like string or number
+ * The class describes an expression value i.e. an atomic constant expression item like string or number
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  * @see ValueType
@@ -140,14 +139,12 @@ public final class Value implements ExpressionItem {
 
     try {
       return new Value(Long.parseLong(str));
-    }
-    catch (NumberFormatException ex) {
+    } catch (NumberFormatException ex) {
     }
 
     try {
       return new Value(Float.parseFloat(str));
-    }
-    catch (NumberFormatException ex) {
+    } catch (NumberFormatException ex) {
     }
 
     return new Value(str);
@@ -198,8 +195,7 @@ public final class Value implements ExpressionItem {
           if (value.length() > 2 && value.charAt(0) == '0' && (value.charAt(1) == 'x' || value.charAt(1) == 'X')) {
             // HEX value
             return Long.valueOf(PreprocessorUtils.extractTail("0x", value), 16);
-          }
-          else {
+          } else {
             // Decimal value
             return Long.valueOf(value);
           }
@@ -210,8 +206,7 @@ public final class Value implements ExpressionItem {
         default:
           return null;
       }
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       return null;
     }
   }
@@ -221,32 +216,27 @@ public final class Value implements ExpressionItem {
     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) // Boolean
     {
       return ValueType.BOOLEAN;
-    }
-    else if (value.length() > 1 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"') // String value
+    } else if (value.length() > 1 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"') // String value
     {
       return ValueType.STRING;
-    }
-    else {
+    } else {
       try {
         if (value.indexOf('.') >= 0) {
           // Float
           Float.parseFloat(value);
           return ValueType.FLOAT;
-        }
-        else {
+        } else {
           // Integer
           if (value.startsWith("0x")) {
             // HEX value
             Long.parseLong(PreprocessorUtils.extractTail("0x", value), 16);
-          }
-          else {
+          } else {
             // Decimal value
             Long.parseLong(value, 10);
           }
           return ValueType.INT;
         }
-      }
-      catch (NumberFormatException e) {
+      } catch (NumberFormatException e) {
         return ValueType.UNKNOWN;
       }
     }

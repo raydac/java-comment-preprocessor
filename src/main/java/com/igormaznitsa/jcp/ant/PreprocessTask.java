@@ -42,18 +42,15 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.*;
 
 /**
- * The class implements an ANT task to allow calls for preprocessing from ANT
- * build scripts. Also it allows to out messages from preprocessor directives
- * into the ANT log and read ANT properties as global variables (with the "ant."
- * prefix)
+ * The class implements an ANT task to allow calls for preprocessing from ANT build scripts. Also it allows to out messages from preprocessor directives into the ANT log and read
+ * ANT properties as global variables (with the "ant." prefix)
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
 
   /**
-   * Inside class describes a "cfgfile" item, it has the only attribute "file",
-   * the attribute must be defined
+   * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
    *
    * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
    */
@@ -73,10 +70,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   /**
-   * Inside class describes a "global" item, it describes a global variable
-   * which will be added into the preprocessor context It has attributes "name"
-   * and "value", be careful in the value attribute usage because you have to
-   * use "&quot;" instead of \" symbol inside string values
+   * Inside class describes a "global" item, it describes a global variable which will be added into the preprocessor context It has attributes "name" and "value", be careful in
+   * the value attribute usage because you have to use "&quot;" instead of \" symbol inside string values
    *
    * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
    */
@@ -89,7 +84,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     public void setName(@Nonnull final String name) {
       this.name = assertNotNull(name);
     }
-  
+
     @Nullable
     public String getName() {
       return this.name;
@@ -125,17 +120,17 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
 
   /**
-   * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same content.
-   * 
+   * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same
+   * content.
+   *
    * @param flag true if to compare destination file content, false otherwise
    */
-  public void setCompareDestiation(final boolean flag){
+  public void setCompareDestiation(final boolean flag) {
     this.compareDestination = flag;
   }
-  
+
   /**
-   * Set the "source" attribute, it allows to define the source directory to be
-   * preprocessed
+   * Set the "source" attribute, it allows to define the source directory to be preprocessed
    *
    * @param src a directory to be used as the source one, must not be null
    */
@@ -153,8 +148,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   /**
-   * Set the "destination" attribute, it allows to define the destination
-   * directory where the preprocessed files will be placed in
+   * Set the "destination" attribute, it allows to define the destination directory where the preprocessed files will be placed in
    *
    * @param dst a directory to be used as the destination one, must not be null
    */
@@ -163,31 +157,25 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   /**
-   * Set the "inCharset" attribute, it allows to define the text encoding for
-   * the reading text files
+   * Set the "inCharset" attribute, it allows to define the text encoding for the reading text files
    *
-   * @param charSet the character set to be used to decode read texts, must not
-   * be null
+   * @param charSet the character set to be used to decode read texts, must not be null
    */
   public void setInCharset(@Nonnull final String charSet) {
     this.inCharSet = charSet;
   }
 
   /**
-   * Set the "outCharset" attribute, it allows to define the text encoding for
-   * the writing text files
+   * Set the "outCharset" attribute, it allows to define the text encoding for the writing text files
    *
-   * @param charSet the character set to be used to encode written texts, must
-   * not be null
+   * @param charSet the character set to be used to encode written texts, must not be null
    */
   public void setOutCharset(@Nonnull final String charSet) {
     this.outCharSet = charSet;
   }
 
   /**
-   * Set the "excluded" attribute, it defines the excluded file extensions which
-   * will be ignored by the preprocessor in its work (also those files will not
-   * be copied)
+   * Set the "excluded" attribute, it defines the excluded file extensions which will be ignored by the preprocessor in its work (also those files will not be copied)
    *
    * @param ext the list of ignored file extensions, must not be null
    */
@@ -196,42 +184,34 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   /**
-   * Set the "processing" attribute, it defines the file extensions to be
-   * processed
+   * Set the "processing" attribute, it defines the file extensions to be processed
    *
-   * @param ext the list of file extensions which should be preprocessed, must
-   * not be null
+   * @param ext the list of file extensions which should be preprocessed, must not be null
    */
   public void setProcessing(@Nonnull final String ext) {
     this.processing = ext;
   }
 
   /**
-   * Set the "clear" attribute, it is a boolean attribute allows to make the
-   * preprocessor to clear the destination directory before its work
+   * Set the "clear" attribute, it is a boolean attribute allows to make the preprocessor to clear the destination directory before its work
    *
-   * @param flag true if the destination directory must be cleared before
-   * preprocessing, otherwise false
+   * @param flag true if the destination directory must be cleared before preprocessing, otherwise false
    */
   public void setClear(final boolean flag) {
     this.clearDstFlag = flag;
   }
 
   /**
-   * Set the "removeComments" attribute, it is a boolean attribute allows to
-   * make the preprocessor to remove all Java-like comments from the result
-   * files
+   * Set the "removeComments" attribute, it is a boolean attribute allows to make the preprocessor to remove all Java-like comments from the result files
    *
-   * @param flag true if the result file must be cleared from comments,
-   * otherwise false
+   * @param flag true if the result file must be cleared from comments, otherwise false
    */
   public void setRemoveComments(final boolean flag) {
     this.removeComments = flag;
   }
 
   /**
-   * Set the "verbose" attribute, it is a boolean attribute allows to set the
-   * verbose level of preprocessor messages
+   * Set the "verbose" attribute, it is a boolean attribute allows to set the verbose level of preprocessor messages
    *
    * @param flag true if the verbose level must be set, otherwise false
    */
@@ -240,19 +220,16 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   /**
-   * Set the "keepLines" attribute, it is a boolean attribute to keep
-   * non-executing lines as commented ones in the output
+   * Set the "keepLines" attribute, it is a boolean attribute to keep non-executing lines as commented ones in the output
    *
-   * @param flag true if preprocessor should keep the lines as commented ones,
-   * false otherwise
+   * @param flag true if preprocessor should keep the lines as commented ones, false otherwise
    */
   public void setKeepLines(final boolean flag) {
     this.keepLines = flag;
   }
 
   /**
-   * Set the "disableOut" attribute, it is a boolean attribute allows to disable
-   * any output operations into the destination directory
+   * Set the "disableOut" attribute, it is a boolean attribute allows to disable any output operations into the destination directory
    *
    * @param flag true if the output operations must be disabled, otherwise false
    */
@@ -278,13 +255,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   private void fillCfgFiles(@Nonnull final PreprocessorContext context) {
     for (final CfgFile f : configFiles) {
-       context.addConfigFile(assertNotNull("File must not be null",f.getFile()));
+      context.addConfigFile(assertNotNull("File must not be null", f.getFile()));
     }
   }
 
   private void fillGlobalVars(@Nonnull final PreprocessorContext context) {
     for (final Global g : globalVariables) {
-      context.setGlobalVariable(assertNotNull("Name must not be null",g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null",g.getValue())));
+      context.setGlobalVariable(assertNotNull("Name must not be null", g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null", g.getValue())));
     }
   }
 
@@ -302,8 +279,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     if (this.sourceDirectory != null) {
       context.setSourceDirectories(this.sourceDirectory.getAbsolutePath());
-    }
-    else {
+    } else {
       context.setSourceDirectories(getProject().getBaseDir().getAbsolutePath());
     }
 
@@ -344,8 +320,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     try {
       context = generatePreprocessorContext();
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
       throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
     }
@@ -354,10 +329,9 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     try {
       preprocessor.execute();
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
-      throw new BuildException(pp == null ? unexpected.getMessage(): pp.toString(), pp == null ? unexpected : pp);
+      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
     }
   }
 
@@ -388,8 +362,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     if (theProject == null) {
       result = Collections.emptyMap();
-    }
-    else {
+    } else {
 
       result = new HashMap<String, Value>();
 
@@ -412,8 +385,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     if (antVariables == null) {
       result = new String[0];
-    }
-    else {
+    } else {
       result = antVariables.keySet().toArray(new String[antVariables.size()]);
     }
 
@@ -424,18 +396,18 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Nonnull
   public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     if (antVariables == null) {
-      throw context.makeException("Non-initialized ANT property map detected",null);
+      throw context.makeException("Non-initialized ANT property map detected", null);
     }
     final Value result = antVariables.get(varName);
 
     if (result == null) {
-      throw context.makeException("Request for unsupported Ant property \'" + varName + '\'',null);
+      throw context.makeException("Request for unsupported Ant property \'" + varName + '\'', null);
     }
     return result;
   }
 
   @Override
   public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
-    throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!",null);
+    throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!", null);
   }
 }

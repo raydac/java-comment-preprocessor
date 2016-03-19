@@ -40,7 +40,9 @@ import org.apache.maven.project.MavenProject;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven project to use the preprocessed sources.
+ * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
+ * project to use the preprocessed sources.
+ *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 @Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresProject = true)
@@ -49,7 +51,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   /**
    * The Project source roots for non-test mode.
    */
-  @Parameter(name="compileSourceRoots", defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
+  @Parameter(name = "compileSourceRoots", defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
   private List<String> compileSourceRoots;
 
   /**
@@ -69,7 +71,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   @Parameter(name = "source", defaultValue = "")
   private String source;
-  
+
   /**
    * The Destination folder where generated sources will be placed in non-test mode.
    */
@@ -81,7 +83,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   @Parameter(name = "testDestination", defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
   private File testDestination;
-  
+
   /**
    * The Input text encoding to be used for preprocessing, by default it uses defined in project properties.
    */
@@ -89,12 +91,11 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private String inEncoding;
 
   /**
-   * The Encoding for preprocessed text output, by default it uses defined in
-   * project properties.
+   * The Encoding for preprocessed text output, by default it uses defined in project properties.
    */
-  @Parameter(name="outEncoding",defaultValue = "${project.build.sourceEncoding}")
+  @Parameter(name = "outEncoding", defaultValue = "${project.build.sourceEncoding}")
   private String outEncoding;
-  
+
   /**
    * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
    */
@@ -110,13 +111,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   /**
    * Make dry run of the preprocessor without any saving of result.
    */
-  @Parameter(name="disableOut", defaultValue = "false")
+  @Parameter(name = "disableOut", defaultValue = "false")
   private boolean disableOut;
-  
+
   /**
    * Turn on the verbose mode for preprocessing process.
    */
-  @Parameter(name="verbose", defaultValue = "false")
+  @Parameter(name = "verbose", defaultValue = "false")
   private boolean verbose;
 
   /**
@@ -124,13 +125,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   @Parameter(name = "clear", defaultValue = "false")
   private boolean clear;
-  
+
   /**
    * Be precise in processing of the last next line char in files, it will not be added if it is not presented if to turn on the mode..
    */
   @Parameter(name = "careForLastNextLine", defaultValue = "false")
   private boolean careForLastNextLine;
-  
+
   /**
    * Disable overriding of the source root folders for maven project after preprocessing.
    */
@@ -142,7 +143,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   @Parameter(name = "removeComments", defaultValue = "false")
   private boolean removeComments;
-  
+
   /**
    * List of global preprocessing variables.
    */
@@ -164,15 +165,15 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    */
-  @Parameter(name="useTestSources", defaultValue = "false")
+  @Parameter(name = "useTestSources", defaultValue = "false")
   private boolean useTestSources;
 
   /**
    * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
    */
-  @Parameter(name="compareDestination", defaultValue = "false")
+  @Parameter(name = "compareDestination", defaultValue = "false")
   private boolean compareDestination;
-  
+
   public PreprocessorMojo() {
     super();
   }
@@ -228,14 +229,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.cfgFiles;
   }
 
-  public void setCompareDestination(final boolean flag){
+  public void setCompareDestination(final boolean flag) {
     this.compareDestination = flag;
   }
-  
-  public boolean isCompareDestination(){
+
+  public boolean isCompareDestination() {
     return this.compareDestination;
   }
-  
+
   public void setSource(@Nonnull final String source) {
     this.source = source;
   }
@@ -336,8 +337,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     String result = null;
     if (this.source != null && !this.source.isEmpty()) {
       result = this.source;
-    }
-    else if (this.project != null) {
+    } else if (this.project != null) {
       final StringBuilder accum = new StringBuilder();
 
       for (final String srcRoot : (this.useTestSources ? this.testCompileSourceRoots : this.compileSourceRoots)) {
@@ -432,7 +432,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     if (this.globalVars != null && !this.globalVars.isEmpty()) {
       for (final String key : this.globalVars.stringPropertyNames()) {
         final String value = this.globalVars.getProperty(key);
-        assertNotNull("Can't find defined value for '" + key + "' global variable",value);
+        assertNotNull("Can't find defined value for '" + key + "' global variable", value);
         context.setGlobalVariable(key, Value.recognizeRawString(value));
       }
     }
@@ -446,10 +446,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
     try {
       context = makePreprocessorContext();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      throw new MojoExecutionException(pp==null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
+      throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
     }
 
     try {
@@ -458,10 +457,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       if (!getKeepSrcRoot()) {
         replaceSourceRootByPreprocessingDestinationFolder(context);
       }
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.',pp), pp == null ? ex : pp);
+      throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
     }
 
   }

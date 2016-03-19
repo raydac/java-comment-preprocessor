@@ -63,8 +63,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
     try {
       return ((Element) container.getNode()).getAttribute(attributeName);
-    }
-    catch (ClassCastException ex) {
+    } catch (ClassCastException ex) {
       throw context.makeException("Incompatible cached element type [" + elementId + '.' + attributeName + ']', ex);
     }
   }
@@ -73,14 +72,13 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   public Document getCachedDocument(@Nonnull final PreprocessorContext context, @Nonnull final String documentId) {
     final NodeContainer container = (NodeContainer) context.getSharedResource(documentId);
     if (container == null) {
-      throw context.makeException("Can't find any document for the \'" + documentId + "\' id",null);
+      throw context.makeException("Can't find any document for the \'" + documentId + "\' id", null);
     }
 
     try {
       return (Document) container.getNode();
-    }
-    catch (ClassCastException ex) {
-      throw context.makeException("Incompatible cached element type [" + documentId + ']',ex);
+    } catch (ClassCastException ex) {
+      throw context.makeException("Incompatible cached element type [" + documentId + ']', ex);
     }
   }
 
@@ -93,9 +91,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
 
     try {
       return (Element) container.getNode();
-    }
-    catch (ClassCastException ex) {
-      throw context.makeException("Incompatible cached element type [" + elementId + ']',null);
+    } catch (ClassCastException ex) {
+      throw context.makeException("Incompatible cached element type [" + elementId + ']', null);
     }
   }
 
@@ -103,7 +100,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   public Element getCachedElement(@Nonnull final PreprocessorContext context, @Nonnull final String elementId) {
     final Element element = findCachedElement(context, elementId);
     if (element == null) {
-      throw context.makeException("Can't find any active element for the \'" + elementId + "\' id",null);
+      throw context.makeException("Can't find any active element for the \'" + elementId + "\' id", null);
     }
     return element;
   }
@@ -116,9 +113,8 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
     try {
       return container.getNodeList();
-    }
-    catch (ClassCastException ex) {
-      throw context.makeException("Incompatible cached element type [" + elementListId + ']',ex);
+    } catch (ClassCastException ex) {
+      throw context.makeException("Incompatible cached element type [" + elementListId + ']', ex);
     }
   }
 
@@ -126,7 +122,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   public NodeList getCachedElementList(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId) {
     final NodeList result = findCachedElementList(context, elementListId);
     if (result == null) {
-      throw context.makeException("Can't find any active element list for the \'" + elementListId + "\' id",null);
+      throw context.makeException("Can't find any active element list for the \'" + elementListId + "\' id", null);
     }
     return result;
   }
@@ -168,7 +164,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
     return textContent.toString();
   }
-  
+
   @Nonnull
   public String findElementForIndex(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId, final int elementIndex) {
     final String elementCacheId = makeElementId(elementListId, elementIndex);
@@ -177,18 +173,18 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
       container = (NodeContainer) context.getSharedResource(elementListId);
 
       if (container == null) {
-        throw context.makeException("Can't find any active node list for the id \'" + elementListId + '\'',null);
+        throw context.makeException("Can't find any active node list for the id \'" + elementListId + '\'', null);
       }
 
       final NodeList list = container.getNodeList();
       if (elementIndex < 0 || elementIndex >= list.getLength()) {
-        throw context.makeException("The Element Index is out of bounds [" + elementIndex + ']',null);
+        throw context.makeException("The Element Index is out of bounds [" + elementIndex + ']', null);
       }
 
       final Element element = (Element) list.item(elementIndex);
 
       if (element == null) {
-        throw context.makeException("Wrong index [" + elementIndex + ']',null);
+        throw context.makeException("Wrong index [" + elementIndex + ']', null);
       }
 
       container = new NodeContainer(UID_COUNTER.getAndIncrement(), element);

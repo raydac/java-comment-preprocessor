@@ -32,9 +32,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The class implements the special variable processor interface and allows to
- * get access to inside JCP variables Inside JCP variables have the "jcp."
- * prefix
+ * The class implements the special variable processor interface and allows to get access to inside JCP variables Inside JCP variables have the "jcp." prefix
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -58,52 +56,53 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
   final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
   final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-  
-  public static final class NameReferencePair{
+
+  public static final class NameReferencePair {
+
     private final String name;
     private final String reference;
-    
-    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference){
+
+    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference) {
       this.name = name;
       this.reference = reference;
     }
-    
+
     @Nonnull
-    public String getName(){
+    public String getName() {
       return this.name;
     }
-    
+
     @Nonnull
-    public String getReference(){
+    public String getReference() {
       return this.reference;
     }
   }
-  
+
   @Nonnull
   @MustNotContainNull
-  public static List<NameReferencePair> getReference(){
+  public static List<NameReferencePair> getReference() {
     final List<NameReferencePair> result = new ArrayList<NameReferencePair>();
-    
+
     result.add(new NameReferencePair(VAR_VERSION, "The Preprocessor version"));
     result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to the current preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "The Synonym for '"+VAR_DEST_FULLPATH+"', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "The Synonym for '" + VAR_DEST_FULLPATH + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_DIR, "The Current preprocessing file folder, read only"));
-    result.add(new NameReferencePair(VAR_SRC_DIR2, "The Synonym for '"+VAR_SRC_DIR+"', read only"));
+    result.add(new NameReferencePair(VAR_SRC_DIR2, "The Synonym for '" + VAR_SRC_DIR + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "The Current preprocessing file name, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "The Synonym for '"+VAR_SRC_FILE_NAME+"', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "The Synonym for '" + VAR_SRC_FILE_NAME + "', read only"));
 
     result.add(new NameReferencePair(VAR_LINE, "The Current preprocessing line number in the current source file, read only"));
     result.add(new NameReferencePair(VAR_DEST_FULLPATH, "The Full Destination File path for the preprocessing file, read only"));
     result.add(new NameReferencePair(VAR_DEST_DIR, "The Destination File path for the preprocessing file, read only"));
     result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "The Destination File name for the preprocessing file, allowed for reading and writing"));
-    
+
     result.add(new NameReferencePair(VAR_TIME, "The Current time"));
     result.add(new NameReferencePair(VAR_DATE, "The Current date"));
     result.add(new NameReferencePair(VAR_TIMESTAMP, "The Timestamp of the current source file"));
-    
+
     return result;
   }
-  
+
   @Override
   @Nonnull
   @MustNotContainNull
@@ -129,55 +128,44 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   @Override
   @Nullable
   public Value getVariable(@Nonnull final String varName, @Nullable final PreprocessorContext context) {
-    final PreprocessingState state = context == null ? null:context.getPreprocessingState();
+    final PreprocessingState state = context == null ? null : context.getPreprocessingState();
 
     if (VAR_DEST_DIR.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationDir());
-    }
-    else if (VAR_DEST_FILE_NAME.equals(varName)) {
+    } else if (VAR_DEST_FILE_NAME.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationName());
-    }
-    else if (VAR_DEST_FULLPATH.equals(varName)) {
+    } else if (VAR_DEST_FULLPATH.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
-    }
-    else if (VAR_SRC_DIR.equals(varName) || VAR_SRC_DIR2.equals(varName)) {
+    } else if (VAR_SRC_DIR.equals(varName) || VAR_SRC_DIR2.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
-    }
-    else if (VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FILE_NAME2.equals(varName)) {
+    } else if (VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FILE_NAME2.equals(varName)) {
       return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
-    }
-    else if (VAR_SRC_FULLPATH.equals(varName) || VAR_SRC_FULLPATH2.equals(varName)) {
+    } else if (VAR_SRC_FULLPATH.equals(varName) || VAR_SRC_FULLPATH2.equals(varName)) {
       return state == null ? null : Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
-    }
-    else if (VAR_VERSION.equals(varName)) {
+    } else if (VAR_VERSION.equals(varName)) {
       return Value.valueOf(InfoHelper.getVersion());
-    }
-    else if (VAR_TIME.equals(varName)) {
+    } else if (VAR_TIME.equals(varName)) {
       return Value.valueOf(timeFormat.format(new Date()));
-    }
-    else if (VAR_DATE.equals(varName)) {
+    } else if (VAR_DATE.equals(varName)) {
       return Value.valueOf(dateFormat.format(new Date()));
-    }
-    else if (VAR_TIMESTAMP.equals(varName)) {
-      if (state == null){
+    } else if (VAR_TIMESTAMP.equals(varName)) {
+      if (state == null) {
         return Value.valueOf("<no file>");
-      }else{
-        return Value.valueOf(timestampFormat.format(new Date(assertNotNull("File must be presented on stack",state.peekFile()).getFile().lastModified())));
+      } else {
+        return Value.valueOf(timestampFormat.format(new Date(assertNotNull("File must be presented on stack", state.peekFile()).getFile().lastModified())));
       }
-    }
-    else if (VAR_LINE.equals(varName)) {
+    } else if (VAR_LINE.equals(varName)) {
       final TextFileDataContainer currentFile = state == null ? null : state.peekFile();
       final long line;
-      if (currentFile == null){
+      if (currentFile == null) {
         line = -1L;
-      }else{
-        line = currentFile.getLastReadStringIndex()+1;
+      } else {
+        line = currentFile.getLastReadStringIndex() + 1;
       }
       return Value.valueOf(line);
-    }
-    else {
+    } else {
       final String text = "Attempting to read unexpected special variable [" + varName + ']';
-      throw context == null ? new  IllegalStateException(text) : context.makeException(text,null);
+      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
     }
   }
 
@@ -188,33 +176,33 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      if (state!=null) state.getRootFileInfo().setDestinationDir(value.asString());
-    }
-    else if (VAR_DEST_FILE_NAME.equals(varName)) {
+      if (state != null) {
+        state.getRootFileInfo().setDestinationDir(value.asString());
+      }
+    } else if (VAR_DEST_FILE_NAME.equals(varName)) {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      if (state!=null) state.getRootFileInfo().setDestinationName(value.asString());
-    }
-    else if (VAR_DEST_FULLPATH.equals(varName)
-            || VAR_SRC_DIR.equals(varName)
-            || VAR_SRC_DIR2.equals(varName)
-            || VAR_SRC_FILE_NAME.equals(varName)
-            || VAR_SRC_FILE_NAME2.equals(varName)
-            || VAR_SRC_FULLPATH.equals(varName)
-            || VAR_SRC_FULLPATH2.equals(varName)
-            || VAR_VERSION.equals(varName)
-            || VAR_LINE.equals(varName)
-            || VAR_TIME.equals(varName)
-            || VAR_TIMESTAMP.equals(varName)
-            || VAR_DATE.equals(varName)
-            ) {
+      if (state != null) {
+        state.getRootFileInfo().setDestinationName(value.asString());
+      }
+    } else if (VAR_DEST_FULLPATH.equals(varName)
+        || VAR_SRC_DIR.equals(varName)
+        || VAR_SRC_DIR2.equals(varName)
+        || VAR_SRC_FILE_NAME.equals(varName)
+        || VAR_SRC_FILE_NAME2.equals(varName)
+        || VAR_SRC_FULLPATH.equals(varName)
+        || VAR_SRC_FULLPATH2.equals(varName)
+        || VAR_VERSION.equals(varName)
+        || VAR_LINE.equals(varName)
+        || VAR_TIME.equals(varName)
+        || VAR_TIMESTAMP.equals(varName)
+        || VAR_DATE.equals(varName)) {
       final String text = "The variable \'" + varName + "\' can't be set directly";
-      throw context == null ? new IllegalStateException(text) : context.makeException(text,null);
-    }
-    else {
+      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+    } else {
       final String text = "Attempting to write unexpected special variable [" + varName + ']';
-      throw context == null ? new IllegalArgumentException(text) : context.makeException(text,null);
+      throw context == null ? new IllegalArgumentException(text) : context.makeException(text, null);
     }
   }
 }

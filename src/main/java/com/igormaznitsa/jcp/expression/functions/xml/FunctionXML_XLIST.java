@@ -49,15 +49,14 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
 
     final String xpathId = makeXPathListId(documentIdStr, pathStr);
     final Document document = getCachedDocument(context, documentIdStr);
-    
+
     NodeList list = findCachedElementList(context, xpathId);
-    if (list == null){
+    if (list == null) {
       try {
         final XPathExpression expression = prepareXPathExpression(pathStr);
         list = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
-      }
-      catch (XPathExpressionException ex) {
-        throw context.makeException("Error during XPath compilation [" + pathStr + ']',ex);
+      } catch (XPathExpressionException ex) {
+        throw context.makeException("Error during XPath compilation [" + pathStr + ']', ex);
       }
       final NodeContainer container = new NodeContainer(UID_COUNTER.getAndIncrement(), list);
       context.setSharedResource(xpathId, container);
@@ -71,7 +70,7 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
     final XPath xpath = factory.newXPath();
     return xpath.compile(path);
   }
-  
+
   @Override
   public int getArity() {
     return 2;

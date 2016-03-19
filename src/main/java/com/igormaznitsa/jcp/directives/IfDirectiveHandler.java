@@ -61,14 +61,13 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
       if (expressionResult.getType() != ValueType.BOOLEAN) {
-        throw context.makeException("Non boolean flag",null);
+        throw context.makeException("Non boolean flag", null);
       }
       state.pushIf(true);
       if (!expressionResult.asBoolean()) {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
-    }
-    else {
+    } else {
       state.pushIf(false);
     }
 

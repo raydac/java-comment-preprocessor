@@ -22,8 +22,7 @@ import java.io.Writer;
 import javax.annotation.Nonnull;
 
 /**
- * A remover allows to cut off all Java like comments from a reader and write
- * the result into a writer
+ * A remover allows to cut off all Java like comments from a reader and write the result into a writer
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -64,15 +63,11 @@ public class JavaCommentsRemover {
       if (starFound) {
         if (chr == '/') {
           return;
-        }
-        else {
+        } else {
           starFound = chr == '*';
         }
-      }
-      else {
-        if (chr == '*') {
-          starFound = true;
-        }
+      } else if (chr == '*') {
+        starFound = true;
       }
     }
   }

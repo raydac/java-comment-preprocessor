@@ -47,13 +47,13 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
     return "define global(!) variable as true (by default) or initialize it by expression result (if presented)";
   }
 
-  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists){
-    if (exists){
+  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
+    if (exists) {
       context.logWarning("Variable \'" + varName + "\' has been already defined");
     }
     context.setGlobalVariable(varName, value);
   }
-  
+
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
@@ -62,41 +62,39 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       final int spaceIndex = trimmedTail.indexOf(' ');
       final String name;
       final String expression;
-      if (spaceIndex>0){
-        name = trimmedTail.substring(0,spaceIndex).trim();
+      if (spaceIndex > 0) {
+        name = trimmedTail.substring(0, spaceIndex).trim();
         final String trimmed = trimmedTail.substring(spaceIndex).trim();
         expression = trimmed.isEmpty() || trimmed.startsWith("//") || trimmed.startsWith("/*") ? null : trimmed;
-      }else{
+      } else {
         name = trimmedTail;
         expression = null;
       }
-      
+
       final ExpressionTree nameTree = ExpressionParser.getInstance().parse(name, context);
-      
-      if (nameTree.isEmpty()){
-        throw context.makeException("Var name is empty",null);
+
+      if (nameTree.isEmpty()) {
+        throw context.makeException("Var name is empty", null);
       }
 
       final ExpressionTreeElement root = nameTree.getRoot();
       final ExpressionItem item = root.getItem();
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
-        throw context.makeException("Can't recognize variable name ["+name+']',null);
+        throw context.makeException("Can't recognize variable name [" + name + ']', null);
       }
-      
+
       final Value value;
-      
-      if (expression!=null){
+
+      if (expression != null) {
         value = Expression.evalExpression(expression, context);
-      }else{
+      } else {
         value = Value.valueOf(Boolean.TRUE);
       }
-      
-      process(context, ((Variable) item).getName(), value, context.findVariableForName(name) != null);
-    }
-    catch (IOException ex) {
-      throw context.makeException("Unexpected exception",ex);
-    }
 
+      process(context, ((Variable) item).getName(), value, context.findVariableForName(name) != null);
+    } catch (IOException ex) {
+      throw context.makeException("Unexpected exception", ex);
+    }
 
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

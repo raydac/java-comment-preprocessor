@@ -46,7 +46,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isWhileStackEmpty()) {
-      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "while",null);
+      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while", null);
     }
 
     if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
@@ -56,8 +56,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
       if (!breakIsSet) {
         state.goToString(thisWhile.getNextStringIndex());
       }
-    }
-    else {
+    } else {
       state.popWhile();
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;

@@ -34,7 +34,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
  */
 public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING,ValueType.STRING}};
+  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
 
   @Override
   @Nonnull
@@ -49,21 +49,19 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
 
     final String xpathElementId = makeXPathElementId(documentIdStr, pathStr);
     final Document document = getCachedDocument(context, documentIdStr);
-    
+
     Element elem = findCachedElement(context, xpathElementId);
-    if (elem == null){
+    if (elem == null) {
       try {
         final XPathExpression expression = prepareXPathExpression(pathStr);
         elem = (Element) expression.evaluate(document, XPathConstants.NODE);
-        if (elem == null){
-          throw context.makeException("Can't find element for xpath [" + pathStr + ']',null);
+        if (elem == null) {
+          throw context.makeException("Can't find element for xpath [" + pathStr + ']', null);
         }
-      }
-      catch (XPathExpressionException ex) {
-        throw context.makeException("Error during XPath compilation [" + pathStr + ']',ex);
-      }
-      catch (ClassCastException ex){
-        throw context.makeException("Can't get element for XPath [" + pathStr + ']',ex);
+      } catch (XPathExpressionException ex) {
+        throw context.makeException("Error during XPath compilation [" + pathStr + ']', ex);
+      } catch (ClassCastException ex) {
+        throw context.makeException("Can't get element for XPath [" + pathStr + ']', ex);
       }
       final NodeContainer container = new NodeContainer(UID_COUNTER.getAndIncrement(), elem);
       context.setSharedResource(xpathElementId, container);
@@ -77,7 +75,7 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
     final XPath xpath = factory.newXPath();
     return xpath.compile(path);
   }
-  
+
   @Override
   public int getArity() {
     return 2;

@@ -33,15 +33,14 @@ import org.apache.maven.project.MavenProject;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The class imports some properties from the maven which can be accessible from
- * preprocessed sources as global variables
+ * The class imports some properties from the maven which can be accessible from preprocessed sources as global variables
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
   private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO = Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
-  
+
   private static final String[] TO_IMPORT = {
     "project.name",
     "project.version",
@@ -82,7 +81,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
   private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value) {
     if (insideVarMap.containsKey(name)) {
-      throw context.makeException("Duplicated importing value detected [" + name + ']',null);
+      throw context.makeException("Duplicated importing value detected [" + name + ']', null);
     }
     insideVarMap.put(name, value);
     printInfoAboutVarIntoLog(context, name, value.asString());
@@ -127,8 +126,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     try {
       if (root == null) {
         throw new IllegalArgumentException("Unsupported root object detected [" + splitted[0] + ']');
-      }
-      else {
+      } else {
         for (int i = 1; i < splitted.length - 1; i++) {
           final Method getter = root.getClass().getMethod(normalizeGetter(splitted[i]));
           root = getter.invoke(root);
@@ -141,14 +139,11 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
         final Object result = finalStringGetter.invoke(root);
         return result == null ? "" : result.toString();
       }
-    }
-    catch (NoSuchMethodException ex) {
+    } catch (NoSuchMethodException ex) {
       throw new RuntimeException("Can't find method", ex);
-    }
-    catch (IllegalAccessException ex) {
+    } catch (IllegalAccessException ex) {
       throw new RuntimeException("Security exception", ex);
-    }
-    catch (InvocationTargetException ex) {
+    } catch (InvocationTargetException ex) {
       throw new RuntimeException("Exception during invocation", ex.getCause());
     }
   }

@@ -55,15 +55,14 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
     final String documentId = makeDocumentId(name);
     final String documentIdRoot = makeDocumentRootId(documentId);
-    
+
     NodeContainer docContainer = (NodeContainer) context.getSharedResource(documentId);
     if (docContainer == null) {
       File file = null;
       try {
         file = context.getSourceFile(name);
-      }
-      catch (IOException unexpected) {
-        throw context.makeException("Can't read \'" + name + '\'',null);
+      } catch (IOException unexpected) {
+        throw context.makeException("Can't read \'" + name + '\'', null);
       }
 
       final Document document = openFileAndParse(context, file);
@@ -85,15 +84,12 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
     try {
       return docBuilderFactory.newDocumentBuilder().parse(file);
-    }
-    catch (ParserConfigurationException unexpected) {
-      throw context.makeException("XML parser configuration exception",unexpected);
-    }
-    catch (SAXException unexpected) {
-      throw context.makeException("Exception during XML parsing",unexpected);
-    }
-    catch (IOException unexpected) {
-      throw context.makeException("Can't read XML file",unexpected);
+    } catch (ParserConfigurationException unexpected) {
+      throw context.makeException("XML parser configuration exception", unexpected);
+    } catch (SAXException unexpected) {
+      throw context.makeException("Exception during XML parsing", unexpected);
+    } catch (IOException unexpected) {
+      throw context.makeException("Can't read XML file", unexpected);
     }
   }
 

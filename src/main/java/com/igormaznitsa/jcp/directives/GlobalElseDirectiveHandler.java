@@ -37,7 +37,7 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "invert condition result for "+DIRECTIVE_PREFIX +"_if.."+DIRECTIVE_PREFIX +"_endif control construction";
+    return "invert condition result for " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX + "_endif control construction";
   }
 
   @Override
@@ -55,14 +55,13 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "_if",null);
+      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "_if", null);
     }
 
     if (state.isAtActiveIf()) {
       if (state.getPreprocessingFlags().contains(PreprocessingFlag.IF_CONDITION_FALSE)) {
         state.getPreprocessingFlags().remove(PreprocessingFlag.IF_CONDITION_FALSE);
-      }
-      else {
+      } else {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }
     }

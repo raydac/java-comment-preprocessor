@@ -37,8 +37,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The class is one from the main classes in the preprocessor because it
- * describes a preprocessing file and contains business logic for the process
+ * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -50,14 +49,12 @@ public class FileInfoContainer {
   private final File sourceFile;
 
   /**
-   * The flag shows that the file should be just copied into the destination
-   * place without any preprocessing
+   * The flag shows that the file should be just copied into the destination place without any preprocessing
    */
   private final boolean forCopyOnly;
 
   /**
-   * The flag shows that the file has been excluded from preprocessing and it
-   * will not be preprocessed and copied
+   * The flag shows that the file has been excluded from preprocessing and it will not be preprocessed and copied
    */
   private boolean excludedFromPreprocessing;
 
@@ -110,8 +107,7 @@ public class FileInfoContainer {
     if (lastDirSeparator < 0) {
       destFolder = "." + File.separatorChar;
       destFileName = dstFileName;
-    }
-    else {
+    } else {
       destFolder = dstFileName.substring(0, lastDirSeparator);
       destFileName = dstFileName.substring(lastDirSeparator + 1);
     }
@@ -136,7 +132,7 @@ public class FileInfoContainer {
   @Nonnull
   @MustNotContainNull
   public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nullable final PreprocessingState state, @Nonnull final PreprocessorContext context) throws IOException {
-    final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this,0) : state;
+    final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this, 0) : state;
 
     String leftTrimmedString = null;
     try {
@@ -156,8 +152,7 @@ public class FileInfoContainer {
           preprocessingState.popTextContainer();
           if (preprocessingState.isIncludeStackEmpty()) {
             break;
-          }
-          else {
+          } else {
             continue;
           }
         }
@@ -175,13 +170,11 @@ public class FileInfoContainer {
           }
         }
       }
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
       if (pp == null) {
         throw preprocessingState.makeException("Unexpected exception detected", leftTrimmedString, unexpected);
-      }
-      else {
+      } else {
         throw pp;
       }
     }
@@ -189,15 +182,14 @@ public class FileInfoContainer {
     if (!preprocessingState.isIfStackEmpty()) {
       final TextFileDataContainer lastIf = assertNotNull(preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
-              "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
+          "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
 
     return preprocessingState.popAllExcludeIfInfoData();
   }
 
   /**
-   * Preprocess file, NB! it doesn't clear local variables automatically for
-   * cloned contexts
+   * Preprocess file, NB! it doesn't clear local variables automatically for cloned contexts
    *
    * @param state the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
@@ -212,7 +204,7 @@ public class FileInfoContainer {
       context.clearLocalVariables();
     }
 
-    final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this,1);
+    final PreprocessingState preprocessingState = state != null ? state : context.produceNewPreprocessingState(this, 1);
 
     String leftTrimmedString = null;
 
@@ -232,7 +224,6 @@ public class FileInfoContainer {
           rawString = null;
         }
 
-        
         if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.END_PROCESSING)) {
           preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
           rawString = null;
@@ -242,8 +233,7 @@ public class FileInfoContainer {
           lastTextFileDataContainer = preprocessingState.popTextContainer();
           if (preprocessingState.isIncludeStackEmpty()) {
             break;
-          }
-          else {
+          } else {
             continue;
           }
         }
@@ -253,14 +243,12 @@ public class FileInfoContainer {
         final String stringPrefix;
         if (leftTrimmedString.isEmpty()) {
           stringPrefix = rawString;
-        }
-        else {
+        } else {
           final int numberOfSpacesAtTheLineBeginning = rawString.indexOf(leftTrimmedString);
 
           if (numberOfSpacesAtTheLineBeginning > 0) {
             stringPrefix = rawString.substring(0, numberOfSpacesAtTheLineBeginning);
-          }
-          else {
+          } else {
             stringPrefix = "";
           }
         }
@@ -278,8 +266,7 @@ public class FileInfoContainer {
                 final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
                 if (usePrintLn) {
                   preprocessingState.getPrinter().println(text);
-                }
-                else {
+                } else {
                   preprocessingState.getPrinter().print(text);
                 }
               }
@@ -289,8 +276,7 @@ public class FileInfoContainer {
               final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
               if (usePrintLn) {
                 preprocessingState.getPrinter().println(text);
-              }
-              else {
+              } else {
                 preprocessingState.getPrinter().print(text);
               }
               continue;
@@ -313,12 +299,10 @@ public class FileInfoContainer {
             final String text = PreprocessorUtils.extractTail("//$$", leftTrimmedString);
             if (usePrintLn) {
               preprocessingState.getPrinter().println(text);
-            }
-            else {
+            } else {
               preprocessingState.getPrinter().print(text);
             }
-          }
-          else if (stringToBeProcessed.startsWith("//$")) {
+          } else if (stringToBeProcessed.startsWith("//$")) {
             // Output the tail of the string to the output stream without comments
             preprocessingState.getPrinter().print(stringPrefix);
 
@@ -326,12 +310,10 @@ public class FileInfoContainer {
 
             if (usePrintLn) {
               preprocessingState.getPrinter().println(text);
-            }
-            else {
+            } else {
               preprocessingState.getPrinter().print(text);
             }
-          }
-          else {
+          } else {
             // Just string
             final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
@@ -343,24 +325,20 @@ public class FileInfoContainer {
             preprocessingState.getPrinter().print(stringPrefix);
             if (usePrintLn) {
               preprocessingState.getPrinter().println(strToOut);
-            }
-            else {
+            } else {
               preprocessingState.getPrinter().print(strToOut);
             }
           }
-        }
-        else if (context.isKeepLines()) {
+        } else if (context.isKeepLines()) {
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
           if (usePrintLn) {
             preprocessingState.getPrinter().println(text);
-          }
-          else {
+          } else {
             preprocessingState.getPrinter().print(text);
           }
         }
       }
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       final String message = unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
       throw preprocessingState.makeException(message, leftTrimmedString, unexpected);
     }
@@ -368,18 +346,18 @@ public class FileInfoContainer {
     if (!preprocessingState.isIfStackEmpty()) {
       final TextFileDataContainer lastIf = preprocessingState.peekIf();
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
-              "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
+          "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
     if (!preprocessingState.isWhileStackEmpty()) {
       final TextFileDataContainer lastWhile = preprocessingState.peekWhile();
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
-              "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
+          "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
     if (!context.isFileOutputDisabled() && lastTextFileDataContainer.isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
-      
+
       if (context.isVerbose()) {
         context.logForVerbose("Content was " + (wasSaved ? "saved" : "not saved") + " into file '" + outFile + "\'");
       }
@@ -410,8 +388,7 @@ public class FileInfoContainer {
       case ONOFF: {
         if (trimmedRest.isEmpty()) {
           result = false;
-        }
-        else {
+        } else {
           final char firstChar = rest.charAt(0);
           result = firstChar == '+' || firstChar == '-';
           if (rest.length() > 1) {
@@ -420,9 +397,10 @@ public class FileInfoContainer {
         }
       }
       break;
-      case TAIL:{
+      case TAIL: {
         result = true;
-      }break;
+      }
+      break;
       default: {
         result = !trimmedRest.isEmpty() && Character.isSpaceChar(rest.charAt(0));
       }
@@ -449,12 +427,10 @@ public class FileInfoContainer {
         if (checkDirectiveArgumentRoughly(handler, restOfString)) {
           if (allowedForExecution) {
             return handler.execute(restOfString, context);
-          }
-          else {
+          } else {
             return context.isKeepLines() ? AfterDirectiveProcessingBehaviour.SHOULD_BE_COMMENTED : AfterDirectiveProcessingBehaviour.PROCESSED;
           }
-        }
-        else {
+        } else {
           throw context.makeException("Detected bad argument for " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + handler.getName(), null);
         }
       }

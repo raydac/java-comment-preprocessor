@@ -87,8 +87,7 @@ public final class PreprocessorUtils {
 
     if (trimmed.isEmpty()) {
       result = new String[0];
-    }
-    else {
+    } else {
       result = splitForChar(extensions, ',');
       for (int li = 0; li < result.length; li++) {
         result[li] = result[li].trim().toLowerCase(Locale.ENGLISH);
@@ -111,8 +110,7 @@ public final class PreprocessorUtils {
 
     if (bufferSize <= 0) {
       result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
-    }
-    else {
+    } else {
       result = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset), bufferSize);
     }
 
@@ -174,8 +172,7 @@ public final class PreprocessorUtils {
         pos += written;
         size -= written;
       }
-    }
-    finally {
+    } finally {
       IOUtils.closeQuietly(fileSrcInput);
       IOUtils.closeQuietly(fileOutput);
       IOUtils.closeQuietly(fileDst);
@@ -202,12 +199,10 @@ public final class PreprocessorUtils {
           final Value value = Expression.evalExpression(macrosBody, context);
 
           result = leftPart + value.toString() + rightPart;
-        }
-        else {
+        } else {
           break;
         }
-      }
-      else {
+      } else {
         break;
       }
     }
@@ -249,17 +244,14 @@ public final class PreprocessorUtils {
           strContainer.add(buffer.toString());
           buffer.setLength(0);
           meetCR = false;
-        }
-        else if (chr == '\r') {
+        } else if (chr == '\r') {
           if (meetCR) {
             buffer.append((char) chr);
-          }
-          else {
+          } else {
             stringEndedByNextLine = false;
             meetCR = true;
           }
-        }
-        else {
+        } else {
           if (meetCR) {
             buffer.append('\r');
           }
@@ -277,8 +269,7 @@ public final class PreprocessorUtils {
       if (endedByNextLine != null) {
         endedByNextLine.set(stringEndedByNextLine);
       }
-    }
-    finally {
+    } finally {
       srcBufferedReader.close();
     }
 
@@ -302,8 +293,7 @@ public final class PreprocessorUtils {
         }
         len -= read;
       }
-    }
-    finally {
+    } finally {
       IOUtils.closeQuietly(inChannel);
     }
 
@@ -318,8 +308,7 @@ public final class PreprocessorUtils {
     final String[] result;
     if (index < 0) {
       result = new String[]{string};
-    }
-    else {
+    } else {
       final String leftPart = string.substring(0, index).trim();
       final String rightPart = string.substring(index + 1).trim();
       result = new String[]{leftPart, rightPart};
@@ -341,8 +330,7 @@ public final class PreprocessorUtils {
           tokens.add(buffer.toString());
           buffer.setLength(0);
         }
-      }
-      else {
+      } else {
         buffer.append(curChar);
       }
     }
@@ -369,8 +357,7 @@ public final class PreprocessorUtils {
     if (file != null) {
       try {
         result = file.getCanonicalPath();
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         result = file.getAbsolutePath();
       }
     }
@@ -399,8 +386,7 @@ public final class PreprocessorUtils {
 
       if (detectedPrefix != null) {
         result[i] = replacement + str.substring(detectedPrefix.length());
-      }
-      else {
+      } else {
         result[i] = str;
       }
     }
@@ -468,8 +454,7 @@ public final class PreprocessorUtils {
         }
       }
       return true;
-    }
-    finally {
+    } finally {
       IOUtils.closeQuietly(srcIn);
       IOUtils.closeQuietly(dstIn);
     }

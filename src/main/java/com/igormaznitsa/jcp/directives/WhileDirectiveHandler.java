@@ -40,7 +40,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "start " + getFullName() + ".."+DIRECTIVE_PREFIX+"end loop structure";
+    return "start " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop structure";
   }
 
   @Override
@@ -69,8 +69,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
       if (!condition.asBoolean()) {
         state.getPreprocessingFlags().add(PreprocessingFlag.BREAK_COMMAND);
       }
-    }
-    else {
+    } else {
       state.pushWhile(false);
     }
 

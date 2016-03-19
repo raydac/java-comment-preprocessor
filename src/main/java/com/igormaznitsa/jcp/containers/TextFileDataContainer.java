@@ -22,8 +22,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The class contains text data of a file and the string position index for the
- * file
+ * The class contains text data of a file and the string position index for the file
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -39,14 +38,14 @@ public final class TextFileDataContainer {
   private boolean autoFlush = true;
   private int nextStringIndex;
 
-  public void disableAutoFlush(){
+  public void disableAutoFlush() {
     this.autoFlush = false;
   }
-  
-  public boolean isAutoFlush(){
+
+  public boolean isAutoFlush() {
     return this.autoFlush;
   }
-  
+
   @Nonnull
   @MustNotContainNull
   public String[] getText() {
@@ -62,16 +61,15 @@ public final class TextFileDataContainer {
     nextStringIndex = 0;
   }
 
-  public boolean isPresentedNextLineOnReadString(){
-    return this.nextStringIndex<this.text.length || fileEndedByNextLine;
+  public boolean isPresentedNextLineOnReadString() {
+    return this.nextStringIndex < this.text.length || fileEndedByNextLine;
   }
-  
+
   @Nullable
   public String nextLine() {
     if (nextStringIndex >= text.length) {
       return null;
-    }
-    else {
+    } else {
       return text[nextStringIndex++];
     }
   }

@@ -75,11 +75,10 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
         }
 
         if (!context.getPreprocessorExtension().processAction(context, results)) {
-          throw context.makeException("Extension can't process action ",null);
+          throw context.makeException("Extension can't process action ", null);
         }
-      }
-      catch (IOException ex) {
-        throw context.makeException("Unexpected string detected [" + string + ']',ex);
+      } catch (IOException ex) {
+        throw context.makeException("Unexpected string detected [" + string + ']', ex);
       }
     }
     return AfterDirectiveProcessingBehaviour.PROCESSED;
@@ -99,8 +98,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     if (state == null) {
       stack = null;
       sources = null;
-    }
-    else {
+    } else {
       stack = state.makeIncludeStack();
       sources = state.getLastReadString();
     }
@@ -109,25 +107,22 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
       final ExpressionTree tree;
       if (state == null) {
         tree = new ExpressionTree();
-      }
-      else {
+      } else {
         tree = new ExpressionTree(stack, sources);
       }
       final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);
 
       if (delimiter != null && ExpressionParser.SpecialItem.COMMA != delimiter) {
-        throw context.makeException("Wrong argument format detected",null);
+        throw context.makeException("Wrong argument format detected", null);
       }
 
       if (tree.isEmpty()) {
         if (delimiter == null) {
           break;
+        } else {
+          throw context.makeException("Empty argument", null);
         }
-        else {
-          throw context.makeException("Empty argument",null);
-        }
-      }
-      else {
+      } else {
         result.add(tree);
         if (delimiter == null) {
           break;

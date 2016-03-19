@@ -30,9 +30,7 @@ import org.apache.commons.io.IOUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The Function makes preprocessing of a file and return result as a string
- * value. It uses the current preprocessor context as the context for
- * preprocessing the file.
+ * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
  *
  * @author Igor Maznitsa (http://www.igormaznitsa.com)
  */
@@ -84,15 +82,14 @@ public class FunctionEVALFILE extends AbstractFunction {
     final File theFile;
     try {
       theFile = context.getSourceFile(filePath);
-    }
-    catch (IOException ex) {
-      throw context.makeException("Can't get get source file '" + filePath + '\'',null);
+    } catch (IOException ex) {
+      throw context.makeException("Can't get get source file '" + filePath + '\'', null);
     }
 
-    if (context.isVerbose()){
-      context.logForVerbose("Eval file '"+theFile+'\'');
+    if (context.isVerbose()) {
+      context.logForVerbose("Eval file '" + theFile + '\'');
     }
-    
+
     try {
       final FileInfoContainer fileContainer = new FileInfoContainer(theFile, theFile.getName(), false);
       final PreprocessingState state = fileContainer.preprocessFile(null, clonedContext);
@@ -100,9 +97,8 @@ public class FunctionEVALFILE extends AbstractFunction {
       state.writePrinterBuffers(strWriter);
       IOUtils.closeQuietly(strWriter);
       return Value.valueOf(strWriter.toString());
-    }
-    catch (Exception ex) {
-      throw context.makeException("Unexpected exception",ex);
+    } catch (Exception ex) {
+      throw context.makeException("Unexpected exception", ex);
     }
   }
 }

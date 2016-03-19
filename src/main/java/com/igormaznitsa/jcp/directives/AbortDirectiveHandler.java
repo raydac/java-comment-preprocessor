@@ -49,11 +49,10 @@ public class AbortDirectiveHandler extends AbstractDirectiveHandler {
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
     final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
-    final String message = "ABORT: "+PreprocessorUtils.processMacroses(normal, context);
+    final String message = "ABORT: " + PreprocessorUtils.processMacroses(normal, context);
     if (context.isVerbose()) {
       context.logForVerbose(message);
-    }
-    else {
+    } else {
       context.logInfo(message);
     }
     context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.ABORT_PROCESSING);

@@ -133,8 +133,7 @@ public final class JCPreprocessor {
 
       try {
         val = Expression.evalExpression(condition, context);
-      }
-      catch (IllegalArgumentException ex) {
+      } catch (IllegalArgumentException ex) {
         throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, ex);
       }
 
@@ -175,8 +174,7 @@ public final class JCPreprocessor {
     for (final FileInfoContainer fileRef : files) {
       if (fileRef.isExcludedFromPreprocessing()) {
         // do nothing
-      }
-      else if (fileRef.isForCopyOnly()) {
+      } else if (fileRef.isForCopyOnly()) {
         if (!context.isFileOutputDisabled()) {
 
           final File destinationFile = context.createDestinationFileForPath(fileRef.getDestinationFilePath());
@@ -198,8 +196,7 @@ public final class JCPreprocessor {
             copFileCounter++;
           }
         }
-      }
-      else {
+      } else {
         final long startTime = System.currentTimeMillis();
         fileRef.preprocessFile(null, context);
         final long elapsedTime = System.currentTimeMillis() - startTime;
@@ -221,8 +218,7 @@ public final class JCPreprocessor {
     if (context.doesClearDestinationDirBefore() && destinationExistsAndDirectory) {
       try {
         FileUtils.cleanDirectory(destination);
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
       }
     }
@@ -266,8 +262,7 @@ public final class JCPreprocessor {
     for (final File file : allowedFiles) {
       if (file.isDirectory()) {
         result.addAll(findAllFiles(file));
-      }
-      else {
+      } else {
         result.add(file);
       }
     }
@@ -283,8 +278,7 @@ public final class JCPreprocessor {
 
     try {
       preprocessorContext = processCommandString(null, args, normalizedStrings);
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       System.err.println("Error during command line processing [" + ex.getMessage() + ']');
       System.exit(1);
       throw new RuntimeException("To show compiler executiion stop");
@@ -294,8 +288,7 @@ public final class JCPreprocessor {
 
     try {
       preprocessor.execute();
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       System.err.println(PreprocessorException.referenceAsString(' ', unexpected));
       System.exit(1);
     }
@@ -345,11 +338,9 @@ public final class JCPreprocessor {
 
         if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
           // do nothing
-        }
-        else if (trimmed.charAt(0) == '@') {
+        } else if (trimmed.charAt(0) == '@') {
           PreprocessorUtils.throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);
-        }
-        else if (trimmed.charAt(0) == '/') {
+        } else if (trimmed.charAt(0) == '/') {
           // a command line argument
           boolean processed = false;
           try {
@@ -362,16 +353,14 @@ public final class JCPreprocessor {
                 break;
               }
             }
-          }
-          catch (Exception unexpected) {
+          } catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
           }
 
           if (!processed) {
             PreprocessorUtils.throwPreprocessorException("Unsupported or disallowed directive", trimmed, file, readStringIndex, null);
           }
-        }
-        else {
+        } else {
           // a global variable
           final String[] splitted = PreprocessorUtils.splitForEqualChar(trimmed);
           if (splitted.length != 2) {
@@ -390,8 +379,7 @@ public final class JCPreprocessor {
             if (context.isVerbose()) {
               context.logForVerbose("Register global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
             }
-          }
-          catch (Exception unexpected) {
+          } catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
           }
         }

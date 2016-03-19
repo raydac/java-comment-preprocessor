@@ -30,8 +30,7 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
- * The class describes a wrapper around an expression item to be saved into an
- * expression tree
+ * The class describes a wrapper around an expression item to be saved into an expression tree
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -58,20 +57,17 @@ public class ExpressionTreeElement {
   private ExpressionTreeElement[] childElements;
 
   /**
-   * The link to the parent element, if it is the tree root then it contains
-   * null
+   * The link to the parent element, if it is the tree root then it contains null
    */
   private ExpressionTreeElement parentTreeElement;
 
   /**
-   * The priority of the tree element, it is very strongly used during tree
-   * sorting
+   * The priority of the tree element, it is very strongly used during tree sorting
    */
   private int priority;
 
   /**
-   * Because I fill children sequentially, the variable contains the index of
-   * the first empty child slot
+   * Because I fill children sequentially, the variable contains the index of the first empty child slot
    */
   private int nextChildSlot = 0;
 
@@ -79,21 +75,21 @@ public class ExpressionTreeElement {
    * Contains the source string for the expression.
    */
   private final String sourceString;
-  
+
   /**
    * Current include stack of the preprocessor to the source string.
    */
-  private final FilePositionInfo [] includeStack;
-  
+  private final FilePositionInfo[] includeStack;
+
   /**
    * The constructor
    *
    * @param item an expression item to be wrapped, must not be null
    */
-  ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo [] callStack, @Nullable final String sourceString) {
+  ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sourceString) {
     this.sourceString = sourceString;
     this.includeStack = callStack;
-    
+
     if (item == null) {
       throw new PreprocessorException("[Expression]The item is null", this.sourceString, this.includeStack, null);
     }
@@ -101,8 +97,7 @@ public class ExpressionTreeElement {
     int arity = 0;
     if (item.getExpressionItemType() == ExpressionItemType.OPERATOR) {
       arity = ((AbstractOperator) item).getArity();
-    }
-    else if (item.getExpressionItemType() == ExpressionItemType.FUNCTION) {
+    } else if (item.getExpressionItemType() == ExpressionItemType.FUNCTION) {
       arity = ((AbstractFunction) item).getArity();
     }
     priority = item.getExpressionItemPriority().getPriority();
@@ -175,8 +170,7 @@ public class ExpressionTreeElement {
    * It replaces a child element
    *
    * @param oldOne the old expression element to be replaced (must not be null)
-   * @param newOne the new expression element to be used instead the old one
-   * (must not be null)
+   * @param newOne the new expression element to be used instead the old one (must not be null)
    * @return true if the element was found and replaced, else false
    */
   public boolean replaceElement(@Nonnull final ExpressionTreeElement oldOne, @Nonnull final ExpressionTreeElement newOne) {
@@ -209,8 +203,7 @@ public class ExpressionTreeElement {
    *
    * @param index the index of the needed child
    * @return the child or null if the slot is empty
-   * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible
-   * index is being used
+   * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible index is being used
    */
   @Nullable
   public ExpressionTreeElement getChildForIndex(final int index) {
@@ -239,40 +232,34 @@ public class ExpressionTreeElement {
       if (parentTreeElement == null) {
         element.addTreeElement(this);
         result = element;
-      }
-      else {
+      } else {
         result = parentTreeElement.addTreeElement(element);
       }
-    }
-    else if (newElementPriority == currentPriority) {
+    } else if (newElementPriority == currentPriority) {
       if (parentTreeElement != null) {
         parentTreeElement.replaceElement(this, element);
       }
-      if (element.nextChildSlot>=element.childElements.length){
+      if (element.nextChildSlot >= element.childElements.length) {
         throw new PreprocessorException("[Expression]Can't process expression item, may be wrong number of arguments", this.sourceString, this.includeStack, null);
       }
       element.childElements[element.nextChildSlot] = this;
       element.nextChildSlot++;
       this.parentTreeElement = element;
       result = element;
-    }
-    else {
-      if (isFull()) {
-        final int lastElementIndex = getArity() - 1;
+    } else if (isFull()) {
+      final int lastElementIndex = getArity() - 1;
 
-        final ExpressionTreeElement lastElement = childElements[lastElementIndex];
-        if (lastElement.getPriority() > newElementPriority) {
-          element.addElementToNextFreeSlot(lastElement);
-          childElements[lastElementIndex] = element;
-          element.parentTreeElement = this;
-          result = element;
-        }
-
-      }
-      else {
-        addElementToNextFreeSlot(element);
+      final ExpressionTreeElement lastElement = childElements[lastElementIndex];
+      if (lastElement.getPriority() > newElementPriority) {
+        element.addElementToNextFreeSlot(lastElement);
+        childElements[lastElementIndex] = element;
+        element.parentTreeElement = this;
         result = element;
       }
+
+    } else {
+      addElementToNextFreeSlot(element);
+      result = element;
     }
     return result;
   }
@@ -293,11 +280,11 @@ public class ExpressionTreeElement {
    */
   public void fillArguments(@Nonnull @MustNotContainNull final List<ExpressionTree> arguments) {
     if (arguments == null) {
-      throw new PreprocessorException("[Expression]Argument list is null",this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]Argument list is null", this.sourceString, this.includeStack, null);
     }
 
     if (childElements.length != arguments.size()) {
-      throw new PreprocessorException("Wrong argument list size",this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("Wrong argument list size", this.sourceString, this.includeStack, null);
     }
 
     int i = 0;
@@ -307,7 +294,7 @@ public class ExpressionTreeElement {
       }
 
       if (childElements[i] != null) {
-        throw new PreprocessorException("[Expression]Non-null slot detected, it is possible that there is a program error, contact a developer please",this.sourceString, this.includeStack, null);
+        throw new PreprocessorException("[Expression]Non-null slot detected, it is possible that there is a program error, contact a developer please", this.sourceString, this.includeStack, null);
       }
 
       final ExpressionTreeElement root = arg.getRoot();
@@ -332,22 +319,17 @@ public class ExpressionTreeElement {
     }
 
     if (childElements.length == 0) {
-      throw new PreprocessorException("[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']',this.sourceString, this.includeStack, null);
-    }
-    else {
-      if (isFull()) {
-        throw new PreprocessorException("[Expression]There is not any possibility to add new argument [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
-      }
-      else {
-        childElements[nextChildSlot++] = element;
-      }
+      throw new PreprocessorException("[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
+    } else if (isFull()) {
+      throw new PreprocessorException("[Expression]There is not any possibility to add new argument [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
+    } else {
+      childElements[nextChildSlot++] = element;
     }
     element.parentTreeElement = this;
   }
 
   /**
-   * Post-processing after the tree is formed, the unary minus operation will be
-   * optimized
+   * Post-processing after the tree is formed, the unary minus operation will be optimized
    */
   public void postProcess() {
     switch (savedItem.getExpressionItemType()) {
@@ -362,26 +344,22 @@ public class ExpressionTreeElement {
                 childElements = EMPTY;
                 savedItem = Value.valueOf(0 - val.asLong());
                 makeMaxPriority();
-              }
-              else if (val.getType() == ValueType.FLOAT) {
+              } else if (val.getType() == ValueType.FLOAT) {
                 childElements = EMPTY;
                 savedItem = Value.valueOf(0.0f - val.asFloat());
                 makeMaxPriority();
-              }
-              else {
+              } else {
                 left.postProcess();
               }
             }
-          }
-          else {
+          } else {
             for (final ExpressionTreeElement element : childElements) {
               if (element != null) {
                 element.postProcess();
               }
             }
           }
-        }
-        else {
+        } else {
           for (final ExpressionTreeElement element : childElements) {
             if (element != null) {
               element.postProcess();
