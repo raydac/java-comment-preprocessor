@@ -408,8 +408,8 @@ public final class PreprocessingState {
 
   public void saveBuffersToStreams(@Nonnull final OutputStream prefix, @Nonnull final OutputStream normal, @Nonnull final OutputStream postfix) throws IOException {
     prefixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
-    normalPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
-    postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+    normalPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(normal, globalOutCharacterEncoding)));
+    postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
   }
 
   public boolean saveBuffersToFile(@Nonnull final File outFile, final boolean removeComments) throws IOException {

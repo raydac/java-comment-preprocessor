@@ -87,7 +87,11 @@ public abstract class AbstractUseCaseTest {
         fail("Must be file : " + f2.getAbsolutePath());
         else assertFolder(f, f2);
       }else{
-        assertEquals("File size must be the same ("+f.getName()+')',f.length(),f2.length());
+        final boolean equalsLength = f.length() == f2.length();
+        if (!equalsLength){
+          System.err.println("WRONG FILE CONTENT\r\n---------------\r\n"+FileUtils.readFileToString(f2, "UTF-8")+"\r\n---------------");
+          fail("Wrong length of result file (" + f.getName() + ')');
+        }
         assertEquals("Checksum must be equal ("+f.getName()+')',FileUtils.checksumCRC32(f),FileUtils.checksumCRC32(f2));
       }
     }

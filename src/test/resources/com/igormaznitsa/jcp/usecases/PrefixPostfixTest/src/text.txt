@@ -1,4 +1,7 @@
 start
+//#postfix+
+the first line in postfix
+//#postfix-
 //#-
 ignored section
 at all

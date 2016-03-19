@@ -1,0 +1,2 @@
+start
+/*$evalfile("./some.txt")$*/end
