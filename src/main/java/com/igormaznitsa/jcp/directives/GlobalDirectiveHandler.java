@@ -55,7 +55,6 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
   public boolean isGlobalPhaseAllowed() {
     return true;
   }

@@ -40,7 +40,6 @@ public class UndefDirectiveHandler extends DefineDirectiveHandler {
   }
 
   @Override
-  @Nonnull
   protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
     if(context.isLocalVariable(varName)){
       context.removeLocalVariable(varName);
