@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -42,7 +43,7 @@ public class BreakDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = context.getPreprocessingState();
+    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
 
     if (state.isWhileStackEmpty()) {
       throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "while",null);

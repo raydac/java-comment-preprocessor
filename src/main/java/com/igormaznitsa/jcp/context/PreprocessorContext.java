@@ -158,7 +158,9 @@ public class PreprocessorContext {
 
     this.currentState = context.currentState;
     this.cloned = true;
-    this.currentInCloneSource = context.getPreprocessingState() == null ? null : context.getPreprocessingState().peekFile();
+    
+    final PreprocessingState theState = context.getPreprocessingState();
+    this.currentInCloneSource = theState == null ? null : theState.peekFile();
   }
 
   /**
@@ -515,7 +517,7 @@ public class PreprocessorContext {
     assertNotNull("Variable name is null", name);
     assertNotNull("Value is null", value);
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Not defined variable name", null);
@@ -539,7 +541,7 @@ public class PreprocessorContext {
   @Nonnull
   public PreprocessorContext removeLocalVariable(@Nonnull final String name) {
     assertNotNull("Variable name is null", name);
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
@@ -567,7 +569,7 @@ public class PreprocessorContext {
   public PreprocessorContext removeGlobalVariable(@Nonnull final String name) {
     assertNotNull("Variable name is null", name);
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
@@ -597,7 +599,7 @@ public class PreprocessorContext {
       return null;
     }
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return null;
@@ -617,7 +619,7 @@ public class PreprocessorContext {
       return false;
     }
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return false;
@@ -648,7 +650,7 @@ public class PreprocessorContext {
   public PreprocessorContext setGlobalVariable(@Nonnull final String name, @Nonnull final Value value) {
     assertNotNull("Variable name is null", name);
 
-    final String normalizedName = PreprocessorUtils.normalizeVariableName(name);
+    final String normalizedName = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalizedName.isEmpty()) {
       throw makeException("Name is empty", null);
@@ -683,7 +685,7 @@ public class PreprocessorContext {
       return false;
     }
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
     if (normalized.isEmpty()) {
       return false;
     }
@@ -703,7 +705,7 @@ public class PreprocessorContext {
       return null;
     }
 
-    final String normalized = PreprocessorUtils.normalizeVariableName(name);
+    final String normalized = assertNotNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return null;
@@ -929,8 +931,9 @@ public class PreprocessorContext {
     File result = null;
 
     String parentDir = null;
-    if (currentState != null && currentState.peekFile() != null) {
-      parentDir = currentState.peekFile().getFile().getParent();
+    if (currentState != null){
+      final TextFileDataContainer theFile = currentState.peekFile();
+      parentDir = theFile == null ? null : theFile.getFile().getParent();
     }
 
     if (FilenameUtils.getPrefixLength(path) <= 0 && parentDir != null) {

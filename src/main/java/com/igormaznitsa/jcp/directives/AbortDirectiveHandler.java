@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -55,7 +56,7 @@ public class AbortDirectiveHandler extends AbstractDirectiveHandler {
     } else {
       context.logInfo(message);
     }
-    context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.ABORT_PROCESSING);
+    assertNotNull(context.getPreprocessingState()).getPreprocessingFlags().add(PreprocessingFlag.ABORT_PROCESSING);
     return AfterDirectiveProcessingBehaviour.READ_NEXT_LINE;
   }
 }

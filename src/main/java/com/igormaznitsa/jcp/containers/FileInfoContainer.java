@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 /**
@@ -264,20 +265,22 @@ public class FileInfoContainer {
             case READ_NEXT_LINE: {
               if (context.isKeepLines()) {
                 final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
+                final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
                 if (usePrintLn) {
-                  preprocessingState.getPrinter().println(text);
+                  thePrinter.println(text);
                 } else {
-                  preprocessingState.getPrinter().print(text);
+                  thePrinter.print(text);
                 }
               }
               continue;
             }
             case SHOULD_BE_COMMENTED: {
               final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
+              final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
               if (usePrintLn) {
-                preprocessingState.getPrinter().println(text);
+                thePrinter.println(text);
               } else {
-                preprocessingState.getPrinter().print(text);
+                thePrinter.print(text);
               }
               continue;
             }
@@ -286,6 +289,7 @@ public class FileInfoContainer {
           }
         }
 
+        final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
         if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
           final boolean startsWithTwoDollars = leftTrimmedString.startsWith("//$$");
 
@@ -295,46 +299,46 @@ public class FileInfoContainer {
 
           if (startsWithTwoDollars) {
             // Output the tail of the string to the output stream without comments and macroses
-            preprocessingState.getPrinter().print(stringPrefix);
+            thePrinter.print(stringPrefix);
             final String text = PreprocessorUtils.extractTail("//$$", leftTrimmedString);
             if (usePrintLn) {
-              preprocessingState.getPrinter().println(text);
+              thePrinter.println(text);
             } else {
-              preprocessingState.getPrinter().print(text);
+              thePrinter.print(text);
             }
           } else if (stringToBeProcessed.startsWith("//$")) {
             // Output the tail of the string to the output stream without comments
-            preprocessingState.getPrinter().print(stringPrefix);
+            thePrinter.print(stringPrefix);
 
             final String text = PreprocessorUtils.extractTail("//$", stringToBeProcessed);
 
             if (usePrintLn) {
-              preprocessingState.getPrinter().println(text);
+              thePrinter.println(text);
             } else {
-              preprocessingState.getPrinter().print(text);
+              thePrinter.print(text);
             }
           } else {
             // Just string
             final String strToOut = processStringForTailRemover(stringToBeProcessed);
 
             if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
-              preprocessingState.getPrinter().print(AbstractDirectiveHandler.ONE_LINE_COMMENT);
+              thePrinter.print(AbstractDirectiveHandler.ONE_LINE_COMMENT);
               preprocessingState.getPreprocessingFlags().remove(PreprocessingFlag.COMMENT_NEXT_LINE);
             }
 
-            preprocessingState.getPrinter().print(stringPrefix);
+            thePrinter.print(stringPrefix);
             if (usePrintLn) {
-              preprocessingState.getPrinter().println(strToOut);
+              thePrinter.println(strToOut);
             } else {
-              preprocessingState.getPrinter().print(strToOut);
+              thePrinter.print(strToOut);
             }
           }
         } else if (context.isKeepLines()) {
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
           if (usePrintLn) {
-            preprocessingState.getPrinter().println(text);
+            thePrinter.println(text);
           } else {
-            preprocessingState.getPrinter().print(text);
+            thePrinter.print(text);
           }
         }
       }

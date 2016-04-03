@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -74,7 +75,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
           results[index++] = val;
         }
 
-        if (!context.getPreprocessorExtension().processAction(context, results)) {
+        if (!assertNotNull(context.getPreprocessorExtension()).processAction(context, results)) {
           throw context.makeException("Extension can't process action ", null);
         }
       } catch (IOException ex) {

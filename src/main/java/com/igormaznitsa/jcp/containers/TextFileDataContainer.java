@@ -109,10 +109,6 @@ public final class TextFileDataContainer {
 
   @Override
   public boolean equals(@Nullable final Object that) {
-    if (that == null) {
-      return false;
-    }
-
     if (this == that) {
       return true;
     }
