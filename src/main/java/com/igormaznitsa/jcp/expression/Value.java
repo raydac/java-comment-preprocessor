@@ -301,15 +301,11 @@ public final class Value implements ExpressionItem {
 
   @Override
   public boolean equals(@Nullable final Object var) {
-    if (var == null) {
-      return false;
-    }
-
     if (this == var) {
       return true;
     }
 
-    if (var.getClass() == Value.class) {
+    if (var instanceof Value) {
       final Value thatValue = (Value) var;
 
       return this.type == thatValue.type && this.value.equals(thatValue.value);

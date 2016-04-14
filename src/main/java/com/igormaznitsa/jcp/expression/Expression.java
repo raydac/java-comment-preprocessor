@@ -15,8 +15,6 @@
  */
 package com.igormaznitsa.jcp.expression;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -30,6 +28,7 @@ import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The main class to calculate expressions

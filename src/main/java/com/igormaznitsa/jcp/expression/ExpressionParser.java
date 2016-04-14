@@ -15,8 +15,6 @@
  */
 package com.igormaznitsa.jcp.expression;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -35,6 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * This class is a parser allows to parse an expression and make a tree as the output

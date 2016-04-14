@@ -1,8 +1,10 @@
 start
 //#include "./directive_include2.txt"
+//#include __filefolder__+"/directive_include3.txt"
 end
 ---START_ETALON---
 start
 This text must be included
 and this one too
+Absolute path
 end

@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.context;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 import com.igormaznitsa.jcp.InfoHelper;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
@@ -30,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class implements the special variable processor interface and allows to get access to inside JCP variables Inside JCP variables have the "jcp." prefix

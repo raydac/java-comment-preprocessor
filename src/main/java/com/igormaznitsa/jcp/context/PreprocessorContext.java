@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.context;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
@@ -38,6 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
@@ -912,54 +912,77 @@ public class PreprocessorContext {
   }
 
   /**
-   * It returns a File object for a path to a source file subject to the source directory path
+   * It finds a file for its path among files in source folder, it is prohibited to return files out of preprocessing folders.
    *
-   * @param path the path to the needed source file, it must not be null and the file must exist and be a file
-   * @return a generated File object for the path
-   * @throws IOException it will be thrown for problem to create the File or to find it on the disk
+   * @param path the path to the needed file, it must not be null and the file must exist and be a file and be among files in preprocessing source folders
+   * @return detected file object for the path
+   * @throws IOException if it is impossible to find a file for the path
    */
   @Nonnull
-  public File getSourceFile(@Nonnull final String path) throws IOException {
+  public File findFileInSourceFolder(@Nonnull final String path) throws IOException {
     if (path == null) {
       throw makeException("Path is null", null);
     }
 
     if (path.isEmpty()) {
-      throw makeException("Folder path is empty", null);
+      throw makeException("Path is empty", null);
     }
 
     File result = null;
 
     String parentDir = null;
-    if (currentState != null){
+    if (currentState != null) {
       final TextFileDataContainer theFile = currentState.peekFile();
       parentDir = theFile == null ? null : theFile.getFile().getParent();
     }
 
-    if (FilenameUtils.getPrefixLength(path) <= 0 && parentDir != null) {
-      // relative path
-      result = new File(parentDir, path);
-    } else {
-      final List<File> findFiles = new ArrayList<File>();
+    final File resultFile = new File(path);
+    if (resultFile.isAbsolute()) {
+      // absolute path
+
+      // check that the file is a child of a preprocessing source root else usage of the file is prohibited
+      final String normalizedPath = FilenameUtils.normalizeNoEndSeparator(resultFile.getAbsolutePath());
       for (final File root : getSourceDirectoryAsFiles()) {
-        final File variant = new File(root, path);
-        if (variant.exists() && variant.isFile()) {
-          findFiles.add(variant);
+        final String rootNormalizedPath = FilenameUtils.normalizeNoEndSeparator(root.getAbsolutePath()) + File.separatorChar;
+        if (normalizedPath.startsWith(rootNormalizedPath)) {
+          result = resultFile;
+          break;
         }
       }
 
-      if (findFiles.size() == 1) {
-        result = findFiles.get(0);
-      } else if (findFiles.isEmpty()) {
+      if (result == null) {
+        throw makeException("Can't find file for path \'" + path + "\' in preprocessing source folders, allowed usage only files in preprocessing source folders!", null);
+      } else if (!result.isFile()) {
+        throw makeException("File \'" + result + "\' is either not found or not a file", null);
+      }
+
+    } else if (parentDir != null) {
+      // relative path
+      result = new File(parentDir, path);
+    } else {
+      final List<File> setOfFoundFiles = new ArrayList<File>();
+      for (final File root : getSourceDirectoryAsFiles()) {
+        final File variant = new File(root, path);
+        if (variant.exists() && variant.isFile()) {
+          setOfFoundFiles.add(variant);
+        }
+      }
+
+      if (setOfFoundFiles.size() == 1) {
+        result = setOfFoundFiles.get(0);
+      } else if (setOfFoundFiles.isEmpty()) {
         result = null;
       } else {
         throw makeException("Found several variants for path \'" + path + "\' in different source roots", null);
       }
+
+      if (result == null) {
+        throw makeException("Can't find file for path \'" + path + "\' among source files registered for preprocessing.", null);
+      } else if (!result.isFile()) {
+        throw makeException("File \'" + PreprocessorUtils.getFilePath(result) + "\' is either not found or not a file", null);
+      }
     }
 
-    if (result == null || !result.isFile()) {
-      throw makeException("The File \'" + PreprocessorUtils.getFilePath(result) + "\' is not found or not a file", null);
-    }
     return result;
   }
 

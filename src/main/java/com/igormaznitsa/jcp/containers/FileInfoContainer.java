@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.containers;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -36,6 +35,7 @@ import javax.annotation.Nullable;
 
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
@@ -348,17 +348,17 @@ public class FileInfoContainer {
     }
 
     if (!preprocessingState.isIfStackEmpty()) {
-      final TextFileDataContainer lastIf = preprocessingState.peekIf();
+      final TextFileDataContainer lastIf = assertNotNull("'IF' stack is empty",preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
           "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
     if (!preprocessingState.isWhileStackEmpty()) {
-      final TextFileDataContainer lastWhile = preprocessingState.peekWhile();
+      final TextFileDataContainer lastWhile = assertNotNull("'WHILE' stack is empty",preprocessingState.peekWhile());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
           "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled() && lastTextFileDataContainer.isAutoFlush()) {
+    if (!context.isFileOutputDisabled() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
       final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
 

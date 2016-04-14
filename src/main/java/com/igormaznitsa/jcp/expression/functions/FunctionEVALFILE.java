@@ -81,7 +81,7 @@ public class FunctionEVALFILE extends AbstractFunction {
 
     final File theFile;
     try {
-      theFile = context.getSourceFile(filePath);
+      theFile = context.findFileInSourceFolder(filePath);
     } catch (IOException ex) {
       throw context.makeException("Can't get get source file '" + filePath + '\'', null);
     }

@@ -48,6 +48,16 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
   }
 
   @Test
+  public void testExecution_AbsolutePath() throws Exception {
+    final File theTestPath = getCurrentTestPath();
+    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("evalfile(\""+getCurrentTestPath().getParentFile().getAbsolutePath()+"/eval/TestEval.java\")", context);
+    assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
   public void testExecution_IncludedEvalCall() throws Exception {
     final File theTestPath = getCurrentTestPath();
     final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
