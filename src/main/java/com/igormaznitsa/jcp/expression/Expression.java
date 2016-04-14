@@ -29,6 +29,7 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
 /**
  * The main class to calculate expressions
@@ -195,6 +196,10 @@ public class Expression {
       } catch (NoSuchMethodException unexpected) {
         throw this.context.makeException("[Expression]Can't find a function method to process data [" + signature.toString() + ']', unexpected);
       } catch (Exception unexpected) {
+        final Throwable cause = unexpected.getCause();
+        if (cause instanceof PreprocessorException){
+          throw (PreprocessorException)cause;
+        }
         throw this.context.makeException("[Expression]Can't execute a function method to process data [" + function.getClass().getName() + '.' + signature.toString() + ']', unexpected);
       }
     }
