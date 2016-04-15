@@ -12,6 +12,11 @@ It is the most powerful multi-pass preprocessor for Java but also it can be used
 
 Changelog
 ==========
+- **6.1.0** (under development)
+  - __changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests__
+  - __fixed #8 issue, fixed work with absolute paths in //#include and evalfile(), added tests__
+  - refactoring
+
 - **6.0.1**
   - improved the MAVEN plugin to hide content of potentially sensitive properties from printing into Maven log (issue #2)
   - added --z option ('compareDestination' in MAVEN and ANT) to check content of existing result file and to not replace it if content equals (issue #1), by default turned off because makes some overhead
