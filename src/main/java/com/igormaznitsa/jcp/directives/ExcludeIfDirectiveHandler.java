@@ -59,7 +59,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
+    final PreprocessingState state = context.getPreprocessingState();
     state.pushExcludeIfData(state.getRootFileInfo(), string, assertNotNull("'IF' stack is empty!",state.peekFile()).getLastReadStringIndex());
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

@@ -44,7 +44,7 @@ public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
+    final PreprocessingState state = context.getPreprocessingState();
 
     if (state.isWhileStackEmpty()) {
       throw context.makeException("Detected "+getFullName() + " without " + DIRECTIVE_PREFIX + "while",null);

@@ -712,7 +712,7 @@ public final class PreprocessorContext {
 
     final SpecialVariableProcessor processor = mapVariableNameToSpecialVarProcessor.get(normalized);
 
-    if (processor != null && currentState != null) {
+    if (processor != null) {
       return processor.getVariable(normalized, this);
     }
 
@@ -1064,24 +1064,15 @@ public final class PreprocessorContext {
 
     final FilePositionInfo[] includeStack;
     final String sourceLine;
-    if (this.currentState == null) {
-      includeStack = PreprocessingState.EMPTY_STACK;
-      sourceLine = "";
-    } else {
-      includeStack = this.currentState.makeIncludeStack();
-      sourceLine = this.currentState.getLastReadString();
-    }
+    includeStack = this.currentState.makeIncludeStack();
+    sourceLine = this.currentState.getLastReadString();
     return new PreprocessorException(text, sourceLine, includeStack, cause);
   }
 
   public void logForVerbose(@Nonnull final String str) {
     if (isVerbose()) {
       final String stack;
-      if (this.currentState != null) {
-        stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
-      } else {
-        stack = "";
-      }
+      stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
   }

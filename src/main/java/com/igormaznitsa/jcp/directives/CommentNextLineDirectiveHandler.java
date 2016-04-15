@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.directives;
 import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class implements the //#// directive handler
@@ -42,7 +41,7 @@ public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    assertNotNull(context.getPreprocessingState()).getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
+    context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.COMMENT_NEXT_LINE);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 

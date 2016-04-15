@@ -172,22 +172,18 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nullable final PreprocessorContext context) {
-    final PreprocessingState state = context == null ? null : context.getPreprocessingState();
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
+    final PreprocessingState state = context.getPreprocessingState();
     if (VAR_DEST_DIR.equals(varName)) {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      if (state != null) {
-        state.getRootFileInfo().setDestinationDir(value.asString());
-      }
+      state.getRootFileInfo().setDestinationDir(value.asString());
     } else if (VAR_DEST_FILE_NAME.equals(varName)) {
       if (value.getType() != ValueType.STRING) {
         throw new IllegalArgumentException("Only STRING type allowed");
       }
-      if (state != null) {
-        state.getRootFileInfo().setDestinationName(value.asString());
-      }
+      state.getRootFileInfo().setDestinationName(value.asString());
     } else if (VAR_DEST_FULLPATH.equals(varName)
         || VAR_SRC_DIR.equals(varName)
         || VAR_SRC_DIR2.equals(varName)
@@ -201,10 +197,10 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         || VAR_TIMESTAMP.equals(varName)
         || VAR_DATE.equals(varName)) {
       final String text = "The variable \'" + varName + "\' can't be set directly";
-      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+      throw context.makeException(text, null);
     } else {
       final String text = "Attempting to write unexpected special variable [" + varName + ']';
-      throw context == null ? new IllegalArgumentException(text) : context.makeException(text, null);
+      throw context.makeException(text, null);
     }
   }
 }

@@ -124,6 +124,7 @@ public final class PreprocessingState {
     this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
     this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
     this.rootReference = null;
+    this.lastReadString = "";
     this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
     this.overrideOnlyIfContentChanged = true;
     this.context = context;
