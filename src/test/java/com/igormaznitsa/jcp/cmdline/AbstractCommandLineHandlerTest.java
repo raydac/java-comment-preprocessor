@@ -18,8 +18,9 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.JCPreprocessor;
 import static org.junit.Assert.*;
 import org.junit.Test;
+import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 
-public abstract class AbstractCommandLineHandlerTest {
+public abstract class AbstractCommandLineHandlerTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public abstract void testExecution() throws Exception;

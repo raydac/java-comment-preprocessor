@@ -21,8 +21,9 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 
-public abstract class AbstractOperatorTest {
+public abstract class AbstractOperatorTest extends AbstractSpyPreprocessorContextTest {
 
   @Test
   public abstract void testKeyword();
@@ -50,7 +51,7 @@ public abstract class AbstractOperatorTest {
   }
 
   public PreprocessorContext assertExecution(final Value expectedResult, final String expression) throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     assertEquals("The expression result must be equals to the expected one", expectedResult, Expression.evalExpression(expression, context));
     return context;
   }

@@ -59,16 +59,6 @@ public class Expression {
   private final ExpressionTree expressionTree;
 
   /**
-   * Evaluate the expression
-   *
-   * @return the result as a Value object, it can't be null
-   */
-  @Nonnull
-  public Value eval() {
-    return this.eval(null);
-  }
-
-  /**
    * Evaluate expression
    *
    * @param expression the expression as a String, must not be null
@@ -95,7 +85,7 @@ public class Expression {
   @Nonnull
   public static Value evalTree(@Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context) {
     final Expression exp = new Expression(context, tree);
-    return exp.eval(context.getPreprocessingState());
+    return exp.eval(assertNotNull(context.getPreprocessingState()));
   }
 
   private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {
@@ -107,7 +97,7 @@ public class Expression {
   }
 
   @Nonnull
-  private ExpressionTreeElement evalFunction(@Nonnull final ExpressionTreeElement functionElement, @Nullable final PreprocessingState state) {
+  private ExpressionTreeElement evalFunction(@Nonnull final ExpressionTreeElement functionElement, @Nonnull final PreprocessingState state) {
     final AbstractFunction function = (AbstractFunction) functionElement.getItem();
 
     final int arity = function.getArity();
@@ -118,13 +108,8 @@ public class Expression {
     final FilePositionInfo[] stack;
     final String sources;
 
-    if (state == null) {
-      stack = PreprocessingState.EMPTY_STACK;
-      sources = "";
-    } else {
-      stack = state.makeIncludeStack();
-      sources = state.getLastReadString();
-    }
+    stack = state.makeIncludeStack();
+    sources = state.getLastReadString();
 
     final StringBuilder signature = new StringBuilder(AbstractFunction.EXECUTION_PREFIX);
 
@@ -206,7 +191,7 @@ public class Expression {
   }
 
   @Nonnull
-  private ExpressionTreeElement evalOperator(@Nonnull final ExpressionTreeElement operatorElement, @Nullable final PreprocessingState state) {
+  private ExpressionTreeElement evalOperator(@Nonnull final ExpressionTreeElement operatorElement, @Nonnull final PreprocessingState state) {
     final AbstractOperator operator = (AbstractOperator) operatorElement.getItem();
 
     final int arity = operator.getArity();
@@ -220,13 +205,9 @@ public class Expression {
 
     final FilePositionInfo[] stack;
     final String sources;
-    if (state == null) {
-      stack = PreprocessingState.EMPTY_STACK;
-      sources = "";
-    } else {
-      stack = state.makeIncludeStack();
-      sources = state.getLastReadString();
-    }
+
+    stack = state.makeIncludeStack();
+    sources = state.getLastReadString();
 
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement arg = operatorElement.getChildForIndex(i);
@@ -328,7 +309,7 @@ public class Expression {
   }
 
   @Nonnull
-  private Value eval(@Nullable final PreprocessingState state) {
+  private Value eval(@Nonnull final PreprocessingState state) {
     if (expressionTree.isEmpty()) {
       throw this.context.makeException("[Expression]The expression is empty", null);
     }

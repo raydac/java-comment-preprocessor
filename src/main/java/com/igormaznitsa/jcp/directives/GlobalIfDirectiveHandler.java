@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -67,7 +68,7 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = context.getPreprocessingState();
+    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);
       if (expressionResult.getType() != ValueType.BOOLEAN) {

@@ -30,7 +30,7 @@ public class ExcludedFileExtensionsHandlerTest extends AbstractCommandLineHandle
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = mock(PreprocessorContext.class);
+    final PreprocessorContext mock = preparePreprocessorContext();
 
     assertFalse(HANDLER.processCommandLineKey("", mock));
     assertFalse(HANDLER.processCommandLineKey("/ef:", mock));

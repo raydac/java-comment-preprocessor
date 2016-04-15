@@ -117,34 +117,43 @@ public final class PreprocessingState {
   private TextFileDataContainer activeWhile;
   private String lastReadString;
   private final PreprocessorContext context;
+  private final boolean fake;
+
+  PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final String inEncoding, @Nonnull final String outEncoding) {
+    this.fake = true;
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
+    this.rootReference = null;
+    this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
+    this.overrideOnlyIfContentChanged = true;
+    this.context = context;
+    init();
+  }
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final FileInfoContainer rootFile, @Nonnull final String inEncoding, @Nonnull final String outEncoding, final boolean overrideOnlyIfContentChanged) throws IOException {
-    assertNotNull("The root file is null", rootFile);
-    assertNotNull("InEncoding is null", inEncoding);
-    assertNotNull("OutEncoding is null", outEncoding);
+    this.fake = false;
 
     this.context = context;
 
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
-    this.globalInCharacterEncoding = inEncoding;
-    this.globalOutCharacterEncoding = outEncoding;
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
 
-    this.rootFileInfo = rootFile;
+    this.rootFileInfo = assertNotNull("The root file is null", rootFile);
     init();
     rootReference = openFile(rootFile.getSourceFile());
   }
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final FileInfoContainer rootFile, @Nonnull final TextFileDataContainer rootContainer, @Nonnull final String inEncoding, @Nonnull final String outEncoding, final boolean overrideOnlyIfContentChanged) {
-    assertNotNull("The root file is null", rootFile);
-    assertNotNull("InEncoding is null", inEncoding);
+    this.fake = false;
 
     this.context = context;
 
-    this.globalInCharacterEncoding = inEncoding;
-    this.globalOutCharacterEncoding = outEncoding;
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
 
-    this.rootFileInfo = rootFile;
+    this.rootFileInfo = assertNotNull("The root file is null",rootFile);
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
@@ -220,6 +229,8 @@ public final class PreprocessingState {
   @Nonnull
   @MustNotContainNull
   public FilePositionInfo[] makeIncludeStack() {
+    if (this.fake) return EMPTY_STACK;
+    
     final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
     for (int i = 0; i < includeStack.size(); i++) {
       final TextFileDataContainer fileContainer = includeStack.get(i);

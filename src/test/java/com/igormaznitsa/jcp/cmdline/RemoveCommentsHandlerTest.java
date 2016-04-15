@@ -30,7 +30,7 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = mock(PreprocessorContext.class);
+    final PreprocessorContext mock = preparePreprocessorContext();
 
     assertFalse(HANDLER.processCommandLineKey("", mock));
     assertFalse(HANDLER.processCommandLineKey("/r:", mock));

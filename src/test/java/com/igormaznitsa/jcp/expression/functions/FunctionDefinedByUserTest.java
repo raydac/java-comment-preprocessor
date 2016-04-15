@@ -16,21 +16,32 @@
 package com.igormaznitsa.jcp.expression.functions;
 
 import com.igormaznitsa.jcp.expression.Value;
-import static org.mockito.Mockito.*;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
-public class FunctionDefinedByUserTest {
-
+public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTest {
+  
   @Test
-  public void testExecution_withArguments() {
+  public void testExecution_withArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    
     final Value testResult = Value.valueOf("result");
     context.setPreprocessorExtension(mock);
 
@@ -48,10 +59,10 @@ public class FunctionDefinedByUserTest {
   }
 
   @Test
-  public void testExecution_withoutArguments() {
+  public void testExecution_withoutArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
 
-    final PreprocessorContext context = new PreprocessorContext();
     final Value testResult = Value.valueOf("result");
     context.setPreprocessorExtension(mock);
 

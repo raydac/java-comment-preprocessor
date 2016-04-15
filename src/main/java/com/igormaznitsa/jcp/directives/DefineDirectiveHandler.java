@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
 
@@ -77,8 +78,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         throw context.makeException("Var name is empty", null);
       }
 
-      final ExpressionTreeElement root = nameTree.getRoot();
-      final ExpressionItem item = root.getItem();
+      final ExpressionItem item = assertNotNull(assertNotNull(nameTree.getRoot()).getItem());
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
         throw context.makeException("Can't recognize variable name [" + name + ']', null);
       }

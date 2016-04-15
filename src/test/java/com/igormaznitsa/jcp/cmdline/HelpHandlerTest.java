@@ -16,7 +16,6 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.mockito.Mockito;
 import static org.junit.Assert.*;
 
 public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
@@ -30,7 +29,7 @@ public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = Mockito.mock(PreprocessorContext.class);
+    final PreprocessorContext context = preparePreprocessorContext();
     assertFalse(HANDLER.processCommandLineKey("", context));
     assertFalse(HANDLER.processCommandLineKey("/HH", context));
     assertFalse(HANDLER.processCommandLineKey("/??", context));

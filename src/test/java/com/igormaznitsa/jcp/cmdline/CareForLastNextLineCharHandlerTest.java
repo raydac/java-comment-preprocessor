@@ -30,7 +30,7 @@ public class CareForLastNextLineCharHandlerTest extends AbstractCommandLineHandl
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = mock(PreprocessorContext.class);
+    final PreprocessorContext mock = preparePreprocessorContext();
 
     assertFalse(HANDLER.processCommandLineKey("/n:", mock));
     assertFalse(HANDLER.processCommandLineKey("/NN", mock));

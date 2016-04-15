@@ -21,35 +21,13 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import org.apache.commons.io.FileUtils;
-import org.junit.*;
 import static org.junit.Assert.*;
-import org.junit.rules.TemporaryFolder;
+import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 
-public abstract class AbstractFunctionTest {
+public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContextTest {
 
-  public static TemporaryFolder destinationFolder;
-
-  
-  @BeforeClass
-  public static void prepareClassTests() throws Exception{
-    destinationFolder = new TemporaryFolder(new File("./"));
-    destinationFolder.create();
-  }
-  
-  @AfterClass
-  public static void doJanitor() throws Exception {
-    destinationFolder.delete();
-  }
-  
-  @Before
-  public void beforeTest() throws Exception {
-    FileUtils.cleanDirectory(destinationFolder.getRoot());
-  }
-  
   @Test
   public abstract void testName();
 
@@ -88,27 +66,6 @@ public abstract class AbstractFunctionTest {
     }
   }
 
-  protected File getCurrentTestPath() throws Exception {
-    final File root = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
-    final String clazz = this.getClass().getCanonicalName().replace('.', File.separatorChar)+".class";
-    return new File(root,clazz);
-  }
-  
-  protected File getDestinationFolder(){
-    return destinationFolder.getRoot();
-  }
-  
-  protected void assertDestinationFolderEmpty() throws Exception {
-    assertEquals("Destination folder must be enpty",0, destinationFolder.getRoot().list().length);
-  }
-  
-  protected PreprocessorContext preparePreprocessorContext(final String sourceFolder) throws Exception {
-    final PreprocessorContext preprocessorcontext = new PreprocessorContext();
-    preprocessorcontext.setSourceDirectories(sourceFolder);
-    preprocessorcontext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
-    return preprocessorcontext;
-  }
-  
   protected void assertFunction(final String expression, final Value expected) throws Exception {
     final PreprocessorContext context = preparePreprocessorContext("./");
     final Value result = Expression.evalExpression(expression, context);
@@ -125,8 +82,8 @@ public abstract class AbstractFunctionTest {
     return t;
   }
   
-  protected void assertFunctionException(final String expression) throws IOException {
-    final PreprocessorContext context = new PreprocessorContext();
+  protected void assertFunctionException(final String expression) throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(this.getCurrentTestFolder());
     try {
       Expression.evalExpression(expression, context);
       fail("Must throw RuntimeException [" + expression + ']');

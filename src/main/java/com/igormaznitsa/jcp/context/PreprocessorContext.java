@@ -35,7 +35,6 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 
-import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
@@ -44,8 +43,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-@ImplementationNote("Must not be final to be mocked in tests")
-public class PreprocessorContext {
+public final class PreprocessorContext {
 
   public static final String DEFAULT_SOURCE_DIRECTORY = "." + File.separatorChar;
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
@@ -89,6 +87,7 @@ public class PreprocessorContext {
    * The constructor
    */
   public PreprocessorContext() {
+    this.currentState = new PreprocessingState(this, this.inCharacterEncoding, this.outCharacterEncoding);
     setSourceDirectories(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
@@ -156,7 +155,7 @@ public class PreprocessorContext {
 
     this.configFiles.addAll(context.configFiles);
 
-    this.currentState = context.currentState;
+    this.currentState = assertNotNull(context.currentState);
     this.cloned = true;
     
     final PreprocessingState theState = context.getPreprocessingState();
@@ -931,10 +930,8 @@ public class PreprocessorContext {
     File result = null;
 
     String parentDir = null;
-    if (currentState != null) {
-      final TextFileDataContainer theFile = currentState.peekFile();
-      parentDir = theFile == null ? null : theFile.getFile().getParent();
-    }
+    final TextFileDataContainer theFile = currentState.peekFile();
+    parentDir = theFile == null ? null : theFile.getFile().getParent();
 
     final File resultFile = new File(path);
     if (resultFile.isAbsolute()) {
@@ -1046,9 +1043,9 @@ public class PreprocessorContext {
   /**
    * Get the last generated preprocessing state, it is the current one
    *
-   * @return the last generated preprocessing state or null if there is not anyone
+   * @return the last generated preprocessing state
    */
-  @Nullable
+  @Nonnull
   public PreprocessingState getPreprocessingState() {
     return this.currentState;
   }

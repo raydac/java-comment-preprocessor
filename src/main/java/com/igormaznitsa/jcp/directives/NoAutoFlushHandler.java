@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -42,13 +43,11 @@ public class NoAutoFlushHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = context.getPreprocessingState();
-    if (state!=null){
-      if (context.isVerbose()){
-        context.logForVerbose("AutoFlush for file has been disabled");
-      }
-      state.peekFile().disableAutoFlush();
+    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
+    if (context.isVerbose()) {
+      context.logForVerbose("AutoFlush for file has been disabled");
     }
+    assertNotNull("The File stack is empty!", state.peekFile()).disableAutoFlush();
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

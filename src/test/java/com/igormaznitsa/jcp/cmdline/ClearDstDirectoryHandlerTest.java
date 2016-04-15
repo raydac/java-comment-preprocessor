@@ -30,7 +30,7 @@ public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = mock(PreprocessorContext.class);
+    final PreprocessorContext mock = preparePreprocessorContext();
 
     assertFalse(HANDLER.processCommandLineKey("/c:", mock));
     assertFalse(HANDLER.processCommandLineKey("/CC", mock));

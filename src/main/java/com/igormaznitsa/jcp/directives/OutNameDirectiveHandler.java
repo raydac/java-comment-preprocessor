@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
@@ -55,7 +56,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
     if (context.isVerbose()){
       context.logForVerbose("Change result file name to '"+fileNameAsStr+"\'");
     }
-    context.getPreprocessingState().getRootFileInfo().setDestinationName(fileNameAsStr);
+    assertNotNull(context.getPreprocessingState()).getRootFileInfo().setDestinationName(fileNameAsStr);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

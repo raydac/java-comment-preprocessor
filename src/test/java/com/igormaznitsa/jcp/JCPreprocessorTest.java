@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp;
 
-import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;

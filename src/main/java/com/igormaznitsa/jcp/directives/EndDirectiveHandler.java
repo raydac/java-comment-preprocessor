@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -44,13 +45,13 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = context.getPreprocessingState();
+    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
     if (state.isWhileStackEmpty()) {
       throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while", null);
     }
 
     if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
-      final TextFileDataContainer thisWhile = state.peekWhile();
+      final TextFileDataContainer thisWhile = assertNotNull("'WHILE' stack is empty!",state.peekWhile());
       final boolean breakIsSet = state.getPreprocessingFlags().contains(PreprocessingFlag.BREAK_COMMAND);
       state.popWhile();
       if (!breakIsSet) {

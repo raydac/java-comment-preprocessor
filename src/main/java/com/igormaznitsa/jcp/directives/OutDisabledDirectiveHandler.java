@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
@@ -48,7 +49,7 @@ public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);
+    assertNotNull(context.getPreprocessingState()).getPreprocessingFlags().add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 

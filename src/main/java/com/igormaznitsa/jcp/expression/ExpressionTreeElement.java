@@ -202,12 +202,13 @@ public class ExpressionTreeElement {
    * Get the child element for its index (the first is 0)
    *
    * @param index the index of the needed child
-   * @return the child or null if the slot is empty
+   * @return the child or EMPTY if the slot is empty
    * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible index is being used
+   * @see #EMPTY
    */
-  @Nullable
+  @Nonnull
   public ExpressionTreeElement getChildForIndex(final int index) {
-    return childElements[index];
+    return this.childElements[index];
   }
 
   /**

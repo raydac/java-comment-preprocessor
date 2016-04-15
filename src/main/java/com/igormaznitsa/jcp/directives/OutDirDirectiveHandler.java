@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import javax.annotation.Nonnull;
 
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
@@ -55,7 +56,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     if (context.isVerbose()) {
       context.logForVerbose("Change result file folder '" + nameAsString + "\'");
     }
-    context.getPreprocessingState().getRootFileInfo().setDestinationDir(nameAsString);
+    assertNotNull(context.getPreprocessingState()).getRootFileInfo().setDestinationDir(nameAsString);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

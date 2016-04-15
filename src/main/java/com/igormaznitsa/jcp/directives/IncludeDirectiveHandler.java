@@ -15,6 +15,7 @@
  */
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
@@ -53,7 +54,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final PreprocessingState state = context.getPreprocessingState();
+    final PreprocessingState state = assertNotNull(context.getPreprocessingState());
     final Value includingFilePath = Expression.evalExpression(string, context);
 
     final String filePath = includingFilePath.toString();

@@ -203,13 +203,19 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.8</version>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.6.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>1.6.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -394,6 +400,17 @@
           </execution>
         </executions>
       </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19.1</version>
+          <configuration>
+            <systemPropertyVariables>
+              <test.folder>${project.build.testOutputDirectory}</test.folder>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

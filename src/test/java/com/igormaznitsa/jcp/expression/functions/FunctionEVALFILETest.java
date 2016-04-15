@@ -17,7 +17,6 @@ package com.igormaznitsa.jcp.expression.functions;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.*;
-import java.io.File;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,8 +26,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_ErrorForUndefinedVariable() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     try{
       Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
     }catch(Exception ex){
@@ -39,8 +37,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_VisibilityLocalVariable() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
@@ -49,18 +46,17 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_AbsolutePath() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final String theTestFolder = getCurrentTestFolder();
+    final PreprocessorContext context = preparePreprocessorContext(theTestFolder);
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression("evalfile(\""+getCurrentTestPath().getParentFile().getAbsolutePath()+"/eval/TestEval.java\")", context);
+    final Value result = Expression.evalExpression("evalfile(\""+theTestFolder+"/eval/TestEval.java\")", context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_IncludedEvalCall() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEvalWithIncluded.java\")", context);
     final String resultstr = result.asString().trim();
@@ -71,8 +67,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_VisibilityGlobalVariable() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
@@ -81,8 +76,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_ConditionsInsideFile() throws Exception {
-    final File theTestPath = getCurrentTestPath();
-    final PreprocessorContext context = preparePreprocessorContext(theTestPath.getParent());
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setGlobalVariable("includemeth", Value.valueOf(true));
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);

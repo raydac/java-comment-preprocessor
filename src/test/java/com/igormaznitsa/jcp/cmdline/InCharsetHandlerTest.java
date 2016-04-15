@@ -18,6 +18,8 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.mockito.Mockito;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
 
@@ -30,14 +32,14 @@ public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = Mockito.mock(PreprocessorContext.class);
+    final PreprocessorContext mock = preparePreprocessorContext();
     assertFalse(HANDLER.processCommandLineKey("/o:UUU", mock));
     assertFalse(HANDLER.processCommandLineKey("/T:", mock));
     assertFalse(HANDLER.processCommandLineKey("/t", mock));
     assertTrue(HANDLER.processCommandLineKey("/t:HELLOWORLD", mock));
-    Mockito.verify(mock).setInCharacterEncoding("HELLOWORLD");
+    verify(mock).setInCharacterEncoding("HELLOWORLD");
 
-    Mockito.reset(mock);
+    reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/T:NEW", mock));
     Mockito.verify(mock).setInCharacterEncoding("NEW");
