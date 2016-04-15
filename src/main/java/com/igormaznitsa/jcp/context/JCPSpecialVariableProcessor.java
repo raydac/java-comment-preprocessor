@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class implements the special variable processor interface and allows to get access to inside JCP variables Inside JCP variables have the "jcp." prefix
@@ -127,21 +126,21 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
   @Override
   @Nullable
-  public Value getVariable(@Nonnull final String varName, @Nullable final PreprocessorContext context) {
-    final PreprocessingState state = context == null ? null : context.getPreprocessingState();
+  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
+    final PreprocessingState state = context.getPreprocessingState();
 
     if (VAR_DEST_DIR.equals(varName)) {
-      return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationDir());
+      return Value.valueOf(state.getRootFileInfo().getDestinationDir());
     } else if (VAR_DEST_FILE_NAME.equals(varName)) {
-      return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationName());
+      return Value.valueOf(state.getRootFileInfo().getDestinationName());
     } else if (VAR_DEST_FULLPATH.equals(varName)) {
-      return state == null ? null : Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
+      return Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
     } else if (VAR_SRC_DIR.equals(varName) || VAR_SRC_DIR2.equals(varName)) {
-      return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
+      return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
     } else if (VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FILE_NAME2.equals(varName)) {
-      return state == null ? null : Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
+      return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
     } else if (VAR_SRC_FULLPATH.equals(varName) || VAR_SRC_FULLPATH2.equals(varName)) {
-      return state == null ? null : Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
+      return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
     } else if (VAR_VERSION.equals(varName)) {
       return Value.valueOf(InfoHelper.getVersion());
     } else if (VAR_TIME.equals(varName)) {
@@ -149,13 +148,16 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     } else if (VAR_DATE.equals(varName)) {
       return Value.valueOf(dateFormat.format(new Date()));
     } else if (VAR_TIMESTAMP.equals(varName)) {
-      if (state == null) {
-        return Value.valueOf("<no file>");
-      } else {
-        return Value.valueOf(timestampFormat.format(new Date(assertNotNull("File must be presented on stack", state.peekFile()).getFile().lastModified())));
+      final TextFileDataContainer filedata = state.peekFile();
+      final Value result;
+      if (filedata == null) {
+        result = Value.valueOf("<no file>");
+      }else{
+        result = Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
       }
+      return result;
     } else if (VAR_LINE.equals(varName)) {
-      final TextFileDataContainer currentFile = state == null ? null : state.peekFile();
+      final TextFileDataContainer currentFile = state.peekFile();
       final long line;
       if (currentFile == null) {
         line = -1L;
@@ -165,7 +167,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       return Value.valueOf(line);
     } else {
       final String text = "Attempting to read unexpected special variable [" + varName + ']';
-      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+      throw context.makeException(text, null);
     }
   }
 

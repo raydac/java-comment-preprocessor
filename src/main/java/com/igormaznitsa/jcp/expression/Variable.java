@@ -18,7 +18,6 @@ package com.igormaznitsa.jcp.expression;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The class describes an expression variable

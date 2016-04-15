@@ -61,24 +61,16 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
 
   @Override
   @Nullable
-  public Value getVariable(@Nonnull final String varName, @Nullable final PreprocessorContext context) {
+  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     final Value result = environmentVars.get(varName);
     if (result == null) {
-      if (context==null){
-        throw new IllegalArgumentException("Reaing undefined environment record \'" + varName + '\'');
-      }else{
-        throw context.makeException("Reaing undefined environment record \'" + varName + '\'',null);
-      }
+      throw context.makeException("Reaing undefined environment record \'" + varName + '\'',null);
     }
     return result;
   }
 
   @Override
-  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nullable final PreprocessorContext context) {
-    if (context!=null){
-      throw context.makeException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!",null);
-    }else{
-      throw new UnsupportedOperationException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!");
-    }
+  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
+    throw context.makeException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!",null);
   }
 }

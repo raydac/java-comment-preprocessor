@@ -20,16 +20,19 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 
-public class JCPSpecialVariableProcessorTest {
+public class JCPSpecialVariableProcessorTest extends AbstractMockPreprocessorContextTest{
 
   @Test
-  public void testReadVariable() {
-    assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", null).asString());
-    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__line__", null).toString());
-    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__date__", null).asString());
-    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__time__", null).asString());
-    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__timestamp__", null).asString());
+  public void testReadVariable() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
+    assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", context).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__line__", context).toString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__date__", context).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__time__", context).asString());
+    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__timestamp__", context).asString());
   }
 
   @Test(expected = PreprocessorException.class)

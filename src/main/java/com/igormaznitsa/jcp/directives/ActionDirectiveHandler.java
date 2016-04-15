@@ -101,11 +101,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
     while (true) {
       final ExpressionTree tree;
-      if (state == null) {
-        tree = new ExpressionTree();
-      } else {
-        tree = new ExpressionTree(stack, sources);
-      }
+      tree = new ExpressionTree(stack, sources);
       final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);
 
       if (delimiter != null && ExpressionParser.SpecialItem.COMMA != delimiter) {

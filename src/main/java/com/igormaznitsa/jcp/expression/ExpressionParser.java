@@ -100,27 +100,23 @@ public final class ExpressionParser {
    * To parse an expression represented as a string and get a tree
    *
    * @param expressionStr the expression string to be parsed, must not be null
-   * @param context a preprocessor context to be used to get variable values, it can be null
+   * @param context a preprocessor context to be used to get variable values
    * @return a tree containing parsed expression
    * @throws IOException it will be thrown if there is a problem to read the expression string
    */
   @Nonnull
-  public ExpressionTree parse(@Nonnull final String expressionStr, @Nullable final PreprocessorContext context) throws IOException {
+  public ExpressionTree parse(@Nonnull final String expressionStr, @Nonnull final PreprocessorContext context) throws IOException {
     assertNotNull("Expression is null", expressionStr);
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
 
     final ExpressionTree result;
-    if (context == null) {
-      result = new ExpressionTree();
-    } else {
-      final PreprocessingState state = context.getPreprocessingState();
-      result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
-    }
+    final PreprocessingState state = context.getPreprocessingState();
+    result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
 
     if (readExpression(reader, result, context, false, false) != null) {
       final String text = "Unexpected result during parsing [" + expressionStr + ']';
-      throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+      throw context.makeException(text, null);
     }
 
     result.postProcess();
@@ -133,14 +129,14 @@ public final class ExpressionParser {
    *
    * @param reader the reader to be used as the character source, must not be null
    * @param tree the result tree to be filled by read items, must not be null
-   * @param context a preprocessor context to be used for variables, it can be null
+   * @param context a preprocessor context to be used for variables
    * @param insideBracket the flag shows that the expression can be ended by a bracket
    * @param argument the flag shows that the expression can be ended by a comma
    * @return the last read expression item (a comma or a bracket for instance), it can be null
    * @throws IOException it will be thrown if there is a problem in reading from the reader
    */
   @Nullable
-  public ExpressionItem readExpression(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, final boolean insideBracket, final boolean argument) throws IOException {
+  public ExpressionItem readExpression(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context, final boolean insideBracket, final boolean argument) throws IOException {
     boolean working = true;
 
     ExpressionItem result = null;
@@ -148,14 +144,9 @@ public final class ExpressionParser {
     final FilePositionInfo[] stack;
     final String sourceLine;
 
-    if (context == null) {
-      stack = PreprocessingState.EMPTY_STACK;
-      sourceLine = "";
-    } else {
-      final PreprocessingState state = context.getPreprocessingState();
-      stack = state.makeIncludeStack();
-      sourceLine = state.getLastReadString();
-    }
+    final PreprocessingState state = context.getPreprocessingState();
+    stack = state.makeIncludeStack();
+    sourceLine = state.getLastReadString();
 
     ExpressionItem prev = null;
 
@@ -174,19 +165,19 @@ public final class ExpressionParser {
             result = nextItem;
           } else {
             final String text = "Detected alone closing bracket";
-            throw context == null ? new IllegalStateException(text) : context.makeException("Detected alone closing bracket", null);
+            throw context.makeException("Detected alone closing bracket", null);
           }
         } else if (nextItem == SpecialItem.BRACKET_OPENING) {
           if (prev != null && prev.getExpressionItemType() == ExpressionItemType.VARIABLE) {
             final String text = "Unknown function detected [" + prev.toString() + ']';
-            throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+            throw context.makeException(text, null);
           }
 
           final ExpressionTree subExpression;
           subExpression = new ExpressionTree(stack, sourceLine);
           if (SpecialItem.BRACKET_CLOSING != readExpression(reader, subExpression, context, true, false)) {
             final String text = "Detected unclosed bracket";
-            throw context == null ? new IllegalStateException(text) : context.makeException(text, null);
+            throw context.makeException(text, null);
           }
           tree.addTree(subExpression);
         } else if (nextItem == SpecialItem.COMMA) {
@@ -209,14 +200,14 @@ public final class ExpressionParser {
    *
    * @param function the function which arguments will be read from the stream, must not be null
    * @param reader the reader to be used as the character source, must not be null
-   * @param context a preprocessor context, it will be used for a user functions and variables, it can be null
+   * @param context a preprocessor context, it will be used for a user functions and variables
    * @param includeStack the current file include stack, can be null
    * @param sources the current source line, can be null
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
   @Nonnull
-  private ExpressionTree readFunction(@Nonnull final AbstractFunction function, @Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final String sources) throws IOException {
+  private ExpressionTree readFunction(@Nonnull final AbstractFunction function, @Nonnull final PushbackReader reader, @Nonnull final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final String sources) throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
       throw context.makeException("Detected function without params [" + function.getName() + ']', null);
@@ -256,7 +247,7 @@ public final class ExpressionParser {
 
       functionTree = new ExpressionTree(includeStack, sources);
       functionTree.addItem(function);
-      ExpressionTreeElement functionTreeElement = functionTree.getRoot();
+      ExpressionTreeElement functionTreeElement = assertNotNull(functionTree.getRoot());
 
       if (arguments.size() != functionTreeElement.getArity()) {
         throw context.makeException("Wrong argument number detected \'" + function.getName() + "\', must be " + function.getArity() + " argument(s)", null);
@@ -272,14 +263,14 @@ public final class ExpressionParser {
    *
    * @param reader a reader to be the character source, must not be null
    * @param tree the result tree to be filled by read items, must not be null
-   * @param context a preprocessor context, it can be null
+   * @param context a preprocessor context
    * @param callStack the current file call stack, can be null
    * @param source the current source line, can be null
    * @return the last read expression item (a comma or a bracket)
    * @throws IOException it will be thrown if there is any error during char reading from the reader
    */
   @Nullable
-  ExpressionItem readFunctionArgument(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nullable final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String source) throws IOException {
+  ExpressionItem readFunctionArgument(@Nonnull final PushbackReader reader, @Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context, @Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String source) throws IOException {
     boolean working = true;
     ExpressionItem result = null;
     while (working) {
@@ -348,12 +339,12 @@ public final class ExpressionParser {
    * Read the next item from the reader
    *
    * @param reader a reader to be used as the char source, must not be null
-   * @param context a preprocessor context, it can be null
+   * @param context a preprocessor context
    * @return a read expression item, it can be null if the end is reached
    * @throws IOException it will be thrown if there is any error during a char reading
    */
   @Nullable
-  ExpressionItem nextItem(@Nonnull final PushbackReader reader, @Nullable final PreprocessorContext context) throws IOException {
+  ExpressionItem nextItem(@Nonnull final PushbackReader reader, @Nonnull final PreprocessorContext context) throws IOException {
     assertNotNull("Reader is null", reader);
 
     ParserState state = ParserState.WAIT;

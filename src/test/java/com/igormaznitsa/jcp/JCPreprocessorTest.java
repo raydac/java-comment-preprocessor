@@ -88,8 +88,8 @@ public final class JCPreprocessorTest {
     String differentLine = null;
     int lineIndex = 1;
 
-    BufferedReader resultReader = null;
-    BufferedReader etalonReader = null;
+    BufferedReader resultReader;
+    BufferedReader etalonReader;
     try{
       resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile),"UTF-8")));
       etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile),"UTF-8")));

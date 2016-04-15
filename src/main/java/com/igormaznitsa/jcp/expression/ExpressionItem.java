@@ -16,7 +16,6 @@
 package com.igormaznitsa.jcp.expression;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The interface describes an object which can be used during expression

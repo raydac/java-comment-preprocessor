@@ -18,11 +18,15 @@ package com.igormaznitsa.jcp.context;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
-public class EnvironmentVariableProcessorTest {
+public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorContextTest {
 
   @Test
-  public void testReadVariable() {
+  public void testReadVariable() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final String javaVersion = System.getProperty("java.version");
     final String osName = System.getProperty("os.name");
 
@@ -31,17 +35,17 @@ public class EnvironmentVariableProcessorTest {
 
     final EnvironmentVariableProcessor test = new EnvironmentVariableProcessor();
 
-    assertEquals("Must be equals", javaVersion, test.getVariable("env.java.version", null).asString());
-    assertEquals("Must be equals", osName, test.getVariable("env.os.name", null).asString());
+    assertEquals("Must be equals", javaVersion, test.getVariable("env.java.version", context).asString());
+    assertEquals("Must be equals", osName, test.getVariable("env.os.name", context).asString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testReadUnknownVariable() {
-    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", null);
+  @Test(expected = PreprocessorException.class)
+  public void testReadUnknownVariable() throws Exception {
+    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", preparePreprocessorContext());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
-  public void testWriteVariable() {
-    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, null);
+  @Test(expected = PreprocessorException.class)
+  public void testWriteVariable() throws Exception {
+    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, preparePreprocessorContext());
   }
 }

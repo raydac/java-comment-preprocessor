@@ -929,9 +929,8 @@ public final class PreprocessorContext {
 
     File result = null;
 
-    String parentDir = null;
     final TextFileDataContainer theFile = currentState.peekFile();
-    parentDir = theFile == null ? null : theFile.getFile().getParent();
+    final String parentDir = theFile == null ? null : theFile.getFile().getParent();
 
     final File resultFile = new File(path);
     if (resultFile.isAbsolute()) {

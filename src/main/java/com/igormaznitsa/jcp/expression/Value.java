@@ -154,7 +154,7 @@ public final class Value implements ExpressionItem {
   public static Value recognizeOf(@Nonnull final String str) {
     final ValueType type = recognizeType(str);
 
-    Value result = null;
+    final Value result;
 
     switch (type) {
       case BOOLEAN: {

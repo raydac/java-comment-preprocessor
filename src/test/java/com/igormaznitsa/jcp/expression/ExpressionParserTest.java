@@ -30,14 +30,18 @@ import java.io.PushbackReader;
 import java.io.StringReader;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-public class ExpressionParserTest {
+public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testReplacingNegativeNumber() throws Exception {
     final ExpressionTree tree = new ExpressionTree();
     final OperatorSUB SUB = AbstractOperator.findForClass(OperatorSUB.class);
 
+    assertNotNull(SUB);
+    
     tree.addItem(SUB);
     tree.addItem(Value.INT_ONE);
     tree.addItem(SUB);
@@ -54,64 +58,82 @@ public class ExpressionParserTest {
 
   @Test
   public void testNextItem_zero() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+
     final PushbackReader reader = new PushbackReader(new StringReader("0"));
-    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_negativeNumber() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("-1"));
-    assertEquals("Must be SUB", AbstractOperator.findForClass(OperatorSUB.class), ExpressionParser.getInstance().nextItem(reader, null));
-    assertEquals("Must be 1", Value.INT_ONE, ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be SUB", AbstractOperator.findForClass(OperatorSUB.class), ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 1", Value.INT_ONE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_zeroLess() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("0<"));
-    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, null));
-    assertEquals("Must be LESS", AbstractOperator.findForClass(OperatorLESS.class), ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be LESS", AbstractOperator.findForClass(OperatorLESS.class), ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_oneValue() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("3"));
-    assertEquals("Must be 3", Value.INT_THREE, ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be 3", Value.INT_THREE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_oneHexValue() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+
     final PushbackReader reader = new PushbackReader(new StringReader("0xfF"));
-    assertEquals("Must be 255", Value.valueOf(Long.valueOf(255L)), ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be 255", Value.valueOf(Long.valueOf(255L)), ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_oneBooleanTrueValue() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("true"));
-    assertEquals("Must be TRUE", Value.BOOLEAN_TRUE, ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be TRUE", Value.BOOLEAN_TRUE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_oneBooleanFalseValue() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("false"));
-    assertEquals("Must be FALSE", Value.BOOLEAN_FALSE, ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be FALSE", Value.BOOLEAN_FALSE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_oneOperator() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final PushbackReader reader = new PushbackReader(new StringReader("/"));
-    assertEquals("Must be DIV", AbstractOperator.findForClass(OperatorDIV.class), ExpressionParser.getInstance().nextItem(reader, null));
-    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, null));
+    assertEquals("Must be DIV", AbstractOperator.findForClass(OperatorDIV.class), ExpressionParser.getInstance().nextItem(reader, context));
+    assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testNextItem_complexExpression() throws Exception {
+
+    final PreprocessorContext context = preparePreprocessorContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("xml_attr(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
 
@@ -139,16 +161,18 @@ public class ExpressionParserTest {
 
     int index = 0;
     for (final ExpressionItem item : items) {
-      assertEquals("Position " + index + " must be equals", item, ExpressionParser.getInstance().nextItem(reader, null));
+      assertEquals("Position " + index + " must be equals", item, ExpressionParser.getInstance().nextItem(reader, context));
       index++;
     }
-    assertNull(ExpressionParser.getInstance().nextItem(reader, null));
+    assertNull(ExpressionParser.getInstance().nextItem(reader, context));
   }
 
   @Test
   public void testParsing_oneValue() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("3", null);
+    final ExpressionTree tree = parser.parse("3", context);
 
     final ExpressionTreeElement root = tree.getRoot();
     assertEquals("Root is 3", Value.INT_THREE, root.getItem());
@@ -156,8 +180,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_negativeNumber() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse(Long.toString(Long.MIN_VALUE + 1), null);
+    final ExpressionTree tree = parser.parse(Long.toString(Long.MIN_VALUE + 1), context);
 
     final ExpressionTreeElement root = tree.getRoot();
     assertEquals("Root is Long.MIN_VALUE+1", Value.valueOf(Long.valueOf(Long.MIN_VALUE + 1)), root.getItem());
@@ -165,8 +191,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_easyExpression() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("3*4/8", null);
+    final ExpressionTree tree = parser.parse("3*4/8", context);
 
     final ExpressionTreeElement root = tree.getRoot();
     assertEquals("Root is DIV", AbstractOperator.findForClass(OperatorDIV.class), root.getItem());
@@ -180,8 +208,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_complexExpression() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", null);
+    final ExpressionTree tree = parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", context);
 
     final ExpressionTreeElement root = tree.getRoot();
 
@@ -196,8 +226,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_deepIncludingBrackets() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("((((((1+2))))))", null);
+    final ExpressionTree tree = parser.parse("((((((1+2))))))", context);
 
     final ExpressionTreeElement root = tree.getRoot();
 
@@ -208,8 +240,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_insideFunctionCall() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("xml_get(xml_get(1,2),3)", null);
+    final ExpressionTree tree = parser.parse("xml_get(xml_get(1,2),3)", context);
 
     final AbstractFunction xmlElementAt = AbstractFunction.findForName("xml_get");
     assertNotNull(xmlElementAt);
@@ -228,8 +262,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_notEasyBrackets() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+    
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("(1+2*(3-4))", null);
+    final ExpressionTree tree = parser.parse("(1+2*(3-4))", context);
 
     final OperatorADD ADD = AbstractOperator.findForClass(OperatorADD.class);
     final OperatorSUB SUB = AbstractOperator.findForClass(OperatorSUB.class);
@@ -252,8 +288,10 @@ public class ExpressionParserTest {
 
   @Test
   public void testParsing_emptyBrakes() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext();
+
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("()", null);
+    final ExpressionTree tree = parser.parse("()", context);
     assertNull("Must be null", tree.getRoot());
   }
 }
