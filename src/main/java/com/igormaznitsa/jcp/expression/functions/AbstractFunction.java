@@ -180,7 +180,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    * ExpressionItemType.FUNCTION
    */
   @Override
-  @Nullable
+  @Nonnull
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.FUNCTION;
   }

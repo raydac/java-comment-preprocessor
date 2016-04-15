@@ -159,7 +159,7 @@ public final class PreprocessorContext {
     this.cloned = true;
     
     final PreprocessingState theState = context.getPreprocessingState();
-    this.currentInCloneSource = theState == null ? null : theState.peekFile();
+    this.currentInCloneSource = theState.peekFile();
   }
 
   /**

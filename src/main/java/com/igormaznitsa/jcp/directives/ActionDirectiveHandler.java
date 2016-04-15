@@ -96,13 +96,8 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     final FilePositionInfo[] stack;
     final String sources;
-    if (state == null) {
-      stack = null;
-      sources = null;
-    } else {
-      stack = state.makeIncludeStack();
-      sources = state.getLastReadString();
-    }
+    stack = state.makeIncludeStack();
+    sources = state.getLastReadString();
 
     while (true) {
       final ExpressionTree tree;

@@ -31,7 +31,7 @@ public interface ExpressionItem {
    *
    * @return the item type
    */
-  @Nullable
+  @Nonnull
   ExpressionItemType getExpressionItemType();
 
   /**

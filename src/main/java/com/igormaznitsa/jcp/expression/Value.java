@@ -288,7 +288,7 @@ public final class Value implements ExpressionItem {
   }
 
   @Override
-  @Nullable
+  @Nonnull
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VALUE;
   }

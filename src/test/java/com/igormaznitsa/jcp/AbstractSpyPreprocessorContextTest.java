@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp;
 
-import static org.junit.Assert.assertEquals;
 import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

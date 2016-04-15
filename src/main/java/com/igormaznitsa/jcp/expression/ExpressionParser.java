@@ -82,7 +82,7 @@ public final class ExpressionParser {
     @Override
     @Nullable
     public ExpressionItemType getExpressionItemType() {
-      return null;
+      return ExpressionItemType.SPECIAL;
     }
   }
 
@@ -115,11 +115,7 @@ public final class ExpressionParser {
       result = new ExpressionTree();
     } else {
       final PreprocessingState state = context.getPreprocessingState();
-      if (state == null) {
-        result = new ExpressionTree();
-      } else {
-        result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
-      }
+      result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
     }
 
     if (readExpression(reader, result, context, false, false) != null) {
@@ -157,8 +153,8 @@ public final class ExpressionParser {
       sourceLine = "";
     } else {
       final PreprocessingState state = context.getPreprocessingState();
-      stack = state == null ? null : state.makeIncludeStack();
-      sourceLine = state == null ? null : state.getLastReadString();
+      stack = state.makeIncludeStack();
+      sourceLine = state.getLastReadString();
     }
 
     ExpressionItem prev = null;
@@ -168,7 +164,7 @@ public final class ExpressionParser {
       if (nextItem == null) {
         working = false;
         result = null;
-      } else if (nextItem.getExpressionItemType() == null) {
+      } else if (nextItem.getExpressionItemType() == ExpressionItemType.SPECIAL) {
         if (nextItem == SpecialItem.BRACKET_CLOSING) {
           if (insideBracket) {
             working = false;

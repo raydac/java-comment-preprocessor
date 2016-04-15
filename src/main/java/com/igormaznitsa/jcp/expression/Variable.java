@@ -58,7 +58,7 @@ public final class Variable implements ExpressionItem {
    * @return it returns only ExpressionItemType.VARIABLE
    */
   @Override
-  @Nullable
+  @Nonnull
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VARIABLE;
   }

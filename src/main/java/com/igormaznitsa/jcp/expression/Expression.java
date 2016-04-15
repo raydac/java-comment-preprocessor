@@ -27,7 +27,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
@@ -313,7 +312,7 @@ public class Expression {
     if (expressionTree.isEmpty()) {
       throw this.context.makeException("[Expression]The expression is empty", null);
     }
-    final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
+    final ExpressionTreeElement result = calculateTreeElement(assertNotNull(expressionTree.getRoot()), state);
     final ExpressionItem resultItem = result.getItem();
 
     if (resultItem == null) {

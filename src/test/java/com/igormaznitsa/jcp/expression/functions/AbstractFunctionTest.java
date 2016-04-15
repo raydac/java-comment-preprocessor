@@ -21,7 +21,6 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.io.IOException;
 import java.util.Arrays;
 import static org.junit.Assert.*;
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
