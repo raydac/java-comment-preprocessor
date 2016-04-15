@@ -222,7 +222,7 @@ public final class ExpressionParser {
       final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);
       if (SpecialItem.BRACKET_CLOSING != lastItem) {
         throw context.makeException("There is not closing bracket for function [" + function.getName() + ']', null);
-      } else if (subExpression.getRoot() != null) {
+      } else if (!subExpression.getRoot().isEmptySlot()) {
         throw context.makeException("The function \'" + function.getName() + "\' doesn't need arguments", null);
       } else {
         functionTree = new ExpressionTree(includeStack, sources);
@@ -247,7 +247,7 @@ public final class ExpressionParser {
 
       functionTree = new ExpressionTree(includeStack, sources);
       functionTree.addItem(function);
-      ExpressionTreeElement functionTreeElement = assertNotNull(functionTree.getRoot());
+      ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
       if (arguments.size() != functionTreeElement.getArity()) {
         throw context.makeException("Wrong argument number detected \'" + function.getName() + "\', must be " + function.getArity() + " argument(s)", null);

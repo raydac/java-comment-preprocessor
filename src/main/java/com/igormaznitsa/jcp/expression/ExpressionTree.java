@@ -31,7 +31,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
  */
 public class ExpressionTree {
 
-  private ExpressionTreeElement last;
+  private ExpressionTreeElement last = ExpressionTreeElement.EMPTY_SLOT;
 
   private final FilePositionInfo[] includeStack;
   private final String sources;
@@ -51,7 +51,7 @@ public class ExpressionTree {
    * @return true if the tree is empty one else false
    */
   public boolean isEmpty() {
-    return last == null;
+    return last.isEmptySlot();
   }
 
   /**
@@ -64,7 +64,7 @@ public class ExpressionTree {
       throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack, null);
     }
 
-    if (last == null) {
+    if (last.isEmptySlot()) {
       last = new ExpressionTreeElement(item, this.includeStack, this.sources);
     } else {
       last = last.addTreeElement(new ExpressionTreeElement(item, this.includeStack, this.sources));
@@ -78,9 +78,9 @@ public class ExpressionTree {
    */
   public void addTree(@Nonnull final ExpressionTree tree) {
     assertNotNull("Tree is null", tree);
-    if (last == null) {
+    if (last.isEmptySlot()) {
       final ExpressionTreeElement thatTreeRoot = tree.getRoot();
-      if (thatTreeRoot != null) {
+      if (!thatTreeRoot.isEmptySlot()) {
         last = thatTreeRoot;
         last.makeMaxPriority();
       }
@@ -92,12 +92,12 @@ public class ExpressionTree {
   /**
    * Get the root of the tree
    *
-   * @return the root of the tree or null if the tree is empty
+   * @return the root of the tree or EMPTY_SLOT if the tree is empty
    */
-  @Nullable
+  @Nonnull
   public ExpressionTreeElement getRoot() {
-    if (last == null) {
-      return null;
+    if (last.isEmptySlot()) {
+      return this.last;
     } else {
       ExpressionTreeElement element = last;
       while (true) {
@@ -116,7 +116,7 @@ public class ExpressionTree {
    */
   public void postProcess() {
     final ExpressionTreeElement root = getRoot();
-    if (root != null) {
+    if (!root.isEmptySlot()) {
       root.postProcess();
     }
   }

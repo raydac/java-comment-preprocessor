@@ -27,8 +27,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.annotation.Nonnull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The main class to calculate expressions
@@ -84,7 +84,7 @@ public class Expression {
   @Nonnull
   public static Value evalTree(@Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context) {
     final Expression exp = new Expression(context, tree);
-    return exp.eval(assertNotNull(context.getPreprocessingState()));
+    return exp.eval(context.getPreprocessingState());
   }
 
   private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {
@@ -210,7 +210,7 @@ public class Expression {
 
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement arg = operatorElement.getChildForIndex(i);
-      if (arg == null) {
+      if (arg == ExpressionTreeElement.EMPTY_SLOT) {
         throw this.context.makeException("[Expression]There is not needed argument for the operator [" + operator.getKeyword() + ']', null);
       }
 
@@ -312,7 +312,7 @@ public class Expression {
     if (expressionTree.isEmpty()) {
       throw this.context.makeException("[Expression]The expression is empty", null);
     }
-    final ExpressionTreeElement result = calculateTreeElement(assertNotNull(expressionTree.getRoot()), state);
+    final ExpressionTreeElement result = calculateTreeElement(expressionTree.getRoot(), state);
     final ExpressionItem resultItem = result.getItem();
 
     if (resultItem == null) {

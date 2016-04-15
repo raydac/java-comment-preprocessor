@@ -15,8 +15,7 @@
  */
 package com.igormaznitsa.jcp.expression;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-
+import java.util.Arrays;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
@@ -28,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class describes a wrapper around an expression item to be saved into an expression tree
@@ -40,6 +40,8 @@ public class ExpressionTreeElement {
    * Inside constant to be used for speed up some operations
    */
   private static final OperatorSUB OPERATOR_SUB = AbstractOperator.findForClass(OperatorSUB.class);
+
+  public static final ExpressionTreeElement EMPTY_SLOT = new ExpressionTreeElement();
 
   /**
    * Empty array to avoid unnecessary operations
@@ -81,10 +83,25 @@ public class ExpressionTreeElement {
    */
   private final FilePositionInfo[] includeStack;
 
+  private ExpressionTreeElement() {
+    this.sourceString = "";
+    this.includeStack = new FilePositionInfo[0];
+  }
+
+  /**
+   * Allows to check that the element is EMPTY_SLOT
+   * @return true if the element is empty slot, false otherwise
+   */
+  public boolean isEmptySlot(){
+    return EMPTY_SLOT == this;
+  }
+  
   /**
    * The constructor
    *
-   * @param item an expression item to be wrapped, must not be null
+   * @param item an expression item to be wrapped
+   * @param callStack current call stack
+   * @param sourceString source string for the expression
    */
   ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sourceString) {
     this.sourceString = sourceString;
@@ -103,8 +120,15 @@ public class ExpressionTreeElement {
     priority = item.getExpressionItemPriority().getPriority();
     this.savedItem = item;
     childElements = arity == 0 ? EMPTY : new ExpressionTreeElement[arity];
+    Arrays.fill(this.childElements, EMPTY_SLOT);
   }
 
+  private void assertNotEmptySlot(){
+    if (isEmptySlot()) {
+      throw new UnsupportedOperationException("Unsupported operation for empty slot");
+    }
+  }
+  
   /**
    * Inside auxiliary function to set the maximum priority the the element
    */
@@ -158,8 +182,10 @@ public class ExpressionTreeElement {
    */
   @Nonnull
   public ExpressionTreeElement addSubTree(@Nonnull final ExpressionTree tree) {
+    assertNotEmptySlot();
+    
     final ExpressionTreeElement root = tree.getRoot();
-    if (root != null) {
+    if (!root.isEmptySlot()) {
       root.makeMaxPriority();
       addElementToNextFreeSlot(root);
     }
@@ -174,6 +200,8 @@ public class ExpressionTreeElement {
    * @return true if the element was found and replaced, else false
    */
   public boolean replaceElement(@Nonnull final ExpressionTreeElement oldOne, @Nonnull final ExpressionTreeElement newOne) {
+    assertNotEmptySlot();
+    
     if (oldOne == null) {
       throw new PreprocessorException("[Expression]The old element is null", this.sourceString, this.includeStack, null);
     }
@@ -202,12 +230,13 @@ public class ExpressionTreeElement {
    * Get the child element for its index (the first is 0)
    *
    * @param index the index of the needed child
-   * @return the child or EMPTY if the slot is empty
+   * @return the child or EMPTY_SLOT
    * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible index is being used
-   * @see #EMPTY
+   * @see #EMPTY_SLOT
    */
   @Nonnull
   public ExpressionTreeElement getChildForIndex(final int index) {
+    assertNotEmptySlot();
     return this.childElements[index];
   }
 
@@ -219,6 +248,7 @@ public class ExpressionTreeElement {
    */
   @Nullable
   public ExpressionTreeElement addTreeElement(@Nonnull final ExpressionTreeElement element) {
+    assertNotEmptySlot();
     assertNotNull("The element is null", element);
 
     final int newElementPriority = element.getPriority();
@@ -280,6 +310,8 @@ public class ExpressionTreeElement {
    * @param arguments the list containing trees to be used as children
    */
   public void fillArguments(@Nonnull @MustNotContainNull final List<ExpressionTree> arguments) {
+    assertNotEmptySlot();
+    
     if (arguments == null) {
       throw new PreprocessorException("[Expression]Argument list is null", this.sourceString, this.includeStack, null);
     }
@@ -294,12 +326,12 @@ public class ExpressionTreeElement {
         throw new PreprocessorException("[Expression]Argument [" + (i + 1) + "] is null", this.sourceString, this.includeStack, null);
       }
 
-      if (childElements[i] != null) {
-        throw new PreprocessorException("[Expression]Non-null slot detected, it is possible that there is a program error, contact a developer please", this.sourceString, this.includeStack, null);
+      if (!childElements[i].isEmptySlot()) {
+        throw new PreprocessorException("[Expression]Non-empty slot detected, it is possible that there is a program error, contact a developer please", this.sourceString, this.includeStack, null);
       }
 
       final ExpressionTreeElement root = arg.getRoot();
-      if (root == null) {
+      if (root.isEmptySlot()) {
         throw new PreprocessorException("[Expression]Empty argument [" + (i + 1) + "] detected", this.sourceString, this.includeStack, null);
       }
       childElements[i] = root;
@@ -333,57 +365,60 @@ public class ExpressionTreeElement {
    * Post-processing after the tree is formed, the unary minus operation will be optimized
    */
   public void postProcess() {
-    switch (savedItem.getExpressionItemType()) {
-      case OPERATOR: {
-        if (savedItem == OPERATOR_SUB) {
-          if (childElements[0] != null && childElements[1] == null) {
-            final ExpressionTreeElement left = childElements[0];
-            final ExpressionItem item = left.getItem();
-            if (item.getExpressionItemType() == ExpressionItemType.VALUE) {
-              final Value val = (Value) item;
-              switch (val.getType()) {
-                case INT: {
-                  childElements = EMPTY;
-                  savedItem = Value.valueOf(0 - val.asLong());
-                  makeMaxPriority();
+    if (!this.isEmptySlot()) {
+
+      switch (savedItem.getExpressionItemType()) {
+        case OPERATOR: {
+          if (savedItem == OPERATOR_SUB) {
+            if (!childElements[0].isEmptySlot() && childElements[1].isEmptySlot()) {
+              final ExpressionTreeElement left = childElements[0];
+              final ExpressionItem item = left.getItem();
+              if (item.getExpressionItemType() == ExpressionItemType.VALUE) {
+                final Value val = (Value) item;
+                switch (val.getType()) {
+                  case INT: {
+                    childElements = EMPTY;
+                    savedItem = Value.valueOf(0 - val.asLong());
+                    makeMaxPriority();
+                  }
+                  break;
+                  case FLOAT: {
+                    childElements = EMPTY;
+                    savedItem = Value.valueOf(0.0f - val.asFloat());
+                    makeMaxPriority();
+                  }
+                  break;
+                  default: {
+                    if (!left.isEmptySlot()) left.postProcess();
+                  }
+                  break;
                 }
-                break;
-                case FLOAT: {
-                  childElements = EMPTY;
-                  savedItem = Value.valueOf(0.0f - val.asFloat());
-                  makeMaxPriority();
+              }
+            } else {
+              for (final ExpressionTreeElement element : childElements) {
+                if (!element.isEmptySlot()) {
+                  element.postProcess();
                 }
-                break;
-                default: {
-                  left.postProcess();
-                }
-                break;
               }
             }
           } else {
             for (final ExpressionTreeElement element : childElements) {
-              if (element != null) {
+              if (!element.isEmptySlot()) {
                 element.postProcess();
               }
             }
           }
-        } else {
+        }
+        break;
+        case FUNCTION: {
           for (final ExpressionTreeElement element : childElements) {
-            if (element != null) {
+            if (!element.isEmptySlot()) {
               element.postProcess();
             }
           }
         }
+        break;
       }
-      break;
-      case FUNCTION: {
-        for (final ExpressionTreeElement element : childElements) {
-          if (element != null) {
-            element.postProcess();
-          }
-        }
-      }
-      break;
     }
   }
 }

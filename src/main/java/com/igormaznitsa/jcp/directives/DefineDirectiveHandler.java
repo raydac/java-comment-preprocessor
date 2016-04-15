@@ -78,7 +78,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         throw context.makeException("Var name is empty", null);
       }
 
-      final ExpressionItem item = assertNotNull(assertNotNull(nameTree.getRoot()).getItem());
+      final ExpressionItem item = assertNotNull(nameTree.getRoot().getItem());
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
         throw context.makeException("Can't recognize variable name [" + name + ']', null);
       }

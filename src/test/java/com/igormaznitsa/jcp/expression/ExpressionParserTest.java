@@ -52,7 +52,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final ExpressionTreeElement root = tree.getRoot();
 
     assertEquals("Root must be SUB", SUB, root.getItem());
-    assertEquals("Left must be -1", Value.valueOf(Long.valueOf(-1L)), root.getChildForIndex(0).getItem());
+    assertEquals("Left must be -1", Value.valueOf(-1L), root.getChildForIndex(0).getItem());
     assertEquals("Right must be 2", Value.INT_TWO, root.getChildForIndex(1).getItem());
   }
 
@@ -292,6 +292,6 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("()", context);
-    assertNull("Must be null", tree.getRoot());
+    assertTrue("Must be empty", tree.getRoot().isEmptySlot());
   }
 }
