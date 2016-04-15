@@ -239,25 +239,32 @@ public final class PreprocessorUtils {
           break;
         }
 
-        if (chr == '\n') {
-          stringEndedByNextLine = true;
-          strContainer.add(buffer.toString());
-          buffer.setLength(0);
-          meetCR = false;
-        } else if (chr == '\r') {
-          if (meetCR) {
-            buffer.append((char) chr);
-          } else {
+        switch (chr) {
+          case '\n': {
+            stringEndedByNextLine = true;
+            strContainer.add(buffer.toString());
+            buffer.setLength(0);
+            meetCR = false;
+          }
+          break;
+          case '\r': {
+            if (meetCR) {
+              buffer.append((char) chr);
+            } else {
+              stringEndedByNextLine = false;
+              meetCR = true;
+            }
+          }
+          break;
+          default: {
+            if (meetCR) {
+              buffer.append('\r');
+            }
+            meetCR = false;
             stringEndedByNextLine = false;
-            meetCR = true;
+            buffer.append((char) chr);
           }
-        } else {
-          if (meetCR) {
-            buffer.append('\r');
-          }
-          meetCR = false;
-          stringEndedByNextLine = false;
-          buffer.append((char) chr);
+          break;
         }
       }
 

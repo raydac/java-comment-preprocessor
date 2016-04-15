@@ -341,16 +341,23 @@ public class ExpressionTreeElement {
             final ExpressionItem item = left.getItem();
             if (item.getExpressionItemType() == ExpressionItemType.VALUE) {
               final Value val = (Value) item;
-              if (val.getType() == ValueType.INT) {
-                childElements = EMPTY;
-                savedItem = Value.valueOf(0 - val.asLong());
-                makeMaxPriority();
-              } else if (val.getType() == ValueType.FLOAT) {
-                childElements = EMPTY;
-                savedItem = Value.valueOf(0.0f - val.asFloat());
-                makeMaxPriority();
-              } else {
-                left.postProcess();
+              switch (val.getType()) {
+                case INT: {
+                  childElements = EMPTY;
+                  savedItem = Value.valueOf(0 - val.asLong());
+                  makeMaxPriority();
+                }
+                break;
+                case FLOAT: {
+                  childElements = EMPTY;
+                  savedItem = Value.valueOf(0.0f - val.asFloat());
+                  makeMaxPriority();
+                }
+                break;
+                default: {
+                  left.postProcess();
+                }
+                break;
               }
             }
           } else {
