@@ -69,14 +69,18 @@ public class FunctionEVALFILE extends AbstractFunction {
   }
 
   @Nonnull
+  private PreprocessorContext prepareContext(@Nonnull final PreprocessorContext base) {
+    final PreprocessorContext result = new PreprocessorContext(base);
+    result.setFileOutputDisabled(true);
+    result.setKeepLines(false);
+    result.setClearDestinationDirBefore(false);
+    result.setRemoveComments(true);
+    result.setCareForLastNextLine(true);
+    return result;
+  }
+  
+  @Nonnull
   public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath) {
-    final PreprocessorContext clonedContext = new PreprocessorContext(context);
-    clonedContext.setFileOutputDisabled(true);
-    clonedContext.setKeepLines(false);
-    clonedContext.setClearDestinationDirBefore(false);
-    clonedContext.setRemoveComments(true);
-    clonedContext.setCareForLastNextLine(true);
-
     final String filePath = strfilePath.asString();
 
     final File theFile;
@@ -92,7 +96,7 @@ public class FunctionEVALFILE extends AbstractFunction {
 
     try {
       final FileInfoContainer fileContainer = new FileInfoContainer(theFile, theFile.getName(), false);
-      final PreprocessingState state = fileContainer.preprocessFile(null, clonedContext);
+      final PreprocessingState state = fileContainer.preprocessFile(null, prepareContext(context));
       final StringWriter strWriter = new StringWriter(1024);
       state.writePrinterBuffers(strWriter);
       IOUtils.closeQuietly(strWriter);

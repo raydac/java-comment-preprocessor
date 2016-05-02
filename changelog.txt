@@ -1,5 +1,8 @@
-6.0.2
-- 
+6.1.0
+ - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
+- changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests
+- fixed #8 issue, fixed work with absolute paths in //#include and evalfile(), added tests
+- refactoring
 
 6.0.1
 - improved the MAVEN plugin to hide content of potentially sensitive properties from printing into Maven log (issue #2)

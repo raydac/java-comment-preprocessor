@@ -265,6 +265,12 @@
       <version>3.4</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.10</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   
   <build>
@@ -333,7 +339,9 @@
               <artifactSet>
                 <includes>
                   <include>commons-io:*</include>
+                  <include>commons-codec:*</include>
                   <include>org.apache.commons:*</include>
+                  <include>com.igormaznitsa:*</include>
                 </includes>
               </artifactSet>
             </configuration>

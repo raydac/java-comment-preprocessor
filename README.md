@@ -13,6 +13,7 @@ It is the most powerful multi-pass preprocessor for Java but also it can be used
 Changelog
 ==========
 - **6.1.0-SNAPSHOT** (under development)
+  - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
   - __changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests__
   - __fixed #8 issue, fixed work with absolute paths in //#include and evalfile(), added tests__
   - refactoring
