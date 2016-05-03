@@ -42,13 +42,13 @@ public class PreprocessorClearMojo extends AbstractMojo {
   /**
    * The Destination folder where generated sources can be placed in non-test mode and which will be removed.
    */
-  @Parameter(name = "preprocessedSources", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
+  @Parameter(alias = "preprocessedSources", readonly = true, defaultValue = "${project.build.directory}/generated-sources/preprocessed")
   private File preprocessedSources;
 
   /**
    * Destination folder where generated sources can be placed in test-mode and which will be removed.
    */
-  @Parameter(name = "preprocessedTestSources", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
+  @Parameter(alias = "preprocessedTestSources", readonly = true, defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
   private File preprocessedTestSources;
 
   /**
@@ -66,7 +66,7 @@ public class PreprocessorClearMojo extends AbstractMojo {
    *
    * @see <a href="http://maven.apache.org/shared/file-management/apidocs/org/apache/maven/shared/model/fileset/FileSet.html">FileSet javadoc</a>
    */
-  @Parameter(name = "fileSets", required = false)
+  @Parameter(alias = "fileSets", required = false)
   private List<FileSet> fileSets;
 
   private void processPredefinedFolders(@Nonnull final Log log) throws MojoFailureException {
