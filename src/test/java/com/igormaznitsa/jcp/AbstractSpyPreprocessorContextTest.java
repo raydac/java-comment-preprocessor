@@ -31,9 +31,6 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import static org.junit.Assert.assertEquals;
-import java.lang.reflect.Field;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PreprocessorContext.class, PreprocessingState.class})

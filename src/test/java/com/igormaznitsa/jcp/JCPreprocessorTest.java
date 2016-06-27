@@ -25,9 +25,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import com.igormaznitsa.meta.common.utils.Deferrers;
 import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
-import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
-import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
-import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
 
 public final class JCPreprocessorTest {
 

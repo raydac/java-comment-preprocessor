@@ -15,9 +15,6 @@
  */
 package com.igormaznitsa.jcp.context;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
