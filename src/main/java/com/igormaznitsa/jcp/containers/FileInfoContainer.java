@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.containers;
 
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -36,6 +35,8 @@ import javax.annotation.Nullable;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
@@ -43,6 +44,10 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public class FileInfoContainer {
+
+  private static final Pattern DIRECTIVE_HASH_PREFIXED = Pattern.compile("^\\s*//\\s*#(.*)$");
+  private static final Pattern DIRECTIVE_TWO_DOLLARS_PREFIXED = Pattern.compile("^\\s*//\\s*\\$\\$(.*)$");
+  private static final Pattern DIRECTIVE_SINGLE_DOLLAR_PREFIXED = Pattern.compile("^\\s*//\\s*\\$(.*)$");
 
   /**
    * The source file for the container
@@ -160,8 +165,8 @@ public class FileInfoContainer {
 
         leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
 
-        if (leftTrimmedString.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-          switch (processDirective(preprocessingState, PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, leftTrimmedString), context, true)) {
+        if (isHashPrefixed(leftTrimmedString,context)) {
+          switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString,context), context, true)) {
             case PROCESSED:
             case READ_NEXT_LINE:
             case SHOULD_BE_COMMENTED:
@@ -187,6 +192,72 @@ public class FileInfoContainer {
     }
 
     return preprocessingState.popAllExcludeIfInfoData();
+  }
+
+  private boolean isDoubleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$$");
+    }
+  }
+
+  private boolean isSingleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$");
+    }
+  }
+
+  private boolean isHashPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
+    }
+  }
+
+  @Nonnull
+  private String extractHashPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      final Matcher matcher = DIRECTIVE_HASH_PREFIXED.matcher(line);
+      if (matcher.find()) {
+        return matcher.group(1);
+      } else {
+        throw new Error("Unexpected situation, directive is not found, contact developer! (" + line + ')');
+      }
+    } else {
+      return PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, line);
+    }
+  }
+
+  @Nonnull
+  private String extractDoubleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      final Matcher matcher = DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
+      if (matcher.find()) {
+        return matcher.group(1);
+      } else {
+        throw new Error("Unexpected situation, '//$$' directive is not found, contact developer! (" + line + ')');
+      }
+    } else {
+      return PreprocessorUtils.extractTail("//$$", line);
+    }
+  }
+
+  @Nonnull
+  private String extractSingleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
+    if (context.isAllowSpacesBeforeDirectives()) {
+      final Matcher matcher = DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
+      if (matcher.find()) {
+        return matcher.group(1);
+      } else {
+        throw new Error("Unexpected situation, '//$' directive is not found, contact developer! (" + line + ')');
+      }
+    } else {
+      return PreprocessorUtils.extractTail("//$", line);
+    }
   }
 
   /**
@@ -258,8 +329,8 @@ public class FileInfoContainer {
 
         final boolean usePrintLn = presentedNextLine || !context.isCareForLastNextLine();
 
-        if (stringToBeProcessed.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX)) {
-          final String extractedDirective = PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, stringToBeProcessed);
+        if (isHashPrefixed(stringToBeProcessed, context)) {
+          final String extractedDirective = extractHashPrefixedDirective(stringToBeProcessed, context);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
             case PROCESSED:
             case READ_NEXT_LINE: {
@@ -291,7 +362,7 @@ public class FileInfoContainer {
 
         final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
         if (preprocessingState.isDirectiveCanBeProcessed() && !preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
-          final boolean startsWithTwoDollars = leftTrimmedString.startsWith("//$$");
+          final boolean startsWithTwoDollars = isDoubleDollarPrefixed(leftTrimmedString, context);
 
           if (!startsWithTwoDollars) {
             stringToBeProcessed = PreprocessorUtils.processMacroses(leftTrimmedString, context);
@@ -300,17 +371,17 @@ public class FileInfoContainer {
           if (startsWithTwoDollars) {
             // Output the tail of the string to the output stream without comments and macroses
             thePrinter.print(stringPrefix);
-            final String text = PreprocessorUtils.extractTail("//$$", leftTrimmedString);
+            final String text = extractDoubleDollarPrefixedDirective(leftTrimmedString, context);
             if (usePrintLn) {
               thePrinter.println(text);
             } else {
               thePrinter.print(text);
             }
-          } else if (stringToBeProcessed.startsWith("//$")) {
+          } else if (isSingleDollarPrefixed(stringToBeProcessed, context)) {
             // Output the tail of the string to the output stream without comments
             thePrinter.print(stringPrefix);
 
-            final String text = PreprocessorUtils.extractTail("//$", stringToBeProcessed);
+            final String text = extractSingleDollarPrefixedDirective(stringToBeProcessed, context);
 
             if (usePrintLn) {
               thePrinter.println(text);
@@ -348,12 +419,12 @@ public class FileInfoContainer {
     }
 
     if (!preprocessingState.isIfStackEmpty()) {
-      final TextFileDataContainer lastIf = assertNotNull("'IF' stack is empty",preprocessingState.peekIf());
+      final TextFileDataContainer lastIf = assertNotNull("'IF' stack is empty", preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
           "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
     if (!preprocessingState.isWhileStackEmpty()) {
-      final TextFileDataContainer lastWhile = assertNotNull("'WHILE' stack is empty",preprocessingState.peekWhile());
+      final TextFileDataContainer lastWhile = assertNotNull("'WHILE' stack is empty", preprocessingState.peekWhile());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
           "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }

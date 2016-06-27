@@ -37,6 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
@@ -58,6 +59,7 @@ public final class PreprocessorContext {
   private boolean keepNonExecutingLines = false;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
+  private boolean allowSpaceBeforeDirective=false;
 
   private String sourceDirectories;
   private String destinationDirectory;
@@ -130,6 +132,7 @@ public final class PreprocessorContext {
     this.clearDestinationDirectoryBefore = context.clearDestinationDirectoryBefore;
     this.fileOutputDisabled = context.fileOutputDisabled;
     this.keepNonExecutingLines = context.keepNonExecutingLines;
+    this.allowSpaceBeforeDirective = context.allowSpaceBeforeDirective;
     this.sourceDirectories = context.sourceDirectories;
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
@@ -273,6 +276,22 @@ public final class PreprocessorContext {
     return fileOutputDisabled;
   }
 
+  /**
+   * Set flag to allow spaces between directive and comments.
+   * @param flag true if spaces are allowed, false otherwise
+   */
+  public void setAllowSpaceBeforeDirectives(final boolean flag){
+    this.allowSpaceBeforeDirective = flag;
+  }
+  
+  /**
+   * Get flag that allowed format when there are spaces between comment and directive.
+   * @return true if spaces allowed, false otherwise
+   */
+  public boolean isAllowSpacesBeforeDirectives() {
+    return this.allowSpaceBeforeDirective;
+  }
+  
   /**
    * Set source directories
    *

@@ -22,6 +22,9 @@ import com.igormaznitsa.jcp.expression.*;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class implements the //#define directive handler

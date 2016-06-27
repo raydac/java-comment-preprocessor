@@ -129,6 +129,14 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testSetAllowSpaceBeforeDirectives() throws Exception {
+    antTask.setAllowSpaceBeforeDirectives(false);
+    assertFalse("Must be false", antTask.generatePreprocessorContext().isAllowSpacesBeforeDirectives());
+    antTask.setAllowSpaceBeforeDirectives(true);
+    assertTrue("Must be true", antTask.generatePreprocessorContext().isAllowSpacesBeforeDirectives());
+  }
+
+  @Test
   public void testSetRemoveComments() throws Exception {
     antTask.setRemoveComments(true);
     assertTrue("Must be true", antTask.generatePreprocessorContext().isRemoveComments());

@@ -37,6 +37,9 @@ import org.apache.maven.project.MavenProject;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
@@ -161,6 +164,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   @Parameter(alias = "keepLines", defaultValue = "true")
   private boolean keepLines;
 
+  /**
+   * Enable space chars between comment and directive start.
+   */
+  @Parameter(alias = "allowSpaceBeforeDirectives", defaultValue = "false")
+  private boolean allowSpaceBeforeDirectives;
+  
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    */
@@ -323,6 +332,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.keepLines;
   }
 
+  public void setAllowSpaceBeforeDirectives(final boolean allowSpaceBeforeDirectives) {
+    this.allowSpaceBeforeDirectives = allowSpaceBeforeDirectives;
+  }
+  
+  public boolean getAllowSpaceBeforeDirectives() {
+    return this.allowSpaceBeforeDirectives;
+  }
+  
   public void setRemoveComments(final boolean value) {
     this.removeComments = value;
   }
@@ -418,6 +435,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setVerbose(getLog().isDebugEnabled() || this.verbose);
     context.setKeepLines(this.keepLines);
     context.setFileOutputDisabled(this.disableOut);
+    context.setAllowSpaceBeforeDirectives(this.allowSpaceBeforeDirectives);
 
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {

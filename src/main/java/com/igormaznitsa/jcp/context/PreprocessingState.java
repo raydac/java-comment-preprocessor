@@ -54,6 +54,9 @@ import org.apache.commons.io.IOUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class describes a preprocessor state also it contains inside buffers and save data on disk

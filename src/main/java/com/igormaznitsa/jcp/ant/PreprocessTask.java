@@ -114,11 +114,20 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean keepLines = false;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
-
+  private boolean allowSpaceBeforeDirectives = false;
+  
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
   private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
 
+  /**
+   * Set the "allowSpaceBeforeDirectives", it allows to have spaces between comment chars and directive start.
+   * @param flag true if spaces are enabled, false otherwise
+   */
+  public void setAllowSpaceBeforeDirectives(final boolean flag) {
+    this.allowSpaceBeforeDirectives = flag;
+  }
+  
   /**
    * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same
    * content.
@@ -306,6 +315,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setVerbose(this.verbose);
     context.setKeepLines(this.keepLines);
     context.setCareForLastNextLine(this.careForLastNextLine);
+    context.setAllowSpaceBeforeDirectives(this.allowSpaceBeforeDirectives);
 
     fillCfgFiles(context);
     fillGlobalVars(context);

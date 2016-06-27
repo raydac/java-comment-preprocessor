@@ -31,6 +31,9 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import static org.junit.Assert.assertEquals;
+import java.lang.reflect.Field;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PreprocessorContext.class, PreprocessingState.class})
@@ -38,6 +41,10 @@ public abstract class AbstractSpyPreprocessorContextTest {
 
   protected static TemporaryFolder destinationFolder;
 
+  public interface ContextDataProvider {
+    boolean getAllowSpaceBeforeDirectiveFlag();
+  } 
+  
   @BeforeClass
   public static void prepareClassTests() throws Exception {
     destinationFolder = new TemporaryFolder(new File("./"));
@@ -69,18 +76,27 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
   
   protected PreprocessorContext preparePreprocessorContext(final String sourceFolder) throws Exception {
+    return this.preparePreprocessorContext(sourceFolder, new ContextDataProvider() {
+      @Override
+      public boolean getAllowSpaceBeforeDirectiveFlag() {
+        return false;
+      }
+    });
+  }
+
+  protected PreprocessorContext preparePreprocessorContext(final String sourceFolder, final ContextDataProvider provider) throws Exception {
     final PreprocessorContext preprocessorcontext = PowerMockito.spy(new PreprocessorContext());
     final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
     PowerMockito.when(stateMock.getRootFileInfo()).thenReturn(new FileInfoContainer(new File("src/fake.java"), "fake.java", false));
     PowerMockito.when(stateMock.getPrinter()).thenReturn(new ResetablePrinter(10));
-    
+
     PowerMockito.when(preprocessorcontext.getPreprocessingState()).thenReturn(stateMock);
 
+    preprocessorcontext.setAllowSpaceBeforeDirectives(provider.getAllowSpaceBeforeDirectiveFlag());
     preprocessorcontext.setSourceDirectories(sourceFolder);
     preprocessorcontext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
 
     return preprocessorcontext;
   }
-
-
+  
 }
