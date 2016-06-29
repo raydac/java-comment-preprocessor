@@ -48,6 +48,7 @@ public class FileInfoContainer {
   private static final Pattern DIRECTIVE_HASH_PREFIXED = Pattern.compile("^\\s*//\\s*#(.*)$");
   private static final Pattern DIRECTIVE_TWO_DOLLARS_PREFIXED = Pattern.compile("^\\s*//\\s*\\$\\$(.*)$");
   private static final Pattern DIRECTIVE_SINGLE_DOLLAR_PREFIXED = Pattern.compile("^\\s*//\\s*\\$(.*)$");
+  private static final Pattern DIRECTIVE_TAIL_REMOVER = Pattern.compile("\\/\\*\\s*-\\s*\\*\\/");
 
   /**
    * The source file for the container
@@ -390,7 +391,7 @@ public class FileInfoContainer {
             }
           } else {
             // Just string
-            final String strToOut = processStringForTailRemover(stringToBeProcessed);
+            final String strToOut = findTailRemover(stringToBeProcessed, context);
 
             if (preprocessingState.getPreprocessingFlags().contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
               thePrinter.print(AbstractDirectiveHandler.ONE_LINE_COMMENT);
@@ -441,12 +442,20 @@ public class FileInfoContainer {
   }
 
   @Nonnull
-  private static String processStringForTailRemover(@Nonnull final String str) {
-    final int tailRemoverStart = str.indexOf("/*-*/");
-    if (tailRemoverStart >= 0) {
-      return str.substring(0, tailRemoverStart);
+  private static String findTailRemover(@Nonnull final String str, @Nonnull final PreprocessorContext context) {
+    String result = str;
+    if (context.isAllowSpacesBeforeDirectives()) {
+      final Matcher matcher = DIRECTIVE_TAIL_REMOVER.matcher(str);
+      if (matcher.find()){
+        result = str.substring(0, matcher.start());
+      }
+    } else {
+      final int tailRemoverStart = str.indexOf("/*-*/");
+      if (tailRemoverStart >= 0) {
+        result = str.substring(0, tailRemoverStart);
+      }
     }
-    return str;
+    return result;
   }
 
   private boolean checkDirectiveArgumentRoughly(@Nonnull final AbstractDirectiveHandler directive, @Nonnull final String rest) {

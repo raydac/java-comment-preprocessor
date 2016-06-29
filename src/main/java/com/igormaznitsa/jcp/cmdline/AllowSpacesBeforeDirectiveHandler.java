@@ -31,7 +31,7 @@ public class AllowSpacesBeforeDirectiveHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "allow spaces before directives";
+    return "allow spaces between comment and directives";
   }
 
   @Override

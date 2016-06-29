@@ -29,7 +29,7 @@ public class CheckLogicOfAllowSpaceBeforeDirectiveTest extends AbstractSpyPrepro
   public void testProcess_NoSpaced_SpacesNotAllowed() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString(); 
-    assertEquals(" hello\n /*$VAR$*/ Universe\n",text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test",text);
   }
 
   @Test 
@@ -41,7 +41,7 @@ public class CheckLogicOfAllowSpaceBeforeDirectiveTest extends AbstractSpyPrepro
       }
     });
     final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
-    assertEquals(" hello\n /*$VAR$*/ Universe\n", text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class CheckLogicOfAllowSpaceBeforeDirectiveTest extends AbstractSpyPrepro
       }
     });
     final String text = Expression.evalExpression("evalfile(\"./spacedFile.txt\")", context).asString();
-    assertEquals(" hello\n /*$VAR$*/ Universe\n", text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
   }
 
 
