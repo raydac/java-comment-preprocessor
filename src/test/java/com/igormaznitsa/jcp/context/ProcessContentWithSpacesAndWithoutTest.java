@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class CheckLogicOfAllowSpaceBeforeDirectiveTest extends AbstractSpyPreprocessorContextTest {
+public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreprocessorContextTest {
   
   @Test 
   public void testProcess_NoSpaced_SpacesNotAllowed() throws Exception {
