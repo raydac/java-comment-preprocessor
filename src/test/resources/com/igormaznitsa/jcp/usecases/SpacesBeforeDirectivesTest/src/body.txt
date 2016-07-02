@@ -1,0 +1,15 @@
+  // #global SOME_VAR = "HELLO"
+// #_if SOME_VAR=="HELLO"
+all ok
+// #local hello="hello"
+//#_endif
+// #local LOC = HELLO+"world"
+/* $LOC$*//*$LOC$*/
+// #ifdef LOC
+line1/*-*/give up
+line2/*  -  */give up
+// #else
+must not be
+//#endif
+// $ hurraaa+/* $SOME_VAR$ */
+// $$ hry hry +/* $SOME_VAR$ */

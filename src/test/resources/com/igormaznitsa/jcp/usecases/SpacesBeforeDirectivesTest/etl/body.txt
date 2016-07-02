@@ -1,0 +1,6 @@
+all ok
+helloworldhelloworld
+line1
+line2
+ hurraaa+HELLO
+ hry hry +/* $SOME_VAR$ */
