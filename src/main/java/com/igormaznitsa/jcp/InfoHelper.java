@@ -37,12 +37,12 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getVersion() {
-    return "v6.0.2";
+    return "v6.1.0";
   }
 
   @Nonnull
   public static String getCopyright() {
-    return "2003-2015 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+    return "2003-2016 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
   @Nonnull
