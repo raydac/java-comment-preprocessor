@@ -34,11 +34,8 @@ import javax.annotation.Nullable;
 
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**

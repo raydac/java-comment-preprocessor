@@ -15,7 +15,6 @@
  */
 package com.igormaznitsa.jcp.utils;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -50,8 +49,6 @@ import org.apache.commons.io.*;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
