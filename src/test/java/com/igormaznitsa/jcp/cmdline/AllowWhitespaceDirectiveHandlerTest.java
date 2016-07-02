@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.junit.Test;
 
-public class AllowWhitespaceHandlerTest extends AbstractCommandLineHandlerTest {
+public class AllowWhitespaceDirectiveHandlerTest extends AbstractCommandLineHandlerTest {
 
   private static final AllowWhitespaceDirectiveHandler HANDLER = new AllowWhitespaceDirectiveHandler();
 
