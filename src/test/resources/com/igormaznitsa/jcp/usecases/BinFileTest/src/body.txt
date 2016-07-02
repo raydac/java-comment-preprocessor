@@ -1,0 +1,12 @@
+BASE64
+/*$binfile("./file.bin","base64")$*/
+
+BASE64 splitted to lines
+/*$binfile("./file.bin","base64s")$*/
+
+BYTE[]
+/*$binfile("./file.bin","byte[]")$*/
+
+BYTE[] splitted to lines
+/*$binfile("./file.bin","byte[]s")$*/
+---

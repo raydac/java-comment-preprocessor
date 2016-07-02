@@ -90,7 +90,7 @@ public abstract class AbstractUseCaseTest {
         final boolean equalsLength = f.length() == f2.length();
         if (!equalsLength){
           System.err.println("WRONG FILE CONTENT\r\n---------------\r\n"+FileUtils.readFileToString(f2, "UTF-8")+"\r\n---------------");
-          fail("Wrong length of result file (" + f.getName() + ')');
+          fail("Wrong length of result file (" + f.getName() + ", expected length = "+f2.length()+" but detected "+f.length());
         }
         assertEquals("Checksum must be equal ("+f.getName()+')',FileUtils.checksumCRC32(f),FileUtils.checksumCRC32(f2));
       }

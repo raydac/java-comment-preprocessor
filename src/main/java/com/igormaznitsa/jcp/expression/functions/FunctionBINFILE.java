@@ -89,9 +89,9 @@ public class FunctionBINFILE extends AbstractFunction {
       final String endOfLine = System.getProperty("line.separator","\r\n");
       final String result;
       if ("base64".equals(encode)) {
-        result = convertToBase64(theFile, -1, endOfLine);
+        result = convertToBase64(theFile, -1, endOfLine).trim();
       } else if ("base64s".equals(encode)) {
-          result = convertToBase64(theFile, 80, endOfLine);
+          result = convertToBase64(theFile, 80, endOfLine).trim();
         } else if ("byte[]".equals(encode)) {
           result = convertToJBytes(theFile, -1, endOfLine);
         } else if ("byte[]s".equals(encode)) {
@@ -113,11 +113,17 @@ public class FunctionBINFILE extends AbstractFunction {
     
     int endLinePos = lineLength;
     
+    boolean addNextLine = false;
+    
     for(final byte b : array) {
+      if (addNextLine) {
+        addNextLine = false;
+        result.append(endOfLine);
+      }
       if (result.length()>0) result.append(',');
       result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
       if (lineLength>0 && result.length()>=endLinePos){
-        result.append(endOfLine);
+        addNextLine = true;
         endLinePos = result.length()+lineLength;
       }
     }
