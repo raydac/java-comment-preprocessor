@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -55,6 +57,8 @@ import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public final class PreprocessorUtils {
+
+  private static final Pattern PATTERN_MACROS_WITH_SPACES = Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
 
   private PreprocessorUtils() {
   }
@@ -185,26 +189,45 @@ public final class PreprocessorUtils {
     int position;
     String result = processingString;
 
+    if (context.isAllowSpacesBeforeDirectives()){
+      final Matcher matcher = PATTERN_MACROS_WITH_SPACES.matcher(processingString);
+      final StringBuilder buffer = new StringBuilder();
+      int end = 0;
+      while(matcher.find()){
+        final int start = matcher.start();
+        final int prevEnd = end;
+        end = matcher.end();
+        final String macrosBody = matcher.group(1);
+        final Value value = Expression.evalExpression(macrosBody, context);
+        buffer.append(processingString.substring(prevEnd,start));
+        buffer.append(value.toString());
+      }
+      if (end<processingString.length()){
+        buffer.append(processingString.substring(end));
+      }
+      result = buffer.toString();
+    }else{
     while (true) {
-      position = result.indexOf("/*$");
+        position = result.indexOf("/*$");
 
-      if (position >= 0) {
-        final String leftPart = result.substring(0, position);
-        final int beginIndex = position;
-        position = result.indexOf("$*/", position);
         if (position >= 0) {
-          final String macrosBody = result.substring(beginIndex + 3, position);
-          final String rightPart = result.substring(position + 3);
+          final String leftPart = result.substring(0, position);
+          final int beginIndex = position;
+          position = result.indexOf("$*/", position);
+          if (position >= 0) {
+            final String macrosBody = result.substring(beginIndex + 3, position);
+            final String rightPart = result.substring(position + 3);
 
-          final Value value = Expression.evalExpression(macrosBody, context);
+            final Value value = Expression.evalExpression(macrosBody, context);
 
-          result = leftPart + value.toString() + rightPart;
+            result = leftPart + value.toString() + rightPart;
+          } else {
+            break;
+          }
         } else {
           break;
         }
-      } else {
-        break;
-      }
+    }
     }
     return result;
   }
