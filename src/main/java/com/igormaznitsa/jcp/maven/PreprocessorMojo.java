@@ -37,6 +37,13 @@ import org.apache.maven.project.MavenProject;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
@@ -162,10 +169,10 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private boolean keepLines;
 
   /**
-   * Enable space chars between comment and directive start.
+   * Manage mode to allow whitespace between the // and the #.
    */
-  @Parameter(alias = "allowSpaceBeforeDirectives", defaultValue = "false")
-  private boolean allowSpaceBeforeDirectives;
+  @Parameter(alias = "allowWhitespace", defaultValue = "false")
+  private boolean allowWhitespace;
   
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
@@ -329,12 +336,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.keepLines;
   }
 
-  public void setAllowSpaceBeforeDirectives(final boolean allowSpaceBeforeDirectives) {
-    this.allowSpaceBeforeDirectives = allowSpaceBeforeDirectives;
+  public void setAllowWhitespace(final boolean flag) {
+    this.allowWhitespace = flag;
   }
   
-  public boolean getAllowSpaceBeforeDirectives() {
-    return this.allowSpaceBeforeDirectives;
+  public boolean getAllowWhitespace() {
+    return this.allowWhitespace;
   }
   
   public void setRemoveComments(final boolean value) {
@@ -432,7 +439,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setVerbose(getLog().isDebugEnabled() || this.verbose);
     context.setKeepLines(this.keepLines);
     context.setFileOutputDisabled(this.disableOut);
-    context.setAllowSpaceBeforeDirectives(this.allowSpaceBeforeDirectives);
+    context.setAllowWhitespace(this.allowWhitespace);
 
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {

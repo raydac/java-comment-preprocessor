@@ -33,6 +33,13 @@ import org.apache.commons.io.FileUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main method and can be started from a command string
@@ -70,7 +77,7 @@ public final class JCPreprocessor {
     new DestinationDirectoryHandler(),
     new FileExtensionsHandler(),
     new ExcludedFileExtensionsHandler(),
-    new AllowSpacesBeforeDirectiveHandler(),
+    new AllowWhitespaceDirectiveHandler(),
     new RemoveCommentsHandler(),
     new KeepLineHandler(),
     new CompareDestinationContentHandler(),

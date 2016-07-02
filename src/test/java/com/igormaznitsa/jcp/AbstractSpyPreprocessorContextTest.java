@@ -89,7 +89,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
 
     PowerMockito.when(preprocessorcontext.getPreprocessingState()).thenReturn(stateMock);
 
-    preprocessorcontext.setAllowSpaceBeforeDirectives(provider.getAllowSpaceBeforeDirectiveFlag());
+    preprocessorcontext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
     preprocessorcontext.setSourceDirectories(sourceFolder);
     preprocessorcontext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
 

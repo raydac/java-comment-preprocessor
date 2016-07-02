@@ -20,9 +20,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.junit.Test;
 
-public class AllowSpacesBeforeDirectiveHandlerTest extends AbstractCommandLineHandlerTest {
+public class AllowWhitespaceHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final AllowSpacesBeforeDirectiveHandler HANDLER = new AllowSpacesBeforeDirectiveHandler();
+  private static final AllowWhitespaceDirectiveHandler HANDLER = new AllowWhitespaceDirectiveHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -40,14 +40,14 @@ public class AllowSpacesBeforeDirectiveHandlerTest extends AbstractCommandLineHa
     assertFalse(HANDLER.processCommandLineKey("/es:", mock));
     assertFalse(HANDLER.processCommandLineKey("/EK", mock));
     assertFalse(HANDLER.processCommandLineKey("/E ", mock));
-    verify(mock, never()).setAllowSpaceBeforeDirectives(anyBoolean());
+    verify(mock, never()).setAllowWhitespace(anyBoolean());
 
     assertTrue(HANDLER.processCommandLineKey("/ES", mock));
-    verify(mock).setAllowSpaceBeforeDirectives(true);
+    verify(mock).setAllowWhitespace(true);
     reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/es", mock));
-    verify(mock).setAllowSpaceBeforeDirectives(true);
+    verify(mock).setAllowWhitespace(true);
     reset(mock);
   }
 

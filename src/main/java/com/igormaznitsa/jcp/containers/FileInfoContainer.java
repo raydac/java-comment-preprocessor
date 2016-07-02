@@ -37,6 +37,9 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
@@ -196,7 +199,7 @@ public class FileInfoContainer {
   }
 
   private boolean isDoubleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith("//$$");
@@ -204,7 +207,7 @@ public class FileInfoContainer {
   }
 
   private boolean isSingleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith("//$");
@@ -212,7 +215,7 @@ public class FileInfoContainer {
   }
 
   private boolean isHashPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
@@ -221,7 +224,7 @@ public class FileInfoContainer {
 
   @Nonnull
   private String extractHashPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_HASH_PREFIXED.matcher(line);
       if (matcher.find()) {
         return matcher.group(1);
@@ -235,7 +238,7 @@ public class FileInfoContainer {
 
   @Nonnull
   private String extractDoubleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
       if (matcher.find()) {
         return matcher.group(1);
@@ -249,7 +252,7 @@ public class FileInfoContainer {
 
   @Nonnull
   private String extractSingleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
       if (matcher.find()) {
         return matcher.group(1);
@@ -444,7 +447,7 @@ public class FileInfoContainer {
   @Nonnull
   private static String findTailRemover(@Nonnull final String str, @Nonnull final PreprocessorContext context) {
     String result = str;
-    if (context.isAllowSpacesBeforeDirectives()) {
+    if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_TAIL_REMOVER.matcher(str);
       if (matcher.find()){
         result = str.substring(0, matcher.start());

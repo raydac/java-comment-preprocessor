@@ -50,6 +50,9 @@ import org.apache.commons.io.*;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -189,7 +192,7 @@ public final class PreprocessorUtils {
     int position;
     String result = processingString;
 
-    if (context.isAllowSpacesBeforeDirectives()){
+    if (context.isAllowWhitespace()){
       final Matcher matcher = PATTERN_MACROS_WITH_SPACES.matcher(processingString);
       final StringBuilder buffer = new StringBuilder();
       int end = 0;

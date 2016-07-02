@@ -37,6 +37,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
@@ -58,7 +61,7 @@ public final class PreprocessorContext {
   private boolean keepNonExecutingLines = false;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
-  private boolean allowSpaceBeforeDirective=false;
+  private boolean allowWhitespace=false;
 
   private String sourceDirectories;
   private String destinationDirectory;
@@ -131,7 +134,7 @@ public final class PreprocessorContext {
     this.clearDestinationDirectoryBefore = context.clearDestinationDirectoryBefore;
     this.fileOutputDisabled = context.fileOutputDisabled;
     this.keepNonExecutingLines = context.keepNonExecutingLines;
-    this.allowSpaceBeforeDirective = context.allowSpaceBeforeDirective;
+    this.allowWhitespace = context.allowWhitespace;
     this.sourceDirectories = context.sourceDirectories;
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
@@ -276,19 +279,19 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Set flag to allow spaces between directive and comments.
-   * @param flag true if spaces are allowed, false otherwise
+   * Set flag to allow whitespace between directive and comment chars.
+   * @param flag true if whitespace allowed, false otherwise
    */
-  public void setAllowSpaceBeforeDirectives(final boolean flag){
-    this.allowSpaceBeforeDirective = flag;
+  public void setAllowWhitespace(final boolean flag){
+    this.allowWhitespace = flag;
   }
   
   /**
-   * Get flag that allowed format when there are spaces between comment and directive.
-   * @return true if spaces allowed, false otherwise
+   * Get flag that whitespace allowed between directive and comment.
+   * @return true if whitespace allowed, false otherwise
    */
-  public boolean isAllowSpacesBeforeDirectives() {
-    return this.allowSpaceBeforeDirective;
+  public boolean isAllowWhitespace() {
+    return this.allowWhitespace;
   }
   
   /**

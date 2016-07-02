@@ -130,10 +130,10 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetAllowSpaceBeforeDirectives() throws Exception {
-    antTask.setAllowSpaceBeforeDirectives(false);
-    assertFalse("Must be false", antTask.generatePreprocessorContext().isAllowSpacesBeforeDirectives());
-    antTask.setAllowSpaceBeforeDirectives(true);
-    assertTrue("Must be true", antTask.generatePreprocessorContext().isAllowSpacesBeforeDirectives());
+    antTask.setAllowWhitespace(false);
+    assertFalse("Must be false", antTask.generatePreprocessorContext().isAllowWhitespace());
+    antTask.setAllowWhitespace(true);
+    assertTrue("Must be true", antTask.generatePreprocessorContext().isAllowWhitespace());
   }
 
   @Test

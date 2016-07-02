@@ -24,14 +24,14 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class AllowSpacesBeforeDirectiveHandler implements CommandLineHandler {
+public class AllowWhitespaceDirectiveHandler implements CommandLineHandler {
 
   private static final String ARG_NAME = "/ES";
 
   @Override
   @Nonnull
   public String getDescription() {
-    return "allow spaces between comment and directives";
+    return "turn on mode to allow whitespace between the // and the #";
   }
 
   @Override
@@ -39,7 +39,7 @@ public class AllowSpacesBeforeDirectiveHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setAllowSpaceBeforeDirectives(true);
+      context.setAllowWhitespace(true);
       result = true;
     }
 

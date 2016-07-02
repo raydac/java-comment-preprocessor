@@ -16,7 +16,7 @@
       disableOut="false"
       keepLines="false"
       careforlastnextline="true"
-      allowSpaceBeforeDirectives="true"
+      allowWhitespace="true"
     >
       <global name="globalvar" value="antdefined"/>
       <cfgFile file="./cfgfile.cfg"/>

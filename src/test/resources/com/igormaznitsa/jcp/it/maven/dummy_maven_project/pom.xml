@@ -52,7 +52,7 @@
               <goal>preprocess</goal>
             </goals>
             <configuration>
-              <allowSpaceBeforeDirectives>true</allowSpaceBeforeDirectives>
+              <allowWhitespace>true</allowWhitespace>
               <careForLastNextLine>true</careForLastNextLine>
             </configuration>
           </execution>
