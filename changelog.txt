@@ -1,4 +1,7 @@
-6.1.0
+6.1.1
+- 
+
+6.1.0 (03 jul 2016)
 - implemented request #9, added support of whitespace between directive and comment, in command line it is `--es` option and in MAVEN and ANT it is boolean parameter `allowWhitespace`, by default it is turned off
 - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
 - changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests
