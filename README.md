@@ -23,8 +23,8 @@
   - minor bug-fixing
 
 # Introduction
+I guess it is most powerful preprocessor for Java because it is a multi-pass one and can work with XML files as data sources. The First version of the preprocessor was published in 2003 and it was very actively used for J2ME developments. Modern version can be used for any kind of Java project because it can be used with ANT, MAVEN and Gradle.
 ![Features](https://raw.githubusercontent.com/raydac/java-comment-preprocessor/master/assets/doc1.png)
-It is the most powerful multi-pass preprocessor for Java but also it can be used everywhere for text processing if the destination technology supports Java like comment definitions. The Initial version was developed in 2002 by Igor Maznitsa to make easier development for J2ME platform to avoid bunch of repeated class sources for different devices, so that the preprocessor is a powerful tool to avoid DRY (Don't Repeat Yourself) problems. Injection of preprocessor directives into Java comments allows to keep full compatibility with standard Java development chain and make transparent usage in all Java IDEs. 
   
 # How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
