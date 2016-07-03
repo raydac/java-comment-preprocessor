@@ -267,8 +267,8 @@ public class FileInfoContainer {
    * @param state the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
    * @return the state for the preprocessed file
-   * @throws IOException
-   * @throws PreprocessorException
+   * @throws IOException it will be thrown for IO errors
+   * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
    */
   @Nonnull
   public PreprocessingState preprocessFile(@Nullable final PreprocessingState state, @Nonnull final PreprocessorContext context) throws IOException {

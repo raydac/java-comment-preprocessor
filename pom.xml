@@ -8,11 +8,11 @@
    
   <groupId>com.igormaznitsa</groupId>
   <artifactId>jcp</artifactId>
-  <version>6.1.0-SNAPSHOT</version>
+  <version>6.1.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Java Comment Preprocessor</name>
-  <description>A Multi-pass java based preprocessor which directives can be injected as Java comments</description>
+  <description>Multi-pass java based preprocessor keeps directives in Java-style commentaries</description>
   <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
@@ -29,13 +29,14 @@
     <url>https://github.com/raydac/java-comment-preprocessor/issues</url>
   </issueManagement>
   <inceptionYear>2011</inceptionYear>
+  
   <developers>
     <developer>
       <id>raydac</id>
       <name>Igor Maznitsa</name>
       <email>rrg4400@gmail.com</email>
       <url>http://www.igormaznitsa.com</url>
-      <timezone>+2</timezone>
+      <timezone>+3</timezone>
       <roles>
         <role>Author</role>
       </roles>
@@ -148,10 +149,15 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
+                <configuration>
+                  <!--<failOnError>false</failOnError>-->
+                  <sourceFileExcludes>
+                    <exclude>HelpMojo.java</exclude>
+                  </sourceFileExcludes>
+                </configuration>
               </execution>
             </executions>
           </plugin>
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -410,16 +416,16 @@
         </executions>
       </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.19.1</version>
-          <configuration>
-            <systemPropertyVariables>
-              <test.folder>${project.build.testOutputDirectory}</test.folder>
-            </systemPropertyVariables>
-          </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <systemPropertyVariables>
+            <test.folder>${project.build.testOutputDirectory}</test.folder>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
