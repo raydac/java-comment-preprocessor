@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.Locale;
 import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
@@ -39,6 +40,39 @@ public class FunctionBINFILE extends AbstractFunction {
 
   private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
 
+  private enum Type {
+    BASE64("base64"),
+    BASE64_SPLITTED("base64s"),
+    BYTEARRAY("byte[]"),
+    BYTEARRAY_SPLITTED("byte[]s");
+
+    private final String name;
+
+    private Type(@Nonnull final String name) {
+      this.name = name;
+    }
+
+    @Nonnull
+    public String getName() {
+      return this.name;
+    }
+
+    @Nullable
+    public static Type find(@Nullable final String name) {
+      Type result = null;
+      if (name != null) {
+        final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
+        for (final Type t : values()) {
+          if (t.name.equals(name)) {
+            result = t;
+            break;
+          }
+        }
+      }
+      return result;
+    }
+  }
+
   @Override
   @Nonnull
   public String getName() {
@@ -48,7 +82,12 @@ public class FunctionBINFILE extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "encode bin file into string representation";
+    final StringBuilder buffer = new StringBuilder();
+    for(final Type t : Type.values()){
+      if (buffer.length()>0)buffer.append('|');
+      buffer.append(t.name);
+    }
+    return "encode bin file into string representation, allowed types ["+buffer.toString()+']';
   }
 
   @Override
@@ -72,7 +111,11 @@ public class FunctionBINFILE extends AbstractFunction {
   @Nonnull
   public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath, @Nonnull final Value encodeType) {
     final String filePath = strfilePath.asString();
-    final String encode = encodeType.asString().trim().toLowerCase(Locale.ENGLISH);
+    final Type type = Type.find(encodeType.asString());
+
+    if (type == null) {
+      throw context.makeException("Unsupported encode type [" + encodeType.asString() + ']', null);
+    }
 
     final File theFile;
     try {
@@ -86,20 +129,29 @@ public class FunctionBINFILE extends AbstractFunction {
     }
 
     try {
-      final String endOfLine = System.getProperty("line.separator","\r\n");
+      final String endOfLine = System.getProperty("line.separator", "\r\n");
       final String result;
-      if ("base64".equals(encode)) {
-        result = convertToBase64(theFile, -1, endOfLine).trim();
-      } else if ("base64s".equals(encode)) {
-          result = convertToBase64(theFile, 80, endOfLine).trim();
-        } else if ("byte[]".equals(encode)) {
-          result = convertToJBytes(theFile, -1, endOfLine);
-        } else if ("byte[]s".equals(encode)) {
-          result = convertToJBytes(theFile, 80, endOfLine);
-        }else {
-          throw context.makeException("Unsupported encode type [" + encode + ']', null);
+
+      switch (type) {
+        case BASE64: {
+          result = convertToBase64(theFile, -1, endOfLine).trim();
         }
-      
+        break;
+        case BASE64_SPLITTED: {
+          result = convertToBase64(theFile, 80, endOfLine).trim();
+        }
+        break;
+        case BYTEARRAY: {
+          result = convertToJBytes(theFile, -1, endOfLine);
+        }
+        break;
+        case BYTEARRAY_SPLITTED: {
+          result = convertToJBytes(theFile, 80, endOfLine);
+        }
+        break;
+        default:
+          throw new Error("Unexpected type : " + type);
+      }
       return Value.valueOf(result);
     } catch (Exception ex) {
       throw context.makeException("Unexpected exception", ex);
@@ -109,28 +161,30 @@ public class FunctionBINFILE extends AbstractFunction {
   @Nonnull
   private String convertToJBytes(@Nonnull final File file, final int lineLength, @Nonnull final String endOfLine) throws IOException {
     final StringBuilder result = new StringBuilder(512);
-    final byte [] array = FileUtils.readFileToByteArray(file);
-    
+    final byte[] array = FileUtils.readFileToByteArray(file);
+
     int endLinePos = lineLength;
-    
+
     boolean addNextLine = false;
-    
-    for(final byte b : array) {
+
+    for (final byte b : array) {
       if (addNextLine) {
         addNextLine = false;
         result.append(endOfLine);
       }
-      if (result.length()>0) result.append(',');
+      if (result.length() > 0) {
+        result.append(',');
+      }
       result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
-      if (lineLength>0 && result.length()>=endLinePos){
+      if (lineLength > 0 && result.length() >= endLinePos) {
         addNextLine = true;
-        endLinePos = result.length()+lineLength;
+        endLinePos = result.length() + lineLength;
       }
     }
-    
+
     return result.toString();
   }
-  
+
   @Nonnull
   private String convertToBase64(@Nonnull final File file, final int lineLength, @Nonnull final String lineSeparator) throws IOException {
     return new Base64(lineLength, lineSeparator.getBytes("UTF-8"), false).encodeAsString(FileUtils.readFileToByteArray(file));

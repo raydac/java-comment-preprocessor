@@ -10,7 +10,7 @@
 # Changelog
 - **6.1.0**
   - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__
-  - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
+  - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string, it supports generation of strings in BASE64 format and format of java byte array, the second argument allows to select format "base64"|"base64s"|"byte[]"|"byte[]s"
   - __changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests__
   - __fixed #8 issue, fixed work with absolute paths in //#include and evalfile(), added tests__
   - refactoring
