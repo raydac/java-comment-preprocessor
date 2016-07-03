@@ -2,17 +2,12 @@
 [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|6.1.0|jar)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/c6acda63097a40c68d8ca8eaef6180d8)](https://www.codacy.com/app/rrg4400/java-comment-preprocessor)
 [![Java 6.0+](https://img.shields.io/badge/java-6.0%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-[![Maven 3.0.3+](https://img.shields.io/badge/maven-3.0.3%2b-green.svg)](https://maven.apache.org/)
+[![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Ant 1.8.2+](https://img.shields.io/badge/ant-1.8.2%2b-green.svg)](http://ant.apache.org/)
 [![PayPal donation](https://img.shields.io/badge/donation-PayPal-red.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](https://money.yandex.ru/embed/small.xml?account=41001158080699&quickpay=small&yamoney-payment-type=on&button-text=01&button-size=l&button-color=orange&targets=%D0%9F%D0%BE%D0%B6%D0%B5%D1%80%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%BD%D0%B0+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B+%D1%81+%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8B%D0%BC+%D0%B8%D1%81%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%BC+%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC&default-sum=100&successURL=)
 
-Introduction
-=============
-It is the most powerful multi-pass preprocessor for Java but also it can be used everywhere for text processing if the destination technology supports Java like comment definitions. The Initial version was developed in 2002 by Igor Maznitsa to make easier development for J2ME platform to avoid bunch of repeated class sources for different devices, so that the preprocessor is a powerful tool to avoid DRY (Don't Repeat Yourself) problems. Injection of preprocessor directives into Java comments allows to keep full compatibility with standard Java development chain and make transparent usage in all Java IDEs. 
-
-Changelog
-==========
+# Changelog
 - **6.1.0**
   - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__
   - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
@@ -26,9 +21,12 @@ Changelog
   - fixed --c argument usage in CLI, now by default the preprocessor started in CLI doesn't clear its output folder, use --c to turn it on
   - improved tests
   - minor bug-fixing
+
+# Introduction
+![Features](https://raw.githubusercontent.com/raydac/java-comment-preprocessor/master/assets/doc1.png)
+It is the most powerful multi-pass preprocessor for Java but also it can be used everywhere for text processing if the destination technology supports Java like comment definitions. The Initial version was developed in 2002 by Igor Maznitsa to make easier development for J2ME platform to avoid bunch of repeated class sources for different devices, so that the preprocessor is a powerful tool to avoid DRY (Don't Repeat Yourself) problems. Injection of preprocessor directives into Java comments allows to keep full compatibility with standard Java development chain and make transparent usage in all Java IDEs. 
   
-How to use
-===========
+# How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
 
 The Preprocessor can be used by different ways:
@@ -45,7 +43,7 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.0.1</version>
+                <version>6.1.0</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -67,17 +65,16 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
     </build>    
 ```
 
-How to use from command line
-=============================
+# How to use from command line
 The Preprocessor jar can be started under Java as a console application. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
 ```
-java -jar jcp-6.0.1.jar  --i:./test --o:./result
+java -jar jcp-6.1.0.jar  --i:./test --o:./result
 ```
 The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions) 
 
 More complex example:
 ```
-java -jar jcp-6.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-6.1.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -88,9 +85,9 @@ java -jar jcp-6.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - --o use ./result as destination folder
 - --p define named global variable HelloWorld? with the 'Hello world' content 
 - --z turn on checking of file content before replacement, if the same content then preprocessor will not replace the file  
+- --es allow whitespace between comment and directive (by default it is turned off)
 
-The Main idea
-==============
+# The Main idea
 The Java language was born without any preprocessor in creator's mind and even now there are not any plans to include preprocessing into Java. It was good until mass usage Java on mobile and TV devices where we have bunches of half-compatible devices with (sometime) very bizarre standard framework implementations. In the case, preprocessing allows to decrease support of sources dramatically.  
 The only possible way to include preprocessing directives into Java and to not break standard processes and Java tool chain is to inject them into comments, take a look at the example below:
 ```Java
@@ -115,8 +112,7 @@ public static final void testproc()
 }
 ```
 
-Multi-sectioned documents
-==========================
+# Multi-sectioned documents
 Java sources usually have sections, there are the import section and the main section thus JCP has support for such case and there are three section where the preprocessor can write results - the prefix, the middle part and the postfix. Usually I use the prefix to form the import section for Java files. You can switch the text output for sections with //#prefix[+|-] and //#postfix[+|-] directives. 
 ```Java
 //#prefix+
@@ -129,9 +125,8 @@ Java sources usually have sections, there are the import section and the main se
   public static void main(String ... args){}
  }
 ```
-OMG! It allows to remove all your comments!
-============================================
+# OMG! It allows to remove all your comments!
 Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface 
 ```
-java -jar ./jcp-6.0.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-6.1.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
