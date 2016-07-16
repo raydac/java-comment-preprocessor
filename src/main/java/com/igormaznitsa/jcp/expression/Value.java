@@ -268,23 +268,19 @@ public final class Value implements ExpressionItem {
   @Nonnull
   public String toString() {
     switch (type) {
-      case BOOLEAN: {
+      case BOOLEAN:
         return asBoolean().toString();
-      }
-      case INT: {
+      case INT:
         return asLong().toString();
-      }
-      case UNKNOWN: {
+      case UNKNOWN:
         return "<UNKNOWN>";
-      }
-      case FLOAT: {
+      case FLOAT:
         return asFloat().toString();
-      }
-      case STRING: {
+      case STRING:
         return asString();
-      }
+      default:
+        return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
     }
-    return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
   }
 
   @Override

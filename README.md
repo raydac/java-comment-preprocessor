@@ -8,6 +8,9 @@
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](https://money.yandex.ru/embed/small.xml?account=41001158080699&quickpay=small&yamoney-payment-type=on&button-text=01&button-size=l&button-color=orange&targets=%D0%9F%D0%BE%D0%B6%D0%B5%D1%80%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%BD%D0%B0+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B+%D1%81+%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8B%D0%BC+%D0%B8%D1%81%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%BC+%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC&default-sum=100&successURL=)
 
 # Changelog
+- **6.1.1-SNAPSHOT**
+  - [#10](https://github.com/raydac/java-comment-preprocessor/issues/10), added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case)
+
 - **6.1.0**
   - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__
   - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string, it supports generation of strings in BASE64 format and format of java byte array, the second argument allows to select format "base64"|"base64s"|"byte[]"|"byte[]s"

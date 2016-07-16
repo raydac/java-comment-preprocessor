@@ -23,6 +23,8 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.util.Arrays;
 import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.Map;
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 
 public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContextTest {
@@ -65,8 +67,36 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
     }
   }
 
+  protected static Map<String,Value> var(final Map<String,Value> map, final String name, final Value val){
+    map.put(name, val);
+    return map;
+  }
+  
+  protected static Map<String,Value> var(final String name, final Value val){
+    final Map<String,Value> result = new HashMap<String, Value>();
+    result.put(name, val);
+    return result;
+  }
+  
   protected void assertFunction(final String expression, final Value expected) throws Exception {
+    this.assertFunction(expression, expected, null, null);
+  }
+
+  protected void assertFunction(final String expression, final Value expected, final Map<String,Value> localVars, final Map<String, Value> globalVars) throws Exception {
     final PreprocessorContext context = preparePreprocessorContext("./");
+    
+    if (localVars!=null){
+      for(final Map.Entry<String,Value> e : localVars.entrySet()){
+        context.setLocalVariable(e.getKey(), e.getValue());
+      }
+    }
+
+    if (globalVars!=null){
+      for(final Map.Entry<String,Value> e : globalVars.entrySet()){
+        context.setLocalVariable(e.getKey(), e.getValue());
+      }
+    }
+
     final Value result = Expression.evalExpression(expression, context);
     assertEquals("Must be equals", expected, result);
   }

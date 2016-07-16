@@ -15,6 +15,9 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_TEXT;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ATTR;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_LIST;
@@ -63,6 +66,7 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionSTR2JAVA(),
     new FunctionSTRLEN(),
     new FunctionISSUBSTR(),
+    new FunctionIS(),
     new FunctionEVALFILE(),
     new FunctionBINFILE(),
     new FunctionXML_GET(),
@@ -77,6 +81,16 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionXML_XELEMENT()
   };
 
+  public static final Map<String,AbstractFunction> FUNCTION_NAME_MAP;
+  
+  static {
+    final Map<String,AbstractFunction> map = new HashMap<String, AbstractFunction>();
+    for(final AbstractFunction f : ALL_FUNCTIONS){
+      if (map.put(f.getName(), f)!=null) throw new Error("Detected unexpected overriden function : "+f.getName());
+    }
+    FUNCTION_NAME_MAP = Collections.unmodifiableMap(map);
+  }
+  
   /**
    * Allows to find a function handler instance for its class
    *
@@ -112,14 +126,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    */
   @Nullable
   public static AbstractFunction findForName(@Nonnull final String str) {
-    AbstractFunction result = null;
-    for (final AbstractFunction func : ALL_FUNCTIONS) {
-      if (func.getName().equals(str)) {
-        result = func;
-        break;
-      }
-    }
-    return result;
+    return FUNCTION_NAME_MAP.get(str);
   }
 
   /**
