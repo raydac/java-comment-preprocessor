@@ -133,3 +133,20 @@ Sometime it is very useful to remove all comments from my sources at all, JCP ha
 ```
 java -jar ./jcp-6.1.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
+# Public snapshot repository for the plugin
+To make accessible the snapshot version of the plugin during development, I have tuned public maven snapshot repository which can be added into project with snippet
+```xml
+<repositories>
+ <repository>
+  <id>coldcore.ru-snapshots</id>
+  <name>ColdCore.RU Mvn Snapshots</name>
+  <url>http://coldcore.ru/m2</url>
+  <snapshots>
+   <enabled>true</enabled>
+  </snapshots>
+  <releases>
+   <enabled>false</enabled>
+  </releases>
+ </repository>
+</repositories>
+```
