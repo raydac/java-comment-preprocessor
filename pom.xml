@@ -20,7 +20,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-    <maven.home>${user.home}/Programs/apache-maven-3.3.9</maven.home>
+    <maven.home>${user.home}/SDKs/apache-maven-3.3.9</maven.home>
     <min.maven.api>${project.prerequisites.maven}</min.maven.api>
   </properties>
 
@@ -63,6 +63,15 @@
   </licenses>
 
   <profiles>
+    <profile>
+      <id>localrepo</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>local-oss-git-repo</id>
+          <url>file:///home/igorm/Projects_PET/iam-oss-mvn-snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
     <profile>
       <id>integration-tests</id>
       <build>

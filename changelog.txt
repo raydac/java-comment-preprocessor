@@ -1,5 +1,6 @@
-6.1.1
-- 
+6.1.1 (under development)
+ - #10, added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case)
+ - improved the BINFILE function to support byte arrays in Golang, added types "uint8[]" and  "uint8[]s"
 
 6.1.0 (03 jul 2016)
 - implemented request #9, added support of whitespace between directive and comment, in command line it is `--es` option and in MAVEN and ANT it is boolean parameter `allowWhitespace`, by default it is turned off

@@ -10,6 +10,7 @@
 # Changelog
 - **6.1.1-SNAPSHOT**
   - [#10](https://github.com/raydac/java-comment-preprocessor/issues/10), added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case)
+  - improved the BINFILE function to support byte arrays in Golang, added types `uint8[]` and  `uint8[]s`
 
 - **6.1.0**
   - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__

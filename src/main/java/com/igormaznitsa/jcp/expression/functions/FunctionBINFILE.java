@@ -44,7 +44,9 @@ public class FunctionBINFILE extends AbstractFunction {
     BASE64("base64"),
     BASE64_SPLITTED("base64s"),
     BYTEARRAY("byte[]"),
-    BYTEARRAY_SPLITTED("byte[]s");
+    BYTEARRAY_SPLITTED("byte[]s"),
+    UINT8("uint8[]"),
+    UINT8_SPLITTED("uint8[]s");
 
     private final String name;
 
@@ -149,6 +151,14 @@ public class FunctionBINFILE extends AbstractFunction {
           result = convertToJBytes(theFile, 80, endOfLine);
         }
         break;
+        case UINT8: {
+          result = convertToUINT8(theFile, -1, endOfLine);
+        }
+        break;
+        case UINT8_SPLITTED: {
+          result = convertToUINT8(theFile, 80, endOfLine);
+        }
+        break;
         default:
           throw new Error("Unexpected type : " + type);
       }
@@ -156,6 +166,33 @@ public class FunctionBINFILE extends AbstractFunction {
     } catch (Exception ex) {
       throw context.makeException("Unexpected exception", ex);
     }
+  }
+
+  @Nonnull
+  private String convertToUINT8(@Nonnull final File file, final int lineLength, @Nonnull final String endOfLine) throws IOException {
+    final StringBuilder result = new StringBuilder(512);
+    final byte[] array = FileUtils.readFileToByteArray(file);
+
+    int endLinePos = lineLength;
+
+    boolean addNextLine = false;
+
+    for (final byte b : array) {
+      if (addNextLine) {
+        addNextLine = false;
+        result.append(endOfLine);
+      }
+      if (result.length() > 0) {
+        result.append(',');
+      }
+      result.append(Integer.toString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+      if (lineLength > 0 && result.length() >= endLinePos) {
+        addNextLine = true;
+        endLinePos = result.length() + lineLength;
+      }
+    }
+
+    return result.toString();
   }
 
   @Nonnull

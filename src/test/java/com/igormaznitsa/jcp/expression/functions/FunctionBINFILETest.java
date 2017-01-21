@@ -57,7 +57,32 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("binfile(\"./eval/TestBin.txt\",\"byte[]s\")", context);
     final String eof = System.getProperty("line.separator");
-    assertEquals("(byte)0x48,(byte)0x65,(byte)0x6C,(byte)0x6C,(byte)0x6F,(byte)0x20,(byte)0x50,(byte)0x72"+eof+",(byte)0x65,(byte)0x70,(byte)0x72,(byte)0x6F,(byte)0x63,(byte)0x65,(byte)0x73,(byte)0x73"+eof+",(byte)0x6F,(byte)0x72,(byte)0x21", result.asString().trim());
+    assertEquals("(byte)0x48,(byte)0x65,(byte)0x6C,(byte)0x6C,(byte)0x6F,(byte)0x20,(byte)0x50,(byte)0x72" + eof + ",(byte)0x65,(byte)0x70,(byte)0x72,(byte)0x6F,(byte)0x63,(byte)0x65,(byte)0x73,(byte)0x73" + eof + ",(byte)0x6F,(byte)0x72,(byte)0x21", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
+  public void testExecution_UINT8ArrayEncoding() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("binfile(\"./eval/TestBinLong.txt\",\"uint8[]\")", context);
+    assertEquals("72,101,108,108,111,32,80,114,101,112,114,111,99,101,115,115,111,114,33,32,105,116,32,105,115,32,118,101,114,121,32,118,101,114,121,32,118,101,114,121,32,108,111,110,103,32,108,105,110,101,32,116,111,32,102,105,108,108,32,116,104,101,32,102,105,108,101,33,32,115,111,109,101,116,105,109,101,32,105,116,32,105,115,32,117,115,101,102,117,108,32,102,111,114,32,116,101,115,116,115,33,10,97,108,115,32,73,32,100,101,99,105,100,101,100,32,116,111,32,97,100,100,32,111,110,101,32,109,111,114,101,32,108,105,110,101,46", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
+  public void testExecution_UINT8ArrayEncodingSplitted() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("binfile(\"./eval/TestBinLong.txt\",\"uint8[]s\")", context);
+    final String eof = System.getProperty("line.separator");
+    assertEquals("72,101,108,108,111,32,80,114,101,112,114,111,99,101,115,115,111,114,33,32,105,116" + eof
+        + ",32,105,115,32,118,101,114,121,32,118,101,114,121,32,118,101,114,121,32,108,111" + eof
+        + ",110,103,32,108,105,110,101,32,116,111,32,102,105,108,108,32,116,104,101,32,102" + eof
+        + ",105,108,101,33,32,115,111,109,101,116,105,109,101,32,105,116,32,105,115,32,117" + eof
+        + ",115,101,102,117,108,32,102,111,114,32,116,101,115,116,115,33,10,97,108,115,32,73" + eof
+        + ",32,100,101,99,105,100,101,100,32,116,111,32,97,100,100,32,111,110,101,32,109,111" + eof
+        + ",114,101,32,108,105,110,101,46", result.asString().trim());
     assertDestinationFolderEmpty();
   }
 
@@ -89,7 +114,7 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING,ValueType.STRING}});
+    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING, ValueType.STRING}});
   }
 
   @Override
