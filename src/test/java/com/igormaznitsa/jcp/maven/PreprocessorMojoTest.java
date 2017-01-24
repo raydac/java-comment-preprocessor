@@ -65,6 +65,10 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     final PreprocessorMojo mojo = (PreprocessorMojo) lookupMojo("preprocess", testPom);
     assertNotNull("Must not be null", mojo);
 
+    assertFalse(mojo.isSkip());
+    mojo.setSkip(true);
+    assertTrue(mojo.isSkip());
+    
     final PreprocessorContext context = mojo.makePreprocessorContext();
 
     assertEquals("/", context.getSourceDirectories());

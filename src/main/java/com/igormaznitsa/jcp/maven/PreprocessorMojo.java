@@ -174,6 +174,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private boolean useTestSources;
 
   /**
+   * Skip preprocessing.
+   * @since 6.1.1
+   */
+  @Parameter(alias = "skip", property = "jcp.preprocess.skip", defaultValue = "false")
+  private boolean skip;
+  
+  /**
    * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
    */
   @Parameter(alias = "compareDestination", defaultValue = "false")
@@ -183,6 +190,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     super();
   }
 
+  public void setSkip(final boolean flag) {
+    this.skip = flag;
+  }
+  
+  public boolean isSkip() {
+    return this.skip;
+  }
+  
   public void setUseTestSources(final boolean flag) {
     this.useTestSources = flag;
   }
@@ -456,26 +471,31 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    PreprocessorContext context = null;
+    if (this.isSkip()) {
+      getLog().info("Skip preprocessing");
+    } else {
+      PreprocessorContext context = null;
 
-    try {
-      context = makePreprocessorContext();
-    } catch (Exception ex) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
-    }
-
-    try {
-      final JCPreprocessor preprocessor = new JCPreprocessor(context);
-      preprocessor.execute();
-      if (!getKeepSrcRoot()) {
-        replaceSourceRootByPreprocessingDestinationFolder(context);
+      try {
+        context = makePreprocessorContext();
       }
-    } catch (Exception ex) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
-    }
+      catch (Exception ex) {
+        final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+        throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
+      }
 
+      try {
+        final JCPreprocessor preprocessor = new JCPreprocessor(context);
+        preprocessor.execute();
+        if (!getKeepSrcRoot()) {
+          replaceSourceRootByPreprocessingDestinationFolder(context);
+        }
+      }
+      catch (Exception ex) {
+        final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+        throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
+      }
+    }
   }
 
   @Override
