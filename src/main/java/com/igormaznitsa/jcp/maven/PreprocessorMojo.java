@@ -368,7 +368,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     } else if (this.project != null) {
       final StringBuilder accum = new StringBuilder();
 
-      for (final String srcRoot : (this.useTestSources ? this.testCompileSourceRoots : this.compileSourceRoots)) {
+      for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
         if (accum.length() > 0) {
           accum.append(';');
         }
@@ -384,7 +384,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       final String sourceDirectories = context.getSourceDirectories();
       final String[] splitted = sourceDirectories.split(";");
 
-      final List<String> sourceRoots = this.useTestSources ? this.testCompileSourceRoots : this.compileSourceRoots;
+      final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<String>();
       for (final String src : sourceRoots) {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
@@ -417,12 +417,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setPreprocessorLogger(this);
 
     if (this.project != null) {
-      final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project);
+      final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project, getVerbose() || getLog().isDebugEnabled());
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
     context.setSourceDirectories(assertNotNull("Source root list must not be null", makeSourceRootList()));
-    context.setDestinationDirectory(assertNotNull(this.useTestSources ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath()));
+    context.setDestinationDirectory(assertNotNull(this.getUseTestSources() ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath()));
 
     if (this.inEncoding != null) {
       context.setInCharacterEncoding(this.inEncoding);

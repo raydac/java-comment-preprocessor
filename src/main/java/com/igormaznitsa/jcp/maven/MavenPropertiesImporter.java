@@ -79,20 +79,22 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     context.logInfo("Added MAVEN property " + varName + '=' + textValue);
   }
 
-  private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value) {
+  private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value, final boolean verbose) {
     if (insideVarMap.containsKey(name)) {
       throw context.makeException("Duplicated importing value detected [" + name + ']', null);
     }
     insideVarMap.put(name, value);
-    printInfoAboutVarIntoLog(context, name, value.asString());
+    if (verbose) {
+      printInfoAboutVarIntoLog(context, name, value.asString());
+    }
   }
 
-  public MavenPropertiesImporter(@Nonnull final PreprocessorContext context, @Nonnull final MavenProject project) {
+  public MavenPropertiesImporter(@Nonnull final PreprocessorContext context, @Nonnull final MavenProject project, final boolean logAddedProperties) {
     this.project = project;
     for (final String paramName : TO_IMPORT) {
       final String varName = "mvn." + paramName.toLowerCase(Locale.ENGLISH);
       final String value = getProperty(this.project, paramName);
-      addVariableIntoInsideMap(context, varName, Value.valueOf(value));
+      addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
     }
 
     // add active profile ids
@@ -103,13 +105,13 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
       }
       profileIds.append(profile.getId());
     }
-    addVariableIntoInsideMap(context, "mvn.project.activeprofiles", Value.valueOf(profileIds.toString()));
+    addVariableIntoInsideMap(context, "mvn.project.activeprofiles", Value.valueOf(profileIds.toString()),logAddedProperties);
 
     // add properties
     for (final String propertyName : this.project.getProperties().stringPropertyNames()) {
       final String varName = "mvn.project.property." + propertyName.toLowerCase(Locale.ENGLISH).replace(' ', '_');
       final String value = this.project.getProperties().getProperty(propertyName);
-      addVariableIntoInsideMap(context, varName, Value.valueOf(value));
+      addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
     }
   }
 
