@@ -11,8 +11,8 @@
 - **6.1.1-SNAPSHOT**
   - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
   - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase [#14](https://github.com/raydac/java-comment-preprocessor/issues/14)
-  - MAVEN: added 'ignoreMissingSources' boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
-  - MAVEN: added 'skip'boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` [#13](https://github.com/raydac/java-comment-preprocessor/issues/13)
+  - MAVEN: added `ignoreMissingSources` boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
+  - MAVEN: added `skip` boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` [#13](https://github.com/raydac/java-comment-preprocessor/issues/13)
   -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case) [#10](https://github.com/raydac/java-comment-preprocessor/issues/10)
   -  CORE: improved the BINFILE function to support byte arrays in Golang, added types `uint8[]` and  `uint8[]s`
 
