@@ -96,6 +96,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private String outEncoding;
 
   /**
+   * Flag to ignore missing source folders, if false then mojo fail for any missing source folder, if true then missing folder will be ignored.
+   * @since 6.1.1
+   */
+  @Parameter(alias="ignoreMissingSources", defaultValue = "false")
+  private boolean ignoreMissingSources;
+  
+  /**
    * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
    */
   @Parameter(alias = "excluded")
@@ -190,6 +197,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     super();
   }
 
+  public void setIgnoreMissingSources(final boolean flag) {
+    this.ignoreMissingSources = flag;
+  }
+  
+  public boolean isIgnoreMissingSources() {
+    return this.ignoreMissingSources;
+  }
+  
   public void setSkip(final boolean flag) {
     this.skip = flag;
   }
@@ -369,10 +384,30 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       final StringBuilder accum = new StringBuilder();
 
       for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
+        final boolean folderPresented = new File(srcRoot).isDirectory();
+        
+        if (!folderPresented) {
+          getLog().debug("Can't find source folder : "+srcRoot);
+        }
+        
+        String textToAppend = null;
+        
+        if (folderPresented) {
+          textToAppend = srcRoot;
+        } else {
+          if (this.isIgnoreMissingSources()) {
+            textToAppend = null;
+          } else {
+            textToAppend = srcRoot;
+          }
+        }
+          
+        if (textToAppend!=null) {
         if (accum.length() > 0) {
           accum.append(';');
         }
         accum.append(srcRoot);
+        }
       }
       result = accum.toString();
     }
@@ -412,7 +447,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   }
 
   @Nonnull
-  PreprocessorContext makePreprocessorContext() throws IOException {
+  PreprocessorContext makePreprocessorContext(@Nonnull final String sourceFoldersInPreprocessorFormat) throws IOException {
     final PreprocessorContext context = new PreprocessorContext();
     context.setPreprocessorLogger(this);
 
@@ -421,7 +456,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    context.setSourceDirectories(assertNotNull("Source root list must not be null", makeSourceRootList()));
+    context.setSourceDirectories(sourceFoldersInPreprocessorFormat);
     context.setDestinationDirectory(assertNotNull(this.getUseTestSources() ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath()));
 
     if (this.inEncoding != null) {
@@ -476,24 +511,39 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     } else {
       PreprocessorContext context = null;
 
-      try {
-        context = makePreprocessorContext();
-      }
-      catch (Exception ex) {
-        final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-        throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
-      }
+      final String sourceFoldersInPreprocessingFormat = makeSourceRootList();
 
-      try {
-        final JCPreprocessor preprocessor = new JCPreprocessor(context);
-        preprocessor.execute();
-        if (!getKeepSrcRoot()) {
-          replaceSourceRootByPreprocessingDestinationFolder(context);
+      boolean skipPreprocessing = false;
+
+      if (sourceFoldersInPreprocessingFormat == null || sourceFoldersInPreprocessingFormat.isEmpty()) {
+        if (isIgnoreMissingSources()) {
+          getLog().warn("Source folders are not provided, preprocessing is skipped.");
+          skipPreprocessing = true;
+        } else {
+          throw new MojoFailureException("Can't find source folders to preprocess, check parameters and project type!");
         }
       }
-      catch (Exception ex) {
-        final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-        throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
+
+      if (!skipPreprocessing) {
+        try {
+          context = makePreprocessorContext(sourceFoldersInPreprocessingFormat);
+        }
+        catch (Exception ex) {
+          final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+          throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
+        }
+
+        try {
+          final JCPreprocessor preprocessor = new JCPreprocessor(context);
+          preprocessor.execute();
+          if (!getKeepSrcRoot()) {
+            replaceSourceRootByPreprocessingDestinationFolder(context);
+          }
+        }
+        catch (Exception ex) {
+          final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
+          throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
+        }
       }
     }
   }

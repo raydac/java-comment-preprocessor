@@ -69,7 +69,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     mojo.setSkip(true);
     assertTrue(mojo.isSkip());
     
-    final PreprocessorContext context = mojo.makePreprocessorContext();
+    final PreprocessorContext context = mojo.makePreprocessorContext("/");
 
     assertEquals("/", context.getSourceDirectories());
     assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
