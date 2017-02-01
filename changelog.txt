@@ -4,7 +4,7 @@
  - MAVEN: added 'ignoreMissingSources' boolean parameter, allows to skip preprocessing if source folders not found or not provided #12
  - MAVEN: added 'skip'boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` #13
  -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case), #10
- -  CORE: improved the BINFILE function to support byte arrays in Golang, added types "uint8[]" and  "uint8[]s"
+ -  CORE: improved the BINFILE function to support byte arrays in Golang, added types `uint8[]`, `uint8[]s`, `int8[]` and `int8[]s` (`s` means splitting to lines to avoid too long text line)
 
 6.1.0 (03 jul 2016)
 - implemented request #9, added support of whitespace between directive and comment, in command line it is `--es` option and in MAVEN and ANT it is boolean parameter `allowWhitespace`, by default it is turned off
