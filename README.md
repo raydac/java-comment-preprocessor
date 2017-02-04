@@ -14,7 +14,7 @@
   - MAVEN: added `ignoreMissingSources` boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
   - MAVEN: added `skip` boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` [#13](https://github.com/raydac/java-comment-preprocessor/issues/13)
   -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case) [#10](https://github.com/raydac/java-comment-preprocessor/issues/10)
-  -  CORE: improved the BINFILE function to support byte arrays in Golang, added types `uint8[]`, `uint8[]s`, `int8[]` and `int8[]s` (`s` means splitting to lines to avoid too long text line)
+  -  CORE: improved the BINFILE function, it allows `base64|byte[]|uint8[]|int8` and modifiers `s|d|ds|sd` where s - means splitting to lines and d - means deflate compression
 
 - **6.1.0**
   - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__

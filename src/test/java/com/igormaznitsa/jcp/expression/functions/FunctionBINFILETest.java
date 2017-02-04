@@ -34,6 +34,15 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
   }
 
   @Test
+  public void testExecution_Base64Encoding_Deflate() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("binfile(\"./eval/TestBin.txt\",\"base64d\")", context);
+    assertEquals("eNrzSM3JyVcIKEotKMpPTi0uzi9SBABHuwc9", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
   public void testExecution_Base64EncodingSplitted() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
@@ -80,6 +89,15 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
   }
 
   @Test
+  public void testExecution_DEFLATEINT8ArrayEncoding() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("binfile(\"./eval/TestBinLong.txt\",\"int8[]d\")", context);
+    assertEquals("120,-38,77,-116,49,10,-62,64,16,69,-5,-100,-30,-25,2,-98,67,59,-81,16,-78,19,93,-104,100,100,103,35,-40,25,45,-67,-116,10,-126,-92,-16,12,51,55,50,-111,20,54,-97,-57,-121,-9,108,-76,-69,-115,-10,-74,23,-4,98,31,-8,-39,-81,62,-8,-80,124,-10,-16,-21,-124,79,-65,21,107,98,22,108,19,29,-110,-44,-92,42,-87,68,-52,-120,-118,35,-91,-45,-33,-80,116,59,112,-20,8,89,-48,68,102,-28,61,-51,64,37,84,90,-54,-79,-91,-59,-20,-107,-102,-98,-47,72,66,38,-51,90,22,21,43,54,8,84,-57,64,97,14,84,33,64,-90,86,43,-119,126,-43,-43,23,-66,-35,76,-84", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
   public void testExecution_UINT8ArrayEncodingSplitted() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
@@ -112,6 +130,22 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
         + ",115,32,117,115,101,102,117,108,32,102,111,114,32,116,101,115,116,115,33,10,97,108" + eof
         + ",115,32,73,32,100,101,99,105,100,101,100,32,116,111,32,97,100,100,32,111,110,101" + eof
         + ",32,109,111,114,101,32,108,105,110,101,46", result.asString().trim());
+    assertDestinationFolderEmpty();
+  }
+
+  @Test
+  public void testExecution_DEFLATEINT8ArrayEncodingSplitted() throws Exception {
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
+    final Value result = Expression.evalExpression("binfile(\"./eval/TestBinLong.txt\",\"int8[]ds\")", context);
+    final String eof = System.getProperty("line.separator");
+    assertEquals("120,-38,77,-116,49,10,-62,64,16,69,-5,-100,-30,-25,2,-98,67,59,-81,16,-78,19,93,-104" + eof
+        + ",100,100,103,35,-40,25,45,-67,-116,10,-126,-92,-16,12,51,55,50,-111,20,54,-97,-57" + eof
+        + ",-121,-9,108,-76,-69,-115,-10,-74,23,-4,98,31,-8,-39,-81,62,-8,-80,124,-10,-16,-21" + eof
+        + ",-124,79,-65,21,107,98,22,108,19,29,-110,-44,-92,42,-87,68,-52,-120,-118,35,-91" + eof
+        + ",-45,-33,-80,116,59,112,-20,8,89,-48,68,102,-28,61,-51,64,37,84,90,-54,-79,-91,-59" + eof
+        + ",-20,-107,-102,-98,-47,72,66,38,-51,90,22,21,43,54,8,84,-57,64,97,14,84,33,64,-90" + eof
+        + ",86,43,-119,126,-43,-43,23,-66,-35,76,-84", result.asString().trim());
     assertDestinationFolderEmpty();
   }
 

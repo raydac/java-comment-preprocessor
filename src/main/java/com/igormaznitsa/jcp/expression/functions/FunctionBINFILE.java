@@ -22,6 +22,7 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.*;
 
 import java.util.Locale;
+import java.util.zip.Deflater;
 import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
@@ -42,13 +43,9 @@ public class FunctionBINFILE extends AbstractFunction {
 
   private enum Type {
     BASE64("base64"),
-    BASE64_SPLITTED("base64s"),
     BYTEARRAY("byte[]"),
-    BYTEARRAY_SPLITTED("byte[]s"),
     UINT8("uint8[]"),
-    UINT8_SPLITTED("uint8[]s"),
-    INT8("int8[]"),
-    INT8_SPLITTED("int8[]s");
+    INT8("int8[]");
 
     private final String name;
 
@@ -67,7 +64,7 @@ public class FunctionBINFILE extends AbstractFunction {
       if (name != null) {
         final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
         for (final Type t : values()) {
-          if (t.name.equals(name)) {
+          if (name.startsWith(t.name)) {
             result = t;
             break;
           }
@@ -75,6 +72,16 @@ public class FunctionBINFILE extends AbstractFunction {
       }
       return result;
     }
+  }
+
+  private static boolean hasSplitFlag(@Nonnull final String name, @Nonnull final Type type) {
+    final String opts = name.substring(type.name.length());
+    return opts.contains("S") || opts.contains("s");
+  }
+
+  private static boolean hasDeflateFlag(@Nonnull final String name, @Nonnull final Type type) {
+    final String opts = name.substring(type.name.length());
+    return opts.contains("D") || opts.contains("d");
   }
 
   @Override
@@ -87,11 +94,14 @@ public class FunctionBINFILE extends AbstractFunction {
   @Nonnull
   public String getReference() {
     final StringBuilder buffer = new StringBuilder();
-    for(final Type t : Type.values()){
-      if (buffer.length()>0)buffer.append('|');
+    for (final Type t : Type.values()) {
+      if (buffer.length() > 0) {
+        buffer.append('|');
+      }
       buffer.append(t.name);
     }
-    return "encode bin file into string representation, allowed types ["+buffer.toString()+']';
+    buffer.append("[s|d|sd|ds]");
+    return "encode bin file into string representation, allowed types [" + buffer.toString() + "], s - split to lines, d - deflater compression";
   }
 
   @Override
@@ -115,16 +125,21 @@ public class FunctionBINFILE extends AbstractFunction {
   @Nonnull
   public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath, @Nonnull final Value encodeType) {
     final String filePath = strfilePath.asString();
-    final Type type = Type.find(encodeType.asString());
+    final String encodeTypeAsString = encodeType.asString();
+    final Type type = Type.find(encodeTypeAsString);
 
     if (type == null) {
       throw context.makeException("Unsupported encode type [" + encodeType.asString() + ']', null);
     }
 
+    final int lengthOfLine  = hasSplitFlag(encodeTypeAsString, type) ? 80 : -1;
+    final boolean doDeflate  = hasDeflateFlag(encodeTypeAsString, type);
+    
     final File theFile;
     try {
       theFile = context.findFileInSourceFolder(filePath);
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       throw context.makeException("Can't find bin file '" + filePath + '\'', null);
     }
 
@@ -134,133 +149,94 @@ public class FunctionBINFILE extends AbstractFunction {
 
     try {
       final String endOfLine = System.getProperty("line.separator", "\r\n");
-      final String result;
-
-      switch (type) {
-        case BASE64: {
-          result = convertToBase64(theFile, -1, endOfLine).trim();
-        }
-        break;
-        case BASE64_SPLITTED: {
-          result = convertToBase64(theFile, 80, endOfLine).trim();
-        }
-        break;
-        case BYTEARRAY: {
-          result = convertToJBytes(theFile, -1, endOfLine);
-        }
-        break;
-        case BYTEARRAY_SPLITTED: {
-          result = convertToJBytes(theFile, 80, endOfLine);
-        }
-        break;
-        case UINT8: {
-          result = convertToUINT8(theFile, -1, endOfLine);
-        }
-        break;
-        case UINT8_SPLITTED: {
-          result = convertToUINT8(theFile, 80, endOfLine);
-        }
-        break;
-        case INT8: {
-          result = convertToINT8(theFile, -1, endOfLine);
-        }
-        break;
-        case INT8_SPLITTED: {
-          result = convertToINT8(theFile, 80, endOfLine);
-        }
-        break;
-        default:
-          throw new Error("Unexpected type : " + type);
-      }
-      return Value.valueOf(result);
-    } catch (Exception ex) {
+      return Value.valueOf(convertTo(theFile, type, doDeflate, lengthOfLine, endOfLine));
+    }
+    catch (Exception ex) {
       throw context.makeException("Unexpected exception", ex);
     }
   }
 
   @Nonnull
-  private String convertToUINT8(@Nonnull final File file, final int lineLength, @Nonnull final String endOfLine) throws IOException {
+  private static String convertTo(@Nonnull final File file, @Nonnull final Type type, final boolean deflate, final int lineLength, @Nonnull final String endOfLine) throws IOException {
     final StringBuilder result = new StringBuilder(512);
-    final byte[] array = FileUtils.readFileToByteArray(file);
+    byte[] array = FileUtils.readFileToByteArray(file);
+
+    if (deflate) {
+      array = deflate(array);
+    }
 
     int endLinePos = lineLength;
-
     boolean addNextLine = false;
 
-    for (final byte b : array) {
-      if (addNextLine) {
-        addNextLine = false;
-        result.append(endOfLine);
+    switch (type) {
+      case BASE64: {
+        final String baseEncoded = new Base64(lineLength, endOfLine.getBytes("UTF-8"), false).encodeAsString(array);
+        result.append(baseEncoded.trim());
       }
-      if (result.length() > 0) {
-        result.append(',');
+      break;
+      case BYTEARRAY:
+      case INT8:
+      case UINT8: {
+        for (final byte b : array) {
+          if (addNextLine) {
+            addNextLine = false;
+            result.append(endOfLine);
+          }
+          
+          if (result.length() > 0) {
+            result.append(',');
+          }
+
+          switch (type) {
+            case BYTEARRAY: {
+              result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+            }
+            break;
+            case UINT8: {
+              result.append(Integer.toString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+            }
+            break;
+            case INT8: {
+              result.append(Integer.toString(b).toUpperCase(Locale.ENGLISH));
+            }
+            break;
+            default:
+              throw new Error("Unexpected type : " + type);
+          }
+
+          if (lineLength > 0 && result.length() >= endLinePos) {
+            addNextLine = true;
+            endLinePos = result.length() + lineLength;
+          }
+        }
+
       }
-      result.append(Integer.toString(b & 0xFF).toUpperCase(Locale.ENGLISH));
-      if (lineLength > 0 && result.length() >= endLinePos) {
-        addNextLine = true;
-        endLinePos = result.length() + lineLength;
-      }
+      break;
+      default:
+        throw new Error("Unexpected type : " + type);
     }
 
     return result.toString();
   }
 
   @Nonnull
-  private String convertToINT8(@Nonnull final File file, final int lineLength, @Nonnull final String endOfLine) throws IOException {
-    final StringBuilder result = new StringBuilder(512);
-    final byte[] array = FileUtils.readFileToByteArray(file);
+  private static byte[] deflate(@Nonnull final byte[] data) throws IOException {
+    final Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
+    deflater.setInput(data);
 
-    int endLinePos = lineLength;
+    final ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
 
-    boolean addNextLine = false;
-
-    for (final byte b : array) {
-      if (addNextLine) {
-        addNextLine = false;
-        result.append(endOfLine);
-      }
-      if (result.length() > 0) {
-        result.append(',');
-      }
-      result.append(Integer.toString(b));
-      if (lineLength > 0 && result.length() >= endLinePos) {
-        addNextLine = true;
-        endLinePos = result.length() + lineLength;
-      }
+    deflater.finish();
+    final byte[] buffer = new byte[1024];
+    while (!deflater.finished()) {
+      final int count = deflater.deflate(buffer);
+      outputStream.write(buffer, 0, count);
     }
+    outputStream.close();
+    final byte[] output = outputStream.toByteArray();
 
-    return result.toString();
-  }
+    deflater.end();
 
-  @Nonnull
-  private String convertToJBytes(@Nonnull final File file, final int lineLength, @Nonnull final String endOfLine) throws IOException {
-    final StringBuilder result = new StringBuilder(512);
-    final byte[] array = FileUtils.readFileToByteArray(file);
-
-    int endLinePos = lineLength;
-
-    boolean addNextLine = false;
-
-    for (final byte b : array) {
-      if (addNextLine) {
-        addNextLine = false;
-        result.append(endOfLine);
-      }
-      if (result.length() > 0) {
-        result.append(',');
-      }
-      result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
-      if (lineLength > 0 && result.length() >= endLinePos) {
-        addNextLine = true;
-        endLinePos = result.length() + lineLength;
-      }
-    }
-
-    return result.toString();
-  }
-
-  @Nonnull
-  private String convertToBase64(@Nonnull final File file, final int lineLength, @Nonnull final String lineSeparator) throws IOException {
-    return new Base64(lineLength, lineSeparator.getBytes("UTF-8"), false).encodeAsString(FileUtils.readFileToByteArray(file));
+    return output;
   }
 }

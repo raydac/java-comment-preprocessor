@@ -89,8 +89,18 @@ public abstract class AbstractUseCaseTest {
       }else{
         final boolean equalsLength = f.length() == f2.length();
         if (!equalsLength){
-          System.err.println("WRONG FILE CONTENT\r\n---------------\r\n"+FileUtils.readFileToString(f2, "UTF-8")+"\r\n---------------");
-          fail("Wrong length of result file (" + f.getName() + ", expected length = "+f2.length()+" but detected "+f.length());
+          final String fileOne = FileUtils.readFileToString(f, "UTF-8");
+          final String fileTwo = FileUtils.readFileToString(f2, "UTF-8");
+          
+          System.err.println("FILE ONE=====================");
+          System.err.println(fileOne);
+          System.err.println("=============================");
+          
+          System.err.println("FILE TWO=====================");
+          System.err.println(fileTwo);
+          System.err.println("=============================");
+          
+          assertEquals("File content must be same", fileOne,fileTwo);
         }
         assertEquals("Checksum must be equal ("+f.getName()+')',FileUtils.checksumCRC32(f),FileUtils.checksumCRC32(f2));
       }
@@ -98,6 +108,10 @@ public abstract class AbstractUseCaseTest {
   }
   
   protected void tuneContext(final PreprocessorContext context){
+    
+  }
+  
+  private static void printDifference(final String etalon, final String value) {
     
   }
   
