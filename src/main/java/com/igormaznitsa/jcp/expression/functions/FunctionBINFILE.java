@@ -64,7 +64,7 @@ public class FunctionBINFILE extends AbstractFunction {
       if (name != null) {
         final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
         for (final Type t : values()) {
-          if (name.startsWith(t.name)) {
+          if (normalized.startsWith(t.name)) {
             result = t;
             break;
           }

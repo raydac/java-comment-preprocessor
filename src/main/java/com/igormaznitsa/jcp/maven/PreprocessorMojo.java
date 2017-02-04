@@ -37,6 +37,8 @@ import org.apache.maven.project.MavenProject;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import org.apache.commons.lang3.StringUtils;
+import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
@@ -390,7 +392,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
           getLog().debug("Can't find source folder : "+srcRoot);
         }
         
-        String textToAppend = null;
+        String textToAppend;
         
         if (folderPresented) {
           textToAppend = srcRoot;
@@ -515,7 +517,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
       boolean skipPreprocessing = false;
 
-      if (sourceFoldersInPreprocessingFormat == null || sourceFoldersInPreprocessingFormat.isEmpty()) {
+      if (StringUtils.isEmpty(sourceFoldersInPreprocessingFormat)) {
         if (isIgnoreMissingSources()) {
           getLog().warn("Source folders are not provided, preprocessing is skipped.");
           skipPreprocessing = true;
@@ -526,7 +528,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
       if (!skipPreprocessing) {
         try {
-          context = makePreprocessorContext(sourceFoldersInPreprocessingFormat);
+          context = makePreprocessorContext(Assertions.assertNotNull(sourceFoldersInPreprocessingFormat));
         }
         catch (Exception ex) {
           final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
