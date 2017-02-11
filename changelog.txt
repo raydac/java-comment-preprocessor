@@ -1,3 +1,6 @@
+6.1.2-SNAPSHOT (under development)
+ - 
+
 6.1.1 (11 feb 2017)
  - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
  - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase #14

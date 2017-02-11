@@ -8,6 +8,7 @@
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](https://money.yandex.ru/embed/small.xml?account=41001158080699&quickpay=small&yamoney-payment-type=on&button-text=01&button-size=l&button-color=orange&targets=%D0%9F%D0%BE%D0%B6%D0%B5%D1%80%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%BD%D0%B0+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B+%D1%81+%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8B%D0%BC+%D0%B8%D1%81%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%BC+%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC&default-sum=100&successURL=)
 
 # Changelog
+
 - **6.1.1**
   - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
   - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase [#14](https://github.com/raydac/java-comment-preprocessor/issues/14)
