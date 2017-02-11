@@ -66,6 +66,7 @@ public final class FunctionSTR2GO extends AbstractFunction {
     }
   }
 
+  @Nonnull
   private static String toUnicode(final char c) {
     final StringBuilder result = new StringBuilder(4);
     final String hex = Integer.toHexString(c);
