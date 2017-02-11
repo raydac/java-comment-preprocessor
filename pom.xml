@@ -8,7 +8,7 @@
    
   <groupId>com.igormaznitsa</groupId>
   <artifactId>jcp</artifactId>
-  <version>6.1.1-SNAPSHOT</version>
+  <version>6.1.1</version>
   <packaging>maven-plugin</packaging>
 
   <name>Java Comment Preprocessor</name>
