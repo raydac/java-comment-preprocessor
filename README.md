@@ -14,6 +14,7 @@
   - MAVEN: added `ignoreMissingSources` boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
   - MAVEN: added `skip` boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` [#13](https://github.com/raydac/java-comment-preprocessor/issues/13)
   -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case) [#10](https://github.com/raydac/java-comment-preprocessor/issues/10)
+  -  CORE: added `STR str2go(STR)` function to escape strings to be represented in Golang sources
   -  CORE: improved the BINFILE function, it allows `base64|byte[]|uint8[]|int8` and modifiers `s|d|ds|sd` where s - means splitting to lines and d - means deflate compression
 
 - **6.1.0**

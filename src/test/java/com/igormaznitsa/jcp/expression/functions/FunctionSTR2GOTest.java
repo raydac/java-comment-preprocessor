@@ -21,39 +21,41 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionSTR2JAVATest extends AbstractFunctionTest {
+public class FunctionSTR2GOTest extends AbstractFunctionTest {
 
-  private static final FunctionSTR2JAVA HANDLER = new FunctionSTR2JAVA();
+  private static final FunctionSTR2GO HANDLER = new FunctionSTR2GO();
 
   @Test
   public void testExecution_NoSplit() throws Exception {
-    assertFunction("str2java(\"\",false)", Value.valueOf(""));
-    assertFunction("str2java(\"hello\nworld\",false)", Value.valueOf("hello\\nworld"));
+    assertFunction("str2go(\"\",false)", Value.valueOf(""));
+    assertFunction("str2go(\"hello\nworld\",false)", Value.valueOf("hello\\nworld"));
     assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_Split() throws Exception {
-    assertFunction("str2java(\"\",true)", Value.valueOf("\"\""));
-    assertFunction("str2java(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\""));
-    assertFunction("str2java(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
+    assertFunction("str2go(\"\",true)", Value.valueOf("\"\""));
+    assertFunction("str2go(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\""));
+    assertFunction("str2go(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
+    assertFunction("str2go(\"\u000bhello\u0007\nworld\n\",true)", Value.valueOf("\"\\vhello\\a\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
+    assertFunction("str2go(\"Здравствуй\nМир\n\",true)", Value.valueOf("\"\\u0417\\u0434\\u0440\\u0430\\u0432\\u0441\\u0442\\u0432\\u0443\\u0439\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"\\u041c\\u0438\\u0440\\n\""));
     assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_wrongCases() throws Exception {
-    assertFunctionException("str2java()");
-    assertFunctionException("str2java(1,2)");
-    assertFunctionException("str2java(true)");
-    assertFunctionException("str2java(true,\"ss\")");
-    assertFunctionException("str2java(\"ss\",3)");
+    assertFunctionException("str2go()");
+    assertFunctionException("str2go(1,2)");
+    assertFunctionException("str2go(true)");
+    assertFunctionException("str2go(true,\"ss\")");
+    assertFunctionException("str2go(\"ss\",3)");
     assertDestinationFolderEmpty();
    
   }
 
   @Override
   public void testName() {
-    assertEquals("str2java", HANDLER.getName());
+    assertEquals("str2go", HANDLER.getName());
   }
 
   @Override

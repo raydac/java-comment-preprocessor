@@ -64,6 +64,7 @@ public abstract class AbstractFunction implements ExpressionItem {
     new FunctionSTR2JSON(),
     new FunctionSTR2XML(),
     new FunctionSTR2JAVA(),
+    new FunctionSTR2GO(),
     new FunctionSTRLEN(),
     new FunctionISSUBSTR(),
     new FunctionIS(),
