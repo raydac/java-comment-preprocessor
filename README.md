@@ -9,6 +9,9 @@
 
 # Changelog
 
+- **6.1.2-SNAPSHOT (under development)**
+  - CORE: comma in splitted lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
+
 - **6.1.1**
   - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
   - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase [#14](https://github.com/raydac/java-comment-preprocessor/issues/14)
