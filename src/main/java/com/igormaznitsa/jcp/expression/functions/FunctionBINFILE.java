@@ -178,13 +178,13 @@ public class FunctionBINFILE extends AbstractFunction {
       case INT8:
       case UINT8: {
         for (final byte b : array) {
+          if (result.length() > 0) {
+            result.append(',');
+          }
+
           if (addNextLine) {
             addNextLine = false;
             result.append(endOfLine);
-          }
-          
-          if (result.length() > 0) {
-            result.append(',');
           }
 
           switch (type) {
