@@ -77,7 +77,8 @@ public final class JCPreprocessor {
     new VerboseHandler(),
     new GlobalVariableDefiningFileHandler(),
     new GlobalVariableHandler(),
-    new CareForLastNextLineCharHandler()
+    new CareForLastNextLineCharHandler(),
+    new PreserveIndentDirectiveHandler(),
   };
 
   @Nonnull

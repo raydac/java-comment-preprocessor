@@ -58,7 +58,8 @@ public final class PreprocessorContext {
   private boolean keepNonExecutingLines = false;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
-  private boolean allowWhitespace=false;
+  private boolean allowWhitespace = false;
+  private boolean preserveIndent = false;
 
   private String sourceDirectories;
   private String destinationDirectory;
@@ -132,6 +133,7 @@ public final class PreprocessorContext {
     this.fileOutputDisabled = context.fileOutputDisabled;
     this.keepNonExecutingLines = context.keepNonExecutingLines;
     this.allowWhitespace = context.allowWhitespace;
+    this.preserveIndent = context.preserveIndent;
     this.sourceDirectories = context.sourceDirectories;
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
@@ -291,6 +293,23 @@ public final class PreprocessorContext {
     return this.allowWhitespace;
   }
   
+  /**
+   * Set flag to control whether prefixes "//$", "//$$" should replaced
+   * with equal length whitespace strings rather than just removed.
+   * @param flag true enables preserve-indent, false disables it
+   */
+  public void setPreserveIndent(final boolean flag){
+    this.preserveIndent = flag;
+  }
+
+  /**
+   * Get flag indicating whether preserve-indent is enabled or disabled.
+   * @return true if preserve-indent is enabled, false otherwise
+   */
+  public boolean isPreserveIndent() {
+    return this.preserveIndent;
+  }
+
   /**
    * Set source directories
    *
