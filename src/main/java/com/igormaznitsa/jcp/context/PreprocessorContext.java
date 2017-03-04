@@ -60,6 +60,7 @@ public final class PreprocessorContext {
   private boolean compareDestination = false;
   private boolean allowWhitespace = false;
   private boolean preserveIndent = false;
+  private boolean excludeGit = false;
 
   private String sourceDirectories;
   private String destinationDirectory;
@@ -134,6 +135,7 @@ public final class PreprocessorContext {
     this.keepNonExecutingLines = context.keepNonExecutingLines;
     this.allowWhitespace = context.allowWhitespace;
     this.preserveIndent = context.preserveIndent;
+    this.excludeGit = context.excludeGit;
     this.sourceDirectories = context.sourceDirectories;
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
@@ -308,6 +310,23 @@ public final class PreprocessorContext {
    */
   public boolean isPreserveIndent() {
     return this.preserveIndent;
+  }
+
+  /**
+   * Set flag to control whether processing of ".git" directories
+   * is excluded.
+   * @param flag true skips ".git" directories, false does not skip them
+   */
+  public void setExcludeGit(final boolean flag){
+    this.excludeGit = flag;
+  }
+
+  /**
+   * Get flag indicating whether exclude-git is enabled or disabled.
+   * @return true if exclude-git is enabled, false otherwise
+   */
+  public boolean isExcludeGit() {
+    return this.excludeGit;
   }
 
   /**
