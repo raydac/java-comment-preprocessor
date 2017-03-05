@@ -1,0 +1,4 @@
+ test var has HUZZAAA! value
+      test var has HUZZAAA! value
+   test var has /*$TEST_VAR$*/ value
+         test var has /*$TEST_VAR$*/ value

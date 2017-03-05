@@ -115,6 +115,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
   private boolean allowWhitespace = false;
+  private boolean preserveIndent = false;
   
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
@@ -126,6 +127,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
    */
   public void setAllowWhitespace(final boolean flag) {
     this.allowWhitespace = flag;
+  }
+  
+  /**
+   * Set the "preserveident" attribute, to preserve spaces occupied by '//$' and '//$$' directives.
+   * @param flag true to preserve positions of tail chars in lines marked by '//$$' and '//$', false otherwise
+   */
+  public void setPreserveIndent(final boolean flag) {
+    this.preserveIndent = flag;
   }
   
   /**
@@ -316,7 +325,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setKeepLines(this.keepLines);
     context.setCareForLastNextLine(this.careForLastNextLine);
     context.setAllowWhitespace(this.allowWhitespace);
-
+    context.setPreserveIndent(this.preserveIndent);
+    
     fillCfgFiles(context);
     fillGlobalVars(context);
 

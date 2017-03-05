@@ -79,6 +79,14 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testPreserveIndent() throws Exception {
+    antTask.setPreserveIndent(true);
+    assertTrue("Must be true", antTask.generatePreprocessorContext().isPreserveIndent());
+    antTask.setPreserveIndent(false);
+    assertFalse("Must be false", antTask.generatePreprocessorContext().isPreserveIndent());
+  }
+
+  @Test
   public void testSetDestination() throws Exception {
     antTask.setDestination(THIS_DIRECTORY);
     assertEquals("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());

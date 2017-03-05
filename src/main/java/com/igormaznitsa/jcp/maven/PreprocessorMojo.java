@@ -177,6 +177,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private boolean allowWhitespace;
   
   /**
+   * Preserve indents in lines marked by '//$' and '//$$' directives. The Directives will be replaced by white spaces chars.
+   */
+  @Parameter(alias = "preserveIndent", defaultValue = "false")
+  private boolean preserveIndent;
+  
+  /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    */
   @Parameter(alias = "useTestSources", defaultValue = "false")
@@ -213,6 +219,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   
   public boolean isSkip() {
     return this.skip;
+  }
+
+  public void setPreserveIndent(final boolean flag) {
+    this.preserveIndent = flag;
+  }
+  
+  public boolean getPreserveIndent() {
+    return this.preserveIndent;
   }
   
   public void setUseTestSources(final boolean flag) {
@@ -485,7 +499,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setKeepLines(this.keepLines);
     context.setFileOutputDisabled(this.disableOut);
     context.setAllowWhitespace(this.allowWhitespace);
-
+    context.setPreserveIndent(this.preserveIndent);
+    
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {
       for (final File file : this.cfgFiles) {

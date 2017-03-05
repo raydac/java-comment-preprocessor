@@ -37,6 +37,7 @@
                     <keepLines>true</keepLines>
                     <careForLastNextLine>true</careForLastNextLine>
                     <allowWhitespace>true</allowWhitespace>
+                    <preserveIndent>true</preserveIndent>
                     <cfgFiles>
                         <file>test1.cfg</file>
                         <file>test2.cfg</file>

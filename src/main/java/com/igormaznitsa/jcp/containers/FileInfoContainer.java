@@ -233,46 +233,45 @@ public class FileInfoContainer {
     }
   }
 
+  
   @Nonnull
   private String extractDoubleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    String r = null;
+    String tail;
     if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
       if (matcher.find()) {
-        r = matcher.group(1);
+        tail = matcher.group(1);
       } else {
         throw new Error("Unexpected situation, '//$$' directive is not found, contact developer! (" + line + ')');
       }
     } else {
-      r = PreprocessorUtils.extractTail("//$$", line);
+      tail = PreprocessorUtils.extractTail("//$$", line);
     }
+
     if (context.isPreserveIndent()) {
-      int indentLength = line.indexOf("$$") + "$$".length();
-      String indent = new String(new char[indentLength]).replace("\0", " ");
-      return indent + r;
+      tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
-    return r;
+    return tail;
   }
 
   @Nonnull
   private String extractSingleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    String r = null;
+    String tail;
     if (context.isAllowWhitespace()) {
       final Matcher matcher = DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
       if (matcher.find()) {
-        r = matcher.group(1);
+        tail = matcher.group(1);
       } else {
         throw new Error("Unexpected situation, '//$' directive is not found, contact developer! (" + line + ')');
       }
     } else {
-      r = PreprocessorUtils.extractTail("//$", line);
+      tail = PreprocessorUtils.extractTail("//$", line);
     }
+    
     if (context.isPreserveIndent()) {
-      int indentLength = line.indexOf("$")+"$".length();
-      String indent = new String(new char[indentLength]).replace("\0", " ");
-      return indent + r;
+      tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
-    return r;
+    return tail;
   }
 
   /**
