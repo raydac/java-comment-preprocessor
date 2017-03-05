@@ -85,7 +85,8 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Must be true", context.isCareForLastNextLine());
     assertTrue("Must be true", context.isCompareDestination());
     assertTrue("Must be true", context.isAllowWhitespace());
-
+    assertTrue("Must be true", context.isPreserveIndent());
+    
     final File[] cfgfiles = context.getConfigFiles();
     assertEquals("Must be two", 2, cfgfiles.length);
     assertEquals("Must be test1.cfg", "test1.cfg", cfgfiles[0].getName());

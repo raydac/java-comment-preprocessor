@@ -50,6 +50,7 @@ import org.apache.commons.io.*;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -184,6 +185,31 @@ public final class PreprocessorUtils {
     }
   }
 
+  @Nonnull
+  public static String replacePartByChar(@Nonnull final String text, final char chr, final int startPosition, final int length) {
+    Assertions.assertTrue("Start position must be great or equals zero", startPosition >= 0);
+    Assertions.assertTrue("Length must be great or equals zero", length >= 0);
+
+    final StringBuilder result = new StringBuilder(text.length());
+
+    result.append(text.subSequence(0, Math.min(text.length(), startPosition)));
+    for (int i = startPosition; i < Math.min(text.length(), startPosition + length); i++) {
+      result.append(chr);
+    }
+    result.append(text.subSequence(Math.min(startPosition + length, text.length()), text.length()));
+
+    return result.toString();
+  }
+ 
+  @Nonnull
+  public static String generateStringForChar(final char chr, final int length) {
+    final StringBuilder buffer = new StringBuilder(Math.max(length,1));
+    for (int i = 0; i < length; i++) {
+      buffer.append(chr);
+    }
+    return buffer.toString();
+  }
+ 
   @Nonnull
   public static String processMacroses(@Nonnull final String processingString, @Nonnull final PreprocessorContext context) {
     int position;

@@ -33,6 +33,22 @@ public class PreprocessorUtilsTest {
   }
 
   @Test
+  public void testGenerateStringForChar() throws Exception {
+    assertEquals("", PreprocessorUtils.generateStringForChar(' ', -1));
+    assertEquals("", PreprocessorUtils.generateStringForChar(' ', 0));
+    assertEquals(" ", PreprocessorUtils.generateStringForChar(' ', 1));
+    assertEquals("aaa", PreprocessorUtils.generateStringForChar('a', 3));
+  }
+
+  @Test
+  public void testReplacePartByChar() throws Exception {
+    assertEquals("", PreprocessorUtils.replacePartByChar("", ' ', 33, 44));
+    assertEquals("a  de", PreprocessorUtils.replacePartByChar("abcde", ' ', 1, 2));
+    assertEquals("a    ", PreprocessorUtils.replacePartByChar("abcde", ' ', 1, 8));
+    assertEquals("abc  ", PreprocessorUtils.replacePartByChar("abcde", ' ', 3, 8));
+  }
+
+  @Test
   public void testMakeFileReader_charsetAndBufferSizeChange() throws Exception {
     final Charset defaultCharset = Charset.defaultCharset();
     final File testFile = new File(PreprocessorUtilsTest.class.getResource("somefile.txt").toURI());
