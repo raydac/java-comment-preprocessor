@@ -79,6 +79,7 @@ public final class JCPreprocessor {
     new GlobalVariableHandler(),
     new CareForLastNextLineCharHandler(),
     new PreserveIndentDirectiveHandler(),
+    new ExcludeGitDirectiveHandler(),
   };
 
   @Nonnull
@@ -235,6 +236,10 @@ public final class JCPreprocessor {
     final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
 
     for (final File dir : srcDirs) {
+      if (dir.getName().equals(".git") && context.isExcludeGit()) {
+        continue;
+      }
+
       final String canonicalPathForSrcDirectory = dir.getCanonicalPath();
       final Set<File> allFoundFiles = findAllFiles(dir);
 
@@ -262,6 +267,9 @@ public final class JCPreprocessor {
     final File[] allowedFiles = dir.listFiles();
     for (final File file : allowedFiles) {
       if (file.isDirectory()) {
+        if (file.getName().equals(".git") && context.isExcludeGit()) {
+          continue;
+        }
         result.addAll(findAllFiles(file));
       } else {
         result.add(file);
