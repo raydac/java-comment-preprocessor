@@ -159,6 +159,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private Properties globalVars;
 
   /**
+   * List of sub-folders in source folders to be excluded from preprocessing, ANT patterns allowed.
+   */
+  @Parameter(alias = "excludedFolders")
+  private String [] excludedFolders = new String[0];
+  
+  /**
    * List of external configuration files.
    */
   @Parameter(alias = "cfgFiles")
@@ -205,6 +211,16 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     super();
   }
 
+  public void setExcludedFolders(@Nonnull @MustNotContainNull final String ... antPatterns) {
+    this.excludedFolders = Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns));
+  }
+  
+  @Nonnull
+  @MustNotContainNull
+  public String [] getExcludedFolders() {
+    return this.excludedFolders;
+  }
+  
   public void setIgnoreMissingSources(final boolean flag) {
     this.ignoreMissingSources = flag;
   }
@@ -500,6 +516,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setFileOutputDisabled(this.disableOut);
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
+    context.setExcludedFolderPatterns(this.excludedFolders);
     
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {

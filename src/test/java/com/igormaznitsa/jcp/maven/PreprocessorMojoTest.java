@@ -25,6 +25,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 
 public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
@@ -86,6 +87,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Must be true", context.isCompareDestination());
     assertTrue("Must be true", context.isAllowWhitespace());
     assertTrue("Must be true", context.isPreserveIndent());
+    assertArrayEquals(new String[]{".git",".hg","**/.cvs"}, context.getExcludedFolderPatterns());
     
     final File[] cfgfiles = context.getConfigFiles();
     assertEquals("Must be two", 2, cfgfiles.length);

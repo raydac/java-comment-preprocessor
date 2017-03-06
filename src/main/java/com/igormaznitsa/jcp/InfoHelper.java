@@ -42,7 +42,7 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getCopyright() {
-    return "2003-2016 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+    return "2003-2017 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
   @Nonnull

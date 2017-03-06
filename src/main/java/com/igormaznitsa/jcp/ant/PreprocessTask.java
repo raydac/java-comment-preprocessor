@@ -107,6 +107,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private String outCharSet = null;
   private String excludedExtensions = null;
   private String processing = null;
+  private String excludedFolders = null;
   private boolean disableOut = false;
   private boolean verbose = false;
   private boolean clearDstFlag = false;
@@ -120,7 +121,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
   private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
-
+  
   /**
    * Set the "allowWhitespace", it allows to manage the mode to allow whitespace between the // and the #.
    * @param flag true if whitespace is allowed, false otherwise
@@ -210,6 +211,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     this.processing = ext;
   }
 
+  /**
+   * Set the "excludedfolders" attribute, sub-folders in source folders to be excluded from preprocessing, ANT patterns allowed, ${path.separator} should be used for multiple items
+   * @param value folder names as string
+   */
+  public void setExcludedFolders(@Nonnull final String value) {
+    this.excludedFolders = value;
+  }
+  
   /**
    * Set the "clear" attribute, it is a boolean attribute allows to make the preprocessor to clear the destination directory before its work
    *
@@ -326,6 +335,10 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setCareForLastNextLine(this.careForLastNextLine);
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
+    
+    if (this.excludedFolders!=null && !this.excludedFolders.isEmpty()) {
+      context.setExcludedFolderPatterns(this.excludedFolders.split("\\"+File.pathSeparator));
+    }
     
     fillCfgFiles(context);
     fillGlobalVars(context);

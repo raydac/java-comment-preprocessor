@@ -33,9 +33,11 @@ import org.apache.commons.io.FileUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 
 /**
- * The main class implements the Java Comment Preprocessor, it has the main method and can be started from a command string
+ * The main class implements the Java Comment Preprocessor, it has the main
+ * method and can be started from a command string
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -79,6 +81,7 @@ public final class JCPreprocessor {
     new GlobalVariableHandler(),
     new CareForLastNextLineCharHandler(),
     new PreserveIndentDirectiveHandler(),
+    new ExcludeFoldersHandler()
   };
 
   @Nonnull
@@ -103,7 +106,7 @@ public final class JCPreprocessor {
     processCfgFiles();
 
     final File[] srcDirs = context.getSourceDirectoryAsFiles();
-    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs);
+    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs, context.getExcludedFolderPatterns());
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
@@ -134,7 +137,8 @@ public final class JCPreprocessor {
 
       try {
         val = Expression.evalExpression(condition, context);
-      } catch (IllegalArgumentException ex) {
+      }
+      catch (IllegalArgumentException ex) {
         throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, ex);
       }
 
@@ -219,7 +223,8 @@ public final class JCPreprocessor {
     if (context.doesClearDestinationDirBefore() && destinationExistsAndDirectory) {
       try {
         FileUtils.cleanDirectory(destination);
-      } catch (IOException ex) {
+      }
+      catch (IOException ex) {
         throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
       }
     }
@@ -231,12 +236,19 @@ public final class JCPreprocessor {
 
   @Nonnull
   @MustNotContainNull
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final File[] srcDirs) throws IOException {
+  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final File[] srcDirs, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
 
+    final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
     for (final File dir : srcDirs) {
-      final String canonicalPathForSrcDirectory = dir.getCanonicalPath();
-      final Set<File> allFoundFiles = findAllFiles(dir);
+      String canonicalPathForSrcDirectory = dir.getCanonicalPath();
+      
+      if (!canonicalPathForSrcDirectory.endsWith(File.separator)) {
+        canonicalPathForSrcDirectory += File.separator;
+      }
+
+      final Set<File> allFoundFiles = findAllFiles(canonicalPathForSrcDirectory, dir, antPathMatcher, excludedFolderPatterns);
 
       for (final File file : allFoundFiles) {
         if (context.isFileExcludedFromProcess(file)) {
@@ -247,7 +259,7 @@ public final class JCPreprocessor {
         final String filePath = file.getCanonicalPath();
         final String relativePath = filePath.substring(canonicalPathForSrcDirectory.length());
 
-        final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !context.isFileAllowedToBeProcessed(file));
+        final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !this.context.isFileAllowedToBeProcessed(file));
         result.add(reference);
       }
 
@@ -257,12 +269,35 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private Set<File> findAllFiles(@Nonnull final File dir) {
+  private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
     final Set<File> result = new HashSet<File>();
     final File[] allowedFiles = dir.listFiles();
+    
     for (final File file : allowedFiles) {
       if (file.isDirectory()) {
-        result.addAll(findAllFiles(file));
+        boolean process = true;
+
+        final String folderPath = file.getCanonicalPath();
+
+        String excludingPattern = null;
+
+        if (excludedFolderPatterns.length != 0) {
+          final String subPathInBase = folderPath.substring(baseFolderCanonicalPath.length());
+
+          for (final String s : excludedFolderPatterns) {
+            if (antPathMatcher.match(s, subPathInBase)) {
+              excludingPattern = s;
+              process = false;
+              break;
+            }
+          }
+        }
+
+        if (process) {
+          result.addAll(findAllFiles(baseFolderCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
+        } else {
+          this.context.logForVerbose("Folder '" + folderPath + "' excluded for pattern '" + excludingPattern + "'");
+        }
       } else {
         result.add(file);
       }
@@ -279,7 +314,8 @@ public final class JCPreprocessor {
 
     try {
       preprocessorContext = processCommandString(null, args, normalizedStrings);
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       System.err.println("Error during command line processing [" + ex.getMessage() + ']');
       System.exit(1);
       throw new RuntimeException("To show compiler executiion stop");
@@ -289,7 +325,8 @@ public final class JCPreprocessor {
 
     try {
       preprocessor.execute();
-    } catch (Exception unexpected) {
+    }
+    catch (Exception unexpected) {
       System.err.println(PreprocessorException.referenceAsString(' ', unexpected));
       System.exit(1);
     }
@@ -354,7 +391,8 @@ public final class JCPreprocessor {
                 break;
               }
             }
-          } catch (Exception unexpected) {
+          }
+          catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
           }
 
@@ -380,7 +418,8 @@ public final class JCPreprocessor {
             if (context.isVerbose()) {
               context.logForVerbose("Register global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
             }
-          } catch (Exception unexpected) {
+          }
+          catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
           }
         }

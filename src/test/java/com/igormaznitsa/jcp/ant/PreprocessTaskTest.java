@@ -63,6 +63,13 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testExcludedFolders() throws Exception {
+    assertArrayEquals(new String[0], antTask.generatePreprocessorContext().getExcludedFolderPatterns());
+    antTask.setExcludedFolders(".git"+File.pathSeparator+"**/.cvs"+File.pathSeparator+".hg");
+    assertArrayEquals(new String[]{".git","**/.cvs",".hg"}, antTask.generatePreprocessorContext().getExcludedFolderPatterns());
+  }
+
+  @Test
   public void testCareForLastNextLine() throws Exception {
     antTask.setCareForLastNextLine(true);
     assertTrue("Must be true", antTask.generatePreprocessorContext().isCareForLastNextLine());

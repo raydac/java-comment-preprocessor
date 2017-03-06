@@ -10,6 +10,7 @@
 # Changelog
 
 - **6.1.2-SNAPSHOT (under development)**
+  - CORE: added `/ED:` command line option to exclude sub-folders from preprocessing (`excludedFolders` in Maven and ANT) with ANT pattern support.
   - CORE: added `/PI` command line option (`preserveIndent` in Maven and ANT), turn on mode to preserve indent when removing `//$` and `//$$`, thanks to [jamuir](https://github.com/jamuir)
   - CORE: comma in split lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
 

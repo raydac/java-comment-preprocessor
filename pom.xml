@@ -308,6 +308,11 @@
             <goals>
               <goal>check</goal>
             </goals>
+            <configuration>
+              <ignoreClasses>
+                <ignore>com.igormaznitsa.jcp.utils.antpathmatcher.*</ignore>
+              </ignoreClasses>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -352,7 +357,7 @@
                   <shadedPattern>hidden.jcp.org.apache.commons</shadedPattern>
                 </relocation>
               </relocations>
-              <artifactSet>
+               <artifactSet>
                 <includes>
                   <include>commons-io:*</include>
                   <include>commons-codec:*</include>
