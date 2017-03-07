@@ -96,6 +96,10 @@ public class ITPreprocessorMojo {
     try {
       classEntries = (List<JarEntry>) jarAnalyzer.getClassEntries();
 
+      for(final JarEntry ce : classEntries){
+        assertFalse(ce.getName().contains("excludedfolder"));
+      }
+      
       assertEquals("Must have only class", 1, classEntries.size());
       final JarEntry classEntry = classEntries.get(0);
       assertEquals("Class must be placed in the path", "com/igormaznitsa/dummyproject/testmain2.class", classEntry.getName());

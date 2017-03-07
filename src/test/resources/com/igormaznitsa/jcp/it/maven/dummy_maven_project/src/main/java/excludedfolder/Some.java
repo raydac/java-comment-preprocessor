@@ -1,0 +1,5 @@
+package excludedfolder
+
+class Some {
+
+}
