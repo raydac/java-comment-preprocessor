@@ -49,6 +49,28 @@ import static com.igormaznitsa.meta.common.utils.Assertions.*;
  */
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
 
+  private File sourceDirectory = null;
+  private File destinationDirectory = null;
+
+  private String inCharSet = null;
+  private String outCharSet = null;
+  private String excludedExtensions = null;
+  private String processing = null;
+  private String excludedFolders = null;
+  private boolean disableOut = false;
+  private boolean verbose = false;
+  private boolean clearDstFlag = false;
+  private boolean removeComments = false;
+  private boolean keepLines = false;
+  private boolean careForLastNextLine = false;
+  private boolean compareDestination = false;
+  private boolean allowWhitespace = false;
+  private boolean preserveIndent = false;
+  
+  private Map<String, Value> antVariables;
+  private final List<Global> globalVariables = new ArrayList<Global>();
+  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
+
   /**
    * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
    *
@@ -100,28 +122,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
   }
 
-  private File sourceDirectory = null;
-  private File destinationDirectory = null;
-
-  private String inCharSet = null;
-  private String outCharSet = null;
-  private String excludedExtensions = null;
-  private String processing = null;
-  private String excludedFolders = null;
-  private boolean disableOut = false;
-  private boolean verbose = false;
-  private boolean clearDstFlag = false;
-  private boolean removeComments = false;
-  private boolean keepLines = false;
-  private boolean careForLastNextLine = false;
-  private boolean compareDestination = false;
-  private boolean allowWhitespace = false;
-  private boolean preserveIndent = false;
-  
-  private Map<String, Value> antVariables;
-  private final List<Global> globalVariables = new ArrayList<Global>();
-  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
-  
   /**
    * Set the "allowWhitespace", it allows to manage the mode to allow whitespace between the // and the #.
    * @param flag true if whitespace is allowed, false otherwise

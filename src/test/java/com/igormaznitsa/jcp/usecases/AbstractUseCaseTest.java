@@ -106,12 +106,12 @@ public abstract class AbstractUseCaseTest {
       }
     }
   }
-  
+
+  /**
+   * Allows to tune preprocessor context.
+   * @param context preprocessor context
+   */
   protected void tuneContext(final PreprocessorContext context){
-    
-  }
-  
-  private static void printDifference(final String etalon, final String value) {
     
   }
   

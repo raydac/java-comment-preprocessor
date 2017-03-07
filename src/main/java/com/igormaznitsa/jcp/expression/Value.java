@@ -129,11 +129,11 @@ public final class Value implements ExpressionItem {
   public static Value recognizeRawString(@Nonnull final String str) {
     assertNotNull("Parameter is null", str);
 
-    if (str.equals("true")) {
+    if ("true".equals(str)) {
       return Value.BOOLEAN_TRUE;
     }
 
-    if (str.equals("false")) {
+    if ("false".equals(str)) {
       return Value.BOOLEAN_FALSE;
     }
 

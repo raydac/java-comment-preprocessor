@@ -159,7 +159,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private Properties globalVars;
 
   /**
-   * List of sub-folders in source folders to be excluded from preprocessing, ANT patterns allowed.
+   * List of sub-folders in source folders to be excluded from preprocessing, ANT path pattern format allowed.
    */
   @Parameter(alias = "excludedFolders")
   private String [] excludedFolders = new String[0];

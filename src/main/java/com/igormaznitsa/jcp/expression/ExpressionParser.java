@@ -503,7 +503,7 @@ public final class ExpressionParser {
             break;
             default: {
               builder.append(chr);
-            }
+            }break;
           }
         }
         break;

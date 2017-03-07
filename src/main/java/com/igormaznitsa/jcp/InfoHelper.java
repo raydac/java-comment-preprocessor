@@ -30,14 +30,15 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 public final class InfoHelper {
 
+  public static final String DELIMITER = "-------------------------------------------------";
+  
   private InfoHelper() {
   }
 
-  public static final String DELIMITER = "-------------------------------------------------";
 
   @Nonnull
   public static String getVersion() {
-    return "v6.1.1";
+    return "v6.1.2";
   }
 
   @Nonnull

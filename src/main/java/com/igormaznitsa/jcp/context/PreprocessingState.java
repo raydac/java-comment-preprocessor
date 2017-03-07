@@ -66,6 +66,26 @@ public final class PreprocessingState {
 
   public static final int MAX_WRITE_BUFFER_SIZE = 65536;
 
+  private final String globalInCharacterEncoding;
+  private final String globalOutCharacterEncoding;
+  private final TextFileDataContainer rootReference;
+  private final FileInfoContainer rootFileInfo;
+  private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
+  private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
+  private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<TextFileDataContainer>();
+  private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<ExcludeIfInfo>();
+  private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
+  private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
+  private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
+  private final boolean overrideOnlyIfContentChanged;
+  private ResetablePrinter currentPrinter;
+  private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
+  private TextFileDataContainer activeIf;
+  private TextFileDataContainer activeWhile;
+  private String lastReadString;
+  private final PreprocessorContext context;
+  private final boolean fake;
+
   public static class ExcludeIfInfo {
 
     private final FileInfoContainer fileInfoContainer;
@@ -99,25 +119,6 @@ public final class PreprocessingState {
     PREFIX,
     POSTFIX
   }
-  private final String globalInCharacterEncoding;
-  private final String globalOutCharacterEncoding;
-  private final TextFileDataContainer rootReference;
-  private final FileInfoContainer rootFileInfo;
-  private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<ExcludeIfInfo>();
-  private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
-  private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
-  private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
-  private final boolean overrideOnlyIfContentChanged;
-  private ResetablePrinter currentPrinter;
-  private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
-  private TextFileDataContainer activeIf;
-  private TextFileDataContainer activeWhile;
-  private String lastReadString;
-  private final PreprocessorContext context;
-  private final boolean fake;
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final String inEncoding, @Nonnull final String outEncoding) {
     this.fake = true;

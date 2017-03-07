@@ -64,7 +64,7 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
 
   @Override
   public int getUserFunctionArity(final String functionName) {
-    return functionName.equals("testfunc") ? 3 : -1;
+    return "testfunc".equals(functionName) ? 3 : -1;
   }
   
 }
