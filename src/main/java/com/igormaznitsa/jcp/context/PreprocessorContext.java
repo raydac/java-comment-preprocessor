@@ -37,7 +37,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
@@ -89,8 +88,6 @@ public final class PreprocessorContext {
 
   private String [] excludedFolderPatterns = new String[0];
   
-  private final AntPathMatcher antPathMatcher = new AntPathMatcher();
-  
   /**
    * The constructor
    */
@@ -108,7 +105,12 @@ public final class PreprocessorContext {
    * @param patterns array contains Ant path patterns
    */
   public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String ... patterns) {
-    this.excludedFolderPatterns = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
+    final String [] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
+    final String [] normalized = new String[value.length];
+    for(int i=0;i<value.length;i++){
+      normalized[i] = FilenameUtils.normalize(value[i],true);
+    }
+    this.excludedFolderPatterns = normalized;
   }
   
   /**

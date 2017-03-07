@@ -260,7 +260,7 @@ public final class AntPathMatcher implements PathMatcher {
     // up to last '**'
     while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
       String pattDir = pattDirs[pattIdxEnd];
-      if (pattDir.equals("**")) {
+      if ("**".equals(pattDir)) {
         break;
       }
       if (!matchStrings(pattDir, pathDirs[pathIdxEnd], uriTemplateVariables)) {
@@ -272,7 +272,7 @@ public final class AntPathMatcher implements PathMatcher {
     if (pathIdxStart > pathIdxEnd) {
       // String is exhausted
       for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-        if (!pattDirs[i].equals("**")) {
+        if (!"**".equals(pattDirs[i])) {
           return false;
         }
       }
@@ -282,7 +282,7 @@ public final class AntPathMatcher implements PathMatcher {
     while (pattIdxStart != pattIdxEnd && pathIdxStart <= pathIdxEnd) {
       int patIdxTmp = -1;
       for (int i = pattIdxStart + 1; i <= pattIdxEnd; i++) {
-        if (pattDirs[i].equals("**")) {
+        if ("**".equals(pattDirs[i])) {
           patIdxTmp = i;
           break;
         }
@@ -320,7 +320,7 @@ public final class AntPathMatcher implements PathMatcher {
     }
 
     for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-      if (!pattDirs[i].equals("**")) {
+      if (!"**".equals(pattDirs[i])) {
         return false;
       }
     }
@@ -603,8 +603,8 @@ public final class AntPathMatcher implements PathMatcher {
     int dotPos2 = pattern2.indexOf('.');
     String file2 = (dotPos2 == -1 ? pattern2 : pattern2.substring(0, dotPos2));
     String ext2 = (dotPos2 == -1 ? "" : pattern2.substring(dotPos2));
-    boolean ext1All = (ext1.equals(".*") || ext1.equals(""));
-    boolean ext2All = (ext2.equals(".*") || ext2.equals(""));
+    boolean ext1All = (".*".equals(ext1) || "".equals(ext1));
+    boolean ext2All = (".*".equals(ext2) || "".equals(ext2));
     if (!ext1All && !ext2All) {
       throw new IllegalArgumentException("Cannot combine patterns: " + pattern1 + " vs " + pattern2);
     }

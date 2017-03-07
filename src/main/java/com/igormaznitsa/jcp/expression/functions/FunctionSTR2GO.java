@@ -103,7 +103,7 @@ public final class FunctionSTR2GO extends AbstractFunction {
           } else {
             result.append(c);
           }
-        }
+        }break;
       }
     }
     

@@ -207,10 +207,6 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   @Parameter(alias = "compareDestination", defaultValue = "false")
   private boolean compareDestination;
 
-  public PreprocessorMojo() {
-    super();
-  }
-
   public void setExcludedFolders(@Nonnull @MustNotContainNull final String ... antPatterns) {
     this.excludedFolders = Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns));
   }

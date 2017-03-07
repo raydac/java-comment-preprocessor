@@ -42,6 +42,7 @@
                       <folder>.git</folder>
                       <folder>.hg</folder>
                       <folder>**/.cvs</folder>
+                      <folder>c:\hello\**\world</folder>
                     </excludedFolders>
                     <cfgFiles>
                         <file>test1.cfg</file>

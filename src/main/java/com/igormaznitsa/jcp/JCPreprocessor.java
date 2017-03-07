@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import org.apache.commons.io.FilenameUtils;
 import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 
 /**
@@ -273,6 +274,8 @@ public final class JCPreprocessor {
     final Set<File> result = new HashSet<File>();
     final File[] allowedFiles = dir.listFiles();
     
+    final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);
+    
     for (final File file : allowedFiles) {
       if (file.isDirectory()) {
         boolean process = true;
@@ -282,7 +285,7 @@ public final class JCPreprocessor {
         String excludingPattern = null;
 
         if (excludedFolderPatterns.length != 0) {
-          final String subPathInBase = folderPath.substring(baseFolderCanonicalPath.length());
+          final String subPathInBase = folderPath.substring(normalizedBasePath.length());
 
           for (final String s : excludedFolderPatterns) {
             if (antPathMatcher.match(s, subPathInBase)) {

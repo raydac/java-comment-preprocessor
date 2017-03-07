@@ -87,7 +87,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Must be true", context.isCompareDestination());
     assertTrue("Must be true", context.isAllowWhitespace());
     assertTrue("Must be true", context.isPreserveIndent());
-    assertArrayEquals(new String[]{".git",".hg","**/.cvs"}, context.getExcludedFolderPatterns());
+    assertArrayEquals(new String[]{".git",".hg","**/.cvs","c:/hello/**/world"}, context.getExcludedFolderPatterns());
     
     final File[] cfgfiles = context.getConfigFiles();
     assertEquals("Must be two", 2, cfgfiles.length);
