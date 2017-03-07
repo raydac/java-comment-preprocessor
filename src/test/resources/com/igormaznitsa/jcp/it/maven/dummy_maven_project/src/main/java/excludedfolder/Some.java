@@ -1,5 +1,9 @@
-package excludedfolder
+package excludedfolder;
 
-class Some {
+//#abort Must not be called!
 
+public class Some {
+  public Some(){
+    throw new Error("Must be excluded");
+  }
 }
