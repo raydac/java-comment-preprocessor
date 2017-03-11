@@ -74,6 +74,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private String source;
 
   /**
+   * Copy file attributes for copied and generated files.
+   * @since 6.1.2
+   */
+  @Parameter(alias = "copyFileAttributes", defaultValue = "false")
+  private boolean copyFileAttributes;
+  
+  /**
    * The Destination folder where generated sources will be placed in non-test mode.
    */
   @Parameter(alias = "destination", defaultValue = "${project.build.directory}/generated-sources/preprocessed")
@@ -239,6 +246,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   
   public boolean getPreserveIndent() {
     return this.preserveIndent;
+  }
+  
+  public void setCopyFileAttributes(final boolean flag) {
+    this.copyFileAttributes = flag;
+  }
+  
+  public boolean getCopyFileAttributes() {
+    return this.copyFileAttributes;
   }
   
   public void setUseTestSources(final boolean flag) {
@@ -513,6 +528,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
     context.setExcludedFolderPatterns(this.excludedFolders);
+    context.setCopyFileAttributes(this.copyFileAttributes);
     
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {

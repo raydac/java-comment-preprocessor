@@ -67,6 +67,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean compareDestination = false;
   private boolean allowWhitespace = false;
   private boolean preserveIndent = false;
+  private boolean copyFileAttributes = false;
   
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
@@ -123,6 +124,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
   }
 
+  /**
+   * Set the "copyfileattributes", it turns on mode to copy file attributes if file generated or copied.
+   * @param flag true if to copy attributes, false otherwise
+   */
+  public void setCopyFileAttributes(final boolean flag) {
+    this.copyFileAttributes = flag;
+  }
+  
   /**
    * Set the "allowWhitespace", it allows to manage the mode to allow whitespace between the // and the #.
    * @param flag true if whitespace is allowed, false otherwise
@@ -336,6 +345,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setCareForLastNextLine(this.careForLastNextLine);
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
+    context.setCopyFileAttributes(this.copyFileAttributes);
     
     if (this.excludedFolders!=null && !this.excludedFolders.isEmpty()) {
       context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders,File.pathSeparatorChar));

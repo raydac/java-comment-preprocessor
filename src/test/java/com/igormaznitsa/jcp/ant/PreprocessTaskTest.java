@@ -63,6 +63,13 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testCopyFileAttributes() throws Exception {
+    assertFalse(antTask.generatePreprocessorContext().isCopyFileAttributes());
+    antTask.setCopyFileAttributes(true);
+    assertTrue(antTask.generatePreprocessorContext().isCopyFileAttributes());
+  }
+  
+  @Test
   public void testExcludedFolders() throws Exception {
     assertArrayEquals(new String[0], antTask.generatePreprocessorContext().getExcludedFolderPatterns());
     antTask.setExcludedFolders(".git"+File.pathSeparator+"**/.cvs"+File.pathSeparator+".hg");
