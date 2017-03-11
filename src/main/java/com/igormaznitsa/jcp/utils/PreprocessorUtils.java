@@ -150,7 +150,7 @@ public final class PreprocessorUtils {
     return value.substring(prefix.length());
   }
 
-  public static void copyFile(@Nonnull final File source, @Nonnull final File dest) throws IOException {
+  public static void copyFile(@Nonnull final File source, @Nonnull final File dest, final boolean copyFileAttributes) throws IOException {
     assertNotNull("Source is null", source);
     assertNotNull("Destination file is null", dest);
 
@@ -183,8 +183,18 @@ public final class PreprocessorUtils {
       IOUtils.closeQuietly(fileDst);
       IOUtils.closeQuietly(fileSrc);
     }
+    
+      if (copyFileAttributes) {
+        copyFileAttributes(source, dest);
+      }
   }
 
+  public static void copyFileAttributes(@Nonnull final File from, @Nonnull final File to) {
+    to.setExecutable(from.canExecute());
+    to.setReadable(from.canRead());
+    to.setWritable(from.canWrite());
+  }
+  
   @Nonnull
   public static String replacePartByChar(@Nonnull final String text, final char chr, final int startPosition, final int length) {
     Assertions.assertTrue("Start position must be great or equals zero", startPosition >= 0);

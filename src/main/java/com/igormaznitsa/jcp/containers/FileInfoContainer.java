@@ -445,10 +445,15 @@ public class FileInfoContainer {
 
     if (!context.isFileOutputDisabled() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
+      
       final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
 
       if (context.isVerbose()) {
         context.logForVerbose("Content was " + (wasSaved ? "saved" : "not saved") + " into file '" + outFile + "\'");
+      }
+
+      if (this.sourceFile!=null && context.isCopyFileAttributes()) {
+        PreprocessorUtils.copyFileAttributes(this.sourceFile, outFile);
       }
     }
     return preprocessingState;

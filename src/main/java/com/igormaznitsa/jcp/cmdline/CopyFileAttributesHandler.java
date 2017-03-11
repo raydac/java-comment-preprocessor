@@ -26,7 +26,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
  */
 public class CopyFileAttributesHandler implements CommandLineHandler {
 
-  private static final String ARG_NAME = "/CA";
+  private static final String ARG_NAME = "/A";
 
   @Override
   @Nonnull

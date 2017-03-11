@@ -125,10 +125,14 @@ public class PreprocessorContextTest {
   }
   
   private static void assertPreprocessorContextMaps(final PreprocessorContext etalon, final PreprocessorContext that) throws Exception {
-    assertMapFields("globalVarTable", etalon, that);
-    assertMapFields("localVarTable", etalon, that);
-    assertMapFields("mapVariableNameToSpecialVarProcessor", etalon, that);
-    assertMapFields("sharedResources", etalon, that);
+    int detected = 0;
+    for(final Field f : PreprocessorContext.class.getDeclaredFields()) {
+      if (Modifier.isFinal(f.getModifiers()) && Map.class.isAssignableFrom(f.getType())) {
+        assertMapFields(f.getName(), etalon, that);
+        detected++;
+      }
+    }
+    assertEquals(4,detected);
   }
   
   private static void assertContextEquals(final Map<Field, Object> etalon, final Map<Field, Object> value) throws Exception {
