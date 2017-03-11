@@ -52,6 +52,7 @@
               <goal>preprocess</goal>
             </goals>
             <configuration>
+              <copyFileAttributes>true</copyFileAttributes>
               <allowWhitespace>true</allowWhitespace>
               <careForLastNextLine>true</careForLastNextLine>
               <verbose>true</verbose>

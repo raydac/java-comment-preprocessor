@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@SuppressWarnings("unchecked")
 public class ITPreprocessorMojo {
 
   private static void assertMainClass(final String jarFile, final String mainClass) throws Exception {
@@ -67,6 +68,15 @@ public class ITPreprocessorMojo {
     verifier.verifyErrorFreeLog();
   }
 
+  private static JarEntry findClassEntry(final JarAnalyzer jar, final String path) {
+    for(final JarEntry e : (List<JarEntry>)jar.getClassEntries()) {
+      if (path.equals(e.getName())) {
+        return e;
+      }
+    }
+    return null;
+  }
+  
   @Test
   @SuppressWarnings("unchecked")
   public void testPreprocessorUsage() throws Exception {
@@ -102,7 +112,7 @@ public class ITPreprocessorMojo {
       
       assertEquals("Must have only class", 1, classEntries.size());
       final JarEntry classEntry = classEntries.get(0);
-      assertEquals("Class must be placed in the path", "com/igormaznitsa/dummyproject/testmain2.class", classEntry.getName());
+      assertNotNull(findClassEntry(jarAnalyzer, "com/igormaznitsa/dummyproject/testmain2.class"));
 
       DataInputStream inStream = null;
       final byte[] buffer = new byte[(int) classEntry.getSize()];
