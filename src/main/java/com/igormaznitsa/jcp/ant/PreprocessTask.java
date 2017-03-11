@@ -40,6 +40,7 @@ import org.apache.tools.ant.Task;
 import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.*;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 /**
  * The class implements an ANT task to allow calls for preprocessing from ANT build scripts. Also it allows to out messages from preprocessor directives into the ANT log and read
@@ -337,7 +338,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setPreserveIndent(this.preserveIndent);
     
     if (this.excludedFolders!=null && !this.excludedFolders.isEmpty()) {
-      context.setExcludedFolderPatterns(this.excludedFolders.split("\\"+File.pathSeparator));
+      context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders,File.pathSeparatorChar));
     }
     
     fillCfgFiles(context);

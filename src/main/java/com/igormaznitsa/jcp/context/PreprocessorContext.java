@@ -61,7 +61,8 @@ public final class PreprocessorContext {
   private boolean compareDestination = false;
   private boolean allowWhitespace = false;
   private boolean preserveIndent = false;
-
+  private boolean copyFileAttributes = false;
+  
   private String sourceDirectories;
   private String destinationDirectory;
   private File destinationDirectoryFile;
@@ -164,7 +165,7 @@ public final class PreprocessorContext {
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
     this.sourceDirectoryFiles = context.sourceDirectoryFiles.clone();
-
+    this.copyFileAttributes = context.copyFileAttributes;
     this.careForLastNextLine = context.careForLastNextLine;
 
     this.processingFileExtensions.clear();
@@ -180,6 +181,8 @@ public final class PreprocessorContext {
 
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
+    this.excludedFolderPatterns = context.excludedFolderPatterns.clone();
+    
     this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
     this.sharedResources.putAll(context.sharedResources);
 
@@ -187,6 +190,8 @@ public final class PreprocessorContext {
 
     this.currentState = assertNotNull(context.currentState);
     this.cloned = true;
+    
+    this.preprocessorLogger = context.preprocessorLogger;
     
     final PreprocessingState theState = context.getPreprocessingState();
     this.currentInCloneSource = theState.peekFile();
@@ -880,6 +885,26 @@ public final class PreprocessorContext {
     return keepNonExecutingLines;
   }
 
+  /**
+   * Check that the preprocessor must copy file attributes.
+   * 
+   * @return true if the preprocessor must copy file attributes, false otherwise.
+   */
+  public boolean isCopyFileAttributes() {
+    return this.copyFileAttributes;
+  }
+  
+  /**
+   * Set the flag to copy file attributes.
+   * 
+   * @return the preprocessor context
+   */
+  @Nonnull
+  public PreprocessorContext setCopyFileAttributes(final boolean value) {
+    this.copyFileAttributes = value;
+    return this;
+  }
+  
   /**
    * Set a preprocessor extension, it is a module implements the PreprocessorExtension interface which can process and get some calls from a preprocessor during its work
    *

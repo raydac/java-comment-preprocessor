@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class SystemOutLogger implements PreprocessorLogger {
+public final class SystemOutLogger implements PreprocessorLogger {
   
   /**
    * Name of system property to enable debug level logging.
@@ -30,6 +30,17 @@ public class SystemOutLogger implements PreprocessorLogger {
   public static final String PROPERTY_DEBUG_FLAG = "jcp.log.debug";
 
   private static final boolean FLAG_DEBUG_LEVEL = Boolean.parseBoolean(System.getProperty(PROPERTY_DEBUG_FLAG));
+
+
+  @Override
+  public int hashCode() {
+    return System.out.hashCode();
+  }
+  
+  @Override
+  public boolean equals(@Nullable final Object value) {    
+    return value!=null && value instanceof SystemOutLogger;
+  }
   
   @Override
   public void error(@Nullable final String text) {
