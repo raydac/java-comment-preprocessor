@@ -434,11 +434,11 @@ public final class PreprocessingState {
 
     Writer writer = null;
 
+    boolean wasSaved = false;
     try {
       final int totatBufferedChars = prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize();
       final int BUFFER_SIZE = Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE);
 
-      boolean wasSaved = false;
 
       if (this.overrideOnlyIfContentChanged) {
         String content = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();
@@ -474,10 +474,16 @@ public final class PreprocessingState {
         writePrinterBuffers(writer);
         wasSaved = true;
       }
-      return wasSaved;
+      
     } finally {
       IOUtils.closeQuietly(writer);
     }
+
+    if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()){
+      PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
+    }
+
+    return wasSaved;
   }
 
   @Nonnull
