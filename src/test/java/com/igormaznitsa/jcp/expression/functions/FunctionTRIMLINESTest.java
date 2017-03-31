@@ -21,38 +21,32 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class FunctionSTR2JAVATest extends AbstractFunctionTest {
+public class FunctionTRIMLINESTest extends AbstractFunctionTest {
 
-  private static final FunctionSTR2JAVA HANDLER = new FunctionSTR2JAVA();
-
-  @Test
-  public void testExecution_NoSplit() throws Exception {
-    assertFunction("str2java(\"\",false)", Value.valueOf(""));
-    assertFunction("str2java(\"hello\nworld\",false)", Value.valueOf("hello\\nworld"));
-    assertDestinationFolderEmpty();
-  }
+  private static final FunctionTRIMLINES HANDLER = new FunctionTRIMLINES();
 
   @Test
-  public void testExecution_Split() throws Exception {
-    assertFunction("str2java(\"\",true)", Value.valueOf("\"\""));
-    assertFunction("str2java(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\""));
-    assertFunction("str2java(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
+  public void testExecution_WorkingCases() throws Exception {
+    assertFunction("trimlines(\"\")", Value.valueOf(""));
+    assertFunction("trimlines(\"hello world\")", Value.valueOf("hello world"));
+    assertFunction("trimlines(\"  hello   \n   \n   world\n\")", Value.valueOf("hello"+PreprocessorUtils.getNextLineCodes()+"world"));
     assertDestinationFolderEmpty();
   }
 
   @Test
   public void testExecution_wrongCases() throws Exception {
-    assertFunctionException("str2java()");
-    assertFunctionException("str2java(1,2)");
-    assertFunctionException("str2java(true)");
-    assertFunctionException("str2java(true,\"ss\")");
-    assertFunctionException("str2java(\"ss\",3)");
+    assertFunctionException("trimlines()");
+    assertFunctionException("trimlines(1)");
+    assertFunctionException("trimlines(true)");
+    assertFunctionException("trimlines(true,\"ss\")");
+    assertFunctionException("trimlines(\"ss\",3)");
     assertDestinationFolderEmpty();
+   
   }
 
   @Override
   public void testName() {
-    assertEquals("str2java", HANDLER.getName());
+    assertEquals("trimlines", HANDLER.getName());
   }
 
   @Override
@@ -62,12 +56,12 @@ public class FunctionSTR2JAVATest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(2, HANDLER.getArity());
+    assertEquals(1, HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING, ValueType.BOOLEAN}});
+    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING}});
   }
 
   @Override

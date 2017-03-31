@@ -384,6 +384,13 @@ public final class PreprocessorUtils {
 
   @Nonnull
   @MustNotContainNull
+  public static String[] splitForCharAndHoldEmptyLine(@Nonnull final String string, final char delimiter) {
+    String [] result = splitForChar(string, delimiter);
+    return result.length == 0 ? new String[]{""} : result;
+  }
+  
+  @Nonnull
+  @MustNotContainNull
   public static String[] splitForChar(@Nonnull final String string, final char delimiter) {
     final char[] array = string.toCharArray();
     final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
