@@ -56,7 +56,7 @@ public final class FunctionTRIMLINES extends AbstractStrConverter {
   @Override
   @Nonnull
   public String getReference() {
-    return "split string to lines and trim ecah line, empty lines will be removed";
+    return "trim each line in string, empty lines will be removed";
   }
 
   @Override
