@@ -123,8 +123,8 @@ public final class AntPathMatcher implements PathMatcher {
 
   /**
    * Set the path separator to use for pattern parsing.
-   * <p>
    * Default is "/", as in Ant.
+   * @param pathSeparator value to be used as path separator
    */
   public void setPathSeparator(String pathSeparator) {
     this.pathSeparator = (pathSeparator != null ? pathSeparator : DEFAULT_PATH_SEPARATOR);
@@ -136,8 +136,6 @@ public final class AntPathMatcher implements PathMatcher {
    * <p>
    * Default is {@code true}. Switch this to {@code false} for case-insensitive
    * matching.
-   *
-   * @since 4.2
    */
   public void setCaseSensitive(boolean caseSensitive) {
     this.caseSensitive = caseSensitive;

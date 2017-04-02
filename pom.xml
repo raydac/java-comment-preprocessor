@@ -8,7 +8,7 @@
    
   <groupId>com.igormaznitsa</groupId>
   <artifactId>jcp</artifactId>
-  <version>6.1.2-SNAPSHOT</version>
+  <version>6.1.2</version>
   <packaging>maven-plugin</packaging>
 
   <name>Java Comment Preprocessor</name>
@@ -110,7 +110,7 @@
       </build>
     </profile>
     <profile>
-      <id>prepare-distributive</id>
+      <id>publish</id>
       <build>
         <plugins>
           <plugin>
@@ -162,6 +162,7 @@
                   <!--<failOnError>false</failOnError>-->
                   <sourceFileExcludes>
                     <exclude>HelpMojo.java</exclude>
+                    <exclude>**/AntPathMatcher.java</exclude>
                   </sourceFileExcludes>
                 </configuration>
               </execution>

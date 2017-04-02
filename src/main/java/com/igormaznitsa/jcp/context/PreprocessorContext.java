@@ -896,7 +896,7 @@ public final class PreprocessorContext {
   
   /**
    * Set the flag to copy file attributes.
-   * 
+   * @param value true if file attributes must be copied, false otherwise.
    * @return the preprocessor context
    */
   @Nonnull

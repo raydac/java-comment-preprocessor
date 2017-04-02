@@ -1,4 +1,4 @@
-6.1.2-SNAPSHOT (under development)
+6.1.2 (02 apr 2017)
  - CORE: added STR TRIMLINES(STR) function to trim lines represented as string and removing empty lines
  - CORE: added `/A` command line option (`copyFileAttributes` in Maven and ANT) to copy file attributes
  - CORE: added `/ED:` command line option to exclude sub-folders from preprocessing (`excludedFolders` in Maven and ANT) with ANT pattern support.
