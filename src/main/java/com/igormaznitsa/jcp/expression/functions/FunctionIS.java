@@ -39,7 +39,7 @@ public final class FunctionIS extends AbstractFunction {
 
   @Nonnull
   public Value executeStrAny(@Nonnull final PreprocessorContext context, @Nonnull final Value varName, @Nonnull final Value value) {
-    final Value currentValue = context.findVariableForName(varName.asString());
+    final Value currentValue = context.findVariableForName(varName.asString(), false);
 
     Value result = Value.BOOLEAN_FALSE;
     

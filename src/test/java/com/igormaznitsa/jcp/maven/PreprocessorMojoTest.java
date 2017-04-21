@@ -97,7 +97,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertEquals("Must be test1.cfg", "test1.cfg", cfgfiles[0].getName());
     assertEquals("Must be test2.cfg", "test2.cfg", cfgfiles[1].getName());
 
-    assertEquals("Must be 3", Value.INT_THREE, context.findVariableForName("globalvar1"));
-    assertEquals("Must be 'hello world'", Value.valueOf("hello world"), context.findVariableForName("globalvar2"));
+    assertEquals("Must be 3", Value.INT_THREE, context.findVariableForName("globalvar1",true));
+    assertEquals("Must be 'hello world'", Value.valueOf("hello world"), context.findVariableForName("globalvar2",true));
   }
 }

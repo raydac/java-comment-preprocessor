@@ -5,4 +5,13 @@ must be
 //#else
 must not be
 //#endif
+//#ifndef HUZZAA
+huzzaaaaa!
+//#endif
+//#ifdefined SOMEUNKNOWN
+hmmmmmm
+//#endif
+//#ifdef HMMML
+noooooo!!!!!
+//#endif
 ---

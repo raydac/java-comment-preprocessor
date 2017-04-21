@@ -91,7 +91,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         value = Value.valueOf(Boolean.TRUE);
       }
 
-      process(context, ((Variable) item).getName(), value, context.findVariableForName(name) != null);
+      process(context, ((Variable) item).getName(), value, context.findVariableForName(name,true) != null);
     } catch (IOException ex) {
       throw context.makeException("Unexpected exception", ex);
     }

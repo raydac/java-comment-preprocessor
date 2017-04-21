@@ -64,7 +64,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
         throw context.makeException(getFullName() + " needs variable name", null);
       }
       state.pushIf(true);
-      final boolean variableExists = context.findVariableForName(string) != null;
+      final boolean variableExists = context.findVariableForName(string, true) != null;
       if (postprocessFlag(variableExists)) {
         state.getPreprocessingFlags().add(PreprocessingFlag.IF_CONDITION_FALSE);
       }

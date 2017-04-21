@@ -287,7 +287,7 @@ public class Expression {
 
         final Variable var = (Variable) element.getItem();
         final String name = var.getName();
-        final Value value = context.findVariableForName(name);
+        final Value value = context.findVariableForName(name,false);
         if (value == null) {
           throw new RuntimeException("Unknown variable [" + name + ']');
         } else {

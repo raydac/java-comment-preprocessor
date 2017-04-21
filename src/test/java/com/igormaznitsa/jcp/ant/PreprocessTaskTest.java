@@ -195,7 +195,7 @@ public class PreprocessTaskTest {
     global.setName("hello_world");
     global.setValue("4");
 
-    final Value value = antTask.generatePreprocessorContext().findVariableForName("hello_world");
+    final Value value = antTask.generatePreprocessorContext().findVariableForName("hello_world",true);
     assertEquals("Must be 4", Value.INT_FOUR, value);
   }
 

@@ -783,10 +783,11 @@ public final class PreprocessorContext {
    * Find value among local and global variables for a name. It finds in the order: special processors, local variables, global variables
    *
    * @param name the name for the needed variable, it will be normalized to the supported format
+   * @param enforceUnknownVarAsNull if true then state of the unknownVariableAsFalse flag in context will be ignored
    * @return false if either the variable is not found or the name is null, otherwise the variable value
    */
   @Nullable
-  public Value findVariableForName(@Nullable final String name) {
+  public Value findVariableForName(@Nullable final String name, final boolean enforceUnknownVarAsNull) {
     if (name == null) {
       return null;
     }
@@ -810,7 +811,7 @@ public final class PreprocessorContext {
 
     Value result = globalVarTable.get(normalized);
   
-    if (result == null && this.unknownVariableAsFalse) {
+    if (result == null && !enforceUnknownVarAsNull && this.unknownVariableAsFalse) {
       logDebug("Unknown variable '"+name+"' is replaced by FALSE!");
       result = Value.BOOLEAN_FALSE;
     }
