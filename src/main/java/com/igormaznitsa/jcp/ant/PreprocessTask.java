@@ -68,6 +68,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean allowWhitespace = false;
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
+  private boolean unknownVarAsFalse = false;
   
   private Map<String, Value> antVariables;
   private final List<Global> globalVariables = new ArrayList<Global>();
@@ -203,6 +204,14 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     this.outCharSet = charSet;
   }
 
+  /**
+   * Set the "unknownVarAsFalse" attribute, it allows to interpret unknown variables as FALSE.
+   * @param flag true to turn on the mode, false otherwise.
+   */
+  public void setUnknownVarAsFalse(final boolean flag) {
+    this.unknownVarAsFalse = flag;
+  }
+  
   /**
    * Set the "excluded" attribute, it defines the excluded file extensions which will be ignored by the preprocessor in its work (also those files will not be copied)
    *
@@ -346,6 +355,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
     context.setCopyFileAttributes(this.copyFileAttributes);
+    context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
     
     if (this.excludedFolders!=null && !this.excludedFolders.isEmpty()) {
       context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders,File.pathSeparatorChar));

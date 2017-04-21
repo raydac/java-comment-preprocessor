@@ -62,6 +62,7 @@ public final class PreprocessorContext {
   private boolean allowWhitespace = false;
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
+  private boolean unknownVariableAsFalse = false;
   
   private String sourceDirectories;
   private String destinationDirectory;
@@ -174,6 +175,8 @@ public final class PreprocessorContext {
     this.excludedFileExtensions.clear();
     this.excludedFileExtensions.addAll(context.excludedFileExtensions);
 
+    this.unknownVariableAsFalse = context.unknownVariableAsFalse;
+    
     this.preprocessorExtension = context.preprocessorExtension;
     this.inCharacterEncoding = context.inCharacterEncoding;
     this.outCharacterEncoding = context.outCharacterEncoding;
@@ -322,6 +325,22 @@ public final class PreprocessorContext {
    */
   public boolean isAllowWhitespace() {
     return this.allowWhitespace;
+  }
+  
+  /**
+   * Set flag to interpret unknown variable value as FALSE.
+   * @param flag true to turn on mode when unknown variable will be recognized as FALSE
+   */
+  public void setUnknownVariableAsFalse(final boolean flag) {
+    this.unknownVariableAsFalse = flag;
+  }
+  
+  /**
+   * Get flag shows that unknown variable is recognized as FALSE.
+   * @return true if unknown variable must be recognized as FALSE.
+   */
+  public boolean isUnknownVariableAsFalse() {
+    return this.unknownVariableAsFalse;
   }
   
   /**
@@ -789,7 +808,14 @@ public final class PreprocessorContext {
       return val;
     }
 
-    return globalVarTable.get(normalized);
+    Value result = globalVarTable.get(normalized);
+  
+    if (result == null && this.unknownVariableAsFalse) {
+      logDebug("Unknown variable '"+name+"' is replaced by FALSE!");
+      result = Value.BOOLEAN_FALSE;
+    }
+    
+    return result;
   }
 
   /**

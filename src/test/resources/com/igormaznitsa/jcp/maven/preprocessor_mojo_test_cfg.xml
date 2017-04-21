@@ -39,6 +39,7 @@
                     <careForLastNextLine>true</careForLastNextLine>
                     <allowWhitespace>true</allowWhitespace>
                     <preserveIndent>true</preserveIndent>
+                    <unknownVarAsFalse>true</unknownVarAsFalse>>
                     <excludedFolders>
                       <folder>.git</folder>
                       <folder>.hg</folder>

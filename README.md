@@ -9,14 +9,17 @@
 
 # Changelog
 
-- **6.1.2**
+- **6.1.3-SNAPSHOT**
+  - CORE: added `/U` key to turn on mode to interpret unknown variables as FALSE (in Maven and ANT `unknownVarAsFalse`), [#17](https://github.com/raydac/java-comment-preprocessor/issues/17)
+
+- **6.1.2 (02 apr 2017)**
   - CORE: added STR TRIMLINES(STR) function to trim lines represented as string and removing empty lines
   - CORE: added `/A` command line option (`copyFileAttributes` in Maven and ANT) to copy file attributes
   - CORE: added `/ED:` command line option to exclude sub-folders from preprocessing (`excludedFolders` in Maven and ANT) with ANT pattern support.
   - CORE: added `/PI` command line option (`preserveIndent` in Maven and ANT), turn on mode to preserve indent when removing `//$` and `//$$`, thanks to [jamuir](https://github.com/jamuir)
   - CORE: comma in split lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
 
-- **6.1.1**
+- **6.1.1 (11 feb 2017)**
   - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
   - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase [#14](https://github.com/raydac/java-comment-preprocessor/issues/14)
   - MAVEN: added `ignoreMissingSources` boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
@@ -24,20 +27,6 @@
   -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case) [#10](https://github.com/raydac/java-comment-preprocessor/issues/10)
   -  CORE: added `STR str2go(STR)` function to escape strings to be represented in Golang sources
   -  CORE: improved the BINFILE function, it allows `base64|byte[]|uint8[]|int8` and modifiers `s|d|ds|sd` where s - means splitting to lines and d - means deflate compression
-
-- **6.1.0**
-  - added `--es` option to enable spaces between comment chars and directives [#9](https://github.com/raydac/java-comment-preprocessor/issues/9), in ANT and MAVEN plugins it is boolean parameter named `allowWhitespace`, __NB! by default it is turned off for back compatibility!__
-  - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string, it supports generation of strings in BASE64 format and format of java byte array, the second argument allows to select format "base64"|"base64s"|"byte[]"|"byte[]s"
-  - __changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests__
-  - __fixed #8 issue, fixed work with absolute paths in //#include and evalfile(), added tests__
-  - refactoring
-
-- **6.0.1**
-  - improved the MAVEN plugin to hide content of potentially sensitive properties from printing into Maven log (issue #2)
-  - added --z option ('compareDestination' in MAVEN and ANT) to check content of existing result file and to not replace it if content equals (issue #1), by default turned off because makes some overhead
-  - fixed --c argument usage in CLI, now by default the preprocessor started in CLI doesn't clear its output folder, use --c to turn it on
-  - improved tests
-  - minor bug-fixing
 
 # Introduction
 I guess it is most powerful preprocessor for Java because it is a multi-pass one and can work with XML files as data sources. The First version of the preprocessor was published in 2003 and it was very actively used for J2ME developments. Modern version can be used for any kind of Java project because it can be used with ANT, MAVEN and Gradle.

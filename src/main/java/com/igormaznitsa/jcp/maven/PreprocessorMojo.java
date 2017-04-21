@@ -124,6 +124,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private String processing;
 
   /**
+   * Flag to interpret unknown variable as FALSE.
+   */
+  @Parameter(alias="unknownVarAsFalse", defaultValue = "false") 
+  private boolean unknownVarAsFalse;
+  
+  /**
    * Make dry run of the preprocessor without any saving of result.
    */
   @Parameter(alias = "disableOut", defaultValue = "false")
@@ -369,6 +375,14 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.excluded;
   }
 
+  public void setUnknownVarAsFalse(final boolean flag) {
+    this.unknownVarAsFalse = flag;
+  }
+  
+  public boolean getUnknownVarAsFalse() {
+    return this.unknownVarAsFalse;
+  }
+  
   public void setProcessing(@Nullable final String processing) {
     this.processing = processing;
   }
@@ -518,6 +532,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     info("Preprocess sources : " + context.getSourceDirectories());
     info("Preprocess destination : " + context.getDestinationDirectory());
 
+    context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
     context.setCompareDestination(this.compareDestination);
     context.setClearDestinationDirBefore(this.clear);
     context.setCareForLastNextLine(this.careForLastNextLine);

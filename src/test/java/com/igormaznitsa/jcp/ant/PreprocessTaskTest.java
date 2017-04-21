@@ -121,6 +121,13 @@ public class PreprocessTaskTest {
   }
 
   @Test
+  public void testSetUnknownAsFalse() throws Exception {
+    final String TEST = "ISO-8859-1";
+    antTask.setOutCharset(TEST);
+    assertEquals("Must be the same charset", TEST, antTask.generatePreprocessorContext().getOutCharacterEncoding());
+  }
+
+  @Test
   public void testSetExcluded() throws Exception {
     final String TEST = "bin,vb,cpp";
     antTask.setExcluded(TEST);

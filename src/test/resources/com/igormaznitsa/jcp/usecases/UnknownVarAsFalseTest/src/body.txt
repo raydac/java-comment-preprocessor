@@ -1,0 +1,8 @@
+/*$UNKNOWN_VAR$*/
+/*$"123"+UGUMS$*/
+//#if !ANOTHER_UNKNWOWN
+must be
+//#else
+must not be
+//#endif
+---

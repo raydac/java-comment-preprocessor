@@ -83,7 +83,8 @@ public final class JCPreprocessor {
     new CareForLastNextLineCharHandler(),
     new PreserveIndentDirectiveHandler(),
     new ExcludeFoldersHandler(),
-    new CopyFileAttributesHandler()
+    new CopyFileAttributesHandler(),
+    new UnknownAsFalseHandler()  
   };
 
   @Nonnull
