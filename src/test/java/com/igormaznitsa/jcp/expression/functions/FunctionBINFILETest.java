@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 public class FunctionBINFILETest extends AbstractFunctionTest {
 
-  private static final FunctionEVALFILE HANDLER = new FunctionEVALFILE();
+  private static final FunctionBINFILE HANDLER = new FunctionBINFILE();
 
   @Test
   public void testExecution_Base64Encoding() throws Exception {
