@@ -20,7 +20,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-    <maven.home>${user.home}/SDKs/apache-maven-3.3.9</maven.home>
+    <maven.home>${user.home}/SDKs/apache-maven-3.5.0</maven.home>
     <min.maven.api>${project.prerequisites.maven}</min.maven.api>
   </properties>
 
@@ -116,7 +116,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.6</version>
+            <version>3.0.0</version>
             <executions>
               <execution>
                 <id>make-distributive</id>
@@ -150,7 +150,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.3</version>
+            <version>2.10.4</version>
             <executions>
               <execution>
                 <id>generate-javadoc</id>
@@ -226,13 +226,13 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>1.6.4</version>
+      <version>1.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito</artifactId>
-      <version>1.6.4</version>
+      <version>1.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -273,13 +273,13 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.4</version>
+      <version>2.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
+      <version>3.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -374,7 +374,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.0.2</version>
         <configuration>
           <archive>
             <manifest>
@@ -419,7 +419,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <executions>
           <execution>
             <id>generate-sources</id>
@@ -434,7 +434,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
+        <version>2.20</version>
         <configuration>
           <systemPropertyVariables>
             <test.folder>${project.build.testOutputDirectory}</test.folder>
@@ -467,7 +467,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
         <executions>
           <execution>
             <goals>
@@ -483,7 +483,7 @@
           </arguments>
         </configuration>
       </plugin>
-      
+
     </plugins>
   </build>
 </project>
