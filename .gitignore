@@ -1,3 +1,4 @@
 /target/
 /nbproject/
 /.idea/
+/dependency-reduced-pom.xml

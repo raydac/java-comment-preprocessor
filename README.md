@@ -5,7 +5,7 @@
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Ant 1.8.2+](https://img.shields.io/badge/ant-1.8.2%2b-green.svg)](http://ant.apache.org/)
 [![PayPal donation](https://img.shields.io/badge/donation-PayPal-red.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)
-[![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](https://money.yandex.ru/embed/small.xml?account=41001158080699&quickpay=small&yamoney-payment-type=on&button-text=01&button-size=l&button-color=orange&targets=%D0%9F%D0%BE%D0%B6%D0%B5%D1%80%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%BD%D0%B0+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%8B+%D1%81+%D0%BE%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8B%D0%BC+%D0%B8%D1%81%D1%85%D0%BE%D0%B4%D0%BD%D1%8B%D0%BC+%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC&default-sum=100&successURL=)
+[![Yandex.Money donation](http://yasobe.ru/na/iamoss)
 
 # Changelog
 
@@ -31,7 +31,7 @@
 # Introduction
 I guess it is most powerful preprocessor for Java because it is a multi-pass one and can work with XML files as data sources. The First version of the preprocessor was published in 2003 and it was very actively used for J2ME developments. Modern version can be used for any kind of Java project because it can be used with ANT, MAVEN and Gradle.
 ![Features](https://raw.githubusercontent.com/raydac/java-comment-preprocessor/master/assets/doc1.png)
-  
+
 # How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
 
@@ -40,7 +40,7 @@ The Preprocessor can be used by different ways:
   - as Maven plugin
   - [with Gradle through ANT task](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
   - as Java framework with direct class calls
-  - as external utility through CLI (command line interface) 
+  - as external utility through CLI (command line interface)
 The Preprocessor is published in the Maven Central so that can be added in Maven projects without any problems
 ```
     <build>
@@ -76,7 +76,7 @@ The Preprocessor jar can be started under Java as a console application. Let's t
 ```
 java -jar jcp-6.1.0.jar  --i:./test --o:./result
 ```
-The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions) 
+The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions)
 
 More complex example:
 ```
@@ -89,7 +89,7 @@ java -jar jcp-6.1.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - --ef don't exclude any extension from preprocessing
 - --i use ./test as source folder
 - --o use ./result as destination folder
-- --p define named global variable HelloWorld? with the 'Hello world' content 
+- --p define named global variable HelloWorld? with the 'Hello world' content
 - --z turn on checking of file content before replacement, if the same content then preprocessor will not replace the file  
 - --es allow whitespace between comment and directive (by default it is turned off)
 
@@ -119,7 +119,7 @@ public static final void testproc()
 ```
 
 # Multi-sectioned documents
-Java sources usually have sections, there are the import section and the main section thus JCP has support for such case and there are three section where the preprocessor can write results - the prefix, the middle part and the postfix. Usually I use the prefix to form the import section for Java files. You can switch the text output for sections with //#prefix[+|-] and //#postfix[+|-] directives. 
+Java sources usually have sections, there are the import section and the main section thus JCP has support for such case and there are three section where the preprocessor can write results - the prefix, the middle part and the postfix. Usually I use the prefix to form the import section for Java files. You can switch the text output for sections with //#prefix[+|-] and //#postfix[+|-] directives.
 ```Java
 //#prefix+
  import java.lang.*;
@@ -132,7 +132,7 @@ Java sources usually have sections, there are the import section and the main se
  }
 ```
 # OMG! It allows to remove all your comments!
-Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface 
+Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface
 ```
 java -jar ./jcp-6.1.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
