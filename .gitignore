@@ -1,4 +1,6 @@
 /target/
 /nbproject/
-/.idea/
 /dependency-reduced-pom.xml
+/jcp.iml
+/.idea/
+/.idea/libraries
