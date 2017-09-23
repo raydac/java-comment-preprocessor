@@ -24,7 +24,7 @@
 # Introduction
 I guess it is most powerful preprocessor for Java because it is a multi-pass one and can work with XML files as data sources. The First version of the preprocessor was published in 2003 and it was very actively used for J2ME developments. Modern version can be used for any kind of Java project because it can be used with ANT, MAVEN and Gradle.
 ![Features](https://raw.githubusercontent.com/raydac/java-comment-preprocessor/master/assets/doc1.png)
-Because JDK-9 has supported JEP-238, the preprocessor is useful to generate melti-version JARs, [there is example of a maven plugin](https://github.com/raydac/jep-238-jcp-example).
+Because JDK-9 has supported JEP-238, the preprocessor is useful to generate melti-version JARs, [there is example of a maven project which generates JEP-238 JAR for two versions of JDK](https://github.com/raydac/jep-238-jcp-example).
 
 # How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
