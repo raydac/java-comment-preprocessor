@@ -19,18 +19,12 @@
   - CORE: added `/PI` command line option (`preserveIndent` in Maven and ANT), turn on mode to preserve indent when removing `//$` and `//$$`, thanks to [jamuir](https://github.com/jamuir)
   - CORE: comma in split lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
 
-- **6.1.1 (11 feb 2017)**
-  - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
-  - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase [#14](https://github.com/raydac/java-comment-preprocessor/issues/14)
-  - MAVEN: added `ignoreMissingSources` boolean parameter, allows to skip preprocessing if source folders not found or not provided [#12](https://github.com/raydac/java-comment-preprocessor/issues/12)
-  - MAVEN: added `skip` boolean parameter, it allows to skip execution, also it is possible to use `-Djcp.preprocess.skip=true` [#13](https://github.com/raydac/java-comment-preprocessor/issues/13)
-  -  CORE: added function `BOOL is(STR,ANY)` to check existence of variable for its name and compare its value with etalon (through string conversion, it will ensure true for `true` and `"true"` case) [#10](https://github.com/raydac/java-comment-preprocessor/issues/10)
-  -  CORE: added `STR str2go(STR)` function to escape strings to be represented in Golang sources
-  -  CORE: improved the BINFILE function, it allows `base64|byte[]|uint8[]|int8` and modifiers `s|d|ds|sd` where s - means splitting to lines and d - means deflate compression
+[Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
 # Introduction
 I guess it is most powerful preprocessor for Java because it is a multi-pass one and can work with XML files as data sources. The First version of the preprocessor was published in 2003 and it was very actively used for J2ME developments. Modern version can be used for any kind of Java project because it can be used with ANT, MAVEN and Gradle.
 ![Features](https://raw.githubusercontent.com/raydac/java-comment-preprocessor/master/assets/doc1.png)
+Because JDK-9 has supported JEP-238, the preprocessor is useful to generate melti-version JARs, [there is example of a maven plugin](https://github.com/raydac/jep-238-jcp-example).
 
 # How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
@@ -131,8 +125,8 @@ Java sources usually have sections, there are the import section and the main se
   public static void main(String ... args){}
  }
 ```
-# OMG! It allows to remove all your comments!
+# How to remove all coments from sources
 Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface
 ```
-java -jar ./jcp-6.1.2jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-6.1.2.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
