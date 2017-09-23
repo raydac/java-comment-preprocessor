@@ -390,7 +390,7 @@ public final class AntPathMatcher implements PathMatcher {
   protected String[] tokenizePattern(String pattern) {
     String[] tokenized = null;
     Boolean cachePatterns = this.cachePatterns;
-    if (cachePatterns == null || cachePatterns.booleanValue()) {
+    if (cachePatterns == null || cachePatterns) {
       tokenized = this.tokenizedPatternCache.get(pattern);
     }
     if (tokenized == null) {
@@ -402,7 +402,7 @@ public final class AntPathMatcher implements PathMatcher {
         deactivatePatternCache();
         return tokenized;
       }
-      if (cachePatterns == null || cachePatterns.booleanValue()) {
+      if (cachePatterns == null || cachePatterns) {
         this.tokenizedPatternCache.put(pattern, tokenized);
       }
     }
@@ -454,7 +454,7 @@ public final class AntPathMatcher implements PathMatcher {
   protected AntPathStringMatcher getStringMatcher(String pattern) {
     AntPathStringMatcher matcher = null;
     Boolean cachePatterns = this.cachePatterns;
-    if (cachePatterns == null || cachePatterns.booleanValue()) {
+    if (cachePatterns == null || cachePatterns) {
       matcher = this.stringMatcherCache.get(pattern);
     }
     if (matcher == null) {
@@ -466,7 +466,7 @@ public final class AntPathMatcher implements PathMatcher {
         deactivatePatternCache();
         return matcher;
       }
-      if (cachePatterns == null || cachePatterns.booleanValue()) {
+      if (cachePatterns == null || cachePatterns) {
         this.stringMatcherCache.put(pattern, matcher);
       }
     }

@@ -46,7 +46,7 @@ public class OperatorNOT extends AbstractOperator {
 
   @Nonnull
   public Value executeInt(@Nonnull final Value arg1) {
-    return Value.valueOf(0xFFFFFFFFFFFFFFFFL ^ arg1.asLong());
+    return Value.valueOf(~arg1.asLong());
   }
 
   @Nonnull

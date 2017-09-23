@@ -52,10 +52,7 @@ public enum ValueType {
       return true;
     }
 
-    if (this == UNKNOWN || type == UNKNOWN) {
-      return false;
-    }
+    return this != UNKNOWN && type != UNKNOWN && (this == ANY || type == ANY);
 
-    return this == ANY || type == ANY;
   }
 }

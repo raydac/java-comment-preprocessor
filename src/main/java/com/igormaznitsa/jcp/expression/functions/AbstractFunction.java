@@ -15,29 +15,19 @@
  */
 package com.igormaznitsa.jcp.expression.functions;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_TEXT;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ATTR;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_LIST;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_GET;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_SIZE;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_OPEN;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_ROOT;
-import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_NAME;
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.xml.*;
-
-import java.util.concurrent.atomic.AtomicLong;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The abstract class is the base for each function handler in the preprocessor
