@@ -171,7 +171,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -380,6 +380,9 @@
                         <manifest>
                             <mainClass>com.igormaznitsa.jcp.JCPreprocessor</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>igormaznitsa.jcp</Automatic-Module-Name>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -413,7 +416,7 @@
                             <rules>
                                 <!-- there was some permspace error if to compile with JDK 1.6-->
                                 <requireJavaVersion>
-                                    <version>[1.7,1.9)</version>
+                                    <version>[1.7,9)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[${min.maven.api}},)</version>
@@ -427,7 +430,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.7.0</version>
                 <configuration>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <verbose>true</verbose>
