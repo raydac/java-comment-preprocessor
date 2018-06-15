@@ -8,6 +8,8 @@
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](http://yasobe.ru/na/iamoss)
 
 # Changelog
+- **6.1.4 (SNAPSHOT)**
+  - [#19](https://github.com/raydac/java-comment-preprocessor/issues/19) removed meta dependncies  
 
 - **6.1.3 (29 apr 2018)**
   - added automatic module name `igormaznitsa.jcp`
