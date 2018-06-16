@@ -46,7 +46,7 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.1.3</version>
+                <version>6.1.4</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -71,13 +71,13 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
 # How to use from command line
 The Preprocessor jar can be started under Java as a console application. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
 ```
-java -jar jcp-6.1.3.jar  --i:./test --o:./result
+java -jar jcp-6.1.4.jar  --i:./test --o:./result
 ```
 The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions)
 
 More complex example:
 ```
-java -jar jcp-6.1.3.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-6.1.4.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -131,5 +131,5 @@ Java sources usually have sections, there are the import section and the main se
 # How to remove all coments from sources
 Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface
 ```
-java -jar ./jcp-6.1.3.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-6.1.4.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
