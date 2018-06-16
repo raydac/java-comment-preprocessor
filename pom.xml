@@ -18,6 +18,7 @@
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     <maven.home>${user.home}/SDKs/apache-maven-3.5.0</maven.home>
     <min.maven.api>3.0</min.maven.api>
+    <junit.version>5.2.0</junit.version>
   </properties>
 
   <issueManagement>
@@ -235,9 +236,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -462,6 +463,13 @@
             <test.folder>${project.build.testOutputDirectory}</test.folder>
           </systemPropertyVariables>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>1.2.0</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>
