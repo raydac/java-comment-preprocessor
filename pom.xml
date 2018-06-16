@@ -191,6 +191,7 @@
                   <sourceFileExcludes>
                     <exclude>HelpMojo.java</exclude>
                     <exclude>**/AntPathMatcher.java</exclude>
+                    <exclude>com/igormaznitsa/meta/**/*.*</exclude>
                   </sourceFileExcludes>
                 </configuration>
               </execution>
