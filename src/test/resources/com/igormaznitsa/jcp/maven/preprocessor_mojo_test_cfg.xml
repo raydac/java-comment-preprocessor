@@ -20,7 +20,7 @@
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.1.4-SNAPSHOT</version>
+                <version>6.1.4</version>
                 <configuration>
                     <source>/</source>
                     <copyFileAttributes>true</copyFileAttributes>
