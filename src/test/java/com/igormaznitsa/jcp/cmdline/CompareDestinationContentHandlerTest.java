@@ -29,7 +29,7 @@ public class CompareDestinationContentHandlerTest extends AbstractCommandLineHan
 
   @Override
   public void testExecution () throws Exception {
-    final PreprocessorContext mock = preparePreprocessorContext();
+    final PreprocessorContext mock = prepareMockContext();
 
     assertFalse(HANDLER.processCommandLineKey("/z:", mock));
     assertFalse(HANDLER.processCommandLineKey("/ZZ", mock));

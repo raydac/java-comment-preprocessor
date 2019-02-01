@@ -58,7 +58,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_zero() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0"));
     assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
@@ -67,7 +67,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_negativeNumber() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("-1"));
     assertEquals("Must be SUB", AbstractOperator.findForClass(OperatorSUB.class), ExpressionParser.getInstance().nextItem(reader, context));
@@ -77,7 +77,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_zeroLess() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("0<"));
     assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
@@ -87,7 +87,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_oneValue() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("3"));
     assertEquals("Must be 3", Value.INT_THREE, ExpressionParser.getInstance().nextItem(reader, context));
@@ -96,7 +96,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_oneHexValue() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0xfF"));
     assertEquals("Must be 255", Value.valueOf(Long.valueOf(255L)), ExpressionParser.getInstance().nextItem(reader, context));
@@ -105,7 +105,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_oneBooleanTrueValue() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("true"));
     assertEquals("Must be TRUE", Value.BOOLEAN_TRUE, ExpressionParser.getInstance().nextItem(reader, context));
@@ -114,7 +114,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_oneBooleanFalseValue() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("false"));
     assertEquals("Must be FALSE", Value.BOOLEAN_FALSE, ExpressionParser.getInstance().nextItem(reader, context));
@@ -123,7 +123,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testNextItem_oneOperator() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final PushbackReader reader = new PushbackReader(new StringReader("/"));
     assertEquals("Must be DIV", AbstractOperator.findForClass(OperatorDIV.class), ExpressionParser.getInstance().nextItem(reader, context));
@@ -133,7 +133,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
   @Test
   public void testNextItem_complexExpression() throws Exception {
 
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("xml_attr(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
 
@@ -169,7 +169,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_oneValue() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
 
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("3", context);
@@ -180,7 +180,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_negativeNumber() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse(Long.toString(Long.MIN_VALUE + 1), context);
@@ -191,7 +191,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_easyExpression() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("3*4/8", context);
@@ -208,7 +208,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_complexExpression() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", context);
@@ -226,7 +226,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_deepIncludingBrackets() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("((((((1+2))))))", context);
@@ -240,7 +240,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_insideFunctionCall() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("xml_get(xml_get(1,2),3)", context);
@@ -262,7 +262,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_notEasyBrackets() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("(1+2*(3-4))", context);
@@ -288,7 +288,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
   @Test
   public void testParsing_emptyBrakes() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
 
     final ExpressionParser parser = ExpressionParser.getInstance();
     final ExpressionTree tree = parser.parse("()", context);

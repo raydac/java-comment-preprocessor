@@ -30,7 +30,7 @@ public class KeepLineHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = preparePreprocessorContext();
+    final PreprocessorContext mock = prepareMockContext();
 
     assertFalse(HANDLER.processCommandLineKey("/k:", mock));
     assertFalse(HANDLER.processCommandLineKey("/KK", mock));

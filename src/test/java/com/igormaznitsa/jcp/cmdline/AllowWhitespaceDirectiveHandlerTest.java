@@ -35,7 +35,7 @@ public class AllowWhitespaceDirectiveHandlerTest extends AbstractCommandLineHand
   
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = preparePreprocessorContext();
+    final PreprocessorContext mock = prepareMockContext();
 
     assertFalse(HANDLER.processCommandLineKey("/es:", mock));
     assertFalse(HANDLER.processCommandLineKey("/EK", mock));

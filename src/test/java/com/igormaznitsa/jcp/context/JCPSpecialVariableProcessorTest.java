@@ -26,7 +26,7 @@ public class JCPSpecialVariableProcessorTest extends AbstractMockPreprocessorCon
 
   @Test
   public void testReadVariable() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     assertEquals("Must be equals", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", context).asString());
     assertNotNull(new JCPSpecialVariableProcessor().getVariable("__line__", context).toString());

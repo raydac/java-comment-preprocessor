@@ -29,7 +29,7 @@ public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     assertFalse(HANDLER.processCommandLineKey("", context));
     assertFalse(HANDLER.processCommandLineKey("/HH", context));
     assertFalse(HANDLER.processCommandLineKey("/??", context));

@@ -30,7 +30,7 @@ public class UnknownAsFalseHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = preparePreprocessorContext();
+    final PreprocessorContext mock = prepareMockContext();
 
     assertFalse(HANDLER.processCommandLineKey("/u:", mock));
     assertFalse(HANDLER.processCommandLineKey("/UU", mock));

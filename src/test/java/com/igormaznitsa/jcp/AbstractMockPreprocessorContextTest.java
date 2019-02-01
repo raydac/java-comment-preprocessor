@@ -29,23 +29,25 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.File;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
 public abstract class AbstractMockPreprocessorContextTest {
 
-  protected PreprocessorContext preparePreprocessorContext() throws Exception {
+  protected PreprocessorContext prepareMockContext() throws Exception {
     final PreprocessorContext pcContext = mock(PreprocessorContext.class);
     final PreprocessingState pcState = mock(PreprocessingState.class);
 
-    when(pcContext.makeException(any(String.class), any(Throwable.class)))
-        .thenAnswer(inv ->
-            new PreprocessorException(inv.<String>getArgument(0), "", new FilePositionInfo[0], inv.<Throwable>getArgument(1))
-        );
+    doReturn(new PreprocessorException("mock_msg","",new FilePositionInfo[0],null))
+        .when(pcContext)
+        .makeException(any(), any());
 
-    final FileInfoContainer container = new FileInfoContainer(new File("src/fake.java"), "fake.java", false);
+    final FileInfoContainer container = new FileInfoContainer(
+        new File("src/fake.java"),
+        "fake.java",
+        false
+    );
 
     when(pcState.getRootFileInfo()).thenReturn(container);
 

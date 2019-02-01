@@ -32,7 +32,7 @@ public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext mock = preparePreprocessorContext();
+    final PreprocessorContext mock = prepareMockContext();
     assertFalse(HANDLER.processCommandLineKey("/o:UUU", mock));
     assertFalse(HANDLER.processCommandLineKey("/T:", mock));
     assertFalse(HANDLER.processCommandLineKey("/t", mock));

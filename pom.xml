@@ -257,7 +257,7 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>2.0.0-beta.5</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -474,26 +474,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>com.igormaznitsa.jcp.JCPreprocessor</mainClass>
-          <arguments>
-            <argument>--i:/home/igorm/1/cc/Source</argument>
-            <argument>--o:/home/igorm/1/cc/Preprocessed</argument>
-          </arguments>
-        </configuration>
       </plugin>
     </plugins>
   </build>

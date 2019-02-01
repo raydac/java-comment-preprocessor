@@ -26,7 +26,7 @@ public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorCo
 
   @Test
   public void testReadVariable() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext();
+    final PreprocessorContext context = prepareMockContext();
     
     final String javaVersion = System.getProperty("java.version");
     final String osName = System.getProperty("os.name");
@@ -40,15 +40,14 @@ public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorCo
     assertEquals("Must be equals", osName, test.getVariable("env.os.name", context).asString());
   }
 
-  @Ignore
   @Test(expected = PreprocessorException.class)
   public void testReadUnknownVariable() throws Exception {
-    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", preparePreprocessorContext());
+    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", prepareMockContext());
   }
 
-  @Ignore
   @Test(expected = PreprocessorException.class)
   public void testWriteVariable() throws Exception {
-    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, preparePreprocessorContext());
+    PreprocessorContext context = prepareMockContext();
+    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, context);
   }
 }
