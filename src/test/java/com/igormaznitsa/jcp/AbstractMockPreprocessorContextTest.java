@@ -13,47 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.igormaznitsa.jcp;
 
-import static org.mockito.Matchers.any;
-import java.io.File;
-import org.junit.runner.RunWith;
-import static org.powermock.api.mockito.PowerMockito.*;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.File;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({PreprocessorContext.class, PreprocessingState.class})
+@PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
 public abstract class AbstractMockPreprocessorContextTest {
 
   protected PreprocessorContext preparePreprocessorContext() throws Exception {
-    final PreprocessorContext preprocessorcontext = mock(PreprocessorContext.class);
-    final PreprocessingState stateMock = mock(PreprocessingState.class);
-    
-    when(preprocessorcontext.makeException(any(String.class),any(Throwable.class))).thenAnswer(new Answer<PreprocessorException>() {
-      @Override
-      public PreprocessorException answer(final InvocationOnMock invocation) throws Throwable {
-        return new PreprocessorException(invocation.getArgumentAt(0, String.class), "", new FilePositionInfo[0], invocation.getArgumentAt(1, Throwable.class));
-      }
-    });
-    
+    final PreprocessorContext pcContext = mock(PreprocessorContext.class);
+    final PreprocessingState pcState = mock(PreprocessingState.class);
+
+    when(pcContext.makeException(any(String.class), any(Throwable.class)))
+        .thenAnswer(inv ->
+            new PreprocessorException(inv.<String>getArgument(0), "", new FilePositionInfo[0], inv.<Throwable>getArgument(1))
+        );
+
     final FileInfoContainer container = new FileInfoContainer(new File("src/fake.java"), "fake.java", false);
-    
-    when(stateMock.getRootFileInfo()).thenReturn(container);
+
+    when(pcState.getRootFileInfo()).thenReturn(container);
 
     final ResetablePrinter printer = new ResetablePrinter(10);
-    when(stateMock.getPrinter()).thenReturn(printer);
-    when(preprocessorcontext.getPreprocessingState()).thenReturn(stateMock);
+    when(pcState.getPrinter()).thenReturn(printer);
+    when(pcContext.getPreprocessingState()).thenReturn(pcState);
 
-    return preprocessorcontext;
+    return pcContext;
   }
 
 

@@ -8,19 +8,16 @@
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](http://yasobe.ru/na/iamoss)
 
 # Changelog
+- **6.2.0 (SNAPSHOT)**
+  - **minimal Java version changed to 8**
+  - refactoring
+
 - **6.1.4 (16 jun 2018)**
   - [#19](https://github.com/raydac/java-comment-preprocessor/issues/19) removed dependencies to meta packages (their sources moved into project)
 
 - **6.1.3 (29 apr 2018)**
   - added automatic module name `igormaznitsa.jcp`
   - CORE: added `/U` key to turn on mode to interpret unknown variables as FALSE (in Maven and ANT `unknownVarAsFalse`), [#17](https://github.com/raydac/java-comment-preprocessor/issues/17)
-
-- **6.1.2 (02 apr 2017)**
-  - CORE: added STR TRIMLINES(STR) function to trim lines represented as string and removing empty lines
-  - CORE: added `/A` command line option (`copyFileAttributes` in Maven and ANT) to copy file attributes
-  - CORE: added `/ED:` command line option to exclude sub-folders from preprocessing (`excludedFolders` in Maven and ANT) with ANT pattern support.
-  - CORE: added `/PI` command line option (`preserveIndent` in Maven and ANT), turn on mode to preserve indent when removing `//$` and `//$$`, thanks to [jamuir](https://github.com/jamuir)
-  - CORE: comma in split lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 

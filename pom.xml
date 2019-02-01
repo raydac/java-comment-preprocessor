@@ -4,7 +4,7 @@
 
   <groupId>com.igormaznitsa</groupId>
   <artifactId>jcp</artifactId>
-  <version>6.1.5-SNAPSHOT</version>
+  <version>6.2.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Java Comment Preprocessor</name>
@@ -12,13 +12,15 @@
   <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
-    <meta.version>1.1.2</meta.version>
+    <meta.version>1.1.3</meta.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     <maven.home>${user.home}/SDKs/apache-maven-3.5.0</maven.home>
     <min.maven.api>3.0</min.maven.api>
-    <junit.version>5.2.0</junit.version>
+    <junit.version>5.4.0-RC2</junit.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <issueManagement>
@@ -76,7 +78,7 @@
             <artifactId>meta-checker</artifactId>
             <version>${meta.version}</version>
             <configuration>
-              <restrictClassFormat>6</restrictClassFormat>
+              <restrictClassFormat>8</restrictClassFormat>
               <checkMayContainNull>true</checkMayContainNull>
               <checkNullable>true</checkNullable>
               <ignoreClasses>
@@ -86,6 +88,7 @@
             </configuration>
             <executions>
               <execution>
+                <id>meta-check-classes</id>
                 <goals>
                   <goal>check</goal>
                 </goals>
@@ -93,6 +96,15 @@
                   <ignoreClasses>
                     <ignore>com.igormaznitsa.jcp.utils.antpathmatcher.*</ignore>
                   </ignoreClasses>
+                </configuration>
+              </execution>
+              <execution>
+                <id>meta-check-jar</id>
+                <goals>
+                  <goal>check-jar</goal>
+                </goals>
+                <configuration>
+                  <restrictClassFormat><![CDATA[<=8]]></restrictClassFormat>
                 </configuration>
               </execution>
             </executions>
@@ -106,7 +118,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.20.1</version>
+            <version>3.0.0-M3</version>
             <executions>
               <execution>
                 <goals>
@@ -178,7 +190,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.0.0-M1</version>
+            <version>3.0.1</version>
             <executions>
               <execution>
                 <id>generate-javadoc</id>
@@ -245,13 +257,13 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>1.7.4</version>
+      <version>2.0.0-beta.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <version>1.7.4</version>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -263,7 +275,7 @@
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>2.0</version>
+      <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -292,20 +304,17 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.5</version>
-      <scope>compile</scope>
+      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.5</version>
-      <scope>compile</scope>
+      <version>3.8.1</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.10</version>
-      <scope>compile</scope>
+      <version>1.11</version>
     </dependency>
   </dependencies>
 
@@ -338,7 +347,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -368,7 +377,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.1.1</version>
         <configuration>
           <archive>
             <manifest>
@@ -383,23 +392,8 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.6</version>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>cobertura-maven-plugin</artifactId>
-              <version>2.6</version>
-            </plugin>
-          </reportPlugins>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>3.0.0-M2</version>
         <executions>
           <execution>
             <id>enforce-java</id>
@@ -408,10 +402,6 @@
             </goals>
             <configuration>
               <rules>
-                <!-- there was some permspace error if to compile with JDK 1.6-->
-                <requireJavaVersion>
-                  <version>[1.7,1.9)</version>
-                </requireJavaVersion>
                 <requireMavenVersion>
                   <version>[${min.maven.api}},)</version>
                 </requireMavenVersion>
@@ -428,8 +418,6 @@
         <configuration>
           <compilerArgument>-Xlint:all</compilerArgument>
           <verbose>true</verbose>
-          <source>1.6</source>
-          <target>1.6</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
           <excludes>
@@ -458,25 +446,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.21.0</version>
+        <version>3.0.0-M1</version>
         <configuration>
           <systemPropertyVariables>
             <test.folder>${project.build.testOutputDirectory}</test.folder>
           </systemPropertyVariables>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>1.2.0</version>
-          </dependency>
-        </dependencies>
       </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.16</version>
+        <version>1.17</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>

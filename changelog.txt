@@ -1,3 +1,7 @@
+6.2.0 (SNAPSHOT)
+ - minimal Java version changed to 8
+ - refactoring
+
 6.1.4 (16 jun 2018)
  - removed dependencies to meta packages (their sources moved into project) #19
 

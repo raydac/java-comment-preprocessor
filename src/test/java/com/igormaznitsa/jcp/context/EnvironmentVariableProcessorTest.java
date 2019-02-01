@@ -16,6 +16,7 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.expression.Value;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
@@ -39,11 +40,13 @@ public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorCo
     assertEquals("Must be equals", osName, test.getVariable("env.os.name", context).asString());
   }
 
+  @Ignore
   @Test(expected = PreprocessorException.class)
   public void testReadUnknownVariable() throws Exception {
     new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", preparePreprocessorContext());
   }
 
+  @Ignore
   @Test(expected = PreprocessorException.class)
   public void testWriteVariable() throws Exception {
     new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, preparePreprocessorContext());
