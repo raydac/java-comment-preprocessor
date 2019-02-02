@@ -9,7 +9,9 @@
 
 # Changelog
 - **6.2.0 (SNAPSHOT)**
-  - **minimal Java version changed to 8**
+  - fixed build under JDK 9+
+  - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)
+  - **minimal needed Java version changed to 1.8**
   - refactoring
 
 - **6.1.4 (16 jun 2018)**
