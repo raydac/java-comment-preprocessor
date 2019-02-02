@@ -1,25 +1,32 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression.functions;
 
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class FunctionSTR2GOTest extends AbstractFunctionTest {
 
@@ -35,10 +42,10 @@ public class FunctionSTR2GOTest extends AbstractFunctionTest {
   @Test
   public void testExecution_Split() throws Exception {
     assertFunction("str2go(\"\",true)", Value.valueOf("\"\""));
-    assertFunction("str2go(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\""));
-    assertFunction("str2go(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
-    assertFunction("str2go(\"\u000bhello\u0007\nworld\n\",true)", Value.valueOf("\"\\vhello\\a\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"world\\n\""));
-    assertFunction("str2go(\"Здравствуй\nМир\n\",true)", Value.valueOf("\"\\u0417\\u0434\\u0440\\u0430\\u0432\\u0441\\u0442\\u0432\\u0443\\u0439\\n\""+PreprocessorUtils.getNextLineCodes()+"+\"\\u041c\\u0438\\u0440\\n\""));
+    assertFunction("str2go(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\""));
+    assertFunction("str2go(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\\n\""));
+    assertFunction("str2go(\"\u000bhello\u0007\nworld\n\",true)", Value.valueOf("\"\\vhello\\a\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\\n\""));
+    assertFunction("str2go(\"Здравствуй\nМир\n\",true)", Value.valueOf("\"\\u0417\\u0434\\u0440\\u0430\\u0432\\u0441\\u0442\\u0432\\u0443\\u0439\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"\\u041c\\u0438\\u0440\\n\""));
     assertDestinationFolderEmpty();
   }
 
@@ -50,7 +57,7 @@ public class FunctionSTR2GOTest extends AbstractFunctionTest {
     assertFunctionException("str2go(true,\"ss\")");
     assertFunctionException("str2go(\"ss\",3)");
     assertDestinationFolderEmpty();
-   
+
   }
 
   @Override
@@ -70,7 +77,7 @@ public class FunctionSTR2GOTest extends AbstractFunctionTest {
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][]{{ValueType.STRING, ValueType.BOOLEAN}});
+    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}});
   }
 
   @Override

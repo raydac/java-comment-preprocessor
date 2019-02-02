@@ -1,40 +1,75 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp;
 
-import com.igormaznitsa.jcp.cmdline.*;
+import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
+import com.igormaznitsa.jcp.cmdline.CareForLastNextLineCharHandler;
+import com.igormaznitsa.jcp.cmdline.ClearDstDirectoryHandler;
+import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
+import com.igormaznitsa.jcp.cmdline.CompareDestinationContentHandler;
+import com.igormaznitsa.jcp.cmdline.CopyFileAttributesHandler;
+import com.igormaznitsa.jcp.cmdline.DestinationDirectoryHandler;
+import com.igormaznitsa.jcp.cmdline.ExcludeFoldersHandler;
+import com.igormaznitsa.jcp.cmdline.ExcludedFileExtensionsHandler;
+import com.igormaznitsa.jcp.cmdline.FileExtensionsHandler;
+import com.igormaznitsa.jcp.cmdline.GlobalVariableDefiningFileHandler;
+import com.igormaznitsa.jcp.cmdline.GlobalVariableHandler;
+import com.igormaznitsa.jcp.cmdline.HelpHandler;
+import com.igormaznitsa.jcp.cmdline.InCharsetHandler;
+import com.igormaznitsa.jcp.cmdline.KeepLineHandler;
+import com.igormaznitsa.jcp.cmdline.OutCharsetHandler;
+import com.igormaznitsa.jcp.cmdline.PreserveIndentDirectiveHandler;
+import com.igormaznitsa.jcp.cmdline.RemoveCommentsHandler;
+import com.igormaznitsa.jcp.cmdline.SourceDirectoryHandler;
+import com.igormaznitsa.jcp.cmdline.UnknownAsFalseHandler;
+import com.igormaznitsa.jcp.cmdline.VerboseHandler;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.context.*;
-import com.igormaznitsa.jcp.directives.*;
-import com.igormaznitsa.jcp.exceptions.*;
-import com.igormaznitsa.jcp.expression.*;
+import com.igormaznitsa.jcp.context.PreprocessingState;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+import com.igormaznitsa.jcp.expression.Expression;
+import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import java.io.*;
-import java.util.*;
+import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import org.apache.commons.io.FilenameUtils;
-import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
@@ -44,62 +79,113 @@ import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
  */
 public final class JCPreprocessor {
 
-  public static final class PreprocessingStatistics {
-
-    private final int numberOfPreprocessed;
-    private final int numberOfCopied;
-
-    public PreprocessingStatistics(final int numberOfPreprocessed, final int numberOfCopied) {
-      this.numberOfPreprocessed = numberOfPreprocessed;
-      this.numberOfCopied = numberOfCopied;
-    }
-
-    public int getNumberOfCopied() {
-      return this.numberOfCopied;
-    }
-
-    public int getNumberOfPreprocessed() {
-      return this.numberOfPreprocessed;
-    }
-  }
-
-  private final PreprocessorContext context;
-  static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[]{
-    new HelpHandler(),
-    new InCharsetHandler(),
-    new OutCharsetHandler(),
-    new ClearDstDirectoryHandler(),
-    new SourceDirectoryHandler(),
-    new DestinationDirectoryHandler(),
-    new FileExtensionsHandler(),
-    new ExcludedFileExtensionsHandler(),
-    new AllowWhitespaceDirectiveHandler(),
-    new RemoveCommentsHandler(),
-    new KeepLineHandler(),
-    new CompareDestinationContentHandler(),
-    new VerboseHandler(),
-    new GlobalVariableDefiningFileHandler(),
-    new GlobalVariableHandler(),
-    new CareForLastNextLineCharHandler(),
-    new PreserveIndentDirectiveHandler(),
-    new ExcludeFoldersHandler(),
-    new CopyFileAttributesHandler(),
-    new UnknownAsFalseHandler()  
+  static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[] {
+      new HelpHandler(),
+      new InCharsetHandler(),
+      new OutCharsetHandler(),
+      new ClearDstDirectoryHandler(),
+      new SourceDirectoryHandler(),
+      new DestinationDirectoryHandler(),
+      new FileExtensionsHandler(),
+      new ExcludedFileExtensionsHandler(),
+      new AllowWhitespaceDirectiveHandler(),
+      new RemoveCommentsHandler(),
+      new KeepLineHandler(),
+      new CompareDestinationContentHandler(),
+      new VerboseHandler(),
+      new GlobalVariableDefiningFileHandler(),
+      new GlobalVariableHandler(),
+      new CareForLastNextLineCharHandler(),
+      new PreserveIndentDirectiveHandler(),
+      new ExcludeFoldersHandler(),
+      new CopyFileAttributesHandler(),
+      new UnknownAsFalseHandler()
   };
+  private final PreprocessorContext context;
+  public JCPreprocessor(@Nonnull final PreprocessorContext context) {
+    assertNotNull("Configurator is null", context);
+    this.context = context;
+  }
 
   @Nonnull
   public static Iterable<CommandLineHandler> getCommandLineHandlers() {
     return Arrays.asList(COMMAND_LINE_HANDLERS);
   }
 
+  public static void main(@Nonnull @MustNotContainNull final String... args) {
+    printHeader();
+
+    final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[] {"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
+
+    final PreprocessorContext preprocessorContext;
+
+    try {
+      preprocessorContext = processCommandString(null, args, normalizedStrings);
+    } catch (IOException ex) {
+      System.err.println("Error during command line processing [" + ex.getMessage() + ']');
+      System.exit(1);
+      throw new RuntimeException("To show compiler executiion stop");
+    }
+
+    final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
+
+    try {
+      preprocessor.execute();
+    } catch (Exception unexpected) {
+      System.err.println(PreprocessorException.referenceAsString(' ', unexpected));
+      System.exit(1);
+    }
+
+    System.exit(0);
+  }
+
+  @Nonnull
+  private static PreprocessorContext processCommandString(@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
+    final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
+
+    for (int i = 0; i < normalizedStrings.length; i++) {
+      final String arg = normalizedStrings[i];
+      boolean processed = false;
+      for (final CommandLineHandler processor : getCommandLineHandlers()) {
+        if (processor.processCommandLineKey(arg, result)) {
+          processed = true;
+          if (processor instanceof HelpHandler) {
+            help();
+            System.exit(2);
+          }
+          break;
+        }
+      }
+
+      if (!processed) {
+        System.err.println("Can't process a command line argument, may be some wrong usage : " + originalStrings[i]);
+        System.out.println();
+        System.out.println("Take a look at the CLI help below, please");
+        help();
+        System.exit(1);
+      }
+    }
+
+    return result;
+  }
+
+  private static void printHeader() {
+    System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
+    System.out.println(InfoHelper.getSite());
+    System.out.println(InfoHelper.getCopyright());
+  }
+
+  private static void help() {
+    System.out.println();
+
+    for (final String str : InfoHelper.makeTextForHelpInfo()) {
+      System.out.println(str);
+    }
+  }
+
   @Nonnull
   public PreprocessorContext getContext() {
     return context;
-  }
-
-  public JCPreprocessor(@Nonnull final PreprocessorContext context) {
-    assertNotNull("Configurator is null", context);
-    this.context = context;
   }
 
   @Nonnull
@@ -140,13 +226,12 @@ public final class JCPreprocessor {
 
       try {
         val = Expression.evalExpression(condition, context);
-      }
-      catch (IllegalArgumentException ex) {
-        throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, ex);
+      } catch (IllegalArgumentException ex) {
+        throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())}, ex);
       }
 
       if (val.getType() != ValueType.BOOLEAN) {
-        throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[]{new FilePositionInfo(file, item.getStringIndex())}, null);
+        throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())}, null);
       }
 
       if (val.asBoolean()) {
@@ -226,8 +311,7 @@ public final class JCPreprocessor {
     if (context.doesClearDestinationDirBefore() && destinationExistsAndDirectory) {
       try {
         FileUtils.cleanDirectory(destination);
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
       }
     }
@@ -246,7 +330,7 @@ public final class JCPreprocessor {
 
     for (final File dir : srcDirs) {
       String canonicalPathForSrcDirectory = dir.getCanonicalPath();
-      
+
       if (!canonicalPathForSrcDirectory.endsWith(File.separator)) {
         canonicalPathForSrcDirectory += File.separator;
       }
@@ -275,9 +359,9 @@ public final class JCPreprocessor {
   private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
     final Set<File> result = new HashSet<File>();
     final File[] allowedFiles = dir.listFiles();
-    
+
     final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);
-    
+
     for (final File file : allowedFiles) {
       if (file.isDirectory()) {
         boolean process = true;
@@ -310,65 +394,6 @@ public final class JCPreprocessor {
     return result;
   }
 
-  public static void main(@Nonnull @MustNotContainNull final String... args) {
-    printHeader();
-
-    final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[]{"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
-
-    final PreprocessorContext preprocessorContext;
-
-    try {
-      preprocessorContext = processCommandString(null, args, normalizedStrings);
-    }
-    catch (IOException ex) {
-      System.err.println("Error during command line processing [" + ex.getMessage() + ']');
-      System.exit(1);
-      throw new RuntimeException("To show compiler executiion stop");
-    }
-
-    final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
-
-    try {
-      preprocessor.execute();
-    }
-    catch (Exception unexpected) {
-      System.err.println(PreprocessorException.referenceAsString(' ', unexpected));
-      System.exit(1);
-    }
-
-    System.exit(0);
-  }
-
-  @Nonnull
-  private static PreprocessorContext processCommandString(@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
-    final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
-
-    for (int i = 0; i < normalizedStrings.length; i++) {
-      final String arg = normalizedStrings[i];
-      boolean processed = false;
-      for (final CommandLineHandler processor : getCommandLineHandlers()) {
-        if (processor.processCommandLineKey(arg, result)) {
-          processed = true;
-          if (processor instanceof HelpHandler) {
-            help();
-            System.exit(2);
-          }
-          break;
-        }
-      }
-
-      if (!processed) {
-        System.err.println("Can't process a command line argument, may be some wrong usage : " + originalStrings[i]);
-        System.out.println();
-        System.out.println("Take a look at the CLI help below, please");
-        help();
-        System.exit(1);
-      }
-    }
-
-    return result;
-  }
-
   void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
@@ -396,8 +421,7 @@ public final class JCPreprocessor {
                 break;
               }
             }
-          }
-          catch (Exception unexpected) {
+          } catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
           }
 
@@ -423,8 +447,7 @@ public final class JCPreprocessor {
             if (context.isVerbose()) {
               context.logForVerbose("Register global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
             }
-          }
-          catch (Exception unexpected) {
+          } catch (Exception unexpected) {
             PreprocessorUtils.throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
           }
         }
@@ -432,17 +455,22 @@ public final class JCPreprocessor {
     }
   }
 
-  private static void printHeader() {
-    System.out.println(InfoHelper.getProductName() + ' ' + InfoHelper.getVersion());
-    System.out.println(InfoHelper.getSite());
-    System.out.println(InfoHelper.getCopyright());
-  }
+  public static final class PreprocessingStatistics {
 
-  private static void help() {
-    System.out.println();
+    private final int numberOfPreprocessed;
+    private final int numberOfCopied;
 
-    for (final String str : InfoHelper.makeTextForHelpInfo()) {
-      System.out.println(str);
+    public PreprocessingStatistics(final int numberOfPreprocessed, final int numberOfCopied) {
+      this.numberOfPreprocessed = numberOfPreprocessed;
+      this.numberOfCopied = numberOfCopied;
+    }
+
+    public int getNumberOfCopied() {
+      return this.numberOfCopied;
+    }
+
+    public int getNumberOfPreprocessed() {
+      return this.numberOfPreprocessed;
     }
   }
 }

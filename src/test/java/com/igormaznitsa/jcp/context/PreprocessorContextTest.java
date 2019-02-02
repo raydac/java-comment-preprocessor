@@ -1,36 +1,44 @@
 /*
- * Copyright 2017 Igor Maznitsa.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.context;
 
-import org.junit.Test;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import static org.junit.Assert.*;
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import org.junit.Test;
+
+import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("rawtypes")
 public class PreprocessorContextTest {
@@ -103,38 +111,38 @@ public class PreprocessorContextTest {
 
   private static void assertMapFields(final String mapFieldName, final PreprocessorContext etalon, final PreprocessorContext that) throws Exception {
     Field field = null;
-    for(final Field f : PreprocessorContext.class.getDeclaredFields()) {
+    for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
       if (mapFieldName.equals(f.getName())) {
         field = f;
         field.setAccessible(true);
         break;
       }
     }
-    
-    assertNotNull("Can't find field "+mapFieldName,field);
-    
-    final Map thisMap = (Map)field.get(etalon);
-    final Map thatMap = (Map)field.get(that);
-    
-    assertEquals("Map fields must have same size '"+mapFieldName+'\'', thisMap,thatMap);
-    
-    for(final Object k : thisMap.keySet()) {
+
+    assertNotNull("Can't find field " + mapFieldName, field);
+
+    final Map thisMap = (Map) field.get(etalon);
+    final Map thatMap = (Map) field.get(that);
+
+    assertEquals("Map fields must have same size '" + mapFieldName + '\'', thisMap, thatMap);
+
+    for (final Object k : thisMap.keySet()) {
       assertTrue(thatMap.containsKey(k));
-      assertSame("Key '"+k+"' at map field '"+mapFieldName+"'", thisMap.get(k), thatMap.get(k));
+      assertSame("Key '" + k + "' at map field '" + mapFieldName + "'", thisMap.get(k), thatMap.get(k));
     }
   }
-  
+
   private static void assertPreprocessorContextMaps(final PreprocessorContext etalon, final PreprocessorContext that) throws Exception {
     int detected = 0;
-    for(final Field f : PreprocessorContext.class.getDeclaredFields()) {
+    for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
       if (Modifier.isFinal(f.getModifiers()) && Map.class.isAssignableFrom(f.getType())) {
         assertMapFields(f.getName(), etalon, that);
         detected++;
       }
     }
-    assertEquals(4,detected);
+    assertEquals(4, detected);
   }
-  
+
   private static void assertContextEquals(final Map<Field, Object> etalon, final Map<Field, Object> value) throws Exception {
     assertEquals("Must have same number of elements", etalon.size(), value.size());
 
@@ -191,8 +199,7 @@ public class PreprocessorContextTest {
         }
         try {
           f.set(context, new HashSet<String>(Arrays.asList(arr)));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           ex.printStackTrace();
           fail("Can't set value to '" + f.getName() + '\'');
         }
@@ -239,14 +246,14 @@ public class PreprocessorContextTest {
         throw new Error("Unexpected field type : " + type.getName());
       }
     }
-    
+
     context.setLocalVariable("LocalHelloOne", Value.INT_ONE);
     context.setGlobalVariable("GlobalHelloOne", Value.INT_FIVE);
     context.setSharedResource("RESOURCE111", "Some string");
     context.registerSpecialVariableProcessor(new SpecialVariableProcessor() {
       @Override
       public String[] getVariableNames() {
-        return new String[]{"uno::","tuo::"};
+        return new String[] {"uno::", "tuo::"};
       }
 
       @Override

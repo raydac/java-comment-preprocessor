@@ -1,22 +1,29 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.directives;
 
-import javax.annotation.Nonnull;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+
+import javax.annotation.Nonnull;
 
 /**
  * The class is the abstract parent for all classes process preprocessor
@@ -50,57 +57,57 @@ public abstract class AbstractDirectiveHandler {
   /**
    * The array contains all directives of the preprocessor
    */
-  public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[]{
-    // Order makes sense !!!
-    new LocalDirectiveHandler(),
-    new IfDefinedDirectiveHandler(),
-    new IfNDefDirectiveHandler(),
-    new IfDefDirectiveHandler(),
-    new IfDirectiveHandler(),
-    new ElseDirectiveHandler(),
-    new EndIfDirectiveHandler(),
-    new WhileDirectiveHandler(),
-    new BreakDirectiveHandler(),
-    new ContinueDirectiveHandler(),
-    new EndDirectiveHandler(),
-    new ExitIfDirectiveHandler(),
-    new ExitDirectiveHandler(),
-    new OutDirDirectiveHandler(),
-    new OutEnabledDirectiveHandler(),
-    new OutNameDirectiveHandler(),
-    new OutDisabledDirectiveHandler(),
-    new CommentNextLineDirectiveHandler(),
-    new DefinelDirectiveHandler(),
-    new DefineDirectiveHandler(),
-    new UndefDirectiveHandler(),
-    new FlushDirectiveHandler(),
-    new IncludeDirectiveHandler(),
-    new ActionDirectiveHandler(),
-    new PostfixDirectiveHandler(),
-    new PrefixDirectiveHandler(),
-    new GlobalDirectiveHandler(),
-    new GlobalElseDirectiveHandler(),
-    new GlobalEndIfDirectiveHandler(),
-    new GlobalIfDirectiveHandler(),
-    new ExcludeIfDirectiveHandler(),
-    new ErrorDirectiveHandler(),
-    new WarningDirectiveHandler(),
-    new EchoDirectiveHandler(),
-    new MsgDirectiveHandler(),
-    new NoAutoFlushHandler(),
-    new AbortDirectiveHandler()
+  public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[] {
+      // Order makes sense !!!
+      new LocalDirectiveHandler(),
+      new IfDefinedDirectiveHandler(),
+      new IfNDefDirectiveHandler(),
+      new IfDefDirectiveHandler(),
+      new IfDirectiveHandler(),
+      new ElseDirectiveHandler(),
+      new EndIfDirectiveHandler(),
+      new WhileDirectiveHandler(),
+      new BreakDirectiveHandler(),
+      new ContinueDirectiveHandler(),
+      new EndDirectiveHandler(),
+      new ExitIfDirectiveHandler(),
+      new ExitDirectiveHandler(),
+      new OutDirDirectiveHandler(),
+      new OutEnabledDirectiveHandler(),
+      new OutNameDirectiveHandler(),
+      new OutDisabledDirectiveHandler(),
+      new CommentNextLineDirectiveHandler(),
+      new DefinelDirectiveHandler(),
+      new DefineDirectiveHandler(),
+      new UndefDirectiveHandler(),
+      new FlushDirectiveHandler(),
+      new IncludeDirectiveHandler(),
+      new ActionDirectiveHandler(),
+      new PostfixDirectiveHandler(),
+      new PrefixDirectiveHandler(),
+      new GlobalDirectiveHandler(),
+      new GlobalElseDirectiveHandler(),
+      new GlobalEndIfDirectiveHandler(),
+      new GlobalIfDirectiveHandler(),
+      new ExcludeIfDirectiveHandler(),
+      new ErrorDirectiveHandler(),
+      new WarningDirectiveHandler(),
+      new EchoDirectiveHandler(),
+      new MsgDirectiveHandler(),
+      new NoAutoFlushHandler(),
+      new AbortDirectiveHandler()
   };
 
   /**
    * The array contains preprocessor directives active only during the global
    * preprocessing phase
    */
-  public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[]{
-    new GlobalDirectiveHandler(),
-    new GlobalElseDirectiveHandler(),
-    new GlobalEndIfDirectiveHandler(),
-    new GlobalIfDirectiveHandler(),
-    new ExcludeIfDirectiveHandler()
+  public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[] {
+      new GlobalDirectiveHandler(),
+      new GlobalElseDirectiveHandler(),
+      new GlobalEndIfDirectiveHandler(),
+      new GlobalIfDirectiveHandler(),
+      new ExcludeIfDirectiveHandler()
   };
 
   /**
@@ -143,7 +150,7 @@ public abstract class AbstractDirectiveHandler {
    * Execute directive
    *
    * @param tailString the tail of the string where the directive has been met, must not be null but can be empty
-   * @param context the preprocessor context
+   * @param context    the preprocessor context
    * @return the needed preprocessor behavior, must not be null
    */
   @Nonnull
@@ -184,6 +191,7 @@ public abstract class AbstractDirectiveHandler {
 
   /**
    * Check that the directive is deprecated one and can be removed in a next release
+   *
    * @return true if the directive is deprecated, false otherwise
    */
   public boolean isDeprecated() {

@@ -1,18 +1,24 @@
 /*
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.utils;
 
 
@@ -21,7 +27,14 @@ import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
+import com.igormaznitsa.meta.common.utils.Assertions;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,18 +52,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import org.apache.commons.io.*;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * It is an auxiliary class contains some useful methods
@@ -59,16 +64,15 @@ import com.igormaznitsa.meta.common.utils.Assertions;
  */
 public final class PreprocessorUtils {
 
-  private static final Pattern PATTERN_MACROS_WITH_SPACES = Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
-
-  private PreprocessorUtils() {
-  }
-
   public static final String LINE_END;
+  private static final Pattern PATTERN_MACROS_WITH_SPACES = Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
 
   static {
     final String jcpLlineEnd = System.getProperty("jcp.line.separator");
     LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLlineEnd;
+  }
+
+  private PreprocessorUtils() {
   }
 
   @Nullable
@@ -183,10 +187,10 @@ public final class PreprocessorUtils {
       IOUtils.closeQuietly(fileDst);
       IOUtils.closeQuietly(fileSrc);
     }
-    
-      if (copyFileAttributes) {
-        copyFileAttributes(source, dest);
-      }
+
+    if (copyFileAttributes) {
+      copyFileAttributes(source, dest);
+    }
   }
 
   public static void copyFileAttributes(@Nonnull final File from, @Nonnull final File to) {
@@ -194,7 +198,7 @@ public final class PreprocessorUtils {
     to.setReadable(from.canRead());
     to.setWritable(from.canWrite());
   }
-  
+
   @Nonnull
   public static String replacePartByChar(@Nonnull final String text, final char chr, final int startPosition, final int length) {
     Assertions.assertTrue("Start position must be great or equals zero", startPosition >= 0);
@@ -210,40 +214,40 @@ public final class PreprocessorUtils {
 
     return result.toString();
   }
- 
+
   @Nonnull
   public static String generateStringForChar(final char chr, final int length) {
-    final StringBuilder buffer = new StringBuilder(Math.max(length,1));
+    final StringBuilder buffer = new StringBuilder(Math.max(length, 1));
     for (int i = 0; i < length; i++) {
       buffer.append(chr);
     }
     return buffer.toString();
   }
- 
+
   @Nonnull
   public static String processMacroses(@Nonnull final String processingString, @Nonnull final PreprocessorContext context) {
     int position;
     String result = processingString;
 
-    if (context.isAllowWhitespace()){
+    if (context.isAllowWhitespace()) {
       final Matcher matcher = PATTERN_MACROS_WITH_SPACES.matcher(processingString);
       final StringBuilder buffer = new StringBuilder();
       int end = 0;
-      while(matcher.find()){
+      while (matcher.find()) {
         final int start = matcher.start();
         final int prevEnd = end;
         end = matcher.end();
         final String macrosBody = matcher.group(1);
         final Value value = Expression.evalExpression(macrosBody, context);
-        buffer.append(processingString.substring(prevEnd,start));
+        buffer.append(processingString.substring(prevEnd, start));
         buffer.append(value.toString());
       }
-      if (end<processingString.length()){
+      if (end < processingString.length()) {
         buffer.append(processingString.substring(end));
       }
       result = buffer.toString();
-    }else{
-    while (true) {
+    } else {
+      while (true) {
         position = result.indexOf("/*$");
 
         if (position >= 0) {
@@ -263,7 +267,7 @@ public final class PreprocessorUtils {
         } else {
           break;
         }
-    }
+      }
     }
     return result;
   }
@@ -373,11 +377,11 @@ public final class PreprocessorUtils {
 
     final String[] result;
     if (index < 0) {
-      result = new String[]{string};
+      result = new String[] {string};
     } else {
       final String leftPart = string.substring(0, index).trim();
       final String rightPart = string.substring(index + 1).trim();
-      result = new String[]{leftPart, rightPart};
+      result = new String[] {leftPart, rightPart};
     }
     return result;
   }
@@ -385,10 +389,10 @@ public final class PreprocessorUtils {
   @Nonnull
   @MustNotContainNull
   public static String[] splitForCharAndHoldEmptyLine(@Nonnull final String string, final char delimiter) {
-    String [] result = splitForChar(string, delimiter);
-    return result.length == 0 ? new String[]{""} : result;
+    String[] result = splitForChar(string, delimiter);
+    return result.length == 0 ? new String[] {""} : result;
   }
-  
+
   @Nonnull
   @MustNotContainNull
   public static String[] splitForChar(@Nonnull final String string, final char delimiter) {
@@ -438,7 +442,7 @@ public final class PreprocessorUtils {
   }
 
   public static void throwPreprocessorException(@Nullable final String msg, @Nullable final String processingString, @Nonnull final File srcFile, final int nextStringIndex, @Nullable final Throwable cause) {
-    throw new PreprocessorException(msg, processingString, new FilePositionInfo[]{new FilePositionInfo(srcFile, nextStringIndex)}, cause);
+    throw new PreprocessorException(msg, processingString, new FilePositionInfo[] {new FilePositionInfo(srcFile, nextStringIndex)}, cause);
   }
 
   @Nonnull

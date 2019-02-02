@@ -1,36 +1,44 @@
 /*
- * Copyright 2017 Igor Maznitsa.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.utils.antpathmatcher;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AntPathMatcherTest {
-  
+
   @Test
   public void testMatching() {
     final AntPathMatcher matcher = new AntPathMatcher();
- 
+
     assertTrue(matcher.match("", ""));
     assertFalse(matcher.match("", "a"));
     assertFalse(matcher.match("a", ""));
     assertTrue(matcher.match("?", "a"));
     assertFalse(matcher.match("*", ""));
     assertFalse(matcher.match("?", ""));
-    
+
     assertTrue(matcher.match("**/test", "test"));
     assertTrue(matcher.match("**/test?", "test1"));
     assertTrue(matcher.match("**/test*", "test111"));
@@ -46,5 +54,5 @@ public class AntPathMatcherTest {
     assertFalse(matcher.match("some", "some1"));
     assertFalse(matcher.match("some/help", "some/help/ddd"));
   }
-  
+
 }

@@ -1,19 +1,33 @@
 /*
- * Copyright 2014 Igor Maznitsa.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression.functions.xml;
+
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
+import org.apache.xpath.jaxp.XPathFactoryImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,12 +35,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
-
-import org.apache.xpath.jaxp.XPathFactoryImpl;
-import org.w3c.dom.*;
 
 public abstract class AbstractXMLFunction extends AbstractFunction {
 
@@ -58,6 +66,47 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   @Nonnull
   public static String makeXPathElementId(@Nonnull final String documentId, @Nonnull final String xpath) {
     return documentId + "_#xpathelement_" + xpath;
+  }
+
+  @Nonnull
+  public static String buildPathForElement(@Nonnull final Element element) {
+    final StringBuilder result = new StringBuilder();
+
+    Node thenode = element;
+
+    while (thenode != null) {
+      int level = 0;
+      Node sibling = thenode;
+      while (sibling != null) {
+        level++;
+        sibling = sibling.getPreviousSibling();
+      }
+
+      result.append('/').append(thenode.getNodeName()).append('{').append(level).append('}');
+      thenode = thenode.getParentNode();
+    }
+
+    return result.toString();
+  }
+
+  @Nonnull
+  public static String getFirstLevelTextContent(@Nonnull final Node node) {
+    final NodeList list = node.getChildNodes();
+    final StringBuilder textContent = new StringBuilder(128);
+    for (int i = 0; i < list.getLength(); ++i) {
+      final Node child = list.item(i);
+      if (child.getNodeType() == Node.TEXT_NODE) {
+        textContent.append(child.getTextContent());
+      }
+    }
+    return textContent.toString();
+  }
+
+  @Nonnull
+  protected static XPathExpression prepareXPathExpression(@Nonnull final String path) throws XPathExpressionException {
+    final XPathFactory factory = new XPathFactoryImpl();
+    final XPath xpath = factory.newXPath();
+    return xpath.compile(path);
   }
 
   @Nonnull
@@ -137,40 +186,6 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   }
 
   @Nonnull
-  public static String buildPathForElement(@Nonnull final Element element) {
-    final StringBuilder result = new StringBuilder();
-
-    Node thenode = element;
-
-    while (thenode != null) {
-      int level = 0;
-      Node sibling = thenode;
-      while (sibling != null) {
-        level++;
-        sibling = sibling.getPreviousSibling();
-      }
-
-      result.append('/').append(thenode.getNodeName()).append('{').append(level).append('}');
-      thenode = thenode.getParentNode();
-    }
-
-    return result.toString();
-  }
-
-  @Nonnull
-  public static String getFirstLevelTextContent(@Nonnull final Node node) {
-    final NodeList list = node.getChildNodes();
-    final StringBuilder textContent = new StringBuilder(128);
-    for (int i = 0; i < list.getLength(); ++i) {
-      final Node child = list.item(i);
-      if (child.getNodeType() == Node.TEXT_NODE) {
-        textContent.append(child.getTextContent());
-      }
-    }
-    return textContent.toString();
-  }
-
-  @Nonnull
   public String findElementForIndex(@Nonnull final PreprocessorContext context, @Nonnull final String elementListId, final int elementIndex) {
     final String elementCacheId = makeElementId(elementListId, elementIndex);
     NodeContainer container = (NodeContainer) context.getSharedResource(elementCacheId);
@@ -196,13 +211,6 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
       context.setSharedResource(elementCacheId, container);
     }
     return elementCacheId;
-  }
-
-  @Nonnull
-  protected static XPathExpression prepareXPathExpression(@Nonnull final String path) throws XPathExpressionException {
-    final XPathFactory factory = new XPathFactoryImpl();
-    final XPath xpath = factory.newXPath();
-    return xpath.compile(path);
   }
 
 }

@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.containers;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -23,19 +29,18 @@ import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.igormaznitsa.jcp.utils.ResetablePrinter;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -75,29 +80,6 @@ public class FileInfoContainer {
    */
   private String destFileName;
 
-  @Nonnull
-  public File getSourceFile() {
-    return sourceFile;
-  }
-
-  public boolean isExcludedFromPreprocessing() {
-    return excludedFromPreprocessing;
-  }
-
-  public boolean isForCopyOnly() {
-    return forCopyOnly;
-  }
-
-  @Nonnull
-  public String getDestinationDir() {
-    return destFolder;
-  }
-
-  @Nonnull
-  public String getDestinationName() {
-    return destFileName;
-  }
-
   public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String dstFileName, final boolean copyOnly) {
     assertNotNull("The source file is null", srcFile);
     assertNotNull("The destination file name is null", dstFileName);
@@ -118,6 +100,56 @@ public class FileInfoContainer {
       destFolder = dstFileName.substring(0, lastDirSeparator);
       destFileName = dstFileName.substring(lastDirSeparator + 1);
     }
+  }
+
+  @Nonnull
+  private static String findTailRemover(@Nonnull final String str, @Nonnull final PreprocessorContext context) {
+    String result = str;
+    if (context.isAllowWhitespace()) {
+      final Matcher matcher = DIRECTIVE_TAIL_REMOVER.matcher(str);
+      if (matcher.find()) {
+        result = str.substring(0, matcher.start());
+      }
+    } else {
+      final int tailRemoverStart = str.indexOf("/*-*/");
+      if (tailRemoverStart >= 0) {
+        result = str.substring(0, tailRemoverStart);
+      }
+    }
+    return result;
+  }
+
+  @Nonnull
+  public File getSourceFile() {
+    return sourceFile;
+  }
+
+  public boolean isExcludedFromPreprocessing() {
+    return excludedFromPreprocessing;
+  }
+
+  public boolean isForCopyOnly() {
+    return forCopyOnly;
+  }
+
+  @Nonnull
+  public String getDestinationDir() {
+    return destFolder;
+  }
+
+  public void setDestinationDir(@Nonnull final String destDir) {
+    assertNotNull("String is null", destDir);
+    destFolder = destDir;
+  }
+
+  @Nonnull
+  public String getDestinationName() {
+    return destFileName;
+  }
+
+  public void setDestinationName(@Nonnull final String destName) {
+    assertNotNull("String is null", destName);
+    destFileName = destName;
   }
 
   @Nonnull
@@ -166,8 +198,8 @@ public class FileInfoContainer {
 
         leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
 
-        if (isHashPrefixed(leftTrimmedString,context)) {
-          switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString,context), context, true)) {
+        if (isHashPrefixed(leftTrimmedString, context)) {
+          switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString, context), context, true)) {
             case PROCESSED:
             case READ_NEXT_LINE:
             case SHOULD_BE_COMMENTED:
@@ -189,7 +221,7 @@ public class FileInfoContainer {
     if (!preprocessingState.isIfStackEmpty()) {
       final TextFileDataContainer lastIf = assertNotNull(preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
-          "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
+          "", new FilePositionInfo[] {new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
 
     return preprocessingState.popAllExcludeIfInfoData();
@@ -233,7 +265,6 @@ public class FileInfoContainer {
     }
   }
 
-  
   @Nonnull
   private String extractDoubleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
     String tail;
@@ -267,7 +298,7 @@ public class FileInfoContainer {
     } else {
       tail = PreprocessorUtils.extractTail("//$", line);
     }
-    
+
     if (context.isPreserveIndent()) {
       tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
@@ -277,10 +308,10 @@ public class FileInfoContainer {
   /**
    * Preprocess file, NB! it doesn't clear local variables automatically for cloned contexts
    *
-   * @param state the start preprocessing state, can be null
+   * @param state   the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
    * @return the state for the preprocessed file
-   * @throws IOException it will be thrown for IO errors
+   * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
    */
   @Nonnull
@@ -435,45 +466,28 @@ public class FileInfoContainer {
     if (!preprocessingState.isIfStackEmpty()) {
       final TextFileDataContainer lastIf = assertNotNull("'IF' stack is empty", preprocessingState.peekIf());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
-          "", new FilePositionInfo[]{new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
+          "", new FilePositionInfo[] {new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
     }
     if (!preprocessingState.isWhileStackEmpty()) {
       final TextFileDataContainer lastWhile = assertNotNull("'WHILE' stack is empty", preprocessingState.peekWhile());
       throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
-          "", new FilePositionInfo[]{new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
+          "", new FilePositionInfo[] {new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
     if (!context.isFileOutputDisabled() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
-      
+
       final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
 
       if (context.isVerbose()) {
         context.logForVerbose("Content was " + (wasSaved ? "saved" : "not saved") + " into file '" + outFile + "\'");
       }
 
-      if (this.sourceFile!=null && context.isCopyFileAttributes()) {
+      if (this.sourceFile != null && context.isCopyFileAttributes()) {
         PreprocessorUtils.copyFileAttributes(this.sourceFile, outFile);
       }
     }
     return preprocessingState;
-  }
-
-  @Nonnull
-  private static String findTailRemover(@Nonnull final String str, @Nonnull final PreprocessorContext context) {
-    String result = str;
-    if (context.isAllowWhitespace()) {
-      final Matcher matcher = DIRECTIVE_TAIL_REMOVER.matcher(str);
-      if (matcher.find()){
-        result = str.substring(0, matcher.start());
-      }
-    } else {
-      final int tailRemoverStart = str.indexOf("/*-*/");
-      if (tailRemoverStart >= 0) {
-        result = str.substring(0, tailRemoverStart);
-      }
-    }
-    return result;
   }
 
   private boolean checkDirectiveArgumentRoughly(@Nonnull final AbstractDirectiveHandler directive, @Nonnull final String rest) {
@@ -538,16 +552,6 @@ public class FileInfoContainer {
       }
     }
     throw context.makeException("Unknown preprocessor directive [" + directiveString + ']', null);
-  }
-
-  public void setDestinationDir(@Nonnull final String destDir) {
-    assertNotNull("String is null", destDir);
-    destFolder = destDir;
-  }
-
-  public void setDestinationName(@Nonnull final String destName) {
-    assertNotNull("String is null", destName);
-    destFileName = destName;
   }
 
   public void setExcluded(final boolean flag) {

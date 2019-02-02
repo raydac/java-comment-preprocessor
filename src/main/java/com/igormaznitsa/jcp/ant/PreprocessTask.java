@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.ant;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
@@ -21,7 +27,15 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import com.igormaznitsa.meta.annotation.ImplementationNote;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,17 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-
-import com.igormaznitsa.meta.annotation.ImplementationNote;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.*;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class implements an ANT task to allow calls for preprocessing from ANT build scripts. Also it allows to out messages from preprocessor directives into the ANT log and read
@@ -50,9 +54,10 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
  */
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
 
+  private final List<Global> globalVariables = new ArrayList<Global>();
+  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
   private File sourceDirectory = null;
   private File destinationDirectory = null;
-
   private String inCharSet = null;
   private String outCharSet = null;
   private String excludedExtensions = null;
@@ -69,86 +74,35 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVarAsFalse = false;
-  
   private Map<String, Value> antVariables;
-  private final List<Global> globalVariables = new ArrayList<Global>();
-  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
-
-  /**
-   * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
-  public static class CfgFile {
-
-    private File file;
-
-    public void setFile(@Nonnull final File file) {
-      this.file = assertNotNull(file);
-    }
-
-    @Nullable
-    public File getFile() {
-      return this.file;
-    }
-  }
-
-  /**
-   * Inside class describes a "global" item, it describes a global variable which will be added into the preprocessor context It has attributes "name" and "value", be careful in
-   * the value attribute usage because you have to use "&quot;" instead of \" symbol inside string values
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
-  public static class Global {
-
-    private String name;
-    private String value;
-
-    public void setName(@Nonnull final String name) {
-      this.name = assertNotNull(name);
-    }
-
-    @Nullable
-    public String getName() {
-      return this.name;
-    }
-
-    public void setValue(@Nonnull final String value) {
-      this.value = assertNotNull(value);
-    }
-
-    @Nullable
-    public String getValue() {
-      return this.value;
-    }
-  }
 
   /**
    * Set the "copyfileattributes", it turns on mode to copy file attributes if file generated or copied.
+   *
    * @param flag true if to copy attributes, false otherwise
    */
   public void setCopyFileAttributes(final boolean flag) {
     this.copyFileAttributes = flag;
   }
-  
+
   /**
    * Set the "allowWhitespace", it allows to manage the mode to allow whitespace between the // and the #.
+   *
    * @param flag true if whitespace is allowed, false otherwise
    */
   public void setAllowWhitespace(final boolean flag) {
     this.allowWhitespace = flag;
   }
-  
+
   /**
    * Set the "preserveident" attribute, to preserve spaces occupied by '//$' and '//$$' directives.
+   *
    * @param flag true to preserve positions of tail chars in lines marked by '//$$' and '//$', false otherwise
    */
   public void setPreserveIndent(final boolean flag) {
     this.preserveIndent = flag;
   }
-  
+
   /**
    * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same
    * content.
@@ -206,12 +160,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   /**
    * Set the "unknownVarAsFalse" attribute, it allows to interpret unknown variables as FALSE.
+   *
    * @param flag true to turn on the mode, false otherwise.
    */
   public void setUnknownVarAsFalse(final boolean flag) {
     this.unknownVarAsFalse = flag;
   }
-  
+
   /**
    * Set the "excluded" attribute, it defines the excluded file extensions which will be ignored by the preprocessor in its work (also those files will not be copied)
    *
@@ -232,12 +187,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   /**
    * Set the "excludedfolders" attribute, sub-folders in source folders to be excluded from preprocessing, ANT patterns allowed, ${path.separator} should be used for multiple items
+   *
    * @param value folder names as string
    */
   public void setExcludedFolders(@Nonnull final String value) {
     this.excludedFolders = value;
   }
-  
+
   /**
    * Set the "clear" attribute, it is a boolean attribute allows to make the preprocessor to clear the destination directory before its work
    *
@@ -356,11 +312,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setPreserveIndent(this.preserveIndent);
     context.setCopyFileAttributes(this.copyFileAttributes);
     context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
-    
-    if (this.excludedFolders!=null && !this.excludedFolders.isEmpty()) {
-      context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders,File.pathSeparatorChar));
+
+    if (this.excludedFolders != null && !this.excludedFolders.isEmpty()) {
+      context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders, File.pathSeparatorChar));
     }
-    
+
     fillCfgFiles(context);
     fillGlobalVars(context);
 
@@ -463,5 +419,56 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Override
   public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
     throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!", null);
+  }
+
+  /**
+   * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
+   *
+   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+   */
+  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
+  public static class CfgFile {
+
+    private File file;
+
+    @Nullable
+    public File getFile() {
+      return this.file;
+    }
+
+    public void setFile(@Nonnull final File file) {
+      this.file = assertNotNull(file);
+    }
+  }
+
+  /**
+   * Inside class describes a "global" item, it describes a global variable which will be added into the preprocessor context It has attributes "name" and "value", be careful in
+   * the value attribute usage because you have to use "&quot;" instead of \" symbol inside string values
+   *
+   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+   */
+  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
+  public static class Global {
+
+    private String name;
+    private String value;
+
+    @Nullable
+    public String getName() {
+      return this.name;
+    }
+
+    public void setName(@Nonnull final String name) {
+      this.name = assertNotNull(name);
+    }
+
+    @Nullable
+    public String getValue() {
+      return this.value;
+    }
+
+    public void setValue(@Nonnull final String value) {
+      this.value = assertNotNull(value);
+    }
   }
 }

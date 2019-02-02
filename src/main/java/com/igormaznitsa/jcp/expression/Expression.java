@@ -1,33 +1,40 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
+
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import javax.annotation.Nonnull;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -40,12 +47,12 @@ public class Expression {
   /**
    * Precreated array for speed up operations
    */
-  private static final Class<?>[] OPERATOR_SIGNATURE_1 = new Class<?>[]{Value.class};
+  private static final Class<?>[] OPERATOR_SIGNATURE_1 = new Class<?>[] {Value.class};
 
   /**
    * Precreated array for speed up operations
    */
-  private static final Class<?>[] OPERATOR_SIGNATURE_2 = new Class<?>[]{Value.class, Value.class};
+  private static final Class<?>[] OPERATOR_SIGNATURE_2 = new Class<?>[] {Value.class, Value.class};
 
   /**
    * The variable contains the preprocessor context for the expression, it can be null
@@ -57,11 +64,19 @@ public class Expression {
    */
   private final ExpressionTree expressionTree;
 
+  private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {
+    if (tree == null) {
+      throw context.makeException("[Expression]The expression tree is null", null);
+    }
+    this.context = context;
+    this.expressionTree = tree;
+  }
+
   /**
    * Evaluate expression
    *
    * @param expression the expression as a String, must not be null
-   * @param context a preprocessor context to be used for expression operations
+   * @param context    a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
   @Nonnull
@@ -77,7 +92,7 @@ public class Expression {
   /**
    * Evaluate an expression tree
    *
-   * @param tree an expression tree, it must not be null
+   * @param tree    an expression tree, it must not be null
    * @param context a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
@@ -85,14 +100,6 @@ public class Expression {
   public static Value evalTree(@Nonnull final ExpressionTree tree, @Nonnull final PreprocessorContext context) {
     final Expression exp = new Expression(context, tree);
     return exp.eval(context.getPreprocessingState());
-  }
-
-  private Expression(@Nonnull final PreprocessorContext context, @Nonnull final ExpressionTree tree) {
-    if (tree == null) {
-      throw context.makeException("[Expression]The expression tree is null", null);
-    }
-    this.context = context;
-    this.expressionTree = tree;
   }
 
   @Nonnull
@@ -181,8 +188,8 @@ public class Expression {
         throw this.context.makeException("[Expression]Can't find a function method to process data [" + signature.toString() + ']', unexpected);
       } catch (Exception unexpected) {
         final Throwable cause = unexpected.getCause();
-        if (cause instanceof PreprocessorException){
-          throw (PreprocessorException)cause;
+        if (cause instanceof PreprocessorException) {
+          throw (PreprocessorException) cause;
         }
         throw this.context.makeException("[Expression]Can't execute a function method to process data [" + function.getClass().getName() + '.' + signature.toString() + ']', unexpected);
       }
@@ -287,7 +294,7 @@ public class Expression {
 
         final Variable var = (Variable) element.getItem();
         final String name = var.getName();
-        final Value value = context.findVariableForName(name,false);
+        final Value value = context.findVariableForName(name, false);
         if (value == null) {
           throw new RuntimeException("Unknown variable [" + name + ']');
         } else {

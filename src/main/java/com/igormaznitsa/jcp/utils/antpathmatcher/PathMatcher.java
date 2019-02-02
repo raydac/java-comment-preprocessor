@@ -1,18 +1,24 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.utils.antpathmatcher;
 
 import java.util.Comparator;
@@ -31,8 +37,8 @@ import java.util.Map;
  * Ant-style pattern syntax.
  *
  * @author Juergen Hoeller
- * @since 1.2
  * @see AntPathMatcher
+ * @since 1.2
  */
 interface PathMatcher {
 
@@ -54,7 +60,7 @@ interface PathMatcher {
    * to this PathMatcher's matching strategy.
    *
    * @param pattern the pattern to match against
-   * @param path the path String to test
+   * @param path    the path String to test
    * @return {@code true} if the supplied {@code path} matched, {@code false} if
    * it didn't
    */
@@ -68,7 +74,7 @@ interface PathMatcher {
    * path goes, assuming that a full path may then match as well.
    *
    * @param pattern the pattern to match against
-   * @param path the path String to test
+   * @param path    the path String to test
    * @return {@code true} if the supplied {@code path} matched, {@code false} if
    * it didn't
    */
@@ -94,7 +100,7 @@ interface PathMatcher {
    * and the dynamic parts of the given path pattern.
    *
    * @param pattern the path pattern
-   * @param path the full path to introspect
+   * @param path    the full path to introspect
    * @return the pattern-mapped part of the given {@code path} (never
    * {@code null})
    */
@@ -108,7 +114,7 @@ interface PathMatcher {
    * method will return a map containing "hotel"->"1".
    *
    * @param pattern the path pattern, possibly containing URI templates
-   * @param path the full path to extract template variables from
+   * @param path    the full path to extract template variables from
    * @return a map, containing variable names as keys; variables values as
    * values
    */

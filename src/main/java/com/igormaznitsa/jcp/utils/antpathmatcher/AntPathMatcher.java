@@ -1,19 +1,27 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.utils.antpathmatcher;
+
+import com.igormaznitsa.meta.common.utils.Assertions;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -23,7 +31,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * {@link PathMatcher} implementation for Ant-style path patterns.
@@ -86,20 +93,13 @@ public final class AntPathMatcher implements PathMatcher {
   private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\{[^/]+?\\}");
 
   private static final char[] WILDCARD_CHARS = {'*', '?', '{'};
-
-  private String pathSeparator;
-
-  private PathSeparatorPatternCache pathSeparatorPatternCache;
-
-  private boolean caseSensitive = true;
-
-  private boolean trimTokens = false;
-
-  private volatile Boolean cachePatterns;
-
-  private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<String, String[]>(256);
-
   final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(256);
+  private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<String, String[]>(256);
+  private String pathSeparator;
+  private PathSeparatorPatternCache pathSeparatorPatternCache;
+  private boolean caseSensitive = true;
+  private boolean trimTokens = false;
+  private volatile Boolean cachePatterns;
 
   /**
    * Create a new instance with the {@link #DEFAULT_PATH_SEPARATOR}.
@@ -124,6 +124,7 @@ public final class AntPathMatcher implements PathMatcher {
   /**
    * Set the path separator to use for pattern parsing.
    * Default is "/", as in Ant.
+   *
    * @param pathSeparator value to be used as path separator
    */
   public void setPathSeparator(String pathSeparator) {
@@ -161,8 +162,8 @@ public final class AntPathMatcher implements PathMatcher {
    * threshold is 65536), assuming that arbitrary permutations of patterns are
    * coming in, with little chance for encountering a recurring pattern.
    *
-   * @since 4.0.1
    * @see #getStringMatcher(String)
+   * @since 4.0.1
    */
   public void setCachePatterns(boolean cachePatterns) {
     this.cachePatterns = cachePatterns;
@@ -192,10 +193,10 @@ public final class AntPathMatcher implements PathMatcher {
   /**
    * Actually match the given {@code path} against the given {@code pattern}.
    *
-   * @param pattern the pattern to match against
-   * @param path the path String to test
+   * @param pattern   the pattern to match against
+   * @param path      the path String to test
    * @param fullMatch whether a full pattern match is required (else a pattern
-   * match as far as the given base path goes is sufficient)
+   *                  match as far as the given base path goes is sufficient)
    * @return {@code true} if the supplied {@code path} matched, {@code false} if
    * it didn't
    */
@@ -424,8 +425,8 @@ public final class AntPathMatcher implements PathMatcher {
    * Test whether or not a string matches against a pattern.
    *
    * @param pattern the pattern to match against (never {@code null})
-   * @param str the String which must be matched against the pattern (never
-   * {@code null})
+   * @param str     the String which must be matched against the pattern (never
+   *                {@code null})
    * @return {@code true} if the string matches against the pattern, or
    * {@code false} otherwise
    */

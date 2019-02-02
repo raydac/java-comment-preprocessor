@@ -1,25 +1,31 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-package com.igormaznitsa.jcp.extension;
 
-import javax.annotation.Nonnull;
+package com.igormaznitsa.jcp.extension;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * The interface describes an extension which can be connected to a preprocessor
@@ -33,7 +39,7 @@ public interface PreprocessorExtension {
    * To process an action (it will be called if the preprocessor is met
    * //#action directive)
    *
-   * @param context the current preprocessor context, must not be null
+   * @param context    the current preprocessor context, must not be null
    * @param parameters the parameters of the action directive, must not be null
    * @return true if the action has been processed successfully or false, if it
    * is false then exception will be thrown and preprocessing will be stopped
@@ -44,8 +50,8 @@ public interface PreprocessorExtension {
    * Call to process a user function (the function starts with $)
    *
    * @param functionName the name of the function (without $ and in low case),
-   * must not be null
-   * @param arguments the function arguments as an array, must not be null
+   *                     must not be null
+   * @param arguments    the function arguments as an array, must not be null
    * @return a calculated value, it must not be null
    */
   @Nonnull
@@ -56,7 +62,7 @@ public interface PreprocessorExtension {
    * $) then it will ask for its arity
    *
    * @param functionName the function name without $ and in low case, must not
-   * be null
+   *                     be null
    * @return the function arity (the argument number), zero or a great value
    */
   int getUserFunctionArity(@Nonnull String functionName);

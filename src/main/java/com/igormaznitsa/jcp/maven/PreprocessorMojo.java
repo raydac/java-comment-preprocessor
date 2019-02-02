@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.maven;
 
 import com.igormaznitsa.jcp.JCPreprocessor;
@@ -20,25 +26,26 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.Assertions;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.*;
-import org.apache.maven.project.MavenProject;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import org.apache.commons.lang3.StringUtils;
-import com.igormaznitsa.meta.common.utils.Assertions;
 
 /**
  * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
@@ -75,11 +82,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   /**
    * Copy file attributes for copied and generated files.
+   *
    * @since 6.1.2
    */
   @Parameter(alias = "copyFileAttributes", defaultValue = "false")
   private boolean copyFileAttributes;
-  
+
   /**
    * The Destination folder where generated sources will be placed in non-test mode.
    */
@@ -106,11 +114,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   /**
    * Flag to ignore missing source folders, if false then mojo fail for any missing source folder, if true then missing folder will be ignored.
+   *
    * @since 6.1.1
    */
-  @Parameter(alias="ignoreMissingSources", defaultValue = "false")
+  @Parameter(alias = "ignoreMissingSources", defaultValue = "false")
   private boolean ignoreMissingSources;
-  
+
   /**
    * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
    */
@@ -126,9 +135,9 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   /**
    * Flag to interpret unknown variable as FALSE.
    */
-  @Parameter(alias="unknownVarAsFalse", defaultValue = "false") 
+  @Parameter(alias = "unknownVarAsFalse", defaultValue = "false")
   private boolean unknownVarAsFalse;
-  
+
   /**
    * Make dry run of the preprocessor without any saving of result.
    */
@@ -175,8 +184,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    * List of sub-folders in source folders to be excluded from preprocessing, ANT path pattern format allowed.
    */
   @Parameter(alias = "excludedFolders")
-  private String [] excludedFolders = new String[0];
-  
+  private String[] excludedFolders = new String[0];
+
   /**
    * List of external configuration files.
    */
@@ -194,13 +203,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
    */
   @Parameter(alias = "allowWhitespace", defaultValue = "false")
   private boolean allowWhitespace;
-  
+
   /**
    * Preserve indents in lines marked by '//$' and '//$$' directives. The Directives will be replaced by white spaces chars.
    */
   @Parameter(alias = "preserveIndent", defaultValue = "false")
   private boolean preserveIndent;
-  
+
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    */
@@ -209,73 +218,74 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
   /**
    * Skip preprocessing.
+   *
    * @since 6.1.1
    */
   @Parameter(alias = "skip", property = "jcp.preprocess.skip", defaultValue = "false")
   private boolean skip;
-  
+
   /**
    * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
    */
   @Parameter(alias = "compareDestination", defaultValue = "false")
   private boolean compareDestination;
 
-  public void setExcludedFolders(@Nonnull @MustNotContainNull final String ... antPatterns) {
-    this.excludedFolders = Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns));
-  }
-  
   @Nonnull
   @MustNotContainNull
-  public String [] getExcludedFolders() {
+  public String[] getExcludedFolders() {
     return this.excludedFolders;
   }
-  
-  public void setIgnoreMissingSources(final boolean flag) {
-    this.ignoreMissingSources = flag;
+
+  public void setExcludedFolders(@Nonnull @MustNotContainNull final String... antPatterns) {
+    this.excludedFolders = Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns));
   }
-  
+
   public boolean isIgnoreMissingSources() {
     return this.ignoreMissingSources;
   }
-  
+
+  public void setIgnoreMissingSources(final boolean flag) {
+    this.ignoreMissingSources = flag;
+  }
+
+  public boolean isSkip() {
+    return this.skip;
+  }
+
   public void setSkip(final boolean flag) {
     this.skip = flag;
   }
-  
-  public boolean isSkip() {
-    return this.skip;
+
+  public boolean getPreserveIndent() {
+    return this.preserveIndent;
   }
 
   public void setPreserveIndent(final boolean flag) {
     this.preserveIndent = flag;
   }
-  
-  public boolean getPreserveIndent() {
-    return this.preserveIndent;
-  }
-  
-  public void setCopyFileAttributes(final boolean flag) {
-    this.copyFileAttributes = flag;
-  }
-  
+
   public boolean getCopyFileAttributes() {
     return this.copyFileAttributes;
   }
-  
-  public void setUseTestSources(final boolean flag) {
-    this.useTestSources = flag;
+
+  public void setCopyFileAttributes(final boolean flag) {
+    this.copyFileAttributes = flag;
   }
 
   public boolean getUseTestSources() {
     return this.useTestSources;
   }
 
-  public void setClear(final boolean flag) {
-    this.clear = flag;
+  public void setUseTestSources(final boolean flag) {
+    this.useTestSources = flag;
   }
 
   public boolean getClear() {
     return this.clear;
+  }
+
+  public void setClear(final boolean flag) {
+    this.clear = flag;
   }
 
   public void setCareForLastNextLine(final boolean flag) {
@@ -286,16 +296,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.careForLastNextLine;
   }
 
-  public void setKeepSrcRoot(final boolean flag) {
-    this.keepSrcRoot = flag;
-  }
-
   public boolean getKeepSrcRoot() {
     return this.keepSrcRoot;
   }
 
-  public void setGlobalVars(@Nonnull final Properties vars) {
-    this.globalVars = vars;
+  public void setKeepSrcRoot(final boolean flag) {
+    this.keepSrcRoot = flag;
   }
 
   @Nonnull
@@ -303,8 +309,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.globalVars;
   }
 
-  public void setCfgFiles(@Nonnull @MustNotContainNull final File[] files) {
-    this.cfgFiles = files;
+  public void setGlobalVars(@Nonnull final Properties vars) {
+    this.globalVars = vars;
   }
 
   @Nonnull
@@ -313,16 +319,16 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.cfgFiles;
   }
 
-  public void setCompareDestination(final boolean flag) {
-    this.compareDestination = flag;
+  public void setCfgFiles(@Nonnull @MustNotContainNull final File[] files) {
+    this.cfgFiles = files;
   }
 
   public boolean isCompareDestination() {
     return this.compareDestination;
   }
 
-  public void setSource(@Nonnull final String source) {
-    this.source = source;
+  public void setCompareDestination(final boolean flag) {
+    this.compareDestination = flag;
   }
 
   @Nonnull
@@ -330,8 +336,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.source;
   }
 
-  public void setDestination(@Nonnull final File destination) {
-    this.destination = destination;
+  public void setSource(@Nonnull final String source) {
+    this.source = source;
   }
 
   @Nonnull
@@ -339,8 +345,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.destination;
   }
 
-  public void setTestDestination(@Nonnull final File destination) {
-    this.testDestination = destination;
+  public void setDestination(@Nonnull final File destination) {
+    this.destination = destination;
   }
 
   @Nonnull
@@ -348,8 +354,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.testDestination;
   }
 
-  public void setInEncoding(@Nonnull final String value) {
-    this.inEncoding = value;
+  public void setTestDestination(@Nonnull final File destination) {
+    this.testDestination = destination;
   }
 
   @Nonnull
@@ -357,8 +363,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.inEncoding;
   }
 
-  public void setOutEncoding(@Nonnull final String value) {
-    this.outEncoding = value;
+  public void setInEncoding(@Nonnull final String value) {
+    this.inEncoding = value;
   }
 
   @Nonnull
@@ -366,8 +372,8 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.outEncoding;
   }
 
-  public void setExcluded(@Nullable final String excluded) {
-    this.excluded = excluded;
+  public void setOutEncoding(@Nonnull final String value) {
+    this.outEncoding = value;
   }
 
   @Nullable
@@ -375,16 +381,16 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.excluded;
   }
 
-  public void setUnknownVarAsFalse(final boolean flag) {
-    this.unknownVarAsFalse = flag;
+  public void setExcluded(@Nullable final String excluded) {
+    this.excluded = excluded;
   }
-  
+
   public boolean getUnknownVarAsFalse() {
     return this.unknownVarAsFalse;
   }
-  
-  public void setProcessing(@Nullable final String processing) {
-    this.processing = processing;
+
+  public void setUnknownVarAsFalse(final boolean flag) {
+    this.unknownVarAsFalse = flag;
   }
 
   @Nullable
@@ -392,44 +398,48 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     return this.processing;
   }
 
-  public void setDisableOut(final boolean value) {
-    this.disableOut = value;
+  public void setProcessing(@Nullable final String processing) {
+    this.processing = processing;
   }
 
   public boolean getDisableOut() {
     return this.disableOut;
   }
 
-  public void setVerbose(final boolean verbose) {
-    this.verbose = verbose;
+  public void setDisableOut(final boolean value) {
+    this.disableOut = value;
   }
 
   public boolean getVerbose() {
     return this.verbose;
   }
 
-  public void setKeepLines(final boolean keepLines) {
-    this.keepLines = keepLines;
+  public void setVerbose(final boolean verbose) {
+    this.verbose = verbose;
   }
 
   public boolean getKeepLines() {
     return this.keepLines;
   }
 
-  public void setAllowWhitespace(final boolean flag) {
-    this.allowWhitespace = flag;
+  public void setKeepLines(final boolean keepLines) {
+    this.keepLines = keepLines;
   }
-  
+
   public boolean getAllowWhitespace() {
     return this.allowWhitespace;
   }
-  
-  public void setRemoveComments(final boolean value) {
-    this.removeComments = value;
+
+  public void setAllowWhitespace(final boolean flag) {
+    this.allowWhitespace = flag;
   }
 
   public boolean getRemoveComments() {
     return this.removeComments;
+  }
+
+  public void setRemoveComments(final boolean value) {
+    this.removeComments = value;
   }
 
   @Nullable
@@ -442,13 +452,13 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
       for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
         final boolean folderPresented = new File(srcRoot).isDirectory();
-        
+
         if (!folderPresented) {
-          getLog().debug("Can't find source folder : "+srcRoot);
+          getLog().debug("Can't find source folder : " + srcRoot);
         }
-        
+
         String textToAppend;
-        
+
         if (folderPresented) {
           textToAppend = srcRoot;
         } else {
@@ -458,12 +468,12 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
             textToAppend = srcRoot;
           }
         }
-          
-        if (textToAppend!=null) {
-        if (accum.length() > 0) {
-          accum.append(';');
-        }
-        accum.append(srcRoot);
+
+        if (textToAppend != null) {
+          if (accum.length() > 0) {
+            accum.append(';');
+          }
+          accum.append(srcRoot);
         }
       }
       result = accum.toString();
@@ -544,7 +554,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     context.setPreserveIndent(this.preserveIndent);
     context.setExcludedFolderPatterns(this.excludedFolders);
     context.setCopyFileAttributes(this.copyFileAttributes);
-    
+
     // process cfg files
     if (this.cfgFiles != null && this.cfgFiles.length != 0) {
       for (final File file : this.cfgFiles) {
@@ -588,8 +598,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       if (!skipPreprocessing) {
         try {
           context = makePreprocessorContext(Assertions.assertNotNull(sourceFoldersInPreprocessingFormat));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
           throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
         }
@@ -600,8 +609,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
           if (!getKeepSrcRoot()) {
             replaceSourceRootByPreprocessingDestinationFolder(context);
           }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
           throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
         }

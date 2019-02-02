@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -23,16 +29,17 @@ import com.igormaznitsa.jcp.expression.functions.FunctionDefinedByUser;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import java.io.IOException;
-import java.io.PushbackReader;
-import java.io.StringReader;
-import java.util.*;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -41,50 +48,6 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public final class ExpressionParser {
-
-  /**
-   * The enumeration describes inside states of the parses
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  private enum ParserState {
-
-    WAIT,
-    NUMBER,
-    HEX_NUMBER,
-    FLOAT_NUMBER,
-    STRING,
-    SPECIAL_CHAR,
-    VALUE_OR_FUNCTION,
-    OPERATOR
-  }
-
-  /**
-   * The enumeration describes some special items which can be met in the expression
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  public enum SpecialItem implements ExpressionItem {
-
-    BRACKET_OPENING,
-    BRACKET_CLOSING,
-    COMMA;
-
-    private SpecialItem() {
-    }
-
-    @Override
-    @Nullable
-    public ExpressionItemPriority getExpressionItemPriority() {
-      return null;
-    }
-
-    @Override
-    @Nullable
-    public ExpressionItemType getExpressionItemType() {
-      return ExpressionItemType.SPECIAL;
-    }
-  }
 
   /**
    * It contains the instance for the parser, because the parser is a singletone
@@ -96,11 +59,46 @@ public final class ExpressionParser {
     return INSTANCE;
   }
 
+  private static boolean isDelimiterOrOperatorChar(final char chr) {
+    return isDelimiter(chr) || isOperatorChar(chr);
+  }
+
+  private static boolean isDelimiter(final char chr) {
+    switch (chr) {
+      case ',':
+      case '(':
+      case ')':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private static boolean isOperatorChar(final char chr) {
+    switch (chr) {
+      case '-':
+      case '+':
+      case '%':
+      case '*':
+      case '/':
+      case '&':
+      case '|':
+      case '!':
+      case '^':
+      case '=':
+      case '<':
+      case '>':
+        return true;
+      default:
+        return false;
+    }
+  }
+
   /**
    * To parse an expression represented as a string and get a tree
    *
    * @param expressionStr the expression string to be parsed, must not be null
-   * @param context a preprocessor context to be used to get variable values
+   * @param context       a preprocessor context to be used to get variable values
    * @return a tree containing parsed expression
    * @throws IOException it will be thrown if there is a problem to read the expression string
    */
@@ -127,11 +125,11 @@ public final class ExpressionParser {
   /**
    * It reads an expression from a reader and fill a tree
    *
-   * @param reader the reader to be used as the character source, must not be null
-   * @param tree the result tree to be filled by read items, must not be null
-   * @param context a preprocessor context to be used for variables
+   * @param reader        the reader to be used as the character source, must not be null
+   * @param tree          the result tree to be filled by read items, must not be null
+   * @param context       a preprocessor context to be used for variables
    * @param insideBracket the flag shows that the expression can be ended by a bracket
-   * @param argument the flag shows that the expression can be ended by a comma
+   * @param argument      the flag shows that the expression can be ended by a comma
    * @return the last read expression item (a comma or a bracket for instance), it can be null
    * @throws IOException it will be thrown if there is a problem in reading from the reader
    */
@@ -198,11 +196,11 @@ public final class ExpressionParser {
   /**
    * The auxiliary method allows to form a function and its arguments as a tree
    *
-   * @param function the function which arguments will be read from the stream, must not be null
-   * @param reader the reader to be used as the character source, must not be null
-   * @param context a preprocessor context, it will be used for a user functions and variables
+   * @param function     the function which arguments will be read from the stream, must not be null
+   * @param reader       the reader to be used as the character source, must not be null
+   * @param context      a preprocessor context, it will be used for a user functions and variables
    * @param includeStack the current file include stack, can be null
-   * @param sources the current source line, can be null
+   * @param sources      the current source line, can be null
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
@@ -261,11 +259,11 @@ public final class ExpressionParser {
   /**
    * The auxiliary method allows to read a function argument
    *
-   * @param reader a reader to be the character source, must not be null
-   * @param tree the result tree to be filled by read items, must not be null
-   * @param context a preprocessor context
+   * @param reader    a reader to be the character source, must not be null
+   * @param tree      the result tree to be filled by read items, must not be null
+   * @param context   a preprocessor context
    * @param callStack the current file call stack, can be null
-   * @param source the current source line, can be null
+   * @param source    the current source line, can be null
    * @return the last read expression item (a comma or a bracket)
    * @throws IOException it will be thrown if there is any error during char reading from the reader
    */
@@ -300,45 +298,10 @@ public final class ExpressionParser {
     return result;
   }
 
-  private static boolean isDelimiterOrOperatorChar(final char chr) {
-    return isDelimiter(chr) || isOperatorChar(chr);
-  }
-
-  private static boolean isDelimiter(final char chr) {
-    switch (chr) {
-      case ',':
-      case '(':
-      case ')':
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  private static boolean isOperatorChar(final char chr) {
-    switch (chr) {
-      case '-':
-      case '+':
-      case '%':
-      case '*':
-      case '/':
-      case '&':
-      case '|':
-      case '!':
-      case '^':
-      case '=':
-      case '<':
-      case '>':
-        return true;
-      default:
-        return false;
-    }
-  }
-
   /**
    * Read the next item from the reader
    *
-   * @param reader a reader to be used as the char source, must not be null
+   * @param reader  a reader to be used as the char source, must not be null
    * @param context a preprocessor context
    * @return a read expression item, it can be null if the end is reached
    * @throws IOException it will be thrown if there is any error during a char reading
@@ -503,7 +466,8 @@ public final class ExpressionParser {
             break;
             default: {
               builder.append(chr);
-            }break;
+            }
+            break;
           }
         }
         break;
@@ -594,6 +558,50 @@ public final class ExpressionParser {
         }
       }
       return result;
+    }
+  }
+
+  /**
+   * The enumeration describes inside states of the parses
+   *
+   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+   */
+  private enum ParserState {
+
+    WAIT,
+    NUMBER,
+    HEX_NUMBER,
+    FLOAT_NUMBER,
+    STRING,
+    SPECIAL_CHAR,
+    VALUE_OR_FUNCTION,
+    OPERATOR
+  }
+
+  /**
+   * The enumeration describes some special items which can be met in the expression
+   *
+   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+   */
+  public enum SpecialItem implements ExpressionItem {
+
+    BRACKET_OPENING,
+    BRACKET_CLOSING,
+    COMMA;
+
+    private SpecialItem() {
+    }
+
+    @Override
+    @Nullable
+    public ExpressionItemPriority getExpressionItemPriority() {
+      return null;
+    }
+
+    @Override
+    @Nullable
+    public ExpressionItemType getExpressionItemType() {
+      return ExpressionItemType.SPECIAL;
     }
   }
 }

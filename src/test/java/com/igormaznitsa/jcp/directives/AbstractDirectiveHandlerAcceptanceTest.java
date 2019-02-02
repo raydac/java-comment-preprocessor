@@ -1,29 +1,38 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.directives;
 
-import org.junit.BeforeClass;
-import com.igormaznitsa.jcp.context.PreprocessingState.ExcludeIfInfo;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.context.PreprocessingState;
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
+import com.igormaznitsa.jcp.context.PreprocessingState;
+import com.igormaznitsa.jcp.context.PreprocessingState.ExcludeIfInfo;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
+import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import org.apache.commons.io.IOUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,8 +46,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public abstract class AbstractDirectiveHandlerAcceptanceTest {
@@ -90,11 +98,9 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     try {
       preprocessString(preprocessingText, null, extension, globalVars);
       fail("Must throw PreprocessorException");
-    }
-    catch (PreprocessorException expected) {
+    } catch (PreprocessorException expected) {
       assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
-    }
-    catch (Exception unExpected) {
+    } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
     }
@@ -105,11 +111,9 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     try {
       preprocessStringAtGlobalPhase(preprocessingText, null);
       fail("Must throw PreprocessorException");
-    }
-    catch (PreprocessorException expected) {
+    } catch (PreprocessorException expected) {
       assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndex());
-    }
-    catch (Exception unExpected) {
+    } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
     }
@@ -210,8 +214,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       if (etalonList != null) {
         assertEqualsStringLists(etalonList, result);
       }
-    }
-    catch (Exception unexpected) {
+    } catch (Exception unexpected) {
       int index = 1;
       for (final String str : etalonList) {
         System.out.print(index++);
@@ -236,8 +239,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     for (final char chr : str.toCharArray()) {
       if (Character.isWhitespace(chr)) {
         System.out.print(showWhitespaces ? '.' : chr);
-      }
-      else {
+      } else {
         System.out.print(chr);
       }
     }
@@ -262,8 +264,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
         preprocessingPart.add(line);
       }
-    }
-    finally {
+    } finally {
       IOUtils.closeQuietly(reader);
     }
 
@@ -301,21 +302,18 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
           if (readFirestPart) {
             readFirestPart = false;
             continue;
-          }
-          else {
+          } else {
             throw new IllegalStateException("Check etalon prefix for duplication");
           }
         }
 
         if (readFirestPart) {
           preprocessingPart.add(line);
-        }
-        else {
+        } else {
           etalonPart.add(line);
         }
       }
-    }
-    finally {
+    } finally {
       IOUtils.closeQuietly(reader);
     }
 

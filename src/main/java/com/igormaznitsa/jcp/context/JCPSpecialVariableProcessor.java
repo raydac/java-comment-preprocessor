@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.context;
 
 
@@ -21,14 +27,14 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The class implements the special variable processor interface and allows to get access to inside JCP variables Inside JCP variables have the "jcp." prefix
@@ -55,27 +61,6 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy");
   final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
   final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
-
-  public static final class NameReferencePair {
-
-    private final String name;
-    private final String reference;
-
-    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference) {
-      this.name = name;
-      this.reference = reference;
-    }
-
-    @Nonnull
-    public String getName() {
-      return this.name;
-    }
-
-    @Nonnull
-    public String getReference() {
-      return this.reference;
-    }
-  }
 
   @Nonnull
   @MustNotContainNull
@@ -106,21 +91,21 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   @Nonnull
   @MustNotContainNull
   public String[] getVariableNames() {
-    return new String[]{
-      VAR_DEST_DIR,
-      VAR_DEST_FILE_NAME,
-      VAR_DEST_FULLPATH,
-      VAR_SRC_DIR,
-      VAR_SRC_DIR2,
-      VAR_SRC_FILE_NAME,
-      VAR_SRC_FILE_NAME2,
-      VAR_SRC_FULLPATH,
-      VAR_SRC_FULLPATH2,
-      VAR_VERSION,
-      VAR_LINE,
-      VAR_TIME,
-      VAR_TIMESTAMP,
-      VAR_DATE
+    return new String[] {
+        VAR_DEST_DIR,
+        VAR_DEST_FILE_NAME,
+        VAR_DEST_FULLPATH,
+        VAR_SRC_DIR,
+        VAR_SRC_DIR2,
+        VAR_SRC_FILE_NAME,
+        VAR_SRC_FILE_NAME2,
+        VAR_SRC_FULLPATH,
+        VAR_SRC_FULLPATH2,
+        VAR_VERSION,
+        VAR_LINE,
+        VAR_TIME,
+        VAR_TIMESTAMP,
+        VAR_DATE
     };
   }
 
@@ -152,7 +137,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       final Value result;
       if (filedata == null) {
         result = Value.valueOf("<no file>");
-      }else{
+      } else {
         result = Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
       }
       return result;
@@ -201,6 +186,27 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     } else {
       final String text = "Attempting to write unexpected special variable [" + varName + ']';
       throw context.makeException(text, null);
+    }
+  }
+
+  public static final class NameReferencePair {
+
+    private final String name;
+    private final String reference;
+
+    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference) {
+      this.name = name;
+      this.reference = reference;
+    }
+
+    @Nonnull
+    public String getName() {
+      return this.name;
+    }
+
+    @Nonnull
+    public String getReference() {
+      return this.reference;
     }
   }
 }

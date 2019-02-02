@@ -1,35 +1,40 @@
 /*
- * Copyright 2016 Igor Maznitsa.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression.functions;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-
-import java.io.*;
-
-import java.util.Locale;
-import java.util.zip.Deflater;
-import javax.annotation.Nonnull;
-
-import javax.annotation.Nullable;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
+import java.util.zip.Deflater;
 
 /**
  * The Function loads bin file and encodes it into string.
@@ -39,40 +44,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
  */
 public class FunctionBINFILE extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][]{{ValueType.STRING, ValueType.STRING}};
-
-  private enum Type {
-    BASE64("base64"),
-    BYTEARRAY("byte[]"),
-    UINT8("uint8[]"),
-    INT8("int8[]");
-
-    private final String name;
-
-    private Type(@Nonnull final String name) {
-      this.name = name;
-    }
-
-    @Nonnull
-    public String getName() {
-      return this.name;
-    }
-
-    @Nullable
-    public static Type find(@Nullable final String name) {
-      Type result = null;
-      if (name != null) {
-        final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
-        for (final Type t : values()) {
-          if (normalized.startsWith(t.name)) {
-            result = t;
-            break;
-          }
-        }
-      }
-      return result;
-    }
-  }
+  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   private static boolean hasSplitFlag(@Nonnull final String name, @Nonnull final Type type) {
     final String opts = name.substring(type.name.length());
@@ -82,78 +54,6 @@ public class FunctionBINFILE extends AbstractFunction {
   private static boolean hasDeflateFlag(@Nonnull final String name, @Nonnull final Type type) {
     final String opts = name.substring(type.name.length());
     return opts.contains("D") || opts.contains("d");
-  }
-
-  @Override
-  @Nonnull
-  public String getName() {
-    return "binfile";
-  }
-
-  @Override
-  @Nonnull
-  public String getReference() {
-    final StringBuilder buffer = new StringBuilder();
-    for (final Type t : Type.values()) {
-      if (buffer.length() > 0) {
-        buffer.append('|');
-      }
-      buffer.append(t.name);
-    }
-    buffer.append("[s|d|sd|ds]");
-    return "encode bin file into string representation, allowed types [" + buffer.toString() + "], s - split to lines, d - deflater compression";
-  }
-
-  @Override
-  public int getArity() {
-    return 2;
-  }
-
-  @Override
-  @Nonnull
-  @MustNotContainNull
-  public ValueType[][] getAllowedArgumentTypes() {
-    return ARG_TYPES;
-  }
-
-  @Override
-  @Nonnull
-  public ValueType getResultType() {
-    return ValueType.STRING;
-  }
-
-  @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath, @Nonnull final Value encodeType) {
-    final String filePath = strfilePath.asString();
-    final String encodeTypeAsString = encodeType.asString();
-    final Type type = Type.find(encodeTypeAsString);
-
-    if (type == null) {
-      throw context.makeException("Unsupported encode type [" + encodeType.asString() + ']', null);
-    }
-
-    final int lengthOfLine  = hasSplitFlag(encodeTypeAsString, type) ? 80 : -1;
-    final boolean doDeflate  = hasDeflateFlag(encodeTypeAsString, type);
-    
-    final File theFile;
-    try {
-      theFile = context.findFileInSourceFolder(filePath);
-    }
-    catch (IOException ex) {
-      throw context.makeException("Can't find bin file '" + filePath + '\'', null);
-    }
-
-    if (context.isVerbose()) {
-      context.logForVerbose("Loading content of bin file '" + theFile + '\'');
-    }
-
-    try {
-      final String endOfLine = System.getProperty("line.separator", "\r\n");
-      return Value.valueOf(convertTo(theFile, type, doDeflate, lengthOfLine, endOfLine));
-    }
-    catch (Exception ex) {
-      throw context.makeException("Unexpected exception", ex);
-    }
   }
 
   @Nonnull
@@ -238,5 +138,108 @@ public class FunctionBINFILE extends AbstractFunction {
     deflater.end();
 
     return output;
+  }
+
+  @Override
+  @Nonnull
+  public String getName() {
+    return "binfile";
+  }
+
+  @Override
+  @Nonnull
+  public String getReference() {
+    final StringBuilder buffer = new StringBuilder();
+    for (final Type t : Type.values()) {
+      if (buffer.length() > 0) {
+        buffer.append('|');
+      }
+      buffer.append(t.name);
+    }
+    buffer.append("[s|d|sd|ds]");
+    return "encode bin file into string representation, allowed types [" + buffer.toString() + "], s - split to lines, d - deflater compression";
+  }
+
+  @Override
+  public int getArity() {
+    return 2;
+  }
+
+  @Override
+  @Nonnull
+  @MustNotContainNull
+  public ValueType[][] getAllowedArgumentTypes() {
+    return ARG_TYPES;
+  }
+
+  @Override
+  @Nonnull
+  public ValueType getResultType() {
+    return ValueType.STRING;
+  }
+
+  @Nonnull
+  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath, @Nonnull final Value encodeType) {
+    final String filePath = strfilePath.asString();
+    final String encodeTypeAsString = encodeType.asString();
+    final Type type = Type.find(encodeTypeAsString);
+
+    if (type == null) {
+      throw context.makeException("Unsupported encode type [" + encodeType.asString() + ']', null);
+    }
+
+    final int lengthOfLine = hasSplitFlag(encodeTypeAsString, type) ? 80 : -1;
+    final boolean doDeflate = hasDeflateFlag(encodeTypeAsString, type);
+
+    final File theFile;
+    try {
+      theFile = context.findFileInSourceFolder(filePath);
+    } catch (IOException ex) {
+      throw context.makeException("Can't find bin file '" + filePath + '\'', null);
+    }
+
+    if (context.isVerbose()) {
+      context.logForVerbose("Loading content of bin file '" + theFile + '\'');
+    }
+
+    try {
+      final String endOfLine = System.getProperty("line.separator", "\r\n");
+      return Value.valueOf(convertTo(theFile, type, doDeflate, lengthOfLine, endOfLine));
+    } catch (Exception ex) {
+      throw context.makeException("Unexpected exception", ex);
+    }
+  }
+
+  private enum Type {
+    BASE64("base64"),
+    BYTEARRAY("byte[]"),
+    UINT8("uint8[]"),
+    INT8("int8[]");
+
+    private final String name;
+
+    private Type(@Nonnull final String name) {
+      this.name = name;
+    }
+
+    @Nullable
+    public static Type find(@Nullable final String name) {
+      Type result = null;
+      if (name != null) {
+        final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
+        for (final Type t : values()) {
+          if (normalized.startsWith(t.name)) {
+            result = t;
+            break;
+          }
+        }
+      }
+      return result;
+    }
+
+    @Nonnull
+    public String getName() {
+      return this.name;
+    }
   }
 }

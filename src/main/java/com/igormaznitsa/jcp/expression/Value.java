@@ -1,26 +1,32 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * The class describes an expression value i.e. an atomic constant expression item like string or number
@@ -42,16 +48,6 @@ public final class Value implements ExpressionItem {
 
   private final Object value;
   private final ValueType type;
-
-  @Nonnull
-  public ValueType getType() {
-    return type;
-  }
-
-  @Nonnull
-  public Object getValue() {
-    return value;
-  }
 
   private Value(@Nullable final String val) {
     value = val == null ? "null" : val;
@@ -91,38 +87,6 @@ public final class Value implements ExpressionItem {
   @Nonnull
   public static Value valueOf(@Nonnull final String val) {
     return new Value(val);
-  }
-
-  @Nonnull
-  public Long asLong() {
-    if (type != ValueType.INT) {
-      throw new IllegalStateException("Value is not integer");
-    }
-    return (Long) value;
-  }
-
-  @Nonnull
-  public Float asFloat() {
-    if (type != ValueType.FLOAT) {
-      throw new IllegalStateException("Value is not float");
-    }
-    return (Float) value;
-  }
-
-  @Nonnull
-  public String asString() {
-    if (type != ValueType.STRING) {
-      throw new IllegalStateException("Value is not string");
-    }
-    return (String) value;
-  }
-
-  @Nonnull
-  public Boolean asBoolean() {
-    if (type != ValueType.BOOLEAN) {
-      throw new IllegalStateException("Value is not boolean");
-    }
-    return (Boolean) value;
   }
 
   @Nonnull
@@ -240,6 +204,48 @@ public final class Value implements ExpressionItem {
         return ValueType.UNKNOWN;
       }
     }
+  }
+
+  @Nonnull
+  public ValueType getType() {
+    return type;
+  }
+
+  @Nonnull
+  public Object getValue() {
+    return value;
+  }
+
+  @Nonnull
+  public Long asLong() {
+    if (type != ValueType.INT) {
+      throw new IllegalStateException("Value is not integer");
+    }
+    return (Long) value;
+  }
+
+  @Nonnull
+  public Float asFloat() {
+    if (type != ValueType.FLOAT) {
+      throw new IllegalStateException("Value is not float");
+    }
+    return (Float) value;
+  }
+
+  @Nonnull
+  public String asString() {
+    if (type != ValueType.STRING) {
+      throw new IllegalStateException("Value is not string");
+    }
+    return (String) value;
+  }
+
+  @Nonnull
+  public Boolean asBoolean() {
+    if (type != ValueType.BOOLEAN) {
+      throw new IllegalStateException("Value is not boolean");
+    }
+    return (Boolean) value;
   }
 
   @Nonnull

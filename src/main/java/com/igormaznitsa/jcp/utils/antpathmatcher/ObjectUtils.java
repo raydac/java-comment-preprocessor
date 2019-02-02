@@ -1,18 +1,24 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.utils.antpathmatcher;
 
 import java.lang.reflect.Array;
@@ -33,10 +39,10 @@ import java.util.Arrays;
  * @author Rob Harrop
  * @author Chris Beams
  * @author Sam Brannen
- * @since 19.03.2004
  * @see ClassUtils
  * @see CollectionUtils
  * @see StringUtils
+ * @since 19.03.2004
  */
 abstract class ObjectUtils {
 
@@ -68,7 +74,7 @@ abstract class ObjectUtils {
    * Check whether the given exception is compatible with the specified
    * exception types, as declared in a throws clause.
    *
-   * @param ex the exception to check
+   * @param ex                 the exception to check
    * @param declaredExceptions the exception types declared in the throws clause
    * @return whether the given exception is compatible
    */
@@ -110,8 +116,8 @@ abstract class ObjectUtils {
   /**
    * Check whether the given array contains the given element.
    *
-   * @param array the array to check (may be {@code null}, in which case the
-   * return value will always be {@code false})
+   * @param array   the array to check (may be {@code null}, in which case the
+   *                return value will always be {@code false})
    * @param element the element to check for
    * @return whether the element has been found in the given array
    */
@@ -132,9 +138,9 @@ abstract class ObjectUtils {
    * the given name, ignoring case when determining a match.
    *
    * @param enumValues the enum values to check, typically the product of a call
-   * to MyEnum.values()
-   * @param constant the constant name to find (must not be null or empty
-   * string)
+   *                   to MyEnum.values()
+   * @param constant   the constant name to find (must not be null or empty
+   *                   string)
    * @return whether the constant has been found in the given array
    */
   public static boolean containsConstant(Enum<?>[] enumValues, String constant) {
@@ -145,10 +151,10 @@ abstract class ObjectUtils {
    * Check whether the given array of enum constants contains a constant with
    * the given name.
    *
-   * @param enumValues the enum values to check, typically the product of a call
-   * to MyEnum.values()
-   * @param constant the constant name to find (must not be null or empty
-   * string)
+   * @param enumValues    the enum values to check, typically the product of a call
+   *                      to MyEnum.values()
+   * @param constant      the constant name to find (must not be null or empty
+   *                      string)
    * @param caseSensitive whether case is significant in determining a match
    * @return whether the constant has been found in the given array
    */
@@ -166,13 +172,13 @@ abstract class ObjectUtils {
   /**
    * Case insensitive alternative to {@link Enum#valueOf(Class, String)}.
    *
-   * @param <E> the concrete Enum type
+   * @param <E>        the concrete Enum type
    * @param enumValues the array of all Enum constants in question, usually per
-   * Enum.values()
-   * @param constant the constant to get the enum value of
+   *                   Enum.values()
+   * @param constant   the constant to get the enum value of
    * @throws IllegalArgumentException if the given constant is not found in the
-   * given array of enum values. Use {@link #containsConstant(Enum[], String)}
-   * as a guard to avoid this exception.
+   *                                  given array of enum values. Use {@link #containsConstant(Enum[], String)}
+   *                                  as a guard to avoid this exception.
    */
   public static <E extends Enum<?>> E caseInsensitiveValueOf(E[] enumValues, String constant) {
     for (E candidate : enumValues) {
@@ -190,7 +196,7 @@ abstract class ObjectUtils {
    * consisting of the input array contents plus the given object.
    *
    * @param array the array to append to (can be {@code null})
-   * @param obj the object to append
+   * @param obj   the object to append
    * @return the new array (of the same component type; never {@code null})
    */
   public static <A, O extends A> A[] addObjectToArray(A[] array, O obj) {
@@ -245,6 +251,7 @@ abstract class ObjectUtils {
   //---------------------------------------------------------------------
   // Convenience methods for content-based equality/hash-code handling
   //---------------------------------------------------------------------
+
   /**
    * Determine if the given objects are equal, returning {@code true} if both
    * are {@code null} or {@code false} if only one is {@code null}.
@@ -542,6 +549,7 @@ abstract class ObjectUtils {
   //---------------------------------------------------------------------
   // Convenience methods for toString output
   //---------------------------------------------------------------------
+
   /**
    * Return a String representation of an object's overall identity.
    *

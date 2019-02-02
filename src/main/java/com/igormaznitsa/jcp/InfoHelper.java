@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp;
 
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
@@ -21,17 +27,17 @@ import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
-
-import java.util.*;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public final class InfoHelper {
 
   public static final String DELIMITER = "-------------------------------------------------";
-  
+
   private InfoHelper() {
   }
 
@@ -67,7 +73,7 @@ public final class InfoHelper {
     result.add("Command line directives\n------------");
     result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes are allowed\n");
     result.add(makeColumns("@cfg_file", "file contains global definition list", 14));
-    for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {    
+    for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
       result.add(makeCommandLineKeyReference(handler));
     }
     result.add(DELIMITER);
@@ -123,17 +129,19 @@ public final class InfoHelper {
   private static String makeDirectiveReference(@Nonnull final AbstractDirectiveHandler directive) {
     final StringBuilder activityPasses = new StringBuilder();
     int i = 0;
-    if (directive.isGlobalPhaseAllowed()){
+    if (directive.isGlobalPhaseAllowed()) {
       i++;
       activityPasses.append("1st");
     }
-    if (directive.isPreprocessingPhaseAllowed()){
-      if (i>0) activityPasses.append(',');
+    if (directive.isPreprocessingPhaseAllowed()) {
+      if (i > 0) {
+        activityPasses.append(',');
+      }
       activityPasses.append("2th");
       i++;
     }
-    activityPasses.append(i>1 ? "passes" : " pass");
-    
+    activityPasses.append(i > 1 ? "passes" : " pass");
+
     final String directiveName = directive.getFullName();
     final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + activityPasses.toString() + ')';
     return makeColumns(directiveName, descr, 16);

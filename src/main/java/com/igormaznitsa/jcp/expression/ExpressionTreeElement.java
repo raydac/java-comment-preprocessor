@@ -1,32 +1,38 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.expression;
 
-import java.util.Arrays;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
-import java.util.List;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -36,52 +42,43 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  */
 public class ExpressionTreeElement {
 
+  public static final ExpressionTreeElement EMPTY_SLOT = new ExpressionTreeElement();
   /**
    * Inside constant to be used for speed up some operations
    */
   private static final OperatorSUB OPERATOR_SUB = AbstractOperator.findForClass(OperatorSUB.class);
-
-  public static final ExpressionTreeElement EMPTY_SLOT = new ExpressionTreeElement();
-
   /**
    * Empty array to avoid unnecessary operations
    */
   private static final ExpressionTreeElement[] EMPTY = new ExpressionTreeElement[0];
-
-  /**
-   * The variable contains the wrapped expression item
-   */
-  private ExpressionItem savedItem;
-
-  /**
-   * The array contains links to the tree element children
-   */
-  private ExpressionTreeElement[] childElements;
-
-  /**
-   * The link to the parent element, if it is the tree root then it contains null
-   */
-  private ExpressionTreeElement parentTreeElement;
-
-  /**
-   * The priority of the tree element, it is very strongly used during tree sorting
-   */
-  private int priority;
-
-  /**
-   * Because I fill children sequentially, the variable contains the index of the first empty child slot
-   */
-  private int nextChildSlot = 0;
-
   /**
    * Contains the source string for the expression.
    */
   private final String sourceString;
-
   /**
    * Current include stack of the preprocessor to the source string.
    */
   private final FilePositionInfo[] includeStack;
+  /**
+   * The variable contains the wrapped expression item
+   */
+  private ExpressionItem savedItem;
+  /**
+   * The array contains links to the tree element children
+   */
+  private ExpressionTreeElement[] childElements;
+  /**
+   * The link to the parent element, if it is the tree root then it contains null
+   */
+  private ExpressionTreeElement parentTreeElement;
+  /**
+   * The priority of the tree element, it is very strongly used during tree sorting
+   */
+  private int priority;
+  /**
+   * Because I fill children sequentially, the variable contains the index of the first empty child slot
+   */
+  private int nextChildSlot = 0;
 
   private ExpressionTreeElement() {
     this.sourceString = "";
@@ -89,18 +86,10 @@ public class ExpressionTreeElement {
   }
 
   /**
-   * Allows to check that the element is EMPTY_SLOT
-   * @return true if the element is empty slot, false otherwise
-   */
-  public boolean isEmptySlot(){
-    return EMPTY_SLOT == this;
-  }
-  
-  /**
    * The constructor
    *
-   * @param item an expression item to be wrapped
-   * @param callStack current call stack
+   * @param item         an expression item to be wrapped
+   * @param callStack    current call stack
    * @param sourceString source string for the expression
    */
   ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sourceString) {
@@ -123,12 +112,21 @@ public class ExpressionTreeElement {
     Arrays.fill(this.childElements, EMPTY_SLOT);
   }
 
-  private void assertNotEmptySlot(){
+  /**
+   * Allows to check that the element is EMPTY_SLOT
+   *
+   * @return true if the element is empty slot, false otherwise
+   */
+  public boolean isEmptySlot() {
+    return EMPTY_SLOT == this;
+  }
+
+  private void assertNotEmptySlot() {
     if (isEmptySlot()) {
       throw new UnsupportedOperationException("Unsupported operation for empty slot");
     }
   }
-  
+
   /**
    * Inside auxiliary function to set the maximum priority the the element
    */
@@ -183,7 +181,7 @@ public class ExpressionTreeElement {
   @Nonnull
   public ExpressionTreeElement addSubTree(@Nonnull final ExpressionTree tree) {
     assertNotEmptySlot();
-    
+
     final ExpressionTreeElement root = tree.getRoot();
     if (!root.isEmptySlot()) {
       root.makeMaxPriority();
@@ -201,7 +199,7 @@ public class ExpressionTreeElement {
    */
   public boolean replaceElement(@Nonnull final ExpressionTreeElement oldOne, @Nonnull final ExpressionTreeElement newOne) {
     assertNotEmptySlot();
-    
+
     if (oldOne == null) {
       throw new PreprocessorException("[Expression]The old element is null", this.sourceString, this.includeStack, null);
     }
@@ -311,7 +309,7 @@ public class ExpressionTreeElement {
    */
   public void fillArguments(@Nonnull @MustNotContainNull final List<ExpressionTree> arguments) {
     assertNotEmptySlot();
-    
+
     if (arguments == null) {
       throw new PreprocessorException("[Expression]Argument list is null", this.sourceString, this.includeStack, null);
     }
@@ -389,7 +387,9 @@ public class ExpressionTreeElement {
                   }
                   break;
                   default: {
-                    if (!left.isEmptySlot()) left.postProcess();
+                    if (!left.isEmptySlot()) {
+                      left.postProcess();
+                    }
                   }
                   break;
                 }

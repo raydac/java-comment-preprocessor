@@ -1,36 +1,41 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.maven;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.expression.Value;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * The class imports some properties from the maven which can be accessible from preprocessed sources as global variables
@@ -42,52 +47,36 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO = Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
 
   private static final String[] TO_IMPORT = {
-    "project.name",
-    "project.version",
-    "project.url",
-    "project.packaging",
-    "project.modelVersion",
-    "project.inceptionYear",
-    "project.id",
-    "project.groupId",
-    "project.description",
-    "project.artifact.id",
-    "project.artifact.artifactId",
-    "project.artifact.baseVersion",
-    "project.artifact.dependencyConflictId",
-    "project.artifact.downloadUrl",
-    "project.artifact.groupId",
-    "project.artifact.scope",
-    "project.artifact.type",
-    "project.artifact.version",
-    "project.build.directory",
-    "project.build.defaultGoal",
-    "project.build.outputDirectory",
-    "project.build.scriptSourceDirectory",
-    "project.build.sourceDirectory",
-    "project.build.testOutputDirectory",
-    "project.build.testSourceDirectory",
-    "project.organization.name",
-    "project.organization.url"};
+      "project.name",
+      "project.version",
+      "project.url",
+      "project.packaging",
+      "project.modelVersion",
+      "project.inceptionYear",
+      "project.id",
+      "project.groupId",
+      "project.description",
+      "project.artifact.id",
+      "project.artifact.artifactId",
+      "project.artifact.baseVersion",
+      "project.artifact.dependencyConflictId",
+      "project.artifact.downloadUrl",
+      "project.artifact.groupId",
+      "project.artifact.scope",
+      "project.artifact.type",
+      "project.artifact.version",
+      "project.build.directory",
+      "project.build.defaultGoal",
+      "project.build.outputDirectory",
+      "project.build.scriptSourceDirectory",
+      "project.build.sourceDirectory",
+      "project.build.testOutputDirectory",
+      "project.build.testSourceDirectory",
+      "project.organization.name",
+      "project.organization.url"};
 
   private final Map<String, Value> insideVarMap = new HashMap<String, Value>();
   private final MavenProject project;
-
-  private void printInfoAboutVarIntoLog(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final String value) {
-    final boolean possibleContainsPrivateInfo = PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
-    final String textValue = possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
-    context.logInfo("Added MAVEN property " + varName + '=' + textValue);
-  }
-
-  private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value, final boolean verbose) {
-    if (insideVarMap.containsKey(name)) {
-      throw context.makeException("Duplicated importing value detected [" + name + ']', null);
-    }
-    insideVarMap.put(name, value);
-    if (verbose) {
-      printInfoAboutVarIntoLog(context, name, value.asString());
-    }
-  }
 
   public MavenPropertiesImporter(@Nonnull final PreprocessorContext context, @Nonnull final MavenProject project, final boolean logAddedProperties) {
     this.project = project;
@@ -105,7 +94,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
       }
       profileIds.append(profile.getId());
     }
-    addVariableIntoInsideMap(context, "mvn.project.activeprofiles", Value.valueOf(profileIds.toString()),logAddedProperties);
+    addVariableIntoInsideMap(context, "mvn.project.activeprofiles", Value.valueOf(profileIds.toString()), logAddedProperties);
 
     // add properties
     for (final String propertyName : this.project.getProperties().stringPropertyNames()) {
@@ -153,6 +142,22 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   @Nonnull
   static String normalizeGetter(@Nonnull final String str) {
     return "get" + Character.toUpperCase(str.charAt(0)) + str.substring(1);
+  }
+
+  private void printInfoAboutVarIntoLog(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final String value) {
+    final boolean possibleContainsPrivateInfo = PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
+    final String textValue = possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
+    context.logInfo("Added MAVEN property " + varName + '=' + textValue);
+  }
+
+  private void addVariableIntoInsideMap(@Nonnull final PreprocessorContext context, @Nonnull final String name, @Nonnull final Value value, final boolean verbose) {
+    if (insideVarMap.containsKey(name)) {
+      throw context.makeException("Duplicated importing value detected [" + name + ']', null);
+    }
+    insideVarMap.put(name, value);
+    if (verbose) {
+      printInfoAboutVarIntoLog(context, name, value.asString());
+    }
   }
 
   @Override

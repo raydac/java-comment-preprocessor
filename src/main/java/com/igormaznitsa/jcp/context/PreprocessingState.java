@@ -1,18 +1,24 @@
-/* 
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+/*
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
+
 package com.igormaznitsa.jcp.context;
 
 
@@ -24,7 +30,12 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -46,13 +57,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -78,52 +82,18 @@ public final class PreprocessingState {
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
   private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
   private final boolean overrideOnlyIfContentChanged;
-  private ResetablePrinter currentPrinter;
   private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
+  private final PreprocessorContext context;
+  private final boolean fake;
+  private ResetablePrinter currentPrinter;
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
   private String lastReadString;
-  private final PreprocessorContext context;
-  private final boolean fake;
-
-  public static class ExcludeIfInfo {
-
-    private final FileInfoContainer fileInfoContainer;
-    private final String condition;
-    private final int stringIndex;
-
-    public ExcludeIfInfo(@Nonnull final FileInfoContainer fileInfoContainer, @Nonnull final String condition, final int stringIndex) {
-      this.fileInfoContainer = fileInfoContainer;
-      this.condition = condition.trim();
-      this.stringIndex = stringIndex;
-    }
-
-    public int getStringIndex() {
-      return this.stringIndex;
-    }
-
-    @Nonnull
-    public FileInfoContainer getFileInfoContainer() {
-      return fileInfoContainer;
-    }
-
-    @Nonnull
-    public String getCondition() {
-      return condition;
-    }
-  }
-
-  public enum PrinterType {
-
-    NORMAL,
-    PREFIX,
-    POSTFIX
-  }
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final String inEncoding, @Nonnull final String outEncoding) {
     this.fake = true;
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
     this.rootReference = null;
     this.lastReadString = "";
     this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
@@ -138,8 +108,8 @@ public final class PreprocessingState {
     this.context = context;
 
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
 
     this.rootFileInfo = assertNotNull("The root file is null", rootFile);
     init();
@@ -151,11 +121,11 @@ public final class PreprocessingState {
 
     this.context = context;
 
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null",inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null",outEncoding);
+    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
+    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
 
-    this.rootFileInfo = assertNotNull("The root file is null",rootFile);
+    this.rootFileInfo = assertNotNull("The root file is null", rootFile);
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
@@ -200,6 +170,23 @@ public final class PreprocessingState {
     return currentPrinter;
   }
 
+  public void setPrinter(@Nonnull final PrinterType type) {
+    assertNotNull("Type is null", type);
+    switch (type) {
+      case NORMAL:
+        currentPrinter = normalPrinter;
+        break;
+      case POSTFIX:
+        currentPrinter = postfixPrinter;
+        break;
+      case PREFIX:
+        currentPrinter = prefixPrinter;
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported type detected [" + type.name() + ']');
+    }
+  }
+
   @Nonnull
   public TextFileDataContainer getRootTextContainer() {
     return rootReference;
@@ -231,8 +218,10 @@ public final class PreprocessingState {
   @Nonnull
   @MustNotContainNull
   public FilePositionInfo[] makeIncludeStack() {
-    if (this.fake) return EMPTY_STACK;
-    
+    if (this.fake) {
+      return EMPTY_STACK;
+    }
+
     final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
     for (int i = 0; i < includeStack.size(); i++) {
       final TextFileDataContainer fileContainer = includeStack.get(i);
@@ -394,23 +383,6 @@ public final class PreprocessingState {
     setPrinter(PrinterType.NORMAL);
   }
 
-  public void setPrinter(@Nonnull final PrinterType type) {
-    assertNotNull("Type is null", type);
-    switch (type) {
-      case NORMAL:
-        currentPrinter = normalPrinter;
-        break;
-      case POSTFIX:
-        currentPrinter = postfixPrinter;
-        break;
-      case PREFIX:
-        currentPrinter = prefixPrinter;
-        break;
-      default:
-        throw new IllegalArgumentException("Unsupported type detected [" + type.name() + ']');
-    }
-  }
-
   public void resetPrinters() {
     normalPrinter.reset();
     prefixPrinter.reset();
@@ -474,12 +446,12 @@ public final class PreprocessingState {
         writePrinterBuffers(writer);
         wasSaved = true;
       }
-      
+
     } finally {
       IOUtils.closeQuietly(writer);
     }
 
-    if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()){
+    if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()) {
       PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
     }
 
@@ -513,5 +485,39 @@ public final class PreprocessingState {
     this.ifStack.clear();
     this.includeStack.clear();
     this.whileStack.clear();
+  }
+
+  public enum PrinterType {
+
+    NORMAL,
+    PREFIX,
+    POSTFIX
+  }
+
+  public static class ExcludeIfInfo {
+
+    private final FileInfoContainer fileInfoContainer;
+    private final String condition;
+    private final int stringIndex;
+
+    public ExcludeIfInfo(@Nonnull final FileInfoContainer fileInfoContainer, @Nonnull final String condition, final int stringIndex) {
+      this.fileInfoContainer = fileInfoContainer;
+      this.condition = condition.trim();
+      this.stringIndex = stringIndex;
+    }
+
+    public int getStringIndex() {
+      return this.stringIndex;
+    }
+
+    @Nonnull
+    public FileInfoContainer getFileInfoContainer() {
+      return fileInfoContainer;
+    }
+
+    @Nonnull
+    public String getCondition() {
+      return condition;
+    }
   }
 }

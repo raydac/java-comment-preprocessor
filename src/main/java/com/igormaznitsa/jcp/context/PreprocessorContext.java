@@ -1,17 +1,22 @@
 /*
- * Copyright 2014 Igor Maznitsa (http://www.igormaznitsa.com).
+ * Copyright 2002-2019 Igor Maznitsa (http://www.igormaznitsa.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.igormaznitsa.jcp.context;
@@ -36,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +63,13 @@ public final class PreprocessorContext {
   public static final String DEFAULT_PROCESSING_EXTENSIONS = "java,txt,htm,html";
   public static final String DEFAULT_EXCLUDED_EXTENSIONS = "xml";
   public static final String DEFAULT_CHARSET = "UTF8";
-
+  private final Map<String, Value> globalVarTable = new HashMap<>();
+  private final Map<String, Value> localVarTable = new HashMap<>();
+  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<>();
+  private final Map<String, Object> sharedResources = new HashMap<>();
+  private final List<File> configFiles = new ArrayList<>();
+  private final boolean cloned;
+  private final TextFileDataContainer currentInCloneSource;
   private boolean verbose = false;
   private boolean removeComments = false;
   private boolean clearDestinationDirectoryBefore = false;
@@ -71,7 +81,6 @@ public final class PreprocessorContext {
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
-
   private String sourceDirectories;
   private String destinationDirectory;
   private File destinationDirectoryFile;
@@ -81,21 +90,8 @@ public final class PreprocessorContext {
   private PreprocessorExtension preprocessorExtension;
   private String inCharacterEncoding = DEFAULT_CHARSET;
   private String outCharacterEncoding = DEFAULT_CHARSET;
-
-  private final Map<String, Value> globalVarTable = new HashMap<>();
-  private final Map<String, Value> localVarTable = new HashMap<>();
-  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<>();
-  private final Map<String, Object> sharedResources = new HashMap<>();
-
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
-
-  private final List<File> configFiles = new ArrayList<>();
-
   private transient PreprocessingState currentState;
-  private final boolean cloned;
-
-  private final TextFileDataContainer currentInCloneSource;
-
   private String[] excludedFolderPatterns = new String[0];
 
   /**
@@ -108,53 +104,6 @@ public final class PreprocessorContext {
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
     this.currentInCloneSource = null;
-  }
-
-  /**
-   * Set patterns for excluded folders.
-   *
-   * @param patterns array contains Ant path patterns
-   */
-  public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String... patterns) {
-    final String[] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
-    final String[] normalized = new String[value.length];
-    for (int i = 0; i < value.length; i++) {
-      normalized[i] = FilenameUtils.normalize(value[i], true);
-    }
-    this.excludedFolderPatterns = normalized;
-  }
-
-  /**
-   * Get patterns for excluded folders.
-   *
-   * @return array of patterns in Ant pattern format
-   */
-  @Nonnull
-  @MustNotContainNull
-  public String[] getExcludedFolderPatterns() {
-    return this.excludedFolderPatterns.clone();
-  }
-
-  /**
-   * Set the flag to care to be precise in processing the last file next line char
-   *
-   * @param flag true to turn on the mode, false to turn off
-   */
-  public void setCareForLastNextLine(final boolean flag) {
-    this.careForLastNextLine = flag;
-  }
-
-  public boolean isCareForLastNextLine() {
-    return this.careForLastNextLine;
-  }
-
-  /**
-   * Check that the preprocessor context is a clone of another context.
-   *
-   * @return true if the context is a clone, false otherwise
-   */
-  public boolean isCloned() {
-    return this.cloned;
   }
 
   /**
@@ -208,6 +157,90 @@ public final class PreprocessorContext {
 
     final PreprocessingState theState = context.getPreprocessingState();
     this.currentInCloneSource = theState.peekFile();
+  }
+
+  @Nonnull
+  private static String makeStackView(@Nullable final TextFileDataContainer cloneSource, final boolean cloned, @Nullable @MustNotContainNull final List<TextFileDataContainer> list) {
+    if (list == null || list.isEmpty()) {
+      return "";
+    }
+    final StringBuilder builder = new StringBuilder();
+    int tab = 5;
+
+    for (int s = 0; s < tab; s++) {
+      builder.append(' ');
+    }
+
+    builder.append('{');
+    if (cloned) {
+      builder.append(cloneSource == null ? "*No src info" : "*" + cloneSource.getFile().getName() + ':' + cloneSource.getNextStringIndex());
+    } else {
+      builder.append("File chain");
+    }
+    builder.append('}');
+    tab += 5;
+
+    int fileIndex = 1;
+    for (int i = list.size() - 1; i >= 0; i--) {
+      final TextFileDataContainer cur = list.get(i);
+      builder.append('\n');
+      for (int s = 0; s < tab; s++) {
+        builder.append(' ');
+      }
+      builder.append("└>");
+      builder.append(fileIndex++).append(". ");
+      builder.append(cur.getFile().getName()).append(':').append(cur.getLastReadStringIndex() + 1);
+      tab += 3;
+    }
+
+    return builder.toString();
+  }
+
+  /**
+   * Get patterns for excluded folders.
+   *
+   * @return array of patterns in Ant pattern format
+   */
+  @Nonnull
+  @MustNotContainNull
+  public String[] getExcludedFolderPatterns() {
+    return this.excludedFolderPatterns.clone();
+  }
+
+  /**
+   * Set patterns for excluded folders.
+   *
+   * @param patterns array contains Ant path patterns
+   */
+  public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String... patterns) {
+    final String[] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
+    final String[] normalized = new String[value.length];
+    for (int i = 0; i < value.length; i++) {
+      normalized[i] = FilenameUtils.normalize(value[i], true);
+    }
+    this.excludedFolderPatterns = normalized;
+  }
+
+  public boolean isCareForLastNextLine() {
+    return this.careForLastNextLine;
+  }
+
+  /**
+   * Set the flag to care to be precise in processing the last file next line char
+   *
+   * @param flag true to turn on the mode, false to turn off
+   */
+  public void setCareForLastNextLine(final boolean flag) {
+    this.careForLastNextLine = flag;
+  }
+
+  /**
+   * Check that the preprocessor context is a clone of another context.
+   *
+   * @return true if the context is a clone, false otherwise
+   */
+  public boolean isCloned() {
+    return this.cloned;
   }
 
   /**
@@ -283,6 +316,15 @@ public final class PreprocessorContext {
   }
 
   /**
+   * It returns the flag shows that all comments must be removed from the result
+   *
+   * @return true if comments must be returned, otherwise false
+   */
+  public boolean isRemoveComments() {
+    return this.removeComments;
+  }
+
+  /**
    * Set the remove comments flag
    *
    * @param removingComments the flag to set, true if comments must be removed from the result files, otherwise else
@@ -295,12 +337,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * It returns the flag shows that all comments must be removed from the result
+   * Check that writing operations is disabled
    *
-   * @return true if comments must be returned, otherwise false
+   * @return true if writing operations disabled, otherwise false
    */
-  public boolean isRemoveComments() {
-    return this.removeComments;
+  public boolean isFileOutputDisabled() {
+    return fileOutputDisabled;
   }
 
   /**
@@ -313,12 +355,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Check that writing operations is disabled
+   * Get flag that whitespace allowed between directive and comment.
    *
-   * @return true if writing operations disabled, otherwise false
+   * @return true if whitespace allowed, false otherwise
    */
-  public boolean isFileOutputDisabled() {
-    return fileOutputDisabled;
+  public boolean isAllowWhitespace() {
+    return this.allowWhitespace;
   }
 
   /**
@@ -331,12 +373,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Get flag that whitespace allowed between directive and comment.
+   * Get flag shows that unknown variable is recognized as FALSE.
    *
-   * @return true if whitespace allowed, false otherwise
+   * @return true if unknown variable must be recognized as FALSE.
    */
-  public boolean isAllowWhitespace() {
-    return this.allowWhitespace;
+  public boolean isUnknownVariableAsFalse() {
+    return this.unknownVariableAsFalse;
   }
 
   /**
@@ -349,12 +391,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Get flag shows that unknown variable is recognized as FALSE.
+   * Get flag indicating whether preserve-indent is enabled or disabled.
    *
-   * @return true if unknown variable must be recognized as FALSE.
+   * @return true if preserve-indent is enabled, false otherwise
    */
-  public boolean isUnknownVariableAsFalse() {
-    return this.unknownVariableAsFalse;
+  public boolean isPreserveIndent() {
+    return this.preserveIndent;
   }
 
   /**
@@ -365,31 +407,6 @@ public final class PreprocessorContext {
    */
   public void setPreserveIndent(final boolean flag) {
     this.preserveIndent = flag;
-  }
-
-  /**
-   * Get flag indicating whether preserve-indent is enabled or disabled.
-   *
-   * @return true if preserve-indent is enabled, false otherwise
-   */
-  public boolean isPreserveIndent() {
-    return this.preserveIndent;
-  }
-
-  /**
-   * Set source directories
-   *
-   * @param directories semi separated list of source directories, must not be null
-   * @return this preprocessor context instance
-   */
-  @Nonnull
-  public PreprocessorContext setSourceDirectories(@Nonnull final String directories) {
-    assertNotNull("Source directory is null", directories);
-
-    this.sourceDirectories = directories;
-    this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
-
-    return this;
   }
 
   /**
@@ -440,6 +457,22 @@ public final class PreprocessorContext {
   }
 
   /**
+   * Set source directories
+   *
+   * @param directories semi separated list of source directories, must not be null
+   * @return this preprocessor context instance
+   */
+  @Nonnull
+  public PreprocessorContext setSourceDirectories(@Nonnull final String directories) {
+    assertNotNull("Source directory is null", directories);
+
+    this.sourceDirectories = directories;
+    this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
+
+    return this;
+  }
+
+  /**
    * Get the current source directories as a file array
    *
    * @return the current source directories as a file array
@@ -473,21 +506,6 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Set a destination directory for result files
-   *
-   * @param directory a path to the directory as String, it must not be null
-   * @return this preprocessor context instance
-   */
-  @Nonnull
-  public PreprocessorContext setDestinationDirectory(@Nonnull final String directory) {
-    assertNotNull("Directory is null", directory);
-    this.destinationDirectory = directory;
-    destinationDirectoryFile = new File(this.destinationDirectory);
-
-    return this;
-  }
-
-  /**
    * Get the current destination directory as a File object
    *
    * @return the current destination directory as an object
@@ -508,15 +526,17 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Set file extensions of files to be preprocessed, it is a comma separated list
+   * Set a destination directory for result files
    *
-   * @param extensions comma separated extensions list of file extensions to be preprocessed, must not be null
-   * @return this preprocessor context
+   * @param directory a path to the directory as String, it must not be null
+   * @return this preprocessor context instance
    */
   @Nonnull
-  public PreprocessorContext setProcessingFileExtensions(@Nonnull final String extensions) {
-    assertNotNull("Argument is null", extensions);
-    processingFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+  public PreprocessorContext setDestinationDirectory(@Nonnull final String directory) {
+    assertNotNull("Directory is null", directory);
+    this.destinationDirectory = directory;
+    destinationDirectoryFile = new File(this.destinationDirectory);
+
     return this;
   }
 
@@ -529,6 +549,19 @@ public final class PreprocessorContext {
   @MustNotContainNull
   public String[] getProcessingFileExtensions() {
     return processingFileExtensions.toArray(new String[processingFileExtensions.size()]);
+  }
+
+  /**
+   * Set file extensions of files to be preprocessed, it is a comma separated list
+   *
+   * @param extensions comma separated extensions list of file extensions to be preprocessed, must not be null
+   * @return this preprocessor context
+   */
+  @Nonnull
+  public PreprocessorContext setProcessingFileExtensions(@Nonnull final String extensions) {
+    assertNotNull("Argument is null", extensions);
+    processingFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+    return this;
   }
 
   /**
@@ -562,6 +595,17 @@ public final class PreprocessorContext {
   }
 
   /**
+   * Get excluded file extension list as a string array
+   *
+   * @return a string array contains file extensions to be excluded from preprocessing act
+   */
+  @Nonnull
+  @MustNotContainNull
+  public String[] getExcludedFileExtensions() {
+    return excludedFileExtensions.toArray(new String[excludedFileExtensions.size()]);
+  }
+
+  /**
    * Set comma separated list of file extensions to be excluded from preprocessing
    *
    * @param extensions a comma separated file extension list, it must not be null
@@ -572,17 +616,6 @@ public final class PreprocessorContext {
     assertNotNull("Argument is null", extensions);
     excludedFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
-  }
-
-  /**
-   * Get excluded file extension list as a string array
-   *
-   * @return a string array contains file extensions to be excluded from preprocessing act
-   */
-  @Nonnull
-  @MustNotContainNull
-  public String[] getExcludedFileExtensions() {
-    return excludedFileExtensions.toArray(new String[excludedFileExtensions.size()]);
   }
 
   /**
@@ -866,6 +899,15 @@ public final class PreprocessorContext {
   }
 
   /**
+   * Check the verbose flag
+   *
+   * @return true if the preprocessor must be verbose, otherwise false
+   */
+  public boolean isVerbose() {
+    return verbose;
+  }
+
+  /**
    * Set the verbose flag
    *
    * @param flag true if the preprocessor must be verbose, otherwise false
@@ -878,12 +920,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Check the verbose flag
+   * Check the flag to check content of existing file before saving.
    *
-   * @return true if the preprocessor must be verbose, otherwise false
+   * @return true if the content should be checked and new content must not be replaced if it is the same
    */
-  public boolean isVerbose() {
-    return verbose;
+  public boolean isCompareDestination() {
+    return this.compareDestination;
   }
 
   /**
@@ -899,12 +941,12 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Check the flag to check content of existing file before saving.
+   * Check that the preprocessor must keep lines as commented ones
    *
-   * @return true if the content should be checked and new content must not be replaced if it is the same
+   * @return true if the preprocessor must keep lines, false otherwise
    */
-  public boolean isCompareDestination() {
-    return this.compareDestination;
+  public boolean isKeepLines() {
+    return keepNonExecutingLines;
   }
 
   /**
@@ -917,15 +959,6 @@ public final class PreprocessorContext {
   public PreprocessorContext setKeepLines(final boolean flag) {
     keepNonExecutingLines = flag;
     return this;
-  }
-
-  /**
-   * Check that the preprocessor must keep lines as commented ones
-   *
-   * @return true if the preprocessor must keep lines, false otherwise
-   */
-  public boolean isKeepLines() {
-    return keepNonExecutingLines;
   }
 
   /**
@@ -950,6 +983,17 @@ public final class PreprocessorContext {
   }
 
   /**
+   * Get the current preprocessor extension
+   *
+   * @return the current preprocessor extension, it can be null
+   * @see PreprocessorExtension
+   */
+  @Nullable
+  public PreprocessorExtension getPreprocessorExtension() {
+    return preprocessorExtension;
+  }
+
+  /**
    * Set a preprocessor extension, it is a module implements the PreprocessorExtension interface which can process and get some calls from a preprocessor during its work
    *
    * @param extension an object implements the PreprocessorExtension interface, it can be null
@@ -963,14 +1007,13 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Get the current preprocessor extension
+   * Get the current character encoding for text reading
    *
-   * @return the current preprocessor extension, it can be null
-   * @see PreprocessorExtension
+   * @return the current read texts character encoding as a String
    */
-  @Nullable
-  public PreprocessorExtension getPreprocessorExtension() {
-    return preprocessorExtension;
+  @Nonnull
+  public String getInCharacterEncoding() {
+    return inCharacterEncoding;
   }
 
   /**
@@ -991,6 +1034,16 @@ public final class PreprocessorContext {
   }
 
   /**
+   * Get the current character encoding for text writing
+   *
+   * @return the current text writing character encoding as a String
+   */
+  @Nonnull
+  public String getOutCharacterEncoding() {
+    return outCharacterEncoding;
+  }
+
+  /**
    * Set the output texts character encoding, it must be supported by the Java platform else an exception will be thrown
    *
    * @param characterEncoding a character encoding as a String, it must not be null and must be supported by the Java platform
@@ -1003,26 +1056,6 @@ public final class PreprocessorContext {
     }
     this.outCharacterEncoding = characterEncoding;
     return this;
-  }
-
-  /**
-   * Get the current character encoding for text reading
-   *
-   * @return the current read texts character encoding as a String
-   */
-  @Nonnull
-  public String getInCharacterEncoding() {
-    return inCharacterEncoding;
-  }
-
-  /**
-   * Get the current character encoding for text writing
-   *
-   * @return the current text writing character encoding as a String
-   */
-  @Nonnull
-  public String getOutCharacterEncoding() {
-    return outCharacterEncoding;
   }
 
   /**
@@ -1207,42 +1240,5 @@ public final class PreprocessorContext {
       stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
-  }
-
-  @Nonnull
-  private static String makeStackView(@Nullable final TextFileDataContainer cloneSource, final boolean cloned, @Nullable @MustNotContainNull final List<TextFileDataContainer> list) {
-    if (list == null || list.isEmpty()) {
-      return "";
-    }
-    final StringBuilder builder = new StringBuilder();
-    int tab = 5;
-
-    for (int s = 0; s < tab; s++) {
-      builder.append(' ');
-    }
-
-    builder.append('{');
-    if (cloned) {
-      builder.append(cloneSource == null ? "*No src info" : "*" + cloneSource.getFile().getName() + ':' + cloneSource.getNextStringIndex());
-    } else {
-      builder.append("File chain");
-    }
-    builder.append('}');
-    tab += 5;
-
-    int fileIndex = 1;
-    for (int i = list.size() - 1; i >= 0; i--) {
-      final TextFileDataContainer cur = list.get(i);
-      builder.append('\n');
-      for (int s = 0; s < tab; s++) {
-        builder.append(' ');
-      }
-      builder.append("└>");
-      builder.append(fileIndex++).append(". ");
-      builder.append(cur.getFile().getName()).append(':').append(cur.getLastReadStringIndex() + 1);
-      tab += 3;
-    }
-
-    return builder.toString();
   }
 }
