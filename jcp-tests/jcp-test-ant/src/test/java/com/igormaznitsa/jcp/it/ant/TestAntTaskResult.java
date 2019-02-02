@@ -16,7 +16,12 @@
 package com.igormaznitsa.jcp.it.ant;
 
 import java.io.File;
-import org.junit.jupiter.api.Assertions;
+import java.io.FileReader;
+import java.io.Reader;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.apache.tools.ant.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
 public class TestAntTaskResult {
@@ -24,7 +29,20 @@ public class TestAntTaskResult {
   private final File RESULT_FOLDER= new File(System.getProperty("jcp.target.folder"));
   
   @Test
-  public void test() throws Exception {
-    Assertions.assertTrue(RESULT_FOLDER.isDirectory(), "Target folder must be created");
+  public void testPreprocessResult() throws Exception {
+    assertTrue(RESULT_FOLDER.isDirectory(), "Target folder must be created");
+    final File folder = new File(RESULT_FOLDER, "com/igormaznitsa/dummyproject");
+    final File originalFile = new File(folder, "main.java");
+    final File resultFile = new File(folder, "testmain2.java");
+
+    assertFalse(originalFile.isFile(),"original file must not be presented");
+    assertTrue(resultFile.isFile(),"preprocessed file must be presented");
+    String body;
+    try(Reader reader = new FileReader(resultFile)){
+      body = FileUtils.readFully(reader);
+    }
+    assertFalse(body.contains("//#"));
+    assertFalse(body.contains("/*"));
+    assertTrue(body.contains("hellocfg"));
   }
 }
