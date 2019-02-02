@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,14 +29,16 @@ import java.lang.annotation.Target;
 
 /**
  * Signal that marked entity needs refactoring.
+ *
  * @since 1.0
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface NeedsRefactoring {
   /**
    * Optional text
+   *
    * @return optional text
    */
   String value() default "";

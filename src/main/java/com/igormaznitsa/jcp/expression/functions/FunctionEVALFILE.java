@@ -27,12 +27,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuetly;
 
 /**
  * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
@@ -104,7 +105,7 @@ public class FunctionEVALFILE extends AbstractFunction {
       final PreprocessingState state = fileContainer.preprocessFile(null, prepareContext(context));
       final StringWriter strWriter = new StringWriter(1024);
       state.writePrinterBuffers(strWriter);
-      IOUtils.closeQuietly(strWriter);
+      closeQuetly(strWriter);
       return Value.valueOf(strWriter.toString());
     } catch (Exception ex) {
       throw context.makeException("Unexpected exception", ex);

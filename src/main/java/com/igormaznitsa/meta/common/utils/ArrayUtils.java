@@ -18,13 +18,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.utils;
 
-import com.igormaznitsa.meta.annotation.Weight;
-import java.lang.reflect.Array;
 import com.igormaznitsa.meta.annotation.MayContainNull;
+import com.igormaznitsa.meta.annotation.Weight;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
+import java.lang.reflect.Array;
 
 /**
  * Set of auxiliary methods to process arrays.
@@ -89,7 +91,7 @@ public final class ArrayUtils {
   /**
    * Join arrays provided as parameters, all arrays must be the same type, null values allowed.
    *
-   * @param <T> type of array
+   * @param <T>    type of array
    * @param arrays array of arrays to be joined
    * @return all joined arrays as single array
    * @since 1.0
@@ -104,8 +106,7 @@ public final class ArrayUtils {
         commonLength += array.length;
       }
     }
-    @SuppressWarnings("unchecked")
-    final T[] result = (T[]) Array.newInstance(arrays.getClass().getComponentType().getComponentType(), commonLength);
+    @SuppressWarnings("unchecked") final T[] result = (T[]) Array.newInstance(arrays.getClass().getComponentType().getComponentType(), commonLength);
     int position = 0;
     for (final T[] array : arrays) {
       if (array != null) {

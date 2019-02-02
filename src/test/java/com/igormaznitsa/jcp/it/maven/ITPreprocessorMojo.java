@@ -21,7 +21,6 @@
 
 package com.igormaznitsa.jcp.it.maven;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.apache.maven.shared.jar.JarAnalyzer;
@@ -44,14 +43,10 @@ import static org.junit.Assert.*;
 public class ITPreprocessorMojo {
 
   private static void assertMainClass(final String jarFile, final String mainClass) throws Exception {
-    JarInputStream jarStream = null;
-    try {
-      jarStream = new JarInputStream(new FileInputStream(jarFile));
+    try (final JarInputStream jarStream = new JarInputStream(new FileInputStream(jarFile))) {
       final Manifest manifest = jarStream.getManifest();
       final Attributes attrs = manifest.getMainAttributes();
       assertEquals("Maven plugin must also provide and main class in manifest", mainClass, attrs.getValue("Main-Class"));
-    } finally {
-      IOUtils.closeQuietly(jarStream);
     }
   }
 
@@ -126,11 +121,9 @@ public class ITPreprocessorMojo {
       final JarEntry classEntry = classEntries.get(0);
       assertNotNull(findClassEntry(jarAnalyzer, "com/igormaznitsa/dummyproject/testmain2.class"));
 
-      DataInputStream inStream = null;
       final byte[] buffer = new byte[(int) classEntry.getSize()];
-      Class<?> instanceClass = null;
-      try {
-        inStream = new DataInputStream(jarAnalyzer.getEntryInputStream(classEntry));
+      Class<?> instanceClass;
+      try (final DataInputStream inStream = new DataInputStream(jarAnalyzer.getEntryInputStream(classEntry))) {
         inStream.readFully(buffer);
 
         instanceClass = new ClassLoader() {
@@ -139,8 +132,6 @@ public class ITPreprocessorMojo {
             return defineClass(null, data, 0, data.length);
           }
         }.loadClass(buffer);
-      } finally {
-        IOUtils.closeQuietly(inStream);
       }
 
       if (instanceClass != null) {

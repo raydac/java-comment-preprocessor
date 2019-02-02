@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,15 +29,17 @@ import java.lang.annotation.Target;
 
 /**
  * Marks item as experimental one.
+ *
  * @since 1.1.0
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface Experimental {
   /**
    * Some optional text description.
+   *
    * @return optional text description
    */
-  String value () default "";
+  String value() default "";
 }

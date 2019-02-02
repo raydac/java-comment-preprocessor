@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,11 +29,12 @@ import java.lang.annotation.Target;
 
 /**
  * Shows that <a href="https://en.wikipedia.org/wiki/Nondeterministic_algorithm">behavior of the entity is non-determined.</a>
+ *
  * @since 1.0
  */
 @Documented
-@Target ({ElementType.METHOD,ElementType.TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface NonDetermined {
-  
+
 }

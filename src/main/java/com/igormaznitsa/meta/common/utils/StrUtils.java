@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.utils;
 
 
@@ -27,16 +28,17 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
  * Set of auxiliary string functions.
- * 
+ *
  * @since 1.1.2
  */
 public final class StrUtils {
-  private StrUtils () {
-    
+  private StrUtils() {
+
   }
-  
+
   /**
    * Trim left white spaces in string.
+   *
    * @param value string to be trimmed
    * @return trimmed string
    * @since 1.1.2
@@ -45,11 +47,13 @@ public final class StrUtils {
   public static String trimLeft(@Nonnull final String value) {
     final StringBuilder result = new StringBuilder(assertNotNull(value).length());
     int index = 0;
-    for(;index<value.length();index++){
+    for (; index < value.length(); index++) {
       final char chr = value.charAt(index);
-      if (!(Character.isWhitespace(chr) || Character.isISOControl(chr))) break;
+      if (!(Character.isWhitespace(chr) || Character.isISOControl(chr))) {
+        break;
+      }
     }
-    if (index<value.length()) {
+    if (index < value.length()) {
       result.append(value, index, value.length());
     }
     return result.toString();
@@ -57,25 +61,29 @@ public final class StrUtils {
 
   /**
    * Trim right white spaces in string.
+   *
    * @param value string to be trimmed
    * @return trimmed string
    */
   @Nonnull
   public static String trimRight(@Nonnull final String value) {
     final StringBuilder result = new StringBuilder(assertNotNull(value).length());
-    int index = value.length()-1;
-    for(;index>=0;index--){
+    int index = value.length() - 1;
+    for (; index >= 0; index--) {
       final char chr = value.charAt(index);
-      if (!(Character.isWhitespace(chr) || Character.isISOControl(chr))) break;
+      if (!(Character.isWhitespace(chr) || Character.isISOControl(chr))) {
+        break;
+      }
     }
-    if (index>0) {
-      result.append(value, 0, index+1);
+    if (index > 0) {
+      result.append(value, 0, index + 1);
     }
     return result.toString();
   }
-  
+
   /**
    * Remove all white space chars and ISO control chars.
+   *
    * @param value string to be processed
    * @return pressed string without white spaces and control chars
    * @since 1.1.2

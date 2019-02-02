@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -32,11 +33,12 @@ import java.lang.annotation.Target;
  * @since 1.0.2
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface ImplementationNote {
   /**
    * Text description of the warning.
+   *
    * @return text description
    * @since 1.0.2
    */

@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,11 +29,12 @@ import java.lang.annotation.Target;
 
 /**
  * Shows that an array or a collection can't contain null as its value.
+ *
  * @since 1.0
  */
 @Documented
-@Target ({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.CLASS)
 public @interface MustNotContainNull {
-  
+
 }

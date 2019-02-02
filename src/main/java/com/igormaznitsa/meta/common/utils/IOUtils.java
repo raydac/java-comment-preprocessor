@@ -18,18 +18,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.utils;
 
 import com.igormaznitsa.meta.annotation.Weight;
 import com.igormaznitsa.meta.common.exceptions.MetaErrorListeners;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Auxiliary methods for IO operations.

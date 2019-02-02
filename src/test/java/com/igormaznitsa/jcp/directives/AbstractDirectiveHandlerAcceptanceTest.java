@@ -29,7 +29,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,9 +43,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.*;
 
 public abstract class AbstractDirectiveHandlerAcceptanceTest {
@@ -248,24 +247,18 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   private List<String> parseStringForLines(final String text) throws IOException {
     if (text == null || text.isEmpty()) {
-      return Collections.emptyList();
+      return emptyList();
     }
 
-    final BufferedReader reader = new BufferedReader(new StringReader(text), text.length() * 2);
-
-    final List<String> preprocessingPart = new ArrayList<String>(100);
-
-    try {
-      while (true) {
+    final List<String> preprocessingPart = new ArrayList<>(100);
+    try (final BufferedReader reader = new BufferedReader(new StringReader(text), text.length() * 2)) {
+      while (!Thread.currentThread().isInterrupted()) {
         final String line = reader.readLine();
         if (line == null) {
           break;
         }
-
         preprocessingPart.add(line);
       }
-    } finally {
-      IOUtils.closeQuietly(reader);
     }
 
     return preprocessingPart;
@@ -285,14 +278,13 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
     final InputStream stream = new FileInputStream(file);
 
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF8"), 1024);
 
     final List<String> preprocessingPart = new ArrayList<String>(100);
     final List<String> etalonPart = new ArrayList<String>(100);
 
     boolean readFirestPart = true;
-    try {
-      while (true) {
+    try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF8"), 1024)) {
+      while (!Thread.currentThread().isInterrupted()) {
         final String line = reader.readLine();
         if (line == null) {
           break;
@@ -313,8 +305,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
           etalonPart.add(line);
         }
       }
-    } finally {
-      IOUtils.closeQuietly(reader);
     }
 
     return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines, globalVars);

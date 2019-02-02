@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,14 +29,16 @@ import java.lang.annotation.Target;
 
 /**
  * Allows mark methods as impacting on something without any chance for rollback.
+ *
  * @since 1.0
  */
 @Documented
-@Target ({ElementType.METHOD,ElementType.TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface OneWayChange {
   /**
    * Allows to drop some comments about object of the impact.
+   *
    * @return comment as String
    * @since 1.0
    */

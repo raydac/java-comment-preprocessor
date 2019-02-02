@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,16 +29,18 @@ import java.lang.annotation.Target;
 
 /**
  * It allows to mark either field or parameter by some expression. Constraint must contain X as the value and be defined in <a href="http://commons.apache.org/proper/commons-jexl/">JEXL format</a>.
+ *
  * @since 1.0
  */
 @Documented
-@Target ({ElementType.PARAMETER, ElementType.FIELD})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.CLASS)
 public @interface Constraint {
   /**
    * Constraint.
+   *
    * @return text represents constraint condition
    * @since 1.0
    */
-  String value ();
+  String value();
 }

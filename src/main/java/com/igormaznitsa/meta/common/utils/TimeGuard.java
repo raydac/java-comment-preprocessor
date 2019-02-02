@@ -18,7 +18,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.utils;
+
+import com.igormaznitsa.meta.annotation.Constraint;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.annotation.Weight;
+import com.igormaznitsa.meta.common.exceptions.MetaErrorListeners;
+import com.igormaznitsa.meta.common.exceptions.TimeViolationError;
+import com.igormaznitsa.meta.common.exceptions.UnexpectedProcessingError;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,12 +36,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.common.exceptions.UnexpectedProcessingError;
-import com.igormaznitsa.meta.annotation.Weight;
-import com.igormaznitsa.meta.common.exceptions.TimeViolationError;
-import com.igormaznitsa.meta.common.exceptions.MetaErrorListeners;
-import com.igormaznitsa.meta.annotation.Constraint;
+
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -44,28 +47,6 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  */
 @ThreadSafe
 public final class TimeGuard {
-
-  private TimeGuard() {
-  }
-
-  /**
-   * Interface for any object to be informed about time alerts.
-   *
-   * @since 1.0
-   */
-  @ThreadSafe
-  @Weight(Weight.Unit.EXTRALIGHT)
-  public interface TimeAlertListener extends Serializable {
-
-    /**
-     * Process time.
-     *
-     * @param detectedTimeDelayInMilliseconds detected time delay in milliseconds
-     * @param timeData data container contains initial parameters.
-     * @since 1.0
-     */
-    void onTimeAlert(long detectedTimeDelayInMilliseconds, @Nonnull TimeData timeData);
-  }
 
   /**
    * Some variant of "null-device" for time alerts, it does absolutely nothing.
@@ -79,133 +60,6 @@ public final class TimeGuard {
     public void onTimeAlert(final long detectedTimeDelayInMilliseconds, final TimeData timeData) {
     }
   };
-
-  /**
-   * Data container for time watching action.
-   *
-   * @since 1.0
-   */
-  @ThreadSafe
-  @Immutable
-  public static final class TimeData implements Serializable {
-
-    private static final long serialVersionUID = -2417415112571257128L;
-
-    /**
-     * Contains detected stack depth for creation.
-     *
-     * @since 1.0
-     */
-    private final int stackDepth;
-
-    /**
-     * Max allowed time delay in milliseconds.
-     *
-     * @since 1.0
-     */
-    private final long maxAllowedDelayInMilliseconds;
-
-    /**
-     * The Creation time of the data container in milliseconds.
-     *
-     * @since 1.0
-     */
-    private final long creationTimeInMilliseconds;
-
-    /**
-     * The Alert message to be provided into log or somewhere else, for time points it is ID.
-     *
-     * @since 1.0
-     */
-    private final String alertMessage;
-
-    /**
-     * Some provided processor to be called for alert.
-     *
-     * @since 1.0
-     */
-    private final TimeAlertListener alertListener;
-
-    /**
-     * The Constructor
-     *
-     * @param stackDepth stack depth
-     * @param alertMessage alert message for time violation
-     * @param maxAllowedDelayInMilliseconds max allowed time gap in milliseconds
-     * @param violationListener listener for the violation alert
-     * @since 1.0
-     */
-    @Weight(Weight.Unit.LIGHT)
-    public TimeData(@Constraint("X>1") final int stackDepth, @Nonnull final String alertMessage, final long maxAllowedDelayInMilliseconds, @Nullable final TimeAlertListener violationListener) {
-      this.stackDepth = stackDepth;
-      this.maxAllowedDelayInMilliseconds = maxAllowedDelayInMilliseconds;
-      this.creationTimeInMilliseconds = System.currentTimeMillis();
-      this.alertMessage = alertMessage;
-      this.alertListener = GetUtils.ensureNonNull(violationListener, NULL_TIME_ALERT_LISTENER);
-    }
-
-    /**
-     * Get alert listener if provided
-     *
-     * @return the provided alert listener
-     * @since 1.0
-     */
-    @Nonnull
-    public TimeAlertListener getAlertListener() {
-      return this.alertListener;
-    }
-
-    /**
-     * Get the alert message. For time points it is ID.
-     *
-     * @return defined alert message.
-     * @since 1.0
-     */
-    @Nullable
-    public String getAlertMessage() {
-      return this.alertMessage;
-    }
-
-    /**
-     * Get the detected stack depth during the container creation.
-     *
-     * @return the detected stack depth
-     * @since 1.0
-     */
-    public int getDetectedStackDepth() {
-      return this.stackDepth;
-    }
-
-    /**
-     * Get the creation time of the container.
-     *
-     * @return the creation time in milliseconds
-     * @since 1.0
-     */
-    public long getCreationTimeInMilliseconds() {
-      return this.creationTimeInMilliseconds;
-    }
-
-    /**
-     * Get defined max allowed time delay in milliseconds.
-     *
-     * @return the max allowed time delay in milliseconds
-     * @since 1.0
-     */
-    public long getMaxAllowedDelayInMilliseconds() {
-      return this.maxAllowedDelayInMilliseconds;
-    }
-
-    /**
-     * Check that the object represents a named time point.
-     *
-     * @return true if the object represents a time point created for statistics.
-     */
-    public boolean isTimePoint() {
-      return this.maxAllowedDelayInMilliseconds < 0L;
-    }
-  }
-
   /**
    * Inside thread local storage of registered processors.
    *
@@ -219,10 +73,13 @@ public final class TimeGuard {
     }
   };
 
+  private TimeGuard() {
+  }
+
   /**
    * Add a time watcher. As target of notification meta error listeners will be used.
    *
-   * @param alertMessage message for time violation
+   * @param alertMessage                  message for time violation
    * @param maxAllowedDelayInMilliseconds max allowed delay in milliseconds for executing block
    * @see #check()
    * @see #cancelAll()
@@ -240,7 +97,7 @@ public final class TimeGuard {
    * Add a named time point.
    *
    * @param timePointName name for the time point
-   * @param listener listener to be notified
+   * @param listener      listener to be notified
    * @see #checkPoint(java.lang.String)
    * @since 1.0
    */
@@ -321,21 +178,18 @@ public final class TimeGuard {
   /**
    * Add a time watcher and provide processor of time violation.
    *
-   * @param alertMessage message for time violation
+   * @param alertMessage                  message for time violation
    * @param maxAllowedDelayInMilliseconds max allowed delay in milliseconds for executing block
-   * @param timeAlertListener alert listener to be notified, if it is null then the global one will get notification
+   * @param timeAlertListener             alert listener to be notified, if it is null then the global one will get notification
    * @see #check()
    * @see #cancelAll()
    * @since 1.0
    */
   // WARNING! Don't make a call from methods of the class to not break stack depth!
   @Weight(value = Weight.Unit.VARIABLE, comment = "Depends on the current call stack depth")
-  public static void addGuard(@Nullable
-      final String alertMessage,
-      @Constraint("X>0")
-      final long maxAllowedDelayInMilliseconds,
-      @Nullable
-      final TimeAlertListener timeAlertListener
+  public static void addGuard(@Nullable final String alertMessage,
+                              @Constraint("X>0") final long maxAllowedDelayInMilliseconds,
+                              @Nullable final TimeAlertListener timeAlertListener
   ) {
     final List<TimeData> list = REGISTRY.get();
     list.add(new TimeData(ThreadUtils.stackDepth(), alertMessage, maxAllowedDelayInMilliseconds, timeAlertListener));
@@ -442,5 +296,150 @@ public final class TimeGuard {
       REGISTRY.remove();
     }
     return result;
+  }
+
+  /**
+   * Interface for any object to be informed about time alerts.
+   *
+   * @since 1.0
+   */
+  @ThreadSafe
+  @Weight(Weight.Unit.EXTRALIGHT)
+  public interface TimeAlertListener extends Serializable {
+
+    /**
+     * Process time.
+     *
+     * @param detectedTimeDelayInMilliseconds detected time delay in milliseconds
+     * @param timeData                        data container contains initial parameters.
+     * @since 1.0
+     */
+    void onTimeAlert(long detectedTimeDelayInMilliseconds, @Nonnull TimeData timeData);
+  }
+
+  /**
+   * Data container for time watching action.
+   *
+   * @since 1.0
+   */
+  @ThreadSafe
+  @Immutable
+  public static final class TimeData implements Serializable {
+
+    private static final long serialVersionUID = -2417415112571257128L;
+
+    /**
+     * Contains detected stack depth for creation.
+     *
+     * @since 1.0
+     */
+    private final int stackDepth;
+
+    /**
+     * Max allowed time delay in milliseconds.
+     *
+     * @since 1.0
+     */
+    private final long maxAllowedDelayInMilliseconds;
+
+    /**
+     * The Creation time of the data container in milliseconds.
+     *
+     * @since 1.0
+     */
+    private final long creationTimeInMilliseconds;
+
+    /**
+     * The Alert message to be provided into log or somewhere else, for time points it is ID.
+     *
+     * @since 1.0
+     */
+    private final String alertMessage;
+
+    /**
+     * Some provided processor to be called for alert.
+     *
+     * @since 1.0
+     */
+    private final TimeAlertListener alertListener;
+
+    /**
+     * The Constructor
+     *
+     * @param stackDepth                    stack depth
+     * @param alertMessage                  alert message for time violation
+     * @param maxAllowedDelayInMilliseconds max allowed time gap in milliseconds
+     * @param violationListener             listener for the violation alert
+     * @since 1.0
+     */
+    @Weight(Weight.Unit.LIGHT)
+    public TimeData(@Constraint("X>1") final int stackDepth, @Nonnull final String alertMessage, final long maxAllowedDelayInMilliseconds, @Nullable final TimeAlertListener violationListener) {
+      this.stackDepth = stackDepth;
+      this.maxAllowedDelayInMilliseconds = maxAllowedDelayInMilliseconds;
+      this.creationTimeInMilliseconds = System.currentTimeMillis();
+      this.alertMessage = alertMessage;
+      this.alertListener = GetUtils.ensureNonNull(violationListener, NULL_TIME_ALERT_LISTENER);
+    }
+
+    /**
+     * Get alert listener if provided
+     *
+     * @return the provided alert listener
+     * @since 1.0
+     */
+    @Nonnull
+    public TimeAlertListener getAlertListener() {
+      return this.alertListener;
+    }
+
+    /**
+     * Get the alert message. For time points it is ID.
+     *
+     * @return defined alert message.
+     * @since 1.0
+     */
+    @Nullable
+    public String getAlertMessage() {
+      return this.alertMessage;
+    }
+
+    /**
+     * Get the detected stack depth during the container creation.
+     *
+     * @return the detected stack depth
+     * @since 1.0
+     */
+    public int getDetectedStackDepth() {
+      return this.stackDepth;
+    }
+
+    /**
+     * Get the creation time of the container.
+     *
+     * @return the creation time in milliseconds
+     * @since 1.0
+     */
+    public long getCreationTimeInMilliseconds() {
+      return this.creationTimeInMilliseconds;
+    }
+
+    /**
+     * Get defined max allowed time delay in milliseconds.
+     *
+     * @return the max allowed time delay in milliseconds
+     * @since 1.0
+     */
+    public long getMaxAllowedDelayInMilliseconds() {
+      return this.maxAllowedDelayInMilliseconds;
+    }
+
+    /**
+     * Check that the object represents a named time point.
+     *
+     * @return true if the object represents a time point created for statistics.
+     */
+    public boolean isTimePoint() {
+      return this.maxAllowedDelayInMilliseconds < 0L;
+    }
   }
 }

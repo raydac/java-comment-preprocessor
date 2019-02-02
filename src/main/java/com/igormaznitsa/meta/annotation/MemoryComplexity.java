@@ -18,7 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
+
+import com.igormaznitsa.meta.Complexity;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -27,17 +30,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.igormaznitsa.meta.Complexity;
-
 /**
  * Allows to mark executable entity by its memory complexity description.
  *
- * @since 1.1.2
  * @see Complexity
  * @see Weight
+ * @since 1.1.2
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Target( {ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
 @Inherited
 public @interface MemoryComplexity {

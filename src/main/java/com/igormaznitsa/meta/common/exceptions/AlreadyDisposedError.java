@@ -18,13 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.exceptions;
 
 import javax.annotation.Nullable;
 
 /**
  * Error if detected attempt to dispose already disposed object.
- * 
+ *
  * @since 1.0
  */
 public class AlreadyDisposedError extends AssertionError {
@@ -33,11 +34,12 @@ public class AlreadyDisposedError extends AssertionError {
 
   /**
    * Constructor with provided message.
+   *
    * @param message some text message
    * @since 1.0
    */
-  public AlreadyDisposedError (@Nullable final String message) {
+  public AlreadyDisposedError(@Nullable final String message) {
     super(message);
   }
-  
+
 }

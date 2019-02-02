@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,10 +29,11 @@ import java.lang.annotation.Target;
 
 /**
  * Shows that marked entity is <a href="https://en.wikipedia.org/wiki/Lazy_initialization">lazy inited one</a>
+ *
  * @since 1.0
  */
 @Documented
-@Target({ElementType.FIELD,ElementType.PARAMETER})
+@Target( {ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.CLASS)
 public @interface LazyInited {
 }

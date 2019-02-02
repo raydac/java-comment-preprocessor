@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 import com.igormaznitsa.meta.common.utils.Assertions;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -40,7 +41,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -166,28 +166,7 @@ public final class PreprocessorUtils {
       throw new IOException("Can't make directory [" + getFilePath(dest.getParentFile()) + ']');
     }
 
-    FileChannel fileSrc = null;
-    FileChannel fileDst = null;
-    final FileInputStream fileSrcInput = new FileInputStream(source);
-    FileOutputStream fileOutput = null;
-    try {
-      fileSrc = fileSrcInput.getChannel();
-      fileOutput = new FileOutputStream(dest);
-      fileDst = fileOutput.getChannel();
-      long size = fileSrc.size();
-      long pos = 0L;
-      while (size > 0) {
-        final long written = fileSrc.transferTo(pos, size, fileDst);
-        pos += written;
-        size -= written;
-      }
-    } finally {
-      IOUtils.closeQuietly(fileSrcInput);
-      IOUtils.closeQuietly(fileOutput);
-      IOUtils.closeQuietly(fileDst);
-      IOUtils.closeQuietly(fileSrc);
-    }
-
+    FileUtils.copyFile(source, dest);
     if (copyFileAttributes) {
       copyFileAttributes(source, dest);
     }

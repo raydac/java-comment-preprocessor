@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,14 +29,16 @@ import java.lang.annotation.Target;
 
 /**
  * Allows provide some link in text form for an entity. It can be url or something else. It is provided just for information.
+ *
  * @since 1.0
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.PACKAGE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface Link {
   /**
    * Link to some resource in String format.
+   *
    * @return String value
    * @since 1.0
    */

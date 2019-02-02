@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,20 +29,24 @@ import java.lang.annotation.Target;
 
 /**
  * Allows to describe a runtime exception thrown by method.
+ *
  * @since 1.1.0
  */
 @Documented
-@Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
+@Target( {ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
 public @interface ThrowsRuntimeException {
   /**
    * The Class of the runtime exception.
+   *
    * @return the class of the runtime exception
    */
   Class<? extends RuntimeException> value();
+
   /**
    * Description of the exception.
+   *
    * @return the description as text.
    */
-  String reference () default "";
+  String reference() default "";
 }

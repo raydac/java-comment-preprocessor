@@ -18,73 +18,80 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.exceptions;
 
 import com.igormaznitsa.meta.annotation.Weight;
 import com.igormaznitsa.meta.common.utils.Assertions;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Service containing all error listeners for the common module methods and providing their notifications.
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
-@Weight (Weight.Unit.NORMAL)
+@Weight(Weight.Unit.NORMAL)
 public final class MetaErrorListeners {
 
   private static final List<MetaErrorListener> ERROR_LISTENERS = new CopyOnWriteArrayList<MetaErrorListener>();
 
-  private MetaErrorListeners () {
+  private MetaErrorListeners() {
   }
 
   /**
    * Remove all listeners.
+   *
    * @since 1.0
    */
-  public static void clear () {
+  public static void clear() {
     ERROR_LISTENERS.clear();
   }
 
   /**
    * Add new fireError listener for global fireError events.
+   *
    * @param value listener to be added
    * @since 1.0
    */
-  public static void addErrorListener (@Nonnull final MetaErrorListener value) {
+  public static void addErrorListener(@Nonnull final MetaErrorListener value) {
     ERROR_LISTENERS.add(Assertions.assertNotNull(value));
   }
 
   /**
    * Remove listener.
+   *
    * @param value listener to be removed
    * @since 1.0
    */
-  public static void removeErrorListener (@Nonnull final MetaErrorListener value) {
+  public static void removeErrorListener(@Nonnull final MetaErrorListener value) {
     ERROR_LISTENERS.remove(Assertions.assertNotNull(value));
   }
 
   /**
    * Check that there are registered listeners.
+   *
    * @return true if presented listeners for global fireError events, false otherwise
    * @since 1.0
    */
-  public static boolean hasListeners () {
+  public static boolean hasListeners() {
     return !ERROR_LISTENERS.isEmpty();
   }
 
   /**
    * Send notifications to all listeners.
-   * @param text message text
+   *
+   * @param text  message text
    * @param error error object
    * @since 1.0
    */
   @Weight(Weight.Unit.VARIABLE)
-  public static void fireError (@Nonnull final String text, @Nonnull final Throwable error) {
-    for(final MetaErrorListener p : ERROR_LISTENERS){
+  public static void fireError(@Nonnull final String text, @Nonnull final Throwable error) {
+    for (final MetaErrorListener p : ERROR_LISTENERS) {
       p.onDetectedError(text, error);
     }
   }

@@ -18,22 +18,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.common.utils;
 
+import com.igormaznitsa.meta.annotation.MayContainNull;
 import com.igormaznitsa.meta.annotation.Weight;
-
-import java.util.Collection;
-
 import com.igormaznitsa.meta.common.exceptions.AlreadyDisposedError;
-import com.igormaznitsa.meta.common.interfaces.Disposable;
+import com.igormaznitsa.meta.common.exceptions.InvalidObjectError;
 import com.igormaznitsa.meta.common.exceptions.MetaErrorListeners;
+import com.igormaznitsa.meta.common.interfaces.Disposable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-
-import com.igormaznitsa.meta.annotation.MayContainNull;
-import com.igormaznitsa.meta.common.exceptions.InvalidObjectError;
+import java.util.Collection;
 
 /**
  * Set of auxiliary methods for assertion.
@@ -68,7 +66,7 @@ public final class Assertions {
   /**
    * Assert that value is null
    *
-   * @param <T> type of the object to check
+   * @param <T>    type of the object to check
    * @param object the object to check
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if the value is not null
@@ -82,9 +80,9 @@ public final class Assertions {
   /**
    * Assert that value is null
    *
-   * @param <T> type of the object to check
+   * @param <T>         type of the object to check
    * @param failMessage the message to be provided for failure, can be null
-   * @param object the object to check
+   * @param object      the object to check
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if the value is not null
    * @since 1.1.0
@@ -102,7 +100,7 @@ public final class Assertions {
   /**
    * Assert that value is not null
    *
-   * @param <T> type of the object to check
+   * @param <T>    type of the object to check
    * @param object the object to check
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if the value is null
@@ -116,9 +114,9 @@ public final class Assertions {
   /**
    * Assert that value is not null
    *
-   * @param <T> type of the object to check
+   * @param <T>         type of the object to check
    * @param failMessage the message to be provided as error description, can be null
-   * @param object the object to check
+   * @param object      the object to check
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if the value is null
    * @since 1.1.0
@@ -137,7 +135,7 @@ public final class Assertions {
   /**
    * Assert that array doesn't contain null value.
    *
-   * @param <T> type of the object to check
+   * @param <T>   type of the object to check
    * @param array an array to be checked for null value
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if either array is null or it contains null
@@ -159,7 +157,7 @@ public final class Assertions {
   /**
    * Assert condition flag is TRUE. GEL will be notified about error.
    *
-   * @param message message describing situation
+   * @param message   message describing situation
    * @param condition condition which must be true
    * @throws AssertionError if the condition is not true
    * @since 1.0
@@ -174,9 +172,10 @@ public final class Assertions {
 
   /**
    * Assert that value is equal to some etalon value.
-   * @param <T> type of object to be checked.
+   *
+   * @param <T>    type of object to be checked.
    * @param etalon etalon value
-   * @param value value to check
+   * @param value  value to check
    * @return value if it is equal to etalon
    * @throws AssertionError if the value id not equal to the etalon
    * @since 1.1.1
@@ -185,7 +184,7 @@ public final class Assertions {
     if (etalon == null) {
       assertNull(value);
     } else {
-      if (!(etalon==value || etalon.equals(value))){
+      if (!(etalon == value || etalon.equals(value))) {
         final AssertionError error = new AssertionError("Value is not equal to etalon");
         MetaErrorListeners.fireError(error.getMessage(), error);
         throw error;
@@ -197,7 +196,7 @@ public final class Assertions {
   /**
    * Assert condition flag is FALSE. GEL will be notified about error.
    *
-   * @param message message describing situation
+   * @param message   message describing situation
    * @param condition condition which must be false
    * @throws AssertionError if the condition is true
    * @since 1.0
@@ -213,7 +212,7 @@ public final class Assertions {
   /**
    * Assert that collection doesn't contain null value.
    *
-   * @param <T> type of collection to check
+   * @param <T>        type of collection to check
    * @param collection a collection to be checked for null value
    * @return the same input parameter if all is ok
    * @throws AssertionError it will be thrown if either collection is null or it contains null
@@ -231,7 +230,7 @@ public final class Assertions {
   /**
    * Assert that a disposable object is not disposed.
    *
-   * @param <T> type of the object
+   * @param <T>        type of the object
    * @param disposable disposable object to be checked
    * @return the disposable object if it is not disposed yet
    * @throws AlreadyDisposedError it will be thrown if the object is already disposed;
@@ -250,8 +249,8 @@ public final class Assertions {
   /**
    * Check that object is presented among provided elements and replace the object by equal element from the list.
    *
-   * @param <T> type of object
-   * @param obj object to be checked
+   * @param <T>  type of object
+   * @param obj  object to be checked
    * @param list list of elements for checking
    * @return equal element provided in the list
    * @throws AssertionError if object is not found among defined ones
@@ -268,7 +267,7 @@ public final class Assertions {
     } else {
       final int objHash = obj.hashCode();
       for (final T i : assertNotNull(list)) {
-        if (obj == i || (i!=null && objHash == i.hashCode() && obj.equals(i))) {
+        if (obj == i || (i != null && objHash == i.hashCode() && obj.equals(i))) {
           return i;
         }
       }
@@ -281,8 +280,8 @@ public final class Assertions {
   /**
    * Check an object by a validator.
    *
-   * @param <T> object type
-   * @param obj object to be checked
+   * @param <T>       object type
+   * @param obj       object to be checked
    * @param validator validator for the operation
    * @return the object if it is valid
    * @throws InvalidObjectError will be thrown if the object is invalid

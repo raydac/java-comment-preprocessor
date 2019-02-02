@@ -18,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.igormaznitsa.meta.annotation;
 
 import java.lang.annotation.Documented;
@@ -28,11 +29,12 @@ import java.lang.annotation.Target;
 
 /**
  * Shows that marked entity can contain null among its inside values.
+ *
  * @since 1.0
  */
 @Documented
-@Target ({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-@Retention (RetentionPolicy.CLASS)
+@Target( {ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.CLASS)
 public @interface MayContainNull {
-  
+
 }

@@ -102,6 +102,7 @@ public final class JCPreprocessor {
       new UnknownAsFalseHandler()
   };
   private final PreprocessorContext context;
+
   public JCPreprocessor(@Nonnull final PreprocessorContext context) {
     assertNotNull("Configurator is null", context);
     this.context = context;
