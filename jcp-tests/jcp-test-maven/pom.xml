@@ -11,4 +11,56 @@
     <artifactId>jcp-test-maven</artifactId>
     <packaging>jar</packaging>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>jcp</artifactId>
+                <version>${jcp.test.version}</version>
+                <executions>
+                    <execution>
+                        <id>preprocess-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>preprocess</goal>
+                        </goals>
+                        <configuration>
+                            <allowWhitespace>true</allowWhitespace>
+                            <processing>java</processing>
+                            <keepLines>true</keepLines>
+                            <globalVars>
+                                <property>
+                                    <name>some.test.global</name>
+                                    <value>Some Test Global Value</value>
+                                </property>
+                            </globalVars>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>preprocess-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>preprocessTests</goal>
+                        </goals>
+                        <configuration>
+                            <globalVars>
+                                <property>
+                                    <name>some.test.global.test</name>
+                                    <value>Some Test</value>
+                                </property>
+                            </globalVars>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clear-generated-folders</id>
+                        <goals>
+                            <goal>clear</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

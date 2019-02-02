@@ -10,6 +10,7 @@
   <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
+    <jcp.test.version>6.2.0-SNAPSHOT</jcp.test.version>
     <main.project.version>${project.version}</main.project.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <timestamp>${maven.build.timestamp}</timestamp>

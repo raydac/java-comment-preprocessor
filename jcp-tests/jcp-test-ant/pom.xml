@@ -60,7 +60,7 @@
             <dependency>
               <groupId>com.igormaznitsa</groupId>
               <artifactId>jcp</artifactId>
-              <version>${jcp.preprocessor.version}</version>
+              <version>${jcp.test.version}</version>
             </dependency>
             <dependency>
               <groupId>xerces</groupId>

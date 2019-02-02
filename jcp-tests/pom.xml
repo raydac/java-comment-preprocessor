@@ -17,10 +17,6 @@
         <module>jcp-test-maven</module>
     </modules>
 
-    <properties>
-      <jcp.preprocessor.version>6.2.0-SNAPSHOT</jcp.preprocessor.version>
-    </properties>
-
     <dependencies>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
