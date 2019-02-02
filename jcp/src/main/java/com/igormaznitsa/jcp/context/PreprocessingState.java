@@ -410,8 +410,7 @@ public final class PreprocessingState {
     boolean wasSaved = false;
     try {
       final int totatBufferedChars = prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize();
-      final int BUFFER_SIZE = Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE);
-
+      final int BUFFER_SIZE = Math.max(64, Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE));
 
       if (this.overrideOnlyIfContentChanged) {
         String content = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();

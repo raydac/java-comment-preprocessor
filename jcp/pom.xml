@@ -185,11 +185,10 @@
             <version>2.7.2</version>
         </dependency>
         <dependency>
-          <groupId>org.w3c</groupId>
-          <artifactId>dom</artifactId>
-          <version>2.3.0-jaxb-1.0.6</version>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
         </dependency>
-
 
         <dependency>
           <groupId>org.junit.vintage</groupId>
@@ -266,8 +265,20 @@
                         <configuration>
                             <relocations>
                                 <relocation>
+                                    <pattern>javax.xml</pattern>
+                                    <shadedPattern>hidden.jcp.javax.xml</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.apache.commons</pattern>
                                     <shadedPattern>hidden.jcp.org.apache.commons</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>license</pattern>
+                                    <shadedPattern>hidden.jcp.license</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.xml</pattern>
+                                    <shadedPattern>hidden.jcp.org.xml</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.xpath</pattern>
@@ -323,7 +334,7 @@
                                     <include>xerces:*</include>
                                     <include>xalan:*</include>
                                     <include>com.igormaznitsa:*</include>
-                                    <include>org.w3c:*</include>
+                                    <include>xml-apis:*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
