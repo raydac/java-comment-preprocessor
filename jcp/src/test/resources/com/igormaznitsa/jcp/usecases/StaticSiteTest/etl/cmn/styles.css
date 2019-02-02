@@ -1,0 +1,93 @@
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-color: #FFFFFF;
+}
+.menuheader {
+FONT-WEIGHT: normal;
+ FONT-SIZE: 14px;
+  COLOR: #BFBFFF;
+   FONT-FAMILY: "Small Fonts", "Arial Black", Arial, Helvetica, sans-serif}
+.menu {
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 11px;
+	COLOR: white;
+	FONT-FAMILY: Arial, Helvetica, sans-serif;
+	TEXT-DECORATION: none;
+}
+.alltext {
+	FONT-WEIGHT: normal;
+	FONT-FAMILY: "Times New Roman", Times, serif;
+	COLOR: black;
+	TEXT-DECORATION: none;
+	font-size: 12px;
+	font-style: normal;
+}
+.newdata {
+FONT-WEIGHT: bold;
+ FONT-SIZE: 11px;
+  COLOR: #000000;
+   FONT-FAMILY: Arial, Helvetica, sans-serif}
+
+.footer {
+	font-size: x-small;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #999999;
+
+}
+.langtxt {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+.rightnews {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9px;
+}
+.rightnewsHdr {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+a:link {
+	text-decoration: none;
+	color: #00BBFF;
+}
+a:visited {
+	text-decoration: none;
+	color: #00BBFF;
+}
+a:hover {
+	text-decoration: none;
+	color: #00FF00;
+}
+a:active {
+	text-decoration: none;
+	color: #00BBFF;
+}
+.catalogheader {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000066;
+	text-decoration: none;
+}
+.gameinfoheader {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	color: #000066;
+	text-decoration: none;
+}
+.gameinfoheadermin {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000066;
+	text-decoration: none;
+}

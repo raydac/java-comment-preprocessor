@@ -1,0 +1,16 @@
+
+public class test {
+    
+    public static void main(String ... args) {
+        
+	for(String a : args) {
+	  
+	  System.out.println("Arg: "+a);
+	}
+        
+        System.out.println("//Hello /*World*/"); 
+        int a = 5+10;
+        System.out.println("What a terrible comments/**aaaaa*/");
+        
+    }
+}

@@ -1,0 +1,38 @@
+//#-
+//#excludeif true
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NEWS</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<LINK href="../cmn/styles.css" type=text/css rel=stylesheet>
+</head>
+<body>
+//#+
+//#local l_cnewsNewsFile = xml_root(xml_open("hotnews.xml"))
+//#local l_cnewsNewsList = xml_list(l_cnewsNewsFile,"news") 
+<table width="100%"  border="0" align="center" cellpadding="4" cellspacing="0">
+//#local l_cnewsIndex = 0
+//#while l_cnewsIndex<xml_size(l_cnewsNewsList)
+//#local l_cnewsCurNews = xml_get(l_cnewsNewsList,l_cnewsIndex)
+//#local l_cnewsCurNews = xml_get(xml_list(l_cnewsCurNews,curLangID),0)
+//#local l_cnewsName = xml_text(xml_get(xml_list(l_cnewsCurNews,"name"),0))
+//#local l_cnewsContent = xml_text(xml_get(xml_list(l_cnewsCurNews,"content"),0))
+//#local l_cnewsRef = xml_text(xml_get(xml_list(l_cnewsCurNews,"href"),0))
+<tr> 
+<td class="rightnews" ><div align="center"><span class="rightnewsHdr">/*$l_cnewsName$*/</span><br>
+</div>
+<div align="justify">/*$l_cnewsContent$*/<br>
+//#if curLangID=="rus"
+<span class="rightnewsHdr"><a href="/*$l_cnewsRef$*/" target="_new">читать больше...</a></div></td>
+//#else
+<span class="rightnewsHdr"><a href="/*$l_cnewsRef$*/" target="_new">read more...</a></div></td>
+//#endif
+</tr>
+//#local l_cnewsIndex = l_cnewsIndex + 1 
+//#end
+</table>
+//#-
+</body>
+</html>
+//#+

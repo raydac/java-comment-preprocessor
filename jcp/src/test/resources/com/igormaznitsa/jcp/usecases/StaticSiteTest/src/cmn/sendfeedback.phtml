@@ -1,0 +1,14 @@
+<?
+$fText="$fTitle\n\n";
+$fText.=date("l dS of F Y h:i:s A")."\n\n";
+
+$fText.="Name: $fName\n";
+$fText.="Email: $fEmail\n\n";
+
+$fText.=$fComment;
+$fText.="\n\n";
+
+if (mail("feedback@coldcore.ru",$fSubject,$fText)) {Header("Location: $fOk");}
+else {Header("Location: $fBad");}
+exit;
+?>

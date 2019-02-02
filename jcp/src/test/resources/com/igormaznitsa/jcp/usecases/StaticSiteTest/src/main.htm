@@ -1,0 +1,223 @@
+//#local site_file = xml_root(xml_open("site.xml"))
+//#local games_file = xml_root(xml_open("games.xml"))
+//#local games_list = xml_list(xml_get(xml_list(games_file,"games"),0),"game")
+
+//#local languages= xml_list(xml_get(xml_list(site_file,"languages"),0),"lang")
+//#local langsNumber = xml_size(languages)
+
+//#local langIndex = 0
+
+//#while langIndex<langsNumber
+//#local curLangID = xml_attr(xml_get(languages,langIndex),"id")
+//#local curLangText = xml_attr(xml_get(languages,langIndex),"text")
+
+//#local outFileName = "index.htm"
+
+//#echo Language /*$curLangText$*/
+//#outdir curLangID
+
+//#local menuMainIndex = 1
+//#local menuList = 0
+
+
+//#while menuMainIndex>0
+
+//#local menuList = xml_list(site_file,"menu"+menuMainIndex)
+//#if xml_size(menuList)==0
+	//#local menuList=-1
+	//#local menuMainIndex = -1
+	//#continue
+//#endif	
+//#local menuList = xml_get(menuList,0)
+
+//#local menuSubIndex = 0
+//#local submenuList = xml_list(menuList,"item")
+//#local rootMenuNameText = xml_list(menuList,"textname")
+//#local rootMenuNameID = "menu"+menuMainIndex
+//#if xml_size(rootMenuNameText)==0
+	//#local rootMenuNameText=""
+//#else
+	//#local rootMenuNameText = xml_get(rootMenuNameText,0)
+	//#local rootMenuNameText=str2web(xml_text(xml_get(xml_list(rootMenuNameText,curLangID),0)))
+//#endif
+
+//#local submenuItemsNumber = xml_size(submenuList)
+//#echo SUBITEMS: /*$submenuItemsNumber$*/
+//#while menuSubIndex<submenuItemsNumber
+
+//#local currentItem = xml_get(submenuList,menuSubIndex)
+//#local currentItemID = xml_attr(currentItem,"id")
+
+//#local currentItemText = str2web(xml_text(xml_get(xml_list(currentItem,curLangID),0)))
+//#outname rootMenuNameID+"_"+currentItemID + ".htm"
+//#echo making file /*$rootMenuNameID+"_"+currentItemID + ".htm"$*/
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+//#local pageHeader = str2web(xml_text(xml_get(xml_list(xml_get(xml_list(site_file,"header"),0),curLangID),0)))
+//#if strlen(rootMenuNameText)==0
+//#local rootMenuNameText2="/"
+//#else
+//#local rootMenuNameText2="/"+rootMenuNameText+"/"
+//#endif
+<title>/*$pageHeader+rootMenuNameText2+currentItemText$*/</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+
+<LINK href="../cmn/styles.css" type=text/css rel=stylesheet>
+
+</head>
+
+<body>
+<table width="720" border="0" align="center" cellpadding="0" cellspacing="5" bgcolor="#FFFFFF">
+  <tr>
+    <td height="129" bgcolor="#FFFFFF"><table width="100%%"  border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td><div align="left"><img src="../cc_lft.jpg" alt="ColdCore(R)" width="330" height="129"></div></td>
+        <td>&nbsp;</td>
+        <td><div align="right"><img src="../cc_rght.jpg" alt="Buy a bit of Game(TM)" width="329" height="129"></div></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	<table width="100%%"  border="0" cellspacing="8" cellpadding="0">
+        <tr>
+          <td width="150" align="left" valign="top"> 
+            <table width="150"  border="0" cellspacing="0" cellpadding="0">
+              <tr align="center"> 
+                <td colspan="3" bgcolor="#3E0072"><span class="menuheader"></span><span class="menuheader"> 
+                  </span> <table width="100%%"  border="0" cellspacing="0" cellpadding="3">
+                    <tr> 
+                      <td bgcolor="#0F87FF" class="menuheader">
+						//#if curLangID=="eng"
+							<div align="center">MENU</div></td>
+    					//#else
+    						//#if curLangID=="rus"
+    					    <div align="center">&#1053;&#1040;&#1042;&#1048;&#1043;&#1040;&#1062;&#1048;&#1071;</div></td>
+    					    //#endif
+    					//#endif
+                    </tr>
+                  </table></td>
+              </tr>
+              <tr> 
+                <td width="10" bgcolor="#3E0072">
+					<p><strong class="menuheader"></strong></p></td>
+                <td width="130" bgcolor="#3E0072" class="menu"><span class="menu"><strong class="menuheader"><span class="menu">&nbsp;</span></strong></span><strong class="menuheader"><br></strong>
+                  
+//#local l_menuIndex = 1
+//#while true 
+//#local l_mainMenuList = xml_list(site_file,"menu"+l_menuIndex)
+//#if xml_size(l_mainMenuList)==0
+//#break
+//#endif
+
+//#local l_curMenu = xml_get(l_mainMenuList,0)
+//#local l_subelementsMenu = xml_list(l_curMenu,"item")
+//#local l_menuName = xml_list(l_curMenu,"textname")
+//#if xml_size(l_menuName)==0
+  //#local l_spacer = ""
+  //#local l_menuName = ""
+//#else
+  //#local l_spacer = "&nbsp;&nbsp;&nbsp;"
+  //#local l_menuName = xml_text(xml_get(xml_list(xml_get(l_menuName,0),curLangID),0))
+//#endif
+<div>
+//#if strlen(l_menuName)>0
+/*$l_menuName$*/<br>
+//#endif
+//#local l_subMenuItem = 0
+//#while l_subMenuItem<xml_size(l_subelementsMenu)           
+  //#local l_curSubItem = xml_get(l_subelementsMenu,l_subMenuItem)
+ 	//#local l_menuName = xml_text(xml_get(xml_list(l_curSubItem,curLangID),0))       
+	//#local l_menuID = xml_attr(l_curSubItem,"id")
+
+    //#local l_appsNumber = -1
+    
+    //#if l_menuIndex>1
+    	//#local l_appsNumber = 0
+    	//#local l_gIndex = 0
+    	//#while l_gIndex<xml_size(games_list)
+    		//#local l_curGame = xml_get(games_list,l_gIndex)
+    		//#if xml_size(xml_list(l_curGame,l_menuID))>0
+	    		//#local l_appsNumber = l_appsNumber+1
+    		//#endif
+    		//#local l_gIndex = l_gIndex+1
+    	//#end
+    //#endif
+    //#if l_appsNumber<0
+      //#local l_stringGamesNumber = ""
+    //#else
+    	//#local l_stringGamesNumber = "&nbsp;("+l_appsNumber+")"
+    //#endif
+
+	//#if menuSubIndex == l_subMenuItem && menuMainIndex == l_menuIndex
+      /*$l_spacer$*/<img src="../ledon.gif" width="10" height="10" hspace="2" vspace="2" align="absmiddle">/*$l_menuName+l_stringGamesNumber$*/<br>
+	//#else
+      /*$l_spacer$*/<img src="../ledoff.gif" width="10" height="10" hspace="2" vspace="2" align="absmiddle"><a href="/*$"./"+"menu"+l_menuIndex+"_"+l_menuID + ".htm"$*/">/*$l_menuName+l_stringGamesNumber$*/</a><br>
+	//#endif
+//#local l_subMenuItem = l_subMenuItem + 1
+//#end
+<br></div>
+//#local l_menuIndex = l_menuIndex + 1
+//#end
+</td>
+</tr>
+<tr> 
+<td colspan="2" bgcolor="#0066FF"><table width="100%%"  border="0" cellspacing="0" cellpadding="4">
+<tr class="langtxt"> 
+//#local li = 0
+//#while li<langsNumber
+	//#local locLangID = xml_attr(xml_get(languages,li),"id")
+	//#local locLangText = xml_attr(xml_get(languages,li),"text")
+
+	//#if li==langIndex
+    	<td bgcolor="#3E0072"> <div align="center"><font color="#00FF00">/*$locLangText$*/</font></div></td>
+	//#else
+        <td bgcolor="#6A6AFF"><div align="center"><a href="/*$"../"+locLangID+"/"+rootMenuNameID+"_"+currentItemID+".htm"$*/">/*$locLangText$*/</a></div></td>
+	//#endif
+//#local li = li +1
+//#end
+                    </tr>
+                  </table></td>
+              </tr>
+            </table>
+            <br>
+            &nbsp; </td>
+          <td width="391" align="center" valign="top" bgcolor="#FFFFFF" class="menuheader"> 
+            <div>
+              <div align="center" class="menuheader"><strong>/*$currentItemText$*/</strong></div>
+            </div>
+//#local l_templateID = xml_list(currentItem,"template")
+//#if xml_size(l_templateID)>0
+	//#local l_templateID = xml_text(xml_get(l_templateID,0))
+	//#include l_templateID
+//#else
+	//#include "./"+currentItemID+".htm"  
+//#endif
+          </td>
+          <td width="132" align="right" valign="top" bgcolor="#E7D7F4">
+//#include "./"+"hotnews.htm"  
+          </td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr>
+    <td><hr align="center" width="100%%" noshade>
+
+//#local footer = xml_text(xml_get(xml_list(xml_get(xml_list(site_file,"footer"),0),curLangID),0))
+<div align="justify" class="footer">/*$footer$*/</div>
+</td>
+</tr>
+</table>
+</body>
+</html>
+//#flush
+//#local menuSubIndex = menuSubIndex + 1
+//#end
+//#local menuMainIndex = menuMainIndex +1
+//#end
+//#local langIndex = langIndex+1
+//#end
+//#outname "end.txt"

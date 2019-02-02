@@ -1,0 +1,232 @@
+//#noautoflush
+//#local gref_langs = xml_root(xml_open("site.xml"))
+//#local gref_devices = xml_root(xml_open("devices.xml"))
+//#local gref_footer = xml_get(xml_list(xml_root(xml_open("site.xml")),"footer"),0)
+//#local gref_langs = xml_list(xml_get(xml_list(gref_langs,"languages"),0),"lang")
+
+//#local gref_docRoot = xml_root(xml_open("games.xml"))
+//#local gref_gamesList = xml_list(xml_get(xml_list(gref_docRoot,"games"),0),"game")
+//#local gref_channelsList = xml_get(xml_list(gref_docRoot,"channels"),0)
+//#local gref_ownersList = xml_get(xml_list(gref_docRoot,"owners"),0)
+
+//#local gref_langIndex = 0
+//#while gref_langIndex<xml_size(gref_langs)
+//#local gref_curLangID = xml_attr(xml_get(gref_langs,gref_langIndex),"id") 
+//#local gref_curLangFooter = xml_text(xml_get(xml_list(gref_footer,gref_curLangID),0))
+
+//#outdir gref_curLangID
+
+//#local gref_curGameIndex = 0
+//#while gref_curGameIndex<xml_size(gref_gamesList)
+
+//#local gref_currentGameElement = xml_get(gref_gamesList,gref_curGameIndex)
+//#local gref_currentGameScreens = xml_attr(gref_currentGameElement,"screens")
+//#local gref_currentGameID = xml_attr(gref_currentGameElement,"id")
+//#local gref_currentGameTitle = xml_attr(gref_currentGameElement,"title")
+//#local gref_currentGameYear = xml_attr(gref_currentGameElement,"year")
+
+//#local gref_currentGameDevices = xml_list(xml_get(xml_list(gref_currentGameElement,"devices"),0),"*")
+
+//#local gref_currentGameReference =xml_text(xml_get(xml_list(xml_get(xml_list(gref_currentGameElement,"reference"),0),gref_curLangID),0))
+
+//#local gref_currentOwnerElement = xml_get(xml_list(gref_ownersList,xml_attr(xml_get(xml_list(gref_currentGameElement,"owner"),0),"id")),0)
+//#local gref_currentSalesList = xml_list(xml_get(xml_list(gref_currentGameElement,"sales"),0),"*")
+
+//#local gref_pageName = "gpage_"+gref_currentGameID+".htm"
+//#outname gref_pageName
+//#echo Making game reference file /*$gref_pageName$*/
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>ColdCore(TM)//*$gref_currentGameTitle$*/</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<LINK href="../cmn/styles2.css" type=text/css rel=stylesheet>
+</head>
+
+<body>
+<table width="100%%"  border="0" cellpadding="3" cellspacing="0" bgcolor="#CACAFF">
+  <tr>
+    <td width="120" align="center" valign="top"><table width="100%%"  border="0" cellpadding="0" cellspacing="0" bgcolor="#5BB5F7">
+      <tr>
+        <td height="160"><div align="center"><img src="/*$"../games/"+gref_currentGameID+"_splash.jpg"$*/"><br>
+        </div></td>
+      </tr>
+      <tr>
+        <td align="left" valign="top">
+//#if gref_curLangID=="rus"
+        <div class="gameinfoheadermin">&#1042;&#1051;&#1040;&#1044;&#1045;&#1051;&#1045;&#1062;:</div>
+//#else
+        <div class="gameinfoheadermin">OWNER:</div>
+//#endif
+        <div><a href="/*$xml_attr(gref_currentOwnerElement,"link")$*/" target="_new" class="gameinfoheadermin">/*$str2web(xml_text(gref_currentOwnerElement))$*/</a></div>
+         <br>
+//#if gref_curLangID=="rus"
+         <div class="gameinfoheadermin">&#1043;&#1054;&#1044;&nbsp;&#1042;&#1067;&#1055;&#1059;&#1057;&#1050;&#1040;:</div>
+//#else
+         <div class="gameinfoheadermin">PUBLICATION&nbsp;DATE:</div>
+//#endif
+         <div><strong>/*$gref_currentGameYear$*/</strong></div>
+        <BR></td>
+      </tr>
+      <tr>
+        <td align="left">
+
+//#if gref_curLangID=="rus"
+        <strong class="gameinfoheadermin">&#1059;&#1057;&#1058;&#1056;&#1054;&#1049;&#1057;&#1058;&#1042;&#1040;:</strong>
+//#else
+        <strong class="gameinfoheadermin">DEVICES:</strong>
+//#endif
+        <hr align="center" noshade>
+
+//#local gref_curDeviceIndex = 0
+//#local gref_curDeviceName = ""
+//#while gref_curDeviceIndex<xml_size(gref_currentGameDevices)
+//#local gref_curDeviceElement = xml_get(gref_currentGameDevices,gref_curDeviceIndex)
+//#local gref_curDeviceElementName = xml_name(gref_curDeviceElement)
+//#local gref_curDeviceFamily = xml_attr(gref_curDeviceElement,"family")
+//#local gref_curDeviceElementName = xml_get(xml_list(gref_devices,gref_curDeviceElementName),0)
+//#local gref_curDeviceFamily = xml_text(xml_get(xml_list(gref_curDeviceElementName,gref_curDeviceFamily),0))
+//#local gref_curDeviceElementName = xml_attr(gref_curDeviceElementName,"name")
+//#if gref_curDeviceElementName!=gref_curDeviceName
+//#local gref_curDeviceName = gref_curDeviceElementName
+//#if gref_curDeviceIndex!=0
+<br>
+//#endif
+<div class="devicename">/*$str2web(gref_curDeviceName)$*/</div>
+//#endif          
+<div class="devicelist">/*$gref_curDeviceFamily$*/</div>
+//#local gref_curDeviceIndex = gref_curDeviceIndex+1    
+//#end          
+   </td></tr>
+    </table>
+    <br>
+    </td>
+    <td align="left" valign="top"><div align="center" class="gameinfoheader">/*$gref_currentGameTitle$*/<hr align="center" width="50%" noshade>
+      </div>
+      <table width="100%%"  border="0" cellspacing="0" cellpadding="2">
+      <tr>
+//#if strlen(gref_currentGameScreens)>0
+//#local gref_curScreenLimit = str2int(gref_currentGameScreens)
+//#else
+//#local gref_curScreenLimit = 3
+//#endif
+
+//#local gref_curScreenIndex = 1
+//#while gref_curScreenIndex<=gref_curScreenLimit 
+        <td align="center" valign="middle"><div align="center"><img src="/*$"../games/"+gref_currentGameID+"_scr"+gref_curScreenIndex+".gif"$*/"></div></td>
+//#local gref_curScreenIndex = gref_curScreenIndex+1
+//#end
+      </tr>
+    </table>    
+    <div class="alltext" align="justify"><br>/*$gref_currentGameReference$*/</div>
+
+<hr>
+
+<form method="post" action="../cmn/sendfeedback.phtml">
+  <table width=100% cellpadding=4 bgcolor="#C1E1F0" >
+    <tr>
+<td bgcolor="#E6EEF7"> <div class="sendformref">
+//#if gref_curLangID=="rus"
+&#1055;&#1088;&#1080; &#1087;&#1086;&#1084;&#1086;&#1097;&#1080; &#1101;&#1090;&#1086;&#1081; &#1092;&#1086;&#1088;&#1084;&#1099;, &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1087;&#1086;&#1089;&#1083;&#1072;&#1090;&#1100; &#1085;&#1072;&#1084; &#1089;&#1074;&#1086;&#1077; &#1084;&#1085;&#1077;&#1085;&#1080;&#1077;, &#1087;&#1086;&#1078;&#1077;&#1083;&#1072;&#1085;&#1080;&#1077; &#1080;&#1083;&#1080; &#1086;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077; &#1087;&#1088;&#1086;&#1073;&#1083;&#1077;&#1084;&#1099; &#1087;&#1086; &#1101;&#1090;&#1086;&#1084;&#1091; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1102;. &#1069;&#1090;&#1086; &#1086;&#1095;&#1077;&#1085;&#1100; &#1074;&#1072;&#1078;&#1085;&#1086; &#1076;&#1083;&#1103; &#1085;&#1072;&#1089;!
+//#else
+The form enables you to send us your opinion, wish or problem description for the application. It's very important for us!
+//#endif
+</div>
+        </td>
+    </tr>
+    <tr> 
+      <td width=100% valign=top>
+<div class="sendformhdr">
+//#if gref_curLangID=="rus"
+&#1048;&#1084;&#1103;:
+//#else
+Name:
+//#endif
+</div>
+      <input name="fName" type="text" class="sendformfield" style="width:30%" size="64"><br> 
+      <div class="sendformhdr">E-mail:</div>
+      <input name="fEmail" type="text" class="sendformfield" style="width:30%" value="" size="64"> 
+      </td>
+    </tr>
+    <tr> 
+      <td> <div align="left" class="sendformhdr">
+//#if gref_curLangID=="rus"
+&#1057;&#1086;&#1086;&#1073;&#1097;&#1077;&#1085;&#1080;&#1077;:
+//#else
+Message:
+//#endif
+      </div>
+        <div align="center"> 
+          <textarea name="fComment" rows="15" cols="50" class="sendformfield" style="width:100%"></textarea>
+          <input type="hidden" name="fTitle" value="/*$gref_currentGameTitle+"("+gref_currentGameID+")"$*/">
+          <input type="hidden" name="fSubject" value="A feedback from ColdCore.ru">
+
+//#if gref_curLangID=="rus"
+          <input type="hidden" name="fOk" value="http://www.coldcore.ru/rus/send_ok.html">
+          <input type="hidden" name="fBad" value="http://www.coldcore.ru/rus/send_error.html">
+//#else
+          <input type="hidden" name="fOk" value="http://www.coldcore.ru/eng/send_ok.html">
+          <input type="hidden" name="fBad" value="http://www.coldcore.ru/eng/send_error.html">
+//#endif
+          <br>
+//#if gref_curLangID=="rus"
+          <input type="submit" class="sendformhdr" value="&#1054;&#1090;&#1087;&#1088;&#1072;&#1074;&#1080;&#1090;&#1100;" >
+//#else
+          <input type="submit" class="sendformhdr" value="Send" >
+//#endif
+        </div></td>
+    </tr>
+  </table>
+</form>
+
+
+    </td>
+    <td width="120" align="right" valign="top"><table width="100%%"  border="0" cellspacing="2" cellpadding="0">
+      <tr>
+        <td height="30" align="center" valign="middle" bgcolor="#7575FF">
+        <div align="center" class="gameinfoheadermin">
+//#if gref_curLangID=="rus"
+          &nbsp;&#1050;&#1059;&#1055;&#1048;&#1058;&#1068;&nbsp;&#1048;&#1043;&#1056;&#1059;&nbsp;
+//#else
+          &nbsp;PURCHASE&nbsp;
+//#endif
+        </div>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#6698FF"><div align="center"><BR>
+//#local gref_curSalesIndex=0
+//#while gref_curSalesIndex<xml_size(gref_currentSalesList)
+//#local gref_curSalesItem = xml_get(gref_currentSalesList,gref_curSalesIndex)
+//#local gref_curChannel = xml_name(gref_curSalesItem)
+//#local gref_curSalesCost = xml_attr(gref_curSalesItem,"cost")
+//#local gref_curSalesProductpage = xml_attr(gref_curSalesItem,"productpage")
+//#local gref_curChannelLogo = xml_get(xml_list(gref_channelsList,gref_curChannel),0)
+//#local gref_curChannelName = xml_attr(gref_curChannelLogo,"name")
+//#local gref_curChannelLogo = xml_attr(gref_curChannelLogo,"logo")
+<a href="/*$gref_curSalesProductpage$*/" target="_new">
+<img src="/*$gref_curChannelLogo$*/" border="0" alt="/*$gref_curSalesCost$*/">
+</a>
+//#local gref_curSalesIndex=gref_curSalesIndex+1
+//#end
+<BR>
+        &nbsp;</div></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="3" align="center" valign="top"> <hr align="center" noshade>
+    <div>
+      <div align="justify" class="footer">/*$gref_curLangFooter$*/</div>
+    </div></td>
+  </tr>
+</table>
+</body>
+</html>
+//#flush
+//#local gref_curGameIndex = gref_curGameIndex+1
+//#end
+//#local gref_langIndex = gref_langIndex+1
+//#end
+//#outname "null.txt"

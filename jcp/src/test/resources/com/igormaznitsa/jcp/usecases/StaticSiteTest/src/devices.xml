@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<devices>
+	<nokia name="Nokia">
+      <series30bw>3410</series30bw>
+      <series30c>3510i</series30c>
+	  <series40dp1>7210, 3100, 3105, 3108, 3120, 3125, 3200, 3205, 3300, 5100, 6100, 6108, 6200, 6220, 6225, 6585, 6610, 6610i, 6800, 7200, 7250,7250i</series40dp1>
+      <series40dp2>6230, 5140, 5140, 6170, 6255, 6020, 7260, 7270</series40dp2>
+      <series40dp2b>6230i, 8800</series40dp2b>
+      <series60dp1>3650, 3600, 3620, 3660, 7650, N-Gage, N-GageQD</series60dp1>
+      <series60dp2a>6600, 6620</series60dp2a>
+      <series60dp2b>7610, 6260, 6670, 3230</series60dp2b>
+      <series60dp2c>6630</series60dp2c>
+	</nokia>
+	<siemens name="Siemens">
+		<series45a>M(T)50, C55, C56, CT56, 6688i, M46, 3118</series45a>
+		<series45b>SL45i</series45b>
+        <series55a>M55, C60, MC60</series55a>
+        <series55b>S55, SL55</series55b>
+        <series65a>S65, CX65, CXT65, CXV65, CX66, CX70, M65, M6V, M6C, S6V, S6C, S66, SK65</series65a>
+        <series65b>C65, SL65</series65b>
+	</siemens>
+	<motorola name="Motorola">
+		<seriesC380>C380, C650, v220, v180</seriesC380>
+        <seriesA008>Accompli 008</seriesA008>
+        <seriesE398>v300, v500, v600, v535, v550, v620, E398, E375, v3</seriesE398>
+	</motorola>
+    <samsung name="Samsung">
+		<group1>D108, S100, S105, X400, X426, X427, X430</group1>
+		<group2>E400, S200, S208</group2>
+		<group3>C100, C108T, C110, S300, S300M, S307</group3>
+		<group4>E100, E108, E330, E338, E630, E638, E700, E708, E800, E808, E820, X460, X468</group4>
+		<group5>X100, X108, X600, X608</group5>
+		<group6a>E105, E315, E316, E317, E710, E715, P400, P510, P518, X427M, X450, X458, X475</group6a>
+		<group6b>E217, E335, E635, X640</group6b>
+		<group7>C200, C207, C208, C225, E600, E608, X105</group7>
+		<group8>D410, D415, D418, P207, P777</group8>
+		<group9>E300, E310, E810, X480</group9>
+		<group10>X120, X140</group10>
+		<group11>E610, E618, P730, P735</group11>
+		<group12a>D500, D508, E730</group12a>
+		<group12b>E530, E620, E720, E880</group12b>
+		<group12c>D600</group12c>
+		<group13>Z105, Z107</group13>
+		<group14>Z110</group14>
+		<group15a>Z130</group15a>
+		<group15b>Z140, Z300, Z500</group15b>
+	</samsung>
+    <lg name="LG">
+		<seriesG1600>G1600</seriesG1600>
+	</lg>
+    <se name="SonyEricsson">
+		<series610>T610, T616, T618, T628, T630, T637, Z600, Z608</series610>
+	</se>
+</devices>
