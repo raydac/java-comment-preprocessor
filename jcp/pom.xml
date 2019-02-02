@@ -14,10 +14,6 @@
     <name>Java Comment Preprocessor</name>
     <description>Powerful multi-pass preprocessor to process directives situated in C-styled commentaries</description>
 
-    <properties>
-        <junit.version>5.4.0-RC2</junit.version>
-    </properties>
-
     <profiles>
         <profile>
             <id>metacheck</id>
@@ -159,11 +155,6 @@
             <version>${min.maven.api}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.8.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>file-management</artifactId>
             <version>1.2.1</version>
@@ -193,7 +184,19 @@
             <artifactId>xalan</artifactId>
             <version>2.7.2</version>
         </dependency>
+        <dependency>
+          <groupId>org.w3c</groupId>
+          <artifactId>dom</artifactId>
+          <version>2.3.0-jaxb-1.0.6</version>
+        </dependency>
 
+
+        <dependency>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+          <version>${junit.version}</version>
+          <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
@@ -204,12 +207,6 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -228,12 +225,6 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-shared-jar</artifactId>
             <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant-testutil</artifactId>
-            <version>1.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -275,8 +266,40 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache</pattern>
-                                    <shadedPattern>hidden.jcp.org.apache</shadedPattern>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.commons</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.xpath</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.xpath</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.xml</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.xml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.wml</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.wml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.regexp</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.regexp</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.html</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.html</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.bcel</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.bcel</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.xerces</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.xerces</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.xalan</pattern>
+                                    <shadedPattern>hidden.jcp.org.apache.xalan</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.w3c</pattern>
@@ -299,6 +322,7 @@
                                     <include>xerces:*</include>
                                     <include>xalan:*</include>
                                     <include>com.igormaznitsa:*</include>
+                                    <include>org.w3c:*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

@@ -9,7 +9,40 @@
     </parent>
 
     <artifactId>jcp-tests</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>jcp-test-ant</module>
+        <module>jcp-test-maven</module>
+    </modules>
+
+    <properties>
+      <jcp.preprocessor.version>6.2.0-SNAPSHOT</jcp.preprocessor.version>
+    </properties>
+
+    <dependencies>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+        </plugin>
+      </plugins>
+    </build>
 
 </project>

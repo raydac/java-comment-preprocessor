@@ -5,7 +5,7 @@
   <target name="preprocess">
     <preprocess
       source="./src"
-      destination="./result"
+      destination="${jcp.target.folder}"
       verbose="true"
       inCharset="UTF8"
       outCharset="UTF8"
@@ -16,10 +16,9 @@
       disableOut="false"
       keepLines="false"
       careforlastnextline="true"
-      allowWhitespace="true"
-    >
+      allowWhitespace="true">
       <global name="globalvar" value="antdefined"/>
-      <cfgFile file="./cfgfile.cfg"/>
+      <cfgFile file="./config.cfg"/>
     </preprocess>
   </target>
     
