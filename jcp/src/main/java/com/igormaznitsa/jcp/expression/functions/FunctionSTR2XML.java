@@ -24,9 +24,10 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
 
 /**
  * The class implements the str2xml function handler
@@ -44,7 +45,7 @@ public final class FunctionSTR2XML extends AbstractStrConverter {
   @Override
   @Nonnull
   public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
-    final String escaped = StringEscapeUtils.escapeXml10(value.asString());
+    final String escaped = escapeXml10(value.asString());
     return Value.valueOf(escaped);
   }
 

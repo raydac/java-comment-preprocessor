@@ -589,7 +589,7 @@ public final class ExpressionParser {
     BRACKET_CLOSING,
     COMMA;
 
-    private SpecialItem() {
+    SpecialItem() {
     }
 
     @Override

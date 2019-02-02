@@ -28,7 +28,6 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.Assertions;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -586,7 +585,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
 
       boolean skipPreprocessing = false;
 
-      if (StringUtils.isEmpty(sourceFoldersInPreprocessingFormat)) {
+      if (sourceFoldersInPreprocessingFormat == null || sourceFoldersInPreprocessingFormat.isEmpty()) {
         if (isIgnoreMissingSources()) {
           getLog().warn("Source folders are not provided, preprocessing is skipped.");
           skipPreprocessing = true;

@@ -24,10 +24,10 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml3;
 
 /**
  * The class implements the str2web function handler
@@ -45,15 +45,15 @@ public final class FunctionSTR2WEB extends AbstractStrConverter {
   @Override
   @Nonnull
   public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
-    final String escaped = StringEscapeUtils.escapeHtml3(value.asString());
+    final String escaped = escapeHtml3(value.asString());
 
     final StringBuilder result = new StringBuilder(escaped.length() * 2);
     for (int i = 0; i < escaped.length(); i++) {
       final char ch = escaped.charAt(i);
-      if (CharUtils.isAscii(ch)) {
+      if (ch < 128) {
         result.append(ch);
       } else {
-        result.append("&#").append(Integer.toString(Character.codePointAt(escaped, i))).append(';');
+        result.append("&#").append(Character.codePointAt(escaped, i)).append(';');
       }
     }
 

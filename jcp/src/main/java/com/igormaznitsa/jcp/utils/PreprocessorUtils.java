@@ -332,18 +332,15 @@ public final class PreprocessorUtils {
     int len = (int) file.length();
 
     final ByteBuffer buffer = ByteBuffer.allocate(len);
-    final FileChannel inChannel = new FileInputStream(file).getChannel();
 
-    try {
-      while (len > 0) {
+    try (final FileChannel inChannel = new FileInputStream(file).getChannel()) {
+      while (len > 0 && !Thread.currentThread().isInterrupted()) {
         final int read = inChannel.read(buffer);
         if (read < 0) {
           throw new IOException("Can't read whole file [" + getFilePath(file) + '\'');
         }
         len -= read;
       }
-    } finally {
-      IOUtils.closeQuietly(inChannel);
     }
 
     return buffer.array();
@@ -485,34 +482,6 @@ public final class PreprocessorUtils {
     if (src.length() != dst.length()) {
       return false;
     }
-
-    final int bufferSize = Math.min((int) src.length(), 65536);
-
-    final byte[] srcBuffer = new byte[bufferSize];
-    final byte[] dstBuffer = new byte[bufferSize];
-
-    final InputStream srcIn = new BufferedInputStream(new FileInputStream(src), bufferSize);
-    final InputStream dstIn = new BufferedInputStream(new FileInputStream(dst), bufferSize);
-    try {
-      while (true) {
-        final int readSrc = IOUtils.read(srcIn, srcBuffer);
-        final int readDst = IOUtils.read(dstIn, dstBuffer);
-
-        if (readDst != readSrc) {
-          return false;
-        }
-        if (readSrc == 0) {
-          break;
-        }
-
-        if (!Arrays.equals(srcBuffer, dstBuffer)) {
-          return false;
-        }
-      }
-      return true;
-    } finally {
-      IOUtils.closeQuietly(srcIn);
-      IOUtils.closeQuietly(dstIn);
-    }
+    return FileUtils.contentEquals(src,dst);
   }
 }

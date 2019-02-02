@@ -32,7 +32,7 @@ public enum ExpressionItemPriority {
 
   private final int priority;
 
-  private ExpressionItemPriority(final int priority) {
+  ExpressionItemPriority(final int priority) {
     this.priority = priority;
   }
 

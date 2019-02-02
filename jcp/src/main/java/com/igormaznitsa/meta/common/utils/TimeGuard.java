@@ -128,7 +128,7 @@ public final class TimeGuard {
       final TimeData timeWatchItem = iterator.next();
 
       if (timeWatchItem.isTimePoint() && timeWatchItem.getDetectedStackDepth() >= stackDepth && timePointName.equals(timeWatchItem.getAlertMessage())) {
-        detected |= true;
+        detected = true;
         final long detectedDelay = time - timeWatchItem.getCreationTimeInMilliseconds();
         try {
           timeWatchItem.getAlertListener().onTimeAlert(detectedDelay, timeWatchItem);

@@ -38,7 +38,7 @@ public enum ValueType {
    */
   private final String signature;
 
-  private ValueType(@Nonnull final String signature) {
+  ValueType(@Nonnull final String signature) {
     this.signature = signature;
   }
 

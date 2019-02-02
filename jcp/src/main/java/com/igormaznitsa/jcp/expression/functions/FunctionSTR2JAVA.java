@@ -26,9 +26,10 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
 /**
  * The class implements escape function handler to escape strings to be used in java.
@@ -59,7 +60,7 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
         if (result.length() > 0) {
           result.append(nextLineChars).append('+');
         }
-        result.append('\"').append(StringEscapeUtils.escapeJava(s));
+        result.append('\"').append(escapeJava(s));
         if (last) {
           result.append(endsWithNextLine ? "\\n\"" : "\"");
         } else {
@@ -68,7 +69,7 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
       }
       return Value.valueOf(result.toString());
     } else {
-      return Value.valueOf(StringEscapeUtils.escapeJava(source.asString()));
+      return Value.valueOf(escapeJava(source.asString()));
     }
   }
 

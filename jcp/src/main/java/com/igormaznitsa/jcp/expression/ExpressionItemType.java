@@ -27,5 +27,5 @@ public enum ExpressionItemType {
   OPERATOR,
   VALUE,
   VARIABLE,
-  SPECIAL;
+  SPECIAL
 }

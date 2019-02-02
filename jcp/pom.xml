@@ -166,8 +166,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <artifactId>commons-text</artifactId>
+            <version>1.6</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -318,6 +318,7 @@
                                 <includes>
                                     <include>commons-io:*</include>
                                     <include>commons-codec:*</include>
+                                    <include>commons-text:*</include>
                                     <include>org.apache.commons:*</include>
                                     <include>xerces:*</include>
                                     <include>xalan:*</include>
@@ -411,8 +412,8 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java16-sun</artifactId>
-                        <version>1.10</version>
+                        <artifactId>java18</artifactId>
+                        <version>1.0</version>
                     </signature>
                 </configuration>
                 <executions>

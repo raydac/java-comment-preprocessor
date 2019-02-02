@@ -44,5 +44,5 @@ public enum AfterDirectiveProcessingBehaviour {
   /**
    * Notify preprocessor that the line should be commented
    */
-  SHOULD_BE_COMMENTED;
+  SHOULD_BE_COMMENTED
 }

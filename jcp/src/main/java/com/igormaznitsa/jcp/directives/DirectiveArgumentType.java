@@ -42,7 +42,7 @@ public enum DirectiveArgumentType {
 
   private final String str;
 
-  private DirectiveArgumentType(@Nonnull final String str) {
+  DirectiveArgumentType(@Nonnull final String str) {
     this.str = str;
   }
 

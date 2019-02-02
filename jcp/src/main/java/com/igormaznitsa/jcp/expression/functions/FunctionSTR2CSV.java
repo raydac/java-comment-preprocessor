@@ -24,9 +24,10 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeCsv;
 
 /**
  * The class implements the str2csv function handler
@@ -44,7 +45,7 @@ public final class FunctionSTR2CSV extends AbstractStrConverter {
   @Override
   @Nonnull
   public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
-    final String escaped = StringEscapeUtils.escapeCsv(value.asString());
+    final String escaped = escapeCsv(value.asString());
     return Value.valueOf(escaped);
   }
 

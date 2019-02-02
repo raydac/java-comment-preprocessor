@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.zip.Deflater;
 
@@ -70,7 +71,7 @@ public class FunctionBINFILE extends AbstractFunction {
 
     switch (type) {
       case BASE64: {
-        final String baseEncoded = new Base64(lineLength, endOfLine.getBytes("UTF-8"), false).encodeAsString(array);
+        final String baseEncoded = new Base64(lineLength, endOfLine.getBytes(StandardCharsets.UTF_8), false).encodeAsString(array);
         result.append(baseEncoded.trim());
       }
       break;
@@ -218,7 +219,7 @@ public class FunctionBINFILE extends AbstractFunction {
 
     private final String name;
 
-    private Type(@Nonnull final String name) {
+    Type(@Nonnull final String name) {
       this.name = name;
     }
 

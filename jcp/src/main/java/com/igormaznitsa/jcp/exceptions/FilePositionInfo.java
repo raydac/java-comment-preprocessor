@@ -65,6 +65,6 @@ public class FilePositionInfo {
   @Nonnull
   public String toString() {
     final String filePath = PreprocessorUtils.getFilePath(this.file);
-    return filePath + ':' + Integer.toString(stringIndex + 1);
+    return filePath + ':' + (stringIndex + 1);
   }
 }

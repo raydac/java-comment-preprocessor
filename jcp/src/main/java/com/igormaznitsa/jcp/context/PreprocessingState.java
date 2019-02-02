@@ -58,6 +58,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuetly;
 
 /**
  * The class describes a preprocessor state also it contains inside buffers and save data on disk
@@ -422,12 +423,8 @@ public final class PreprocessingState {
         final byte[] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
         if (outFile.isFile() && outFile.length() == contentInBinaryForm.length) {
           // If file exists and has the same content, then skip overwriting it
-          InputStream currentFileInputStream = null;
-          try {
-            currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile), Math.max(16384, (int) outFile.length()));
+          try(InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
             needWrite = !IOUtils.contentEquals(currentFileInputStream, new ByteArrayInputStream(contentInBinaryForm));
-          } finally {
-            IOUtils.closeQuietly(currentFileInputStream);
           }
         }
         if (needWrite) {
@@ -448,7 +445,7 @@ public final class PreprocessingState {
       }
 
     } finally {
-      IOUtils.closeQuietly(writer);
+      closeQuetly(writer);
     }
 
     if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()) {
