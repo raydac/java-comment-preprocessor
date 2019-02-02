@@ -17,10 +17,15 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 
+import org.apache.xpath.jaxp.XPathFactoryImpl;
 import org.w3c.dom.*;
 
 public abstract class AbstractXMLFunction extends AbstractFunction {
@@ -192,4 +197,12 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     }
     return elementCacheId;
   }
+
+  @Nonnull
+  protected static XPathExpression prepareXPathExpression(@Nonnull final String path) throws XPathExpressionException {
+    final XPathFactory factory = new XPathFactoryImpl();
+    final XPath xpath = factory.newXPath();
+    return xpath.compile(path);
+  }
+
 }

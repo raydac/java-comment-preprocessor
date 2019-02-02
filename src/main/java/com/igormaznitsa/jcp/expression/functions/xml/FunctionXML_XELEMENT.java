@@ -69,13 +69,6 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
     return Value.valueOf(xpathElementId);
   }
 
-  @Nonnull
-  private XPathExpression prepareXPathExpression(@Nonnull final String path) throws XPathExpressionException {
-    final XPathFactory factory = XPathFactory.newInstance();
-    final XPath xpath = factory.newXPath();
-    return xpath.compile(path);
-  }
-
   @Override
   public int getArity() {
     return 2;

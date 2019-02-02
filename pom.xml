@@ -316,6 +316,16 @@
       <artifactId>commons-codec</artifactId>
       <version>1.11</version>
     </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.0</version>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.2</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -357,8 +367,20 @@
             <configuration>
               <relocations>
                 <relocation>
-                  <pattern>org.apache.commons</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.commons</shadedPattern>
+                  <pattern>org.apache</pattern>
+                  <shadedPattern>hidden.jcp.org.apache</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.w3c</pattern>
+                  <shadedPattern>hidden.jcp.org.w3c</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>java_cup</pattern>
+                  <shadedPattern>hidden.jcp.java_cup</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>trax</pattern>
+                  <shadedPattern>hidden.jcp.trax</shadedPattern>
                 </relocation>
               </relocations>
               <artifactSet>
@@ -366,6 +388,8 @@
                   <include>commons-io:*</include>
                   <include>commons-codec:*</include>
                   <include>org.apache.commons:*</include>
+                  <include>xerces:*</include>
+                  <include>xalan:*</include>
                   <include>com.igormaznitsa:*</include>
                 </includes>
               </artifactSet>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.igormaznitsa.jcp.context;
 
 
@@ -25,19 +26,26 @@ import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.jcp.logger.SystemOutLogger;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.*;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.Assertions;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
-
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.splitForChar;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import com.igormaznitsa.meta.common.utils.Assertions;
+import static java.util.Arrays.asList;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
@@ -63,33 +71,33 @@ public final class PreprocessorContext {
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
-  
+
   private String sourceDirectories;
   private String destinationDirectory;
   private File destinationDirectoryFile;
   private File[] sourceDirectoryFiles;
-  private Set<String> processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
-  private Set<String> excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
+  private Set<String> processingFileExtensions = new HashSet<>(asList(splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
+  private Set<String> excludedFileExtensions = new HashSet<>(asList(splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
   private PreprocessorExtension preprocessorExtension;
   private String inCharacterEncoding = DEFAULT_CHARSET;
   private String outCharacterEncoding = DEFAULT_CHARSET;
 
-  private final Map<String, Value> globalVarTable = new HashMap<String, Value>();
-  private final Map<String, Value> localVarTable = new HashMap<String, Value>();
-  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<String, SpecialVariableProcessor>();
-  private final Map<String, Object> sharedResources = new HashMap<String, Object>();
+  private final Map<String, Value> globalVarTable = new HashMap<>();
+  private final Map<String, Value> localVarTable = new HashMap<>();
+  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<>();
+  private final Map<String, Object> sharedResources = new HashMap<>();
 
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
 
-  private final List<File> configFiles = new ArrayList<File>();
+  private final List<File> configFiles = new ArrayList<>();
 
   private transient PreprocessingState currentState;
   private final boolean cloned;
 
   private final TextFileDataContainer currentInCloneSource;
 
-  private String [] excludedFolderPatterns = new String[0];
-  
+  private String[] excludedFolderPatterns = new String[0];
+
   /**
    * The constructor
    */
@@ -104,27 +112,29 @@ public final class PreprocessorContext {
 
   /**
    * Set patterns for excluded folders.
+   *
    * @param patterns array contains Ant path patterns
    */
-  public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String ... patterns) {
-    final String [] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
-    final String [] normalized = new String[value.length];
-    for(int i=0;i<value.length;i++){
-      normalized[i] = FilenameUtils.normalize(value[i],true);
+  public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String... patterns) {
+    final String[] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
+    final String[] normalized = new String[value.length];
+    for (int i = 0; i < value.length; i++) {
+      normalized[i] = FilenameUtils.normalize(value[i], true);
     }
     this.excludedFolderPatterns = normalized;
   }
-  
+
   /**
    * Get patterns for excluded folders.
+   *
    * @return array of patterns in Ant pattern format
    */
   @Nonnull
   @MustNotContainNull
-  public String [] getExcludedFolderPatterns() {
+  public String[] getExcludedFolderPatterns() {
     return this.excludedFolderPatterns.clone();
   }
-  
+
   /**
    * Set the flag to care to be precise in processing the last file next line char
    *
@@ -176,7 +186,7 @@ public final class PreprocessorContext {
     this.excludedFileExtensions.addAll(context.excludedFileExtensions);
 
     this.unknownVariableAsFalse = context.unknownVariableAsFalse;
-    
+
     this.preprocessorExtension = context.preprocessorExtension;
     this.inCharacterEncoding = context.inCharacterEncoding;
     this.outCharacterEncoding = context.outCharacterEncoding;
@@ -185,7 +195,7 @@ public final class PreprocessorContext {
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
     this.excludedFolderPatterns = context.excludedFolderPatterns.clone();
-    
+
     this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
     this.sharedResources.putAll(context.sharedResources);
 
@@ -193,9 +203,9 @@ public final class PreprocessorContext {
 
     this.currentState = assertNotNull(context.currentState);
     this.cloned = true;
-    
+
     this.preprocessorLogger = context.preprocessorLogger;
-    
+
     final PreprocessingState theState = context.getPreprocessingState();
     this.currentInCloneSource = theState.peekFile();
   }
@@ -313,47 +323,53 @@ public final class PreprocessorContext {
 
   /**
    * Set flag to allow whitespace between directive and comment chars.
+   *
    * @param flag true if whitespace allowed, false otherwise
    */
-  public void setAllowWhitespace(final boolean flag){
+  public void setAllowWhitespace(final boolean flag) {
     this.allowWhitespace = flag;
   }
-  
+
   /**
    * Get flag that whitespace allowed between directive and comment.
+   *
    * @return true if whitespace allowed, false otherwise
    */
   public boolean isAllowWhitespace() {
     return this.allowWhitespace;
   }
-  
+
   /**
    * Set flag to interpret unknown variable value as FALSE.
+   *
    * @param flag true to turn on mode when unknown variable will be recognized as FALSE
    */
   public void setUnknownVariableAsFalse(final boolean flag) {
     this.unknownVariableAsFalse = flag;
   }
-  
+
   /**
    * Get flag shows that unknown variable is recognized as FALSE.
+   *
    * @return true if unknown variable must be recognized as FALSE.
    */
   public boolean isUnknownVariableAsFalse() {
     return this.unknownVariableAsFalse;
   }
-  
+
   /**
    * Set flag to control whether prefixes "//$", "//$$" should replaced
    * with equal length whitespace strings rather than just removed.
+   *
    * @param flag true enables preserve-indent, false disables it
    */
-  public void setPreserveIndent(final boolean flag){
+  public void setPreserveIndent(final boolean flag) {
     this.preserveIndent = flag;
   }
 
   /**
    * Get flag indicating whether preserve-indent is enabled or disabled.
+   *
    * @return true if preserve-indent is enabled, false otherwise
    */
   public boolean isPreserveIndent() {
@@ -380,7 +396,7 @@ public final class PreprocessorContext {
    * Set a shared source, it is an object saved into the inside map for a name
    *
    * @param name the name for the saved project, must not be null
-   * @param obj the object to be saved in, must not be null
+   * @param obj  the object to be saved in, must not be null
    */
   public void setSharedResource(@Nonnull final String name, @Nonnull final Object obj) {
     assertNotNull("Name is null", name);
@@ -442,7 +458,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   private File[] getParsedSourceDirectoryAsFiles() {
-    final String[] splitted = PreprocessorUtils.splitForChar(sourceDirectories, ';');
+    final String[] splitted = splitForChar(sourceDirectories, ';');
     final File[] result = new File[splitted.length];
     int index = 0;
     for (final String dirName : splitted) {
@@ -500,7 +516,7 @@ public final class PreprocessorContext {
   @Nonnull
   public PreprocessorContext setProcessingFileExtensions(@Nonnull final String extensions) {
     assertNotNull("Argument is null", extensions);
-    processingFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+    processingFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -554,7 +570,7 @@ public final class PreprocessorContext {
   @Nonnull
   public PreprocessorContext setExcludedFileExtensions(@Nonnull final String extensions) {
     assertNotNull("Argument is null", extensions);
-    excludedFileExtensions = new HashSet<String>(Arrays.asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+    excludedFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -593,7 +609,7 @@ public final class PreprocessorContext {
   /**
    * Set a local variable value
    *
-   * @param name the variable name, must not be null, remember that the name will be normalized and will be entirely in lower case
+   * @param name  the variable name, must not be null, remember that the name will be normalized and will be entirely in lower case
    * @param value the value for the variable, it must not be null
    * @return this preprocessor context
    * @see Value
@@ -728,7 +744,7 @@ public final class PreprocessorContext {
   /**
    * Set a global variable value
    *
-   * @param name the variable name, it must not be null and will be normalized to the supported format
+   * @param name  the variable name, it must not be null and will be normalized to the supported format
    * @param value the variable value, it must not be null
    * @return this preprocessor context
    */
@@ -782,7 +798,7 @@ public final class PreprocessorContext {
   /**
    * Find value among local and global variables for a name. It finds in the order: special processors, local variables, global variables
    *
-   * @param name the name for the needed variable, it will be normalized to the supported format
+   * @param name                    the name for the needed variable, it will be normalized to the supported format
    * @param enforceUnknownVarAsNull if true then state of the unknownVariableAsFalse flag in context will be ignored
    * @return false if either the variable is not found or the name is null, otherwise the variable value
    */
@@ -810,12 +826,12 @@ public final class PreprocessorContext {
     }
 
     Value result = globalVarTable.get(normalized);
-  
+
     if (result == null && !enforceUnknownVarAsNull && this.unknownVariableAsFalse) {
-      logDebug("Unknown variable '"+name+"' is replaced by FALSE!");
+      logDebug("Unknown variable '" + name + "' is replaced by FALSE!");
       result = Value.BOOLEAN_FALSE;
     }
-    
+
     return result;
   }
 
@@ -914,15 +930,16 @@ public final class PreprocessorContext {
 
   /**
    * Check that the preprocessor must copy file attributes.
-   * 
+   *
    * @return true if the preprocessor must copy file attributes, false otherwise.
    */
   public boolean isCopyFileAttributes() {
     return this.copyFileAttributes;
   }
-  
+
   /**
    * Set the flag to copy file attributes.
+   *
    * @param value true if file attributes must be copied, false otherwise.
    * @return the preprocessor context
    */
@@ -931,7 +948,7 @@ public final class PreprocessorContext {
     this.copyFileAttributes = value;
     return this;
   }
-  
+
   /**
    * Set a preprocessor extension, it is a module implements the PreprocessorExtension interface which can process and get some calls from a preprocessor during its work
    *
@@ -1122,7 +1139,7 @@ public final class PreprocessorContext {
    * Generate new preprocessing state object, also the new preprocessing state will be saved as the current one in the context
    *
    * @param fileContainer a file container which will be using the preprocessor state, it must not be null
-   * @param phaseIndex index of phase (0 - global, 1 - preprocessing)
+   * @param phaseIndex    index of phase (0 - global, 1 - preprocessing)
    * @return new generated preprocessor state
    * @throws IOException it will be throws if there is any error in opening and reading operations
    */
@@ -1167,7 +1184,7 @@ public final class PreprocessorContext {
   /**
    * Prepare exception with message and cause, or return cause if it is a preprocessor exception
    *
-   * @param text the message text, must not be null
+   * @param text  the message text, must not be null
    * @param cause the cause, it can be null
    * @return prepared exception with additional information
    */
