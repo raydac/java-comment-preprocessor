@@ -1,0 +1,61 @@
+//#-
+//#excludeif true
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NEWS</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<LINK href="../cmn/styles.css" type=text/css rel=stylesheet>
+</head>
+<body>
+//#+
+//#local l_newsList = xml_list(xml_root(xml_open("news.xml")),"news")
+//#local l_newsIndex = 0
+//#while l_newsIndex<xml_size(l_newsList)
+//#local l_newsCurrentNews = xml_get(l_newsList,l_newsIndex)
+//#local l_newsCurrentLink = xml_attr(l_newsCurrentNews,"link")
+//#local l_newsCurrentNewsContent = xml_text(xml_get(xml_list(l_newsCurrentNews,curLangID),0))
+
+//#local l_newsDate = xml_attr(l_newsCurrentNews,"date")
+<table width="100%%"  border="0" cellspacing="0" cellpadding="5">
+   <tr> 
+     <td width="105" bgcolor="#E6E6FF" class="menuheader"><div align="center" class="newdata">/*$l_newsDate$*/</div></td>
+     <td width="303">&nbsp;</td>
+   </tr>
+	<tr  bgcolor="#E6E6FF">
+	<td colspan="2">
+//#local l_newsScreen=1
+//#while true
+//#local l_newsCurScreen = xml_list(l_newsCurrentNews,"scr"+l_newsScreen)
+//#if xml_size(l_newsCurScreen)==0
+//#break
+//#endif
+//#local l_newsScreenHREF = xml_text(xml_get(l_newsCurScreen,0))
+<img src="../news//*$l_newsScreenHREF$*/" alt="/*$"scr"+l_newsScreen$*/">
+//#local l_newsScreen = l_newsScreen + 1
+//#end
+   </td>
+   </tr>	
+   <tr bgcolor="#E6E6FF"> 
+       <td colspan="2"><div align="justify" class="alltext">
+       /*$l_newsCurrentNewsContent$*/
+       </div>
+       //#if strlen(l_newsCurrentLink)>0
+       <div align="justify">
+       //#if curLangID=="rus"
+		<span class="rightnewsHdr"><a href="/*$l_newsCurrentLink$*/" target="_new">читать больше...</a>
+		//#else
+		<span class="rightnewsHdr"><a href="/*$l_newsCurrentLink$*/" target="_new">read more...</a>
+		//#endif
+       </div>
+       //#endif
+       </td>
+    </tr>
+</table>
+<br>
+//#local l_newsIndex = l_newsIndex + 1
+//#end
+//#-
+</body>
+</html>
+//#+

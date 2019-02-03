@@ -51,13 +51,6 @@
                             </globalVars>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>clear-generated-folders</id>
-                        <goals>
-                            <goal>clear</goal>
-                        </goals>
-                        <phase>test</phase>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>

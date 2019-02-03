@@ -67,7 +67,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean verbose = false;
   private boolean clearDstFlag = false;
   private boolean removeComments = false;
-  private boolean keepLines = false;
+  private boolean keepLines = true;
   private boolean careForLastNextLine = false;
   private boolean compareDestination = false;
   private boolean allowWhitespace = false;
