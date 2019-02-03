@@ -299,8 +299,7 @@ public final class JCPreprocessor {
         prepFileCounter++;
       }
     }
-    final PreprocessingStatistics stat = new PreprocessingStatistics(prepFileCounter, copFileCounter);
-    return stat;
+    return new PreprocessingStatistics(prepFileCounter, copFileCounter);
   }
 
   private void createDestinationDirectory() throws IOException {
