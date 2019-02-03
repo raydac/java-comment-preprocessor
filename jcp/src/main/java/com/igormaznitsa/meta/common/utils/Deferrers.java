@@ -55,6 +55,7 @@ public final class Deferrers {
    *
    * @since 1.0
    */
+  @SuppressWarnings("AnonymousHasLambdaAlternative")
   @MustNotContainNull
   private static final ThreadLocal<List<Deferred>> REGISTRY = new ThreadLocal<List<Deferred>>() {
     @Override

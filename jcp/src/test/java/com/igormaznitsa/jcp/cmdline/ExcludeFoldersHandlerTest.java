@@ -47,7 +47,7 @@ public class ExcludeFoldersHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/ED", mock));
 
     assertTrue(HANDLER.processCommandLineKey("/ed:testdir/**/hd" + File.pathSeparator + "zoom" + File.pathSeparator + "g?df", mock));
-    verify(mock).setExcludedFolderPatterns(new String[] {"testdir/**/hd", "zoom", "g?df"});
+    verify(mock).setExcludedFolderPatterns("testdir/**/hd", "zoom", "g?df");
   }
 
   @Override

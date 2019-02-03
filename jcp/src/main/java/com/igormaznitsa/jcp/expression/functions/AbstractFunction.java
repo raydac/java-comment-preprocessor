@@ -39,10 +39,10 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The abstract class is the base for each function handler in the preprocessor
@@ -59,50 +59,57 @@ public abstract class AbstractFunction implements ExpressionItem {
   /**
    * Inside array contains all functions supported by the preprocessor
    */
-  public static final AbstractFunction[] ALL_FUNCTIONS = new AbstractFunction[] {
-      new FunctionABS(),
-      new FunctionROUND(),
-      new FunctionSTR2INT(),
-      new FunctionSTR2WEB(),
-      new FunctionSTR2CSV(),
-      new FunctionSTR2JS(),
-      new FunctionSTR2JSON(),
-      new FunctionSTR2XML(),
-      new FunctionSTR2JAVA(),
-      new FunctionSTR2GO(),
-      new FunctionTRIMLINES(),
-      new FunctionSTRLEN(),
-      new FunctionISSUBSTR(),
-      new FunctionIS(),
-      new FunctionEVALFILE(),
-      new FunctionBINFILE(),
-      new FunctionXML_GET(),
-      new FunctionXML_SIZE(),
-      new FunctionXML_ATTR(),
-      new FunctionXML_ROOT(),
-      new FunctionXML_NAME(),
-      new FunctionXML_LIST(),
-      new FunctionXML_TEXT(),
-      new FunctionXML_OPEN(),
-      new FunctionXML_XLIST(),
-      new FunctionXML_XELEMENT()
-  };
+  private static volatile AbstractFunction[] allFunctions;
+  private static volatile Map<String, AbstractFunction> functionNameMap;
 
-  public static final Map<String, AbstractFunction> FUNCTION_NAME_MAP;
+  @Nonnull
+  @MustNotContainNull
+  public static AbstractFunction[] getAllFunctions() {
+    if (allFunctions == null) {
+      allFunctions = new AbstractFunction[] {
+          new FunctionABS(),
+          new FunctionROUND(),
+          new FunctionSTR2INT(),
+          new FunctionSTR2WEB(),
+          new FunctionSTR2CSV(),
+          new FunctionSTR2JS(),
+          new FunctionSTR2JSON(),
+          new FunctionSTR2XML(),
+          new FunctionSTR2JAVA(),
+          new FunctionSTR2GO(),
+          new FunctionTRIMLINES(),
+          new FunctionSTRLEN(),
+          new FunctionISSUBSTR(),
+          new FunctionIS(),
+          new FunctionEVALFILE(),
+          new FunctionBINFILE(),
+          new FunctionXML_GET(),
+          new FunctionXML_SIZE(),
+          new FunctionXML_ATTR(),
+          new FunctionXML_ROOT(),
+          new FunctionXML_NAME(),
+          new FunctionXML_LIST(),
+          new FunctionXML_TEXT(),
+          new FunctionXML_OPEN(),
+          new FunctionXML_XLIST(),
+          new FunctionXML_XELEMENT()
+      };
+    }
+    return allFunctions;
+  }
+
+  @Nonnull
+  public static Map<String, AbstractFunction> getFunctionNameMap() {
+    if (functionNameMap == null) {
+      functionNameMap = Stream.of(getAllFunctions()).collect(Collectors.toMap(AbstractFunction::getName, x -> x));
+    }
+    return functionNameMap;
+  }
+
   /**
    * Inside counter to generate UID for some cases
    */
   protected static final AtomicLong UID_COUNTER = new AtomicLong(1);
-
-  static {
-    final Map<String, AbstractFunction> map = new HashMap<>();
-    for (final AbstractFunction f : ALL_FUNCTIONS) {
-      if (map.put(f.getName(), f) != null) {
-        throw new Error("Detected unexpected overriden function : " + f.getName());
-      }
-    }
-    FUNCTION_NAME_MAP = Collections.unmodifiableMap(map);
-  }
 
   /**
    * Allows to find a function handler instance for its class
@@ -116,7 +123,7 @@ public abstract class AbstractFunction implements ExpressionItem {
   @Nullable
   public static <E extends AbstractFunction> E findForClass(@Nonnull final Class<E> functionClass) {
     E result = null;
-    for (final AbstractFunction function : ALL_FUNCTIONS) {
+    for (final AbstractFunction function : getAllFunctions()) {
       if (function.getClass() == functionClass) {
         result = functionClass.cast(function);
         break;
@@ -128,13 +135,13 @@ public abstract class AbstractFunction implements ExpressionItem {
   /**
    * Find a function handler for its name
    *
-   * @param str the function name, must not be null
+   * @param functionName the function name, must not be null
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
   @Nullable
-  public static AbstractFunction findForName(@Nonnull final String str) {
-    return FUNCTION_NAME_MAP.get(str);
+  public static AbstractFunction findForName(@Nonnull final String functionName) {
+    return getFunctionNameMap().get(functionName);
   }
 
   /**

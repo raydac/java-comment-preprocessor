@@ -23,6 +23,7 @@ package com.igormaznitsa.jcp.expression.operators;
 
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,22 +43,31 @@ public abstract class AbstractOperator implements ExpressionItem {
   /**
    * The array contains all operators allowed by the preprocessor
    */
-  public static final AbstractOperator[] ALL_OPERATORS = new AbstractOperator[] {
-      new OperatorEQU(),
-      new OperatorGREAT(),
-      new OperatorGREATEQU(),
-      new OperatorLESS(),
-      new OperatorLESSEQU(),
-      new OperatorNOTEQU(),
-      new OperatorADD(),
-      new OperatorSUB(),
-      new OperatorMUL(),
-      new OperatorDIV(),
-      new OperatorMOD(),
-      new OperatorNOT(),
-      new OperatorAND(),
-      new OperatorOR(),
-      new OperatorXOR(),};
+  private static AbstractOperator[] allOperators;
+
+  @Nonnull
+  @MustNotContainNull
+  public static AbstractOperator [] getAllOperators(){
+    if ( allOperators == null) {
+      allOperators = new AbstractOperator[] {
+          new OperatorEQU(),
+          new OperatorGREAT(),
+          new OperatorGREATEQU(),
+          new OperatorLESS(),
+          new OperatorLESSEQU(),
+          new OperatorNOTEQU(),
+          new OperatorADD(),
+          new OperatorSUB(),
+          new OperatorMUL(),
+          new OperatorDIV(),
+          new OperatorMOD(),
+          new OperatorNOT(),
+          new OperatorAND(),
+          new OperatorOR(),
+          new OperatorXOR()};
+    }
+    return allOperators;
+  }
 
   /**
    * Find an operator handler for its class
@@ -68,7 +78,7 @@ public abstract class AbstractOperator implements ExpressionItem {
    */
   @Nullable
   public static <E extends AbstractOperator> E findForClass(@Nonnull final Class<E> operatorClass) {
-    for (final AbstractOperator operator : ALL_OPERATORS) {
+    for (final AbstractOperator operator : getAllOperators()) {
       if (operator.getClass() == operatorClass) {
         return operatorClass.cast(operator);
       }

@@ -65,6 +65,7 @@ public final class TimeGuard {
    *
    * @since 1.0
    */
+  @SuppressWarnings("AnonymousHasLambdaAlternative")
   @MustNotContainNull
   private static final ThreadLocal<List<TimeData>> REGISTRY = new ThreadLocal<List<TimeData>>() {
     @Override

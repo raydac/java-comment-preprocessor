@@ -508,7 +508,7 @@ public final class ExpressionParser {
         break;
         case OPERATOR: {
           final String operatorLC = builder.toString().toLowerCase(Locale.ENGLISH);
-          for (final AbstractOperator operator : AbstractOperator.ALL_OPERATORS) {
+          for (final AbstractOperator operator : AbstractOperator.getAllOperators()) {
             if (operator.getKeyword().equals(operatorLC)) {
               result = operator;
               break;

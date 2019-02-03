@@ -89,12 +89,12 @@ public final class InfoHelper {
     result.add(makeSpecialDirectiveReference("/*-*/", "discard the following text tail"));
 
     result.add("Operators\n------------");
-    for (final AbstractOperator handler : AbstractOperator.ALL_OPERATORS) {
+    for (final AbstractOperator handler : AbstractOperator.getAllOperators()) {
       result.add(makeOperatorReference(handler));
     }
     result.add(DELIMITER);
     result.add("Functions\n------------");
-    for (final AbstractFunction handler : AbstractFunction.ALL_FUNCTIONS) {
+    for (final AbstractFunction handler : AbstractFunction.getAllFunctions()) {
       result.add(makeFunctionReference(handler));
     }
     result.add(DELIMITER);
