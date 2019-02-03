@@ -256,6 +256,7 @@ public final class Assertions {
    * @throws AssertionError if object is not found among defined ones
    * @since 1.0.2
    */
+  @SafeVarargs
   @Nullable
   public static <T> T assertAmong(@Nullable T obj, @MayContainNull @Nonnull final T... list) {
     if (obj == null) {

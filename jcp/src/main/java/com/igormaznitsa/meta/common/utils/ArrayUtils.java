@@ -96,6 +96,7 @@ public final class ArrayUtils {
    * @return all joined arrays as single array
    * @since 1.0
    */
+  @SafeVarargs
   @Nonnull
   @MayContainNull
   @Weight(Weight.Unit.NORMAL)

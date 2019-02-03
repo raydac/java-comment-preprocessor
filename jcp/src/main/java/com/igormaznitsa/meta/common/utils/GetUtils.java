@@ -82,6 +82,7 @@ public final class GetUtils {
    *                        non-null value
    * @since 1.0
    */
+  @SafeVarargs
   @Nonnull
   public static <T> T findFirstNonNull(@Nonnull final T... objects) {
     for (final T obj : ensureNonNull(objects)) {
