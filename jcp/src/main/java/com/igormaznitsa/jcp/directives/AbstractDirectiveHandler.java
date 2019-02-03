@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.meta.annotation.Warning;
 
 import javax.annotation.Nonnull;
 
@@ -57,8 +58,8 @@ public abstract class AbstractDirectiveHandler {
   /**
    * The array contains all directives of the preprocessor
    */
+  @Warning("DO NOT CHANGE ORDER! IT MAKES SENSE!")
   public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[] {
-      // Order makes sense !!!
       new LocalDirectiveHandler(),
       new IfDefinedDirectiveHandler(),
       new IfNDefDirectiveHandler(),
@@ -96,18 +97,6 @@ public abstract class AbstractDirectiveHandler {
       new MsgDirectiveHandler(),
       new NoAutoFlushHandler(),
       new AbortDirectiveHandler()
-  };
-
-  /**
-   * The array contains preprocessor directives active only during the global
-   * preprocessing phase
-   */
-  public static final AbstractDirectiveHandler[] GLOBAL_DIRECTIVES = new AbstractDirectiveHandler[] {
-      new GlobalDirectiveHandler(),
-      new GlobalElseDirectiveHandler(),
-      new GlobalEndIfDirectiveHandler(),
-      new GlobalIfDirectiveHandler(),
-      new ExcludeIfDirectiveHandler()
   };
 
   /**
