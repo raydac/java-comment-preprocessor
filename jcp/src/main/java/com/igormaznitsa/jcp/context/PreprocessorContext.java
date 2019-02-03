@@ -1223,7 +1223,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public PreprocessorException makeException(@Nonnull final String text, @Nullable final Throwable cause) {
-    if (cause != null && cause instanceof PreprocessorException) {
+    if (cause instanceof PreprocessorException) {
       return (PreprocessorException) cause;
     }
 

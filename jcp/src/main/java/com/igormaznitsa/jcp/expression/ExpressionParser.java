@@ -213,7 +213,7 @@ public final class ExpressionParser {
 
     final int arity = function.getArity();
 
-    ExpressionTree functionTree = null;
+    ExpressionTree functionTree;
 
     if (arity == 0) {
       final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);

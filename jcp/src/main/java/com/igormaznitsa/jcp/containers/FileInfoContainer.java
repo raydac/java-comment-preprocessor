@@ -325,7 +325,7 @@ public class FileInfoContainer {
 
     String leftTrimmedString = null;
 
-    TextFileDataContainer lastTextFileDataContainer = null;
+    TextFileDataContainer lastTextFileDataContainer;
 
     try {
       while (true) {

@@ -325,7 +325,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   @Override
   public void execute() throws BuildException {
-    PreprocessorContext context = null;
+    PreprocessorContext context;
     JCPreprocessor preprocessor;
 
     try {

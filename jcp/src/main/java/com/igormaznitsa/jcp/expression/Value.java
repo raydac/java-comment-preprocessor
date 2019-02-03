@@ -252,19 +252,19 @@ public final class Value implements ExpressionItem {
   public String toStringDetail() {
     switch (type) {
       case BOOLEAN: {
-        return "Boolean : " + (Boolean) value;
+        return "Boolean : " + value;
       }
       case INT: {
-        return "Integer : " + (Long) value;
+        return "Integer : " + value;
       }
       case UNKNOWN: {
         return "Unknown : -";
       }
       case FLOAT: {
-        return "Float : " + (Float) value;
+        return "Float : " + value;
       }
       case STRING: {
-        return "String : " + (String) value;
+        return "String : " + value;
       }
     }
     return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";

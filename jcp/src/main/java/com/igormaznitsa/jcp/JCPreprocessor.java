@@ -218,7 +218,7 @@ public final class JCPreprocessor {
       final String condition = item.getCondition();
       final File file = item.getFileInfoContainer().getSourceFile();
 
-      Value val = null;
+      Value val;
 
       if (context.isVerbose()) {
         context.logForVerbose("Processing condition '" + condition + "' for file '" + file.getAbsolutePath() + "'");

@@ -579,7 +579,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
     if (this.isSkip()) {
       getLog().info("Skip preprocessing");
     } else {
-      PreprocessorContext context = null;
+      PreprocessorContext context;
 
       final String sourceFoldersInPreprocessingFormat = makeSourceRootList();
 

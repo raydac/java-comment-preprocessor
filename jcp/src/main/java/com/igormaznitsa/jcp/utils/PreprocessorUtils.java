@@ -214,7 +214,7 @@ public final class PreprocessorUtils {
         end = matcher.end();
         final String macrosBody = matcher.group(1);
         final Value value = Expression.evalExpression(macrosBody, context);
-        buffer.append(processingString.substring(prevEnd, start));
+        buffer.append(processingString, prevEnd, start);
         buffer.append(value.toString());
       }
       if (end < processingString.length()) {

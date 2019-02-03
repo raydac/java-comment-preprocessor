@@ -45,7 +45,7 @@ public final class SystemOutLogger implements PreprocessorLogger {
 
   @Override
   public boolean equals(@Nullable final Object value) {
-    return value != null && value instanceof SystemOutLogger;
+    return value instanceof SystemOutLogger;
   }
 
   @Override

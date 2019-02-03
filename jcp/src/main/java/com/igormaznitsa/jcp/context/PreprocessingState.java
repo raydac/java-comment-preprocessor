@@ -413,9 +413,9 @@ public final class PreprocessingState {
       final int BUFFER_SIZE = Math.max(64, Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE));
 
       if (this.overrideOnlyIfContentChanged) {
-        String content = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();
+        String content = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         if (removeComments) {
-          content = ((StringWriter) new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process()).toString();
+          content = new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process().toString();
         }
 
         boolean needWrite = true; // better write than not
@@ -433,7 +433,7 @@ public final class PreprocessingState {
           this.context.logDebug("Ignore writing data for " + outFile + " because its content has not been changed");
         }
       } else if (removeComments) {
-        final String joinedBufferContent = ((StringWriter) writePrinterBuffers(new StringWriter(totatBufferedChars))).toString();
+        final String joinedBufferContent = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
         new JavaCommentsRemover(new StringReader(joinedBufferContent), writer).process();
         wasSaved = true;

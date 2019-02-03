@@ -61,7 +61,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
     NodeContainer docContainer = (NodeContainer) context.getSharedResource(documentId);
     if (docContainer == null) {
-      File file = null;
+      File file;
       try {
         file = context.findFileInSourceFolder(name);
       } catch (IOException unexpected) {
