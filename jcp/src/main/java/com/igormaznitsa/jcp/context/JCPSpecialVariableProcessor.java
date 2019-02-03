@@ -114,78 +114,87 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
 
-    if (VAR_DEST_DIR.equals(varName)) {
-      return Value.valueOf(state.getRootFileInfo().getDestinationDir());
-    } else if (VAR_DEST_FILE_NAME.equals(varName)) {
-      return Value.valueOf(state.getRootFileInfo().getDestinationName());
-    } else if (VAR_DEST_FULLPATH.equals(varName)) {
-      return Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
-    } else if (VAR_SRC_DIR.equals(varName) || VAR_SRC_DIR2.equals(varName)) {
-      return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
-    } else if (VAR_SRC_FILE_NAME.equals(varName) || VAR_SRC_FILE_NAME2.equals(varName)) {
-      return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
-    } else if (VAR_SRC_FULLPATH.equals(varName) || VAR_SRC_FULLPATH2.equals(varName)) {
-      return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
-    } else if (VAR_VERSION.equals(varName)) {
-      return Value.valueOf(InfoHelper.getVersion());
-    } else if (VAR_TIME.equals(varName)) {
-      return Value.valueOf(timeFormat.format(new Date()));
-    } else if (VAR_DATE.equals(varName)) {
-      return Value.valueOf(dateFormat.format(new Date()));
-    } else if (VAR_TIMESTAMP.equals(varName)) {
-      final TextFileDataContainer filedata = state.peekFile();
-      final Value result;
-      if (filedata == null) {
-        result = Value.valueOf("<no file>");
-      } else {
-        result = Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
-      }
-      return result;
-    } else if (VAR_LINE.equals(varName)) {
-      final TextFileDataContainer currentFile = state.peekFile();
-      final long line;
-      if (currentFile == null) {
-        line = -1L;
-      } else {
-        line = currentFile.getLastReadStringIndex() + 1;
-      }
-      return Value.valueOf(line);
-    } else {
-      final String text = "Attempting to read unexpected special variable [" + varName + ']';
-      throw context.makeException(text, null);
+    switch (varName) {
+      case VAR_DEST_DIR:
+        return Value.valueOf(state.getRootFileInfo().getDestinationDir());
+      case VAR_DEST_FILE_NAME:
+        return Value.valueOf(state.getRootFileInfo().getDestinationName());
+      case VAR_DEST_FULLPATH:
+        return Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
+      case VAR_SRC_DIR:
+      case VAR_SRC_DIR2:
+        return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
+      case VAR_SRC_FILE_NAME:
+      case VAR_SRC_FILE_NAME2:
+        return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
+      case VAR_SRC_FULLPATH:
+      case VAR_SRC_FULLPATH2:
+        return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
+      case VAR_VERSION:
+        return Value.valueOf(InfoHelper.getVersion());
+      case VAR_TIME:
+        return Value.valueOf(timeFormat.format(new Date()));
+      case VAR_DATE:
+        return Value.valueOf(dateFormat.format(new Date()));
+      case VAR_TIMESTAMP:
+        final TextFileDataContainer filedata = state.peekFile();
+        final Value result;
+        if (filedata == null) {
+          result = Value.valueOf("<no file>");
+        } else {
+          result = Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
+        }
+        return result;
+      case VAR_LINE:
+        final TextFileDataContainer currentFile = state.peekFile();
+        final long line;
+        if (currentFile == null) {
+          line = -1L;
+        } else {
+          line = currentFile.getLastReadStringIndex() + 1;
+        }
+        return Value.valueOf(line);
+      default:
+        final String text = "Attempting to read unexpected special variable [" + varName + ']';
+        throw context.makeException(text, null);
     }
   }
 
   @Override
   public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
-    if (VAR_DEST_DIR.equals(varName)) {
-      if (value.getType() != ValueType.STRING) {
-        throw new IllegalArgumentException("Only STRING type allowed");
+    switch (varName) {
+      case VAR_DEST_DIR:
+        if (value.getType() != ValueType.STRING) {
+          throw new IllegalArgumentException("Only STRING type allowed");
+        }
+        state.getRootFileInfo().setDestinationDir(value.asString());
+        break;
+      case VAR_DEST_FILE_NAME:
+        if (value.getType() != ValueType.STRING) {
+          throw new IllegalArgumentException("Only STRING type allowed");
+        }
+        state.getRootFileInfo().setDestinationName(value.asString());
+        break;
+      case VAR_DEST_FULLPATH:
+      case VAR_SRC_DIR:
+      case VAR_SRC_DIR2:
+      case VAR_SRC_FILE_NAME:
+      case VAR_SRC_FILE_NAME2:
+      case VAR_SRC_FULLPATH:
+      case VAR_SRC_FULLPATH2:
+      case VAR_VERSION:
+      case VAR_LINE:
+      case VAR_TIME:
+      case VAR_TIMESTAMP:
+      case VAR_DATE: {
+        final String text = "The variable \'" + varName + "\' can't be set directly";
+        throw context.makeException(text, null);
       }
-      state.getRootFileInfo().setDestinationDir(value.asString());
-    } else if (VAR_DEST_FILE_NAME.equals(varName)) {
-      if (value.getType() != ValueType.STRING) {
-        throw new IllegalArgumentException("Only STRING type allowed");
+      default: {
+        final String text = "Attempting to write unexpected special variable [" + varName + ']';
+        throw context.makeException(text, null);
       }
-      state.getRootFileInfo().setDestinationName(value.asString());
-    } else if (VAR_DEST_FULLPATH.equals(varName)
-        || VAR_SRC_DIR.equals(varName)
-        || VAR_SRC_DIR2.equals(varName)
-        || VAR_SRC_FILE_NAME.equals(varName)
-        || VAR_SRC_FILE_NAME2.equals(varName)
-        || VAR_SRC_FULLPATH.equals(varName)
-        || VAR_SRC_FULLPATH2.equals(varName)
-        || VAR_VERSION.equals(varName)
-        || VAR_LINE.equals(varName)
-        || VAR_TIME.equals(varName)
-        || VAR_TIMESTAMP.equals(varName)
-        || VAR_DATE.equals(varName)) {
-      final String text = "The variable \'" + varName + "\' can't be set directly";
-      throw context.makeException(text, null);
-    } else {
-      final String text = "Attempting to write unexpected special variable [" + varName + ']';
-      throw context.makeException(text, null);
     }
   }
 
