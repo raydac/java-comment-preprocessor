@@ -48,7 +48,7 @@ public final class JCPreprocessorTest {
       preprocessor.processCfgFiles();
       fail("Must throw a PreprocessorException");
     } catch (PreprocessorException expected) {
-      if (stringIndexStartedFromOne != expected.getStringIndexStartedFromOne()) {
+      if (stringIndexStartedFromOne != expected.getLineNumber()) {
         fail("Wrong error string index [" + expected.toString() + ']');
       }
     }

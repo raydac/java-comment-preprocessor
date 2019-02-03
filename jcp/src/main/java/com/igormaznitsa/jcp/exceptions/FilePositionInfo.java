@@ -44,12 +44,12 @@ public class FilePositionInfo {
   /**
    * The current string index in the file
    */
-  private final int zeroBasedStringIndex;
+  private final int stringIndex;
 
-  public FilePositionInfo(@Nonnull final File file, final int zeroBasedStringIndex) {
+  public FilePositionInfo(@Nonnull final File file, final int stringIndex) {
     assertNotNull("File is null", file);
     this.file = file;
-    this.zeroBasedStringIndex = zeroBasedStringIndex;
+    this.stringIndex = stringIndex;
   }
 
   @Nonnull
@@ -57,18 +57,26 @@ public class FilePositionInfo {
     return this.file;
   }
 
-  public int getRawStringIndex() {
-    return this.zeroBasedStringIndex;
+  /**
+   * Get zero based line index
+   * @return zero based line index or -1 if there is no info
+   */
+  public int getStringIndex() {
+    return this.stringIndex < 0 ? -1 : this.stringIndex;
   }
 
-  public int getStringIndexForHuman() {
-    return this.zeroBasedStringIndex < 0 ? -1 : this.zeroBasedStringIndex + 1;
+  /**
+   * Get line number, starting position is one
+   * @return line number started from one, -1 if there is no info
+   */
+  public int getLineNumber() {
+    return this.stringIndex < 0 ? -1 : this.stringIndex + 1;
   }
 
   @Override
   @Nonnull
   public String toString() {
     final String filePath = PreprocessorUtils.getFilePath(this.file);
-    return filePath + ':' + this.getStringIndexForHuman();
+    return filePath + ':' + this.getLineNumber();
   }
 }

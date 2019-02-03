@@ -98,7 +98,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       preprocessString(preprocessingText, null, extension, globalVars);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
-      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndexStartedFromOne());
+      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getLineNumber());
     } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
@@ -111,7 +111,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       preprocessStringAtGlobalPhase(preprocessingText, null);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
-      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getStringIndexStartedFromOne());
+      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getLineNumber());
     } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());

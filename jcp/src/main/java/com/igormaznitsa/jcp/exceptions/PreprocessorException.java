@@ -71,7 +71,7 @@ public class PreprocessorException extends RuntimeException {
       }
       builder.append("└>");
       builder.append(fileIndex++).append(". ");
-      builder.append(cur.getFile().getName()).append(':').append(cur.getStringIndexForHuman());
+      builder.append(cur.getFile().getName()).append(':').append(cur.getLineNumber());
       tab += 3;
     }
 
@@ -132,11 +132,11 @@ public class PreprocessorException extends RuntimeException {
     }
   }
 
-  public int getStringIndexStartedFromOne() {
+  public int getLineNumber() {
     if (includeStack.length == 0) {
       return -1;
     } else {
-      return includeStack[0].getStringIndexForHuman();
+      return includeStack[0].getLineNumber();
     }
   }
 
