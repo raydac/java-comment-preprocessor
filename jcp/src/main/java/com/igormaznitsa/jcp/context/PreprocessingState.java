@@ -422,7 +422,7 @@ public final class PreprocessingState {
         final byte[] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
         if (outFile.isFile() && outFile.length() == contentInBinaryForm.length) {
           // If file exists and has the same content, then skip overwriting it
-          try(InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
+          try (InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
             needWrite = !IOUtils.contentEquals(currentFileInputStream, new ByteArrayInputStream(contentInBinaryForm));
           }
         }

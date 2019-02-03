@@ -59,6 +59,7 @@ public class FilePositionInfo {
 
   /**
    * Get zero based line index
+   *
    * @return zero based line index or -1 if there is no info
    */
   public int getStringIndex() {
@@ -67,6 +68,7 @@ public class FilePositionInfo {
 
   /**
    * Get line number, starting position is one
+   *
    * @return line number started from one, -1 if there is no info
    */
   public int getLineNumber() {
