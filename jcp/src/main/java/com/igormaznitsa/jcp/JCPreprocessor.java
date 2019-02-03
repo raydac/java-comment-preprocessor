@@ -58,7 +58,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -121,7 +120,7 @@ public final class JCPreprocessor {
     final PreprocessorContext preprocessorContext;
 
     try {
-      preprocessorContext = processCommandString(null, args, normalizedStrings);
+      preprocessorContext = processCommandLine(args, normalizedStrings);
     } catch (IOException ex) {
       System.err.println("Error during command line processing [" + ex.getMessage() + ']');
       System.exit(1);
@@ -141,8 +140,8 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private static PreprocessorContext processCommandString(@Nullable final PreprocessorContext context, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
-    final PreprocessorContext result = context == null ? new PreprocessorContext() : context;
+  private static PreprocessorContext processCommandLine(@Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
+    final PreprocessorContext result = new PreprocessorContext();
 
     for (int i = 0; i < normalizedStrings.length; i++) {
       final String arg = normalizedStrings[i];
