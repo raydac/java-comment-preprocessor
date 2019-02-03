@@ -396,7 +396,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     if (antVariables == null) {
       result = new String[0];
     } else {
-      result = antVariables.keySet().toArray(new String[antVariables.size()]);
+      result = antVariables.keySet().toArray(new String[0]);
     }
 
     return result;

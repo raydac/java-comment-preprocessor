@@ -164,7 +164,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   @Nonnull
   @MustNotContainNull
   public String[] getVariableNames() {
-    return insideVarMap.keySet().toArray(new String[insideVarMap.size()]);
+    return insideVarMap.keySet().toArray(new String[0]);
   }
 
   @Override
