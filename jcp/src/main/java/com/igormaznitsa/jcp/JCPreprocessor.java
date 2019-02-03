@@ -60,6 +60,7 @@ import org.apache.commons.io.FilenameUtils;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,7 +109,8 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  public static Iterable<CommandLineHandler> getCommandLineHandlers() {
+  @MustNotContainNull
+  public static List<CommandLineHandler> getCommandLineHandlers() {
     return Arrays.asList(COMMAND_LINE_HANDLERS);
   }
 
@@ -397,7 +399,7 @@ public final class JCPreprocessor {
   void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
-      final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, "UTF-8", null);
+      final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
 
       int readStringIndex = -1;
       for (final String curString : wholeFile) {

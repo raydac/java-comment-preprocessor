@@ -79,7 +79,7 @@ public class PreprocessorUtilsTest {
 
     final int BUFFER_SIZE = 0xCAFE;
 
-    final BufferedReader reader = PreprocessorUtils.makeFileReader(testFile, nonDefaultCharset.name(), BUFFER_SIZE);
+    final BufferedReader reader = PreprocessorUtils.makeFileReader(testFile, nonDefaultCharset, BUFFER_SIZE);
 
     // check that we have selected the non standard charset
     final InputStreamReader wrappedReader = (InputStreamReader) inField.get(reader);

@@ -34,9 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor.getReference;
+import static java.util.stream.Collectors.toList;
+
 public final class InfoHelper {
 
   public static final String DELIMITER = "-------------------------------------------------";
+  public static final String SHORT_DELIMITER = "----------------------";
 
   private InfoHelper() {
   }
@@ -44,12 +48,12 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getVersion() {
-    return "v 6.2.0";
+    return "v6.2.0-SNAPSHOT";
   }
 
   @Nonnull
   public static String getCopyright() {
-    return "2003-2019 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+    return "2002-2019 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
   }
 
   @Nonnull
@@ -67,47 +71,50 @@ public final class InfoHelper {
   public static List<String> makeTextForHelpInfo() {
     final List<String> result = new ArrayList<>();
 
-    result.add(JCPreprocessor.class.getCanonicalName() + " [@cfg_file] [cli_directives]");
+    result.add(JCPreprocessor.class.getCanonicalName() + " [@cfgFile] [cliCommands]");
     result.add("");
 
-    result.add("Command line directives\n------------");
-    result.add("\n(!)Historically all directives are prefixed by '/' but since 5.3.3 both '-' and '--' prefixes are allowed\n");
-    result.add(makeColumns("@cfg_file", "file contains global definition list", 14));
-    for (final CommandLineHandler handler : JCPreprocessor.getCommandLineHandlers()) {
-      result.add(makeCommandLineKeyReference(handler));
-    }
+    result.add("Command line");
+    result.add(SHORT_DELIMITER);
+    result.add("Supported '/','-' and '--' prefixes, '--' doesn't support multiple commands at once");
+    result.add(makeColumns("@cfgFile", "file contains global definition list", 14));
+    result.addAll(JCPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
     result.add(DELIMITER);
 
-    result.add("Preprocessor directives (THE PREPROCESSOR IS A TWO-PASS ONE)\n------------");
+    result.add("Preprocessor directives");
+    result.add(SHORT_DELIMITER);
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.getAllDirectives()) {
       result.add(makeDirectiveReference(handler));
     }
     result.add(DELIMITER);
-    result.add("Special string directives\n------------");
-    result.add(makeSpecialDirectiveReference("//$", "replace macroses in following text and out result"));
-    result.add(makeSpecialDirectiveReference("//$$", "works like //$ but without macros replacement"));
-    result.add(makeSpecialDirectiveReference("/*-*/", "discard the following text tail"));
+    result.add("Special line directives");
+    result.add(SHORT_DELIMITER);
+    result.add(makeSpecialDirectiveReference("//$", "replace all macroses in tail and uncomment"));
+    result.add(makeSpecialDirectiveReference("//$$", "like //$ but macroses are not processed"));
+    result.add(makeSpecialDirectiveReference("/*-*/", "truncate line"));
 
-    result.add("Operators\n------------");
+    result.add("Operators");
+    result.add(SHORT_DELIMITER);
     for (final AbstractOperator handler : AbstractOperator.getAllOperators()) {
       result.add(makeOperatorReference(handler));
     }
     result.add(DELIMITER);
-    result.add("Functions\n------------");
+    result.add("Functions");
+    result.add(SHORT_DELIMITER);
     for (final AbstractFunction handler : AbstractFunction.getAllFunctions()) {
       result.add(makeFunctionReference(handler));
     }
     result.add(DELIMITER);
-    result.add("Data types\n------------");
-    result.add("BOOLEAN: true,false");
-    result.add("INTEGER: 2374,0x56FE (signed 64 bit)");
-    result.add("STRING : \"Hello World!\" (or $Hello World!$ for the command string)");
-    result.add("FLOAT  : 0.745 (signed 32 bit)");
+    result.add("Supported data types");
+    result.add(SHORT_DELIMITER);
+    result.add(" BOOL: true,false");
+    result.add("  INT: 2374,0x56FE (signed 64 bit)");
+    result.add("  STR: \"Hello World!\" (or $Hello World!$ for the command string)");
+    result.add("FLOAT: 0.745 (signed 32 bit)");
     result.add(DELIMITER);
-    result.add("Special variables\n------------");
-    for (final JCPSpecialVariableProcessor.NameReferencePair p : JCPSpecialVariableProcessor.getReference()) {
-      result.add(makeSpecialVariableReference(p));
-    }
+    result.add("Special variables");
+    result.add(SHORT_DELIMITER);
+    result.addAll(getReference().stream().map(InfoHelper::makeSpecialVariableReference).collect(toList()));
     return result;
   }
 

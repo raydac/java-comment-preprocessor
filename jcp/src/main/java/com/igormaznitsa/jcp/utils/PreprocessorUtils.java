@@ -44,6 +44,7 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -103,13 +104,9 @@ public final class PreprocessorUtils {
   }
 
   @Nonnull
-  public static BufferedReader makeFileReader(@Nonnull final File file, @Nonnull final String charset, final int bufferSize) throws IOException {
+  public static BufferedReader makeFileReader(@Nonnull final File file, @Nonnull final Charset charset, final int bufferSize) throws IOException {
     assertNotNull("File is null", file);
     assertNotNull("Charset is null", charset);
-
-    if (!Charset.isSupported(charset)) {
-      throw new IllegalArgumentException("Unsupported charset [" + charset + ']');
-    }
 
     BufferedReader result;
 
@@ -257,13 +254,11 @@ public final class PreprocessorUtils {
 
   @Nonnull
   @MustNotContainNull
-  public static String[] readWholeTextFileIntoArray(@Nonnull final File file, @Nullable final String encoding, @Nullable final AtomicBoolean endedByNextLine) throws IOException {
+  public static String[] readWholeTextFileIntoArray(@Nonnull final File file, @Nullable final Charset encoding, @Nullable final AtomicBoolean endedByNextLine) throws IOException {
     checkFile(file);
 
-    final String enc = encoding == null ? "UTF8" : encoding;
-
     final List<String> strContainer = new ArrayList<>(1024);
-    try (BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length())) {
+    try (BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, encoding == null ? StandardCharsets.UTF_8 : encoding, (int) file.length())) {
       final StringBuilder buffer = new StringBuilder();
 
       boolean stringEndedByNextLine = false;

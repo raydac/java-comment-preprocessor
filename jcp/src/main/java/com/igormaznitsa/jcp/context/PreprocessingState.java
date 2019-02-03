@@ -50,6 +50,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -71,8 +72,8 @@ public final class PreprocessingState {
 
   public static final int MAX_WRITE_BUFFER_SIZE = 65536;
 
-  private final String globalInCharacterEncoding;
-  private final String globalOutCharacterEncoding;
+  private final Charset globalInCharacterEncoding;
+  private final Charset globalOutCharacterEncoding;
   private final TextFileDataContainer rootReference;
   private final FileInfoContainer rootFileInfo;
   private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<>();
@@ -93,8 +94,8 @@ public final class PreprocessingState {
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final String inEncoding, @Nonnull final String outEncoding) {
     this.fake = true;
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
+    this.globalInCharacterEncoding = decodeCharset(assertNotNull("InEncoding is null", inEncoding));
+    this.globalOutCharacterEncoding = decodeCharset(assertNotNull("OutEncoding is null", outEncoding));
     this.rootReference = null;
     this.lastReadString = "";
     this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
@@ -109,8 +110,8 @@ public final class PreprocessingState {
     this.context = context;
 
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
+    this.globalInCharacterEncoding = decodeCharset(assertNotNull("InEncoding is null", inEncoding));
+    this.globalOutCharacterEncoding = decodeCharset(assertNotNull("OutEncoding is null", outEncoding));
 
     this.rootFileInfo = assertNotNull("The root file is null", rootFile);
     init();
@@ -122,14 +123,23 @@ public final class PreprocessingState {
 
     this.context = context;
 
-    this.globalInCharacterEncoding = assertNotNull("InEncoding is null", inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull("OutEncoding is null", outEncoding);
+    this.globalInCharacterEncoding = decodeCharset(assertNotNull("InEncoding is null", inEncoding));
+    this.globalOutCharacterEncoding = decodeCharset(assertNotNull("OutEncoding is null", outEncoding));
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
 
     this.rootFileInfo = assertNotNull("The root file is null", rootFile);
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
+  }
+
+  @Nonnull
+  private static Charset decodeCharset(@Nonnull final String name) {
+    try {
+      return Charset.forName(name);
+    } catch (Exception ex) {
+      throw new IllegalArgumentException("Can't decode charset name: " + name);
+    }
   }
 
   @Nullable
