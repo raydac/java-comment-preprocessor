@@ -927,8 +927,7 @@ abstract class StringUtils {
     if (isEmpty(array2)) {
       return array1;
     }
-    List<String> result = new ArrayList<>();
-    result.addAll(Arrays.asList(array1));
+    List<String> result = new ArrayList<>(Arrays.asList(array1));
     for (String str : array2) {
       if (!result.contains(str)) {
         result.add(str);
@@ -964,7 +963,7 @@ abstract class StringUtils {
     if (collection == null) {
       return null;
     }
-    return collection.toArray(new String[collection.size()]);
+    return collection.toArray(new String[0]);
   }
 
   /**
@@ -980,7 +979,7 @@ abstract class StringUtils {
       return null;
     }
     List<String> list = Collections.list(enumeration);
-    return list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
 
   /**
@@ -1015,11 +1014,7 @@ abstract class StringUtils {
     if (isEmpty(array)) {
       return array;
     }
-    Set<String> set = new LinkedHashSet<>();
-    for (String element : array) {
-      set.add(element);
-    }
-    return toStringArray(set);
+    return toStringArray(new LinkedHashSet<>(Arrays.asList(array)));
   }
 
   /**
@@ -1252,12 +1247,7 @@ abstract class StringUtils {
    * @see #removeDuplicateStrings(String[])
    */
   public static Set<String> commaDelimitedListToSet(String str) {
-    Set<String> set = new LinkedHashSet<>();
-    String[] tokens = commaDelimitedListToStringArray(str);
-    for (String token : tokens) {
-      set.add(token);
-    }
-    return set;
+    return new LinkedHashSet<>(Arrays.asList(commaDelimitedListToStringArray(str)));
   }
 
   /**

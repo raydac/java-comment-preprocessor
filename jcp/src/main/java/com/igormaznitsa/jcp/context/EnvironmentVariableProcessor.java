@@ -60,7 +60,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   @Nonnull
   @MustNotContainNull
   public String[] getVariableNames() {
-    return environmentVars.keySet().toArray(new String[environmentVars.size()]);
+    return environmentVars.keySet().toArray(new String[0]);
   }
 
   @Override

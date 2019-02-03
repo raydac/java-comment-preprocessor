@@ -315,7 +315,7 @@ public final class PreprocessorUtils {
       }
     }
 
-    return strContainer.toArray(new String[strContainer.size()]);
+    return strContainer.toArray(new String[0]);
   }
 
   @Nonnull
@@ -385,7 +385,7 @@ public final class PreprocessorUtils {
       tokens.add(buffer.toString());
     }
 
-    return tokens.toArray(new String[tokens.size()]);
+    return tokens.toArray(new String[0]);
   }
 
   @Nullable

@@ -166,9 +166,7 @@ public class PreprocessorException extends RuntimeException {
   @Override
   @Nonnull
   public String toString() {
-    final StringBuilder result = new StringBuilder();
-    result.append(getMessage()).append(", include stack: ").append(convertIncludeStackToString()).append(", source line: ").append(this.processingString);
-    return result.toString();
+    return getMessage() + ", include stack: " + convertIncludeStackToString() + ", source line: " + this.processingString;
   }
 
 }

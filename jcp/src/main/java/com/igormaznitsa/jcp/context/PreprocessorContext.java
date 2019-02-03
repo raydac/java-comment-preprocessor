@@ -548,7 +548,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   public String[] getProcessingFileExtensions() {
-    return processingFileExtensions.toArray(new String[processingFileExtensions.size()]);
+    return processingFileExtensions.toArray(new String[0]);
   }
 
   /**
@@ -602,7 +602,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   public String[] getExcludedFileExtensions() {
-    return excludedFileExtensions.toArray(new String[excludedFileExtensions.size()]);
+    return excludedFileExtensions.toArray(new String[0]);
   }
 
   /**
@@ -1165,7 +1165,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   public File[] getConfigFiles() {
-    return configFiles.toArray(new File[configFiles.size()]);
+    return configFiles.toArray(new File[0]);
   }
 
   /**

@@ -39,9 +39,6 @@ import java.util.Arrays;
  * @author Rob Harrop
  * @author Chris Beams
  * @author Sam Brannen
- * @see ClassUtils
- * @see CollectionUtils
- * @see StringUtils
  * @since 19.03.2004
  */
 abstract class ObjectUtils {
@@ -107,7 +104,6 @@ abstract class ObjectUtils {
    * length.
    *
    * @param array the array to check
-   * @see #isEmpty(Object)
    */
   public static boolean isEmpty(Object[] array) {
     return (array == null || array.length == 0);
