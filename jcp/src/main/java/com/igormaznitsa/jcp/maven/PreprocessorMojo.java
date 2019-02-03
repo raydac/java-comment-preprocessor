@@ -486,7 +486,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
       final String[] splitted = sourceDirectories.split(";");
 
       final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
-      final List<String> sourceRootsAsCanonical = new ArrayList<String>();
+      final List<String> sourceRootsAsCanonical = new ArrayList<>();
       for (final String src : sourceRoots) {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
       }

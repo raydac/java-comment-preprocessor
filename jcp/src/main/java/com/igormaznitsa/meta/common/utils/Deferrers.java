@@ -59,7 +59,7 @@ public final class Deferrers {
   private static final ThreadLocal<List<Deferred>> REGISTRY = new ThreadLocal<List<Deferred>>() {
     @Override
     protected List<Deferred> initialValue() {
-      return new ArrayList<Deferred>();
+      return new ArrayList<>();
     }
   };
 

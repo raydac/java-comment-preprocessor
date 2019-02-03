@@ -69,7 +69,7 @@ public final class TimeGuard {
   private static final ThreadLocal<List<TimeData>> REGISTRY = new ThreadLocal<List<TimeData>>() {
     @Override
     protected List<TimeData> initialValue() {
-      return new ArrayList<TimeData>();
+      return new ArrayList<>();
     }
   };
 

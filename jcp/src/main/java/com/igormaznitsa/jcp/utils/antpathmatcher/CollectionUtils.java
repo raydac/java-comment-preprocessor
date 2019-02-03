@@ -410,7 +410,7 @@ abstract class CollectionUtils {
    * given.
    */
   public static <A, E extends A> A[] toArray(Enumeration<E> enumeration, A[] array) {
-    ArrayList<A> elements = new ArrayList<A>();
+    ArrayList<A> elements = new ArrayList<>();
     while (enumeration.hasMoreElements()) {
       elements.add(enumeration.nextElement());
     }
@@ -424,7 +424,7 @@ abstract class CollectionUtils {
    * @return the iterator
    */
   public static <E> Iterator<E> toIterator(Enumeration<E> enumeration) {
-    return new EnumerationIterator<E>(enumeration);
+    return new EnumerationIterator<>(enumeration);
   }
 
   /**

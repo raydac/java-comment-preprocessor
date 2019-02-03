@@ -54,8 +54,8 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  */
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
 
-  private final List<Global> globalVariables = new ArrayList<Global>();
-  private final List<CfgFile> configFiles = new ArrayList<CfgFile>();
+  private final List<Global> globalVariables = new ArrayList<>();
+  private final List<CfgFile> configFiles = new ArrayList<>();
   private File sourceDirectory = null;
   private File destinationDirectory = null;
   private String inCharSet = null;
@@ -374,7 +374,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       result = Collections.emptyMap();
     } else {
 
-      result = new HashMap<String, Value>();
+      result = new HashMap<>();
 
       for (final Object key : getProject().getProperties().keySet()) {
         final String keyStr = key.toString();

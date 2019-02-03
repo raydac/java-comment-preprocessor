@@ -96,7 +96,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     final ExpressionParser parser = ExpressionParser.getInstance();
 
     final PushbackReader reader = new PushbackReader(new StringReader(str));
-    final List<ExpressionTree> result = new ArrayList<ExpressionTree>();
+    final List<ExpressionTree> result = new ArrayList<>();
 
     final PreprocessingState state = context.getPreprocessingState();
     final FilePositionInfo[] stack;

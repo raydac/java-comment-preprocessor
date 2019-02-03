@@ -560,7 +560,7 @@ public final class PreprocessorContext {
   @Nonnull
   public PreprocessorContext setProcessingFileExtensions(@Nonnull final String extensions) {
     assertNotNull("Argument is null", extensions);
-    processingFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+    processingFileExtensions = new HashSet<>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -614,7 +614,7 @@ public final class PreprocessorContext {
   @Nonnull
   public PreprocessorContext setExcludedFileExtensions(@Nonnull final String extensions) {
     assertNotNull("Argument is null", extensions);
-    excludedFileExtensions = new HashSet<String>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+    excludedFileExtensions = new HashSet<>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
     return this;
   }
 
@@ -1121,7 +1121,7 @@ public final class PreprocessorContext {
       // relative path
       result = new File(parentDir, path);
     } else {
-      final List<File> setOfFoundFiles = new ArrayList<File>();
+      final List<File> setOfFoundFiles = new ArrayList<>();
       for (final File root : getSourceDirectoryAsFiles()) {
         final File variant = new File(root, path);
         if (variant.exists() && variant.isFile()) {

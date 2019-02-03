@@ -32,23 +32,19 @@ import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 import com.igormaznitsa.meta.common.utils.Assertions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -266,9 +262,8 @@ public final class PreprocessorUtils {
 
     final String enc = encoding == null ? "UTF8" : encoding;
 
-    final BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length());
-    final List<String> strContainer = new ArrayList<String>(1024);
-    try {
+    final List<String> strContainer = new ArrayList<>(1024);
+    try (BufferedReader srcBufferedReader = PreprocessorUtils.makeFileReader(file, enc, (int) file.length())) {
       final StringBuilder buffer = new StringBuilder();
 
       boolean stringEndedByNextLine = false;
@@ -318,8 +313,6 @@ public final class PreprocessorUtils {
       if (endedByNextLine != null) {
         endedByNextLine.set(stringEndedByNextLine);
       }
-    } finally {
-      srcBufferedReader.close();
     }
 
     return strContainer.toArray(new String[strContainer.size()]);
@@ -375,7 +368,7 @@ public final class PreprocessorUtils {
     final char[] array = string.toCharArray();
     final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
 
-    final List<String> tokens = new ArrayList<String>(10);
+    final List<String> tokens = new ArrayList<>(10);
 
     for (final char curChar : array) {
       if (curChar == delimiter) {
@@ -482,6 +475,6 @@ public final class PreprocessorUtils {
     if (src.length() != dst.length()) {
       return false;
     }
-    return FileUtils.contentEquals(src,dst);
+    return FileUtils.contentEquals(src, dst);
   }
 }

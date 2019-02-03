@@ -228,7 +228,7 @@ public final class ExpressionParser {
       }
     } else {
 
-      final List<ExpressionTree> arguments = new ArrayList<ExpressionTree>(arity);
+      final List<ExpressionTree> arguments = new ArrayList<>(arity);
       for (int i = 0; i < function.getArity(); i++) {
         final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
         final ExpressionItem lastItem = readFunctionArgument(reader, subExpression, context, includeStack, sources);

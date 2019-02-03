@@ -45,7 +45,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   private final Map<String, Value> environmentVars;
 
   public EnvironmentVariableProcessor() {
-    final Map<String, Value> env = new HashMap<String, Value>();
+    final Map<String, Value> env = new HashMap<>();
 
     final Properties properties = System.getProperties();
 

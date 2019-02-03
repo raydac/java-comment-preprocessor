@@ -75,10 +75,10 @@ public final class PreprocessingState {
   private final String globalOutCharacterEncoding;
   private final TextFileDataContainer rootReference;
   private final FileInfoContainer rootFileInfo;
-  private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<TextFileDataContainer>();
-  private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<ExcludeIfInfo>();
+  private final LinkedList<TextFileDataContainer> whileStack = new LinkedList<>();
+  private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<>();
+  private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<>();
+  private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<>();
   private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
   private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
@@ -151,7 +151,7 @@ public final class PreprocessingState {
   @Nonnull
   @MustNotContainNull
   public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
-    final List<ExcludeIfInfo> result = new ArrayList<ExcludeIfInfo>(deferredExcludeStack);
+    final List<ExcludeIfInfo> result = new ArrayList<>(deferredExcludeStack);
     deferredExcludeStack.clear();
     return result;
   }

@@ -95,7 +95,7 @@ public abstract class AbstractFunction implements ExpressionItem {
   protected static final AtomicLong UID_COUNTER = new AtomicLong(1);
 
   static {
-    final Map<String, AbstractFunction> map = new HashMap<String, AbstractFunction>();
+    final Map<String, AbstractFunction> map = new HashMap<>();
     for (final AbstractFunction f : ALL_FUNCTIONS) {
       if (map.put(f.getName(), f) != null) {
         throw new Error("Detected unexpected overriden function : " + f.getName());

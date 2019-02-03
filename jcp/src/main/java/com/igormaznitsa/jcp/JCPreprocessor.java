@@ -247,7 +247,7 @@ public final class JCPreprocessor {
   @Nonnull
   @MustNotContainNull
   private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
-    final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<PreprocessingState.ExcludeIfInfo>();
+    final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
         final long startTime = System.currentTimeMillis();
@@ -325,7 +325,7 @@ public final class JCPreprocessor {
   @Nonnull
   @MustNotContainNull
   private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final File[] srcDirs, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
-    final Collection<FileInfoContainer> result = new ArrayList<FileInfoContainer>();
+    final Collection<FileInfoContainer> result = new ArrayList<>();
 
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -358,7 +358,7 @@ public final class JCPreprocessor {
 
   @Nonnull
   private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
-    final Set<File> result = new HashSet<File>();
+    final Set<File> result = new HashSet<>();
     final File[] allowedFiles = dir.listFiles();
 
     final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);

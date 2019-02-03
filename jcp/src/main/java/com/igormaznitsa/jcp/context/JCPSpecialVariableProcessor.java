@@ -65,7 +65,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   @Nonnull
   @MustNotContainNull
   public static List<NameReferencePair> getReference() {
-    final List<NameReferencePair> result = new ArrayList<NameReferencePair>();
+    final List<NameReferencePair> result = new ArrayList<>();
 
     result.add(new NameReferencePair(VAR_VERSION, "The Preprocessor version"));
     result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to the current preprocessing file, read only"));

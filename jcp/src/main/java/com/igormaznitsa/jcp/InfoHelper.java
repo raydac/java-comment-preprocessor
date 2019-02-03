@@ -65,7 +65,7 @@ public final class InfoHelper {
   @Nonnull
   @MustNotContainNull
   public static List<String> makeTextForHelpInfo() {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     result.add(JCPreprocessor.class.getCanonicalName() + " [@cfg_file] [cli_directives]");
     result.add("");
