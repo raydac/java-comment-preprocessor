@@ -70,16 +70,16 @@ public final class TextFileDataContainer {
   @Nonnull
   @MustNotContainNull
   public String[] getText() {
-    return text.clone();
+    return this.text.clone();
   }
 
   @Nonnull
   public File getFile() {
-    return file;
+    return this.file;
   }
 
   public void reset() {
-    nextStringIndex = 0;
+    this.nextStringIndex = 0;
   }
 
   public boolean isPresentedNextLineOnReadString() {
@@ -88,15 +88,15 @@ public final class TextFileDataContainer {
 
   @Nullable
   public String nextLine() {
-    if (nextStringIndex >= text.length) {
+    if (this.nextStringIndex >= this.text.length) {
       return null;
     } else {
-      return text[nextStringIndex++];
+      return this.text[this.nextStringIndex++];
     }
   }
 
   public int getLastReadStringIndex() {
-    return nextStringIndex - 1;
+    return this.nextStringIndex - 1;
   }
 
   public int getNextStringIndex() {

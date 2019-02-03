@@ -44,7 +44,23 @@ public final class PreprocessorExceptionTest {
       container.preprocessFile(null, context);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
-      assertEquals("Must have the right line number", 17, expected.getStringIndex());
+      assertEquals("Expected correct line number", 17, expected.getStringIndexStartedFromOne());
+    }
+  }
+
+  @Test
+  public void testExceptionStringIndex_WrongBracketClosing() throws Exception {
+    final File file = new File(this.getClass().getResource("wrong_bracket_closing.txt").toURI());
+
+    final PreprocessorContext context = new PreprocessorContext();
+    context.setFileOutputDisabled(true);
+
+    final FileInfoContainer container = new FileInfoContainer(file, "test", false);
+    try {
+      container.preprocessFile(null, context);
+      fail("Must throw PreprocessorException");
+    } catch (PreprocessorException expected) {
+      assertEquals("Expected correct line number", 17, expected.getStringIndexStartedFromOne());
     }
   }
 
@@ -63,10 +79,10 @@ public final class PreprocessorExceptionTest {
     } catch (PreprocessorException expected) {
       final FilePositionInfo[] fileStack = expected.getIncludeChain();
       assertEquals("Must have depth 2", 2, fileStack.length);
-      assertEquals("String index in the including file is 26", 25, fileStack[1].getStringIndex());
-      assertEquals("String index in the wrong bracket file is 15", 16, fileStack[0].getStringIndex());
+      assertEquals("String index in the including file is 26", 26, fileStack[1].getStringIndexForHuman());
+      assertEquals("String index in the wrong bracket file is 15", 17, fileStack[0].getStringIndexForHuman());
 
-      assertEquals("Must have the right line number", 17, expected.getStringIndex());
+      assertEquals("Expected correct line number", 17, expected.getStringIndexStartedFromOne());
     }
   }
 }

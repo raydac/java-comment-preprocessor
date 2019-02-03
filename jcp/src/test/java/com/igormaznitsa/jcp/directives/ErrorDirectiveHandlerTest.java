@@ -40,7 +40,7 @@ public class ErrorDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
     } catch (Exception ex) {
       Mockito.verify(mock).error("string2");
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-      assertEquals(2, pp.getIncludeChain()[0].getStringIndex());
+      assertEquals(3, pp.getIncludeChain()[0].getStringIndexForHuman());
     }
   }
 

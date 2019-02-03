@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 
 public final class JCPreprocessorTest {
 
-  private void assertGVDFPreprocessorException(final String file, final int stringIndex) throws Exception {
+  private void assertGVDFPreprocessorException(final String file, final int stringIndexStartedFromOne) throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
     context.addConfigFile(new File(this.getClass().getResource(file).toURI()));
     final JCPreprocessor preprocessor = new JCPreprocessor(context);
@@ -48,7 +48,7 @@ public final class JCPreprocessorTest {
       preprocessor.processCfgFiles();
       fail("Must throw a PreprocessorException");
     } catch (PreprocessorException expected) {
-      if (stringIndex != expected.getStringIndex()) {
+      if (stringIndexStartedFromOne != expected.getStringIndexStartedFromOne()) {
         fail("Wrong error string index [" + expected.toString() + ']');
       }
     }
