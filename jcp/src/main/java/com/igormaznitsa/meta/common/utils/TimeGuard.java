@@ -220,14 +220,8 @@ public final class TimeGuard {
     final int stackDepth = ThreadUtils.stackDepth();
 
     final List<TimeData> list = REGISTRY.get();
-    final Iterator<TimeData> iterator = list.iterator();
 
-    while (iterator.hasNext()) {
-      final TimeData timeWatchItem = iterator.next();
-      if (timeWatchItem.getDetectedStackDepth() >= stackDepth) {
-        iterator.remove();
-      }
-    }
+    list.removeIf(timeWatchItem -> timeWatchItem.getDetectedStackDepth() >= stackDepth);
     if (list.isEmpty()) {
       REGISTRY.remove();
     }

@@ -47,8 +47,8 @@ public abstract class AbstractOperator implements ExpressionItem {
 
   @Nonnull
   @MustNotContainNull
-  public static AbstractOperator [] getAllOperators(){
-    if ( allOperators == null) {
+  public static AbstractOperator[] getAllOperators() {
+    if (allOperators == null) {
       allOperators = new AbstractOperator[] {
           new OperatorEQU(),
           new OperatorGREAT(),

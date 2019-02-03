@@ -530,7 +530,7 @@ public class FileInfoContainer {
   protected AfterDirectiveProcessingBehaviour processDirective(@Nonnull final PreprocessingState state, @Nonnull final String directiveString, @Nonnull final PreprocessorContext context, final boolean firstPass) throws IOException {
     final boolean executionEnabled = state.isDirectiveCanBeProcessed();
 
-    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
+    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.getAllDirectives()) {
       final String name = handler.getName();
       if (directiveString.startsWith(name)) {
         if ((firstPass && !handler.isGlobalPhaseAllowed()) || (!firstPass && !handler.isPreprocessingPhaseAllowed())) {

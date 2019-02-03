@@ -199,14 +199,8 @@ public final class Deferrers {
     final int stackDepth = ThreadUtils.stackDepth();
 
     final List<Deferred> list = REGISTRY.get();
-    final Iterator<Deferred> iterator = list.iterator();
 
-    while (iterator.hasNext()) {
-      final Deferred deferred = iterator.next();
-      if (deferred.getStackDepth() >= stackDepth) {
-        iterator.remove();
-      }
-    }
+    list.removeIf(deferred -> deferred.getStackDepth() >= stackDepth);
     if (list.isEmpty()) {
       REGISTRY.remove();
     }

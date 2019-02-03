@@ -55,7 +55,10 @@ public abstract class AbstractFunction implements ExpressionItem {
    * The string contains the prefix for all executing methods of functions
    */
   public static final String EXECUTION_PREFIX = "execute";
-
+  /**
+   * Inside counter to generate UID for some cases
+   */
+  protected static final AtomicLong UID_COUNTER = new AtomicLong(1);
   /**
    * Inside array contains all functions supported by the preprocessor
    */
@@ -105,11 +108,6 @@ public abstract class AbstractFunction implements ExpressionItem {
     }
     return functionNameMap;
   }
-
-  /**
-   * Inside counter to generate UID for some cases
-   */
-  protected static final AtomicLong UID_COUNTER = new AtomicLong(1);
 
   /**
    * Allows to find a function handler instance for its class

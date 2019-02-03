@@ -358,36 +358,37 @@ public final class JCPreprocessor {
   private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
     final Set<File> result = new HashSet<>();
     final File[] allowedFiles = dir.listFiles();
+    if (allowedFiles != null) {
+      final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);
 
-    final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);
+      for (final File file : allowedFiles) {
+        if (file.isDirectory()) {
+          boolean process = true;
 
-    for (final File file : allowedFiles) {
-      if (file.isDirectory()) {
-        boolean process = true;
+          final String folderPath = file.getCanonicalPath();
 
-        final String folderPath = file.getCanonicalPath();
+          String excludingPattern = null;
 
-        String excludingPattern = null;
+          if (excludedFolderPatterns.length != 0) {
+            final String subPathInBase = folderPath.substring(normalizedBasePath.length());
 
-        if (excludedFolderPatterns.length != 0) {
-          final String subPathInBase = folderPath.substring(normalizedBasePath.length());
-
-          for (final String s : excludedFolderPatterns) {
-            if (antPathMatcher.match(s, subPathInBase)) {
-              excludingPattern = s;
-              process = false;
-              break;
+            for (final String s : excludedFolderPatterns) {
+              if (antPathMatcher.match(s, subPathInBase)) {
+                excludingPattern = s;
+                process = false;
+                break;
+              }
             }
           }
-        }
 
-        if (process) {
-          result.addAll(findAllFiles(baseFolderCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
+          if (process) {
+            result.addAll(findAllFiles(baseFolderCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
+          } else {
+            this.context.logForVerbose("Folder '" + folderPath + "' excluded for pattern '" + excludingPattern + "'");
+          }
         } else {
-          this.context.logForVerbose("Folder '" + folderPath + "' excluded for pattern '" + excludingPattern + "'");
+          result.add(file);
         }
-      } else {
-        result.add(file);
       }
     }
     return result;

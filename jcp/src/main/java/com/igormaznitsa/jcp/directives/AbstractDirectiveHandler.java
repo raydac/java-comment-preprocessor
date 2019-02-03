@@ -22,7 +22,7 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.meta.annotation.Warning;
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
 
@@ -58,46 +58,54 @@ public abstract class AbstractDirectiveHandler {
   /**
    * The array contains all directives of the preprocessor
    */
-  @Warning("DO NOT CHANGE ORDER! IT MAKES SENSE!")
-  public static final AbstractDirectiveHandler[] DIRECTIVES = new AbstractDirectiveHandler[] {
-      new LocalDirectiveHandler(),
-      new IfDefinedDirectiveHandler(),
-      new IfNDefDirectiveHandler(),
-      new IfDefDirectiveHandler(),
-      new IfDirectiveHandler(),
-      new ElseDirectiveHandler(),
-      new EndIfDirectiveHandler(),
-      new WhileDirectiveHandler(),
-      new BreakDirectiveHandler(),
-      new ContinueDirectiveHandler(),
-      new EndDirectiveHandler(),
-      new ExitIfDirectiveHandler(),
-      new ExitDirectiveHandler(),
-      new OutDirDirectiveHandler(),
-      new OutEnabledDirectiveHandler(),
-      new OutNameDirectiveHandler(),
-      new OutDisabledDirectiveHandler(),
-      new CommentNextLineDirectiveHandler(),
-      new DefinelDirectiveHandler(),
-      new DefineDirectiveHandler(),
-      new UndefDirectiveHandler(),
-      new FlushDirectiveHandler(),
-      new IncludeDirectiveHandler(),
-      new ActionDirectiveHandler(),
-      new PostfixDirectiveHandler(),
-      new PrefixDirectiveHandler(),
-      new GlobalDirectiveHandler(),
-      new GlobalElseDirectiveHandler(),
-      new GlobalEndIfDirectiveHandler(),
-      new GlobalIfDirectiveHandler(),
-      new ExcludeIfDirectiveHandler(),
-      new ErrorDirectiveHandler(),
-      new WarningDirectiveHandler(),
-      new EchoDirectiveHandler(),
-      new MsgDirectiveHandler(),
-      new NoAutoFlushHandler(),
-      new AbortDirectiveHandler()
-  };
+  private static volatile AbstractDirectiveHandler[] allDiractives;
+
+  @Nonnull
+  @MustNotContainNull
+  public static AbstractDirectiveHandler[] getAllDirectives() {
+    if (allDiractives == null) {
+      allDiractives = new AbstractDirectiveHandler[] {
+          new LocalDirectiveHandler(),
+          new IfDefinedDirectiveHandler(),
+          new IfNDefDirectiveHandler(),
+          new IfDefDirectiveHandler(),
+          new IfDirectiveHandler(),
+          new ElseDirectiveHandler(),
+          new EndIfDirectiveHandler(),
+          new WhileDirectiveHandler(),
+          new BreakDirectiveHandler(),
+          new ContinueDirectiveHandler(),
+          new EndDirectiveHandler(),
+          new ExitIfDirectiveHandler(),
+          new ExitDirectiveHandler(),
+          new OutDirDirectiveHandler(),
+          new OutEnabledDirectiveHandler(),
+          new OutNameDirectiveHandler(),
+          new OutDisabledDirectiveHandler(),
+          new CommentNextLineDirectiveHandler(),
+          new DefinelDirectiveHandler(),
+          new DefineDirectiveHandler(),
+          new UndefDirectiveHandler(),
+          new FlushDirectiveHandler(),
+          new IncludeDirectiveHandler(),
+          new ActionDirectiveHandler(),
+          new PostfixDirectiveHandler(),
+          new PrefixDirectiveHandler(),
+          new GlobalDirectiveHandler(),
+          new GlobalElseDirectiveHandler(),
+          new GlobalEndIfDirectiveHandler(),
+          new GlobalIfDirectiveHandler(),
+          new ExcludeIfDirectiveHandler(),
+          new ErrorDirectiveHandler(),
+          new WarningDirectiveHandler(),
+          new EchoDirectiveHandler(),
+          new MsgDirectiveHandler(),
+          new NoAutoFlushHandler(),
+          new AbortDirectiveHandler()
+      };
+    }
+    return allDiractives;
+  }
 
   /**
    * Get the name of the directive without prefix

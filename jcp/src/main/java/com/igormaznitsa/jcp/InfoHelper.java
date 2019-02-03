@@ -79,7 +79,7 @@ public final class InfoHelper {
     result.add(DELIMITER);
 
     result.add("Preprocessor directives (THE PREPROCESSOR IS A TWO-PASS ONE)\n------------");
-    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.DIRECTIVES) {
+    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.getAllDirectives()) {
       result.add(makeDirectiveReference(handler));
     }
     result.add(DELIMITER);
