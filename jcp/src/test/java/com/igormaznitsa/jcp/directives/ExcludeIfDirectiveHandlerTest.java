@@ -34,7 +34,7 @@ public class ExcludeIfDirectiveHandlerTest extends AbstractDirectiveHandlerAccep
 
   @Override
   public void testExecution() throws Exception {
-    final List<ExcludeIfInfo> list = new ArrayList<ExcludeIfInfo>();
+    final List<ExcludeIfInfo> list = new ArrayList<>();
     executeGlobalPhase("directive_excludeif.txt", list);
     assertEquals("Must be two //#excludeif ", list.size(), 2);
     final ExcludeIfInfo info1 = list.get(1);

@@ -35,7 +35,7 @@ public class OperatorADDTest extends AbstractOperatorTest {
   public void testExecution() throws Exception {
     assertExecution(Value.valueOf(Long.valueOf(11)), "3+8");
     assertExecution(Value.valueOf("helloworld"), "\"hello\"+\"world\"");
-    assertExecution(Value.valueOf(Float.valueOf(2.2f)), "1.2+1");
+    assertExecution(Value.valueOf(2.2f), "1.2+1");
     assertExecution(Value.valueOf("1test"), "1+\"test\"");
     assertExecution(Value.valueOf("1.2test"), "1.2+\"test\"");
   }

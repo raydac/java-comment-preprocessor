@@ -43,12 +43,9 @@ public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
     SPY_CONTEXT = spy(new PreprocessorContext());
     final File thisRoot = new File(this.getClass().getResource("./").toURI());
 
-    doAnswer(new Answer<Object>() {
-      @Override
-      public Object answer(final InvocationOnMock invocation) throws Throwable {
-        final String name = (String) invocation.getArguments()[0];
-        return new File(thisRoot, name);
-      }
+    doAnswer((Answer<Object>) invocation -> {
+      final String name = (String) invocation.getArguments()[0];
+      return new File(thisRoot, name);
     }).when(SPY_CONTEXT).findFileInSourceFolder(any(String.class));
 
     OPENED_DOCUMENT_ID = new FunctionXML_OPEN().executeStr(SPY_CONTEXT, Value.valueOf("test.xml"));

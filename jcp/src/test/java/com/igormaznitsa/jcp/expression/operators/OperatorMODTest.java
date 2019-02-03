@@ -33,9 +33,9 @@ public class OperatorMODTest extends AbstractOperatorTest {
 
   @Override
   public void testExecution() throws Exception {
-    assertExecution(Value.valueOf(Long.valueOf(3L)), "3%8");
-    assertExecution(Value.valueOf(Long.valueOf(2L)), "8%3");
-    assertExecution(Value.valueOf(Float.valueOf(2.5f % 1.1f)), "2.5%1.1");
+    assertExecution(Value.valueOf(3L), "3%8");
+    assertExecution(Value.valueOf(2L), "8%3");
+    assertExecution(Value.valueOf(2.5f % 1.1f), "2.5%1.1");
   }
 
   @Override

@@ -107,7 +107,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0xfF"));
-    assertEquals("Must be 255", Value.valueOf(Long.valueOf(255L)), ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 255", Value.valueOf(255L), ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -148,7 +148,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final ExpressionItem[] items = new ExpressionItem[] {
         AbstractFunction.findForClass(FunctionXML_ATTR.class),
         ExpressionParser.SpecialItem.BRACKET_OPENING,
-        Value.valueOf(Float.valueOf(1.3f)),
+        Value.valueOf(1.3f),
         AbstractOperator.findForClass(OperatorMOD.class),
         AbstractFunction.findForClass(FunctionABS.class),
         ExpressionParser.SpecialItem.BRACKET_OPENING,
@@ -194,7 +194,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final ExpressionTree tree = parser.parse(Long.toString(Long.MIN_VALUE + 1), context);
 
     final ExpressionTreeElement root = tree.getRoot();
-    assertEquals("Root is Long.MIN_VALUE+1", Value.valueOf(Long.valueOf(Long.MIN_VALUE + 1)), root.getItem());
+    assertEquals("Root is Long.MIN_VALUE+1", Value.valueOf(Long.MIN_VALUE + 1), root.getItem());
   }
 
   @Test
@@ -206,7 +206,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     final ExpressionTreeElement root = tree.getRoot();
     assertEquals("Root is DIV", AbstractOperator.findForClass(OperatorDIV.class), root.getItem());
-    assertEquals("Right is 8", Value.valueOf(Long.valueOf(8L)), root.getChildForIndex(1).getItem());
+    assertEquals("Right is 8", Value.valueOf(8L), root.getChildForIndex(1).getItem());
 
     final ExpressionTreeElement left = root.getChildForIndex(0);
     assertEquals("Left is MUL", AbstractOperator.findForClass(OperatorMUL.class), left.getItem());

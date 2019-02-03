@@ -141,9 +141,9 @@ public class PreprocessTaskTest {
     antTask.setExcluded(TEST);
     final String[] splitted = TEST.split(",");
     final String[] contextExtensions = antTask.generatePreprocessorContext().getExcludedFileExtensions();
-    final Set<String> thoseExts = new HashSet<String>(Arrays.asList(contextExtensions));
+    final Set<String> thoseExts = new HashSet<>(Arrays.asList(contextExtensions));
     assertEquals("Must have the same size", splitted.length, thoseExts.size());
-    assertTrue("Must contains all extensions", new HashSet<String>(Arrays.asList(splitted)).containsAll(thoseExts));
+    assertTrue("Must contains all extensions", new HashSet<>(Arrays.asList(splitted)).containsAll(thoseExts));
   }
 
   @Test
@@ -152,9 +152,9 @@ public class PreprocessTaskTest {
     antTask.setProcessing(TEST);
     final String[] splitted = TEST.split(",");
     final String[] contextExtensions = antTask.generatePreprocessorContext().getProcessingFileExtensions();
-    final Set<String> thoseExts = new HashSet<String>(Arrays.asList(contextExtensions));
+    final Set<String> thoseExts = new HashSet<>(Arrays.asList(contextExtensions));
     assertEquals("Must have the same size", splitted.length, thoseExts.size());
-    assertTrue("Must contains all extensions", new HashSet<String>(Arrays.asList(splitted)).containsAll(thoseExts));
+    assertTrue("Must contains all extensions", new HashSet<>(Arrays.asList(splitted)).containsAll(thoseExts));
   }
 
   @Test

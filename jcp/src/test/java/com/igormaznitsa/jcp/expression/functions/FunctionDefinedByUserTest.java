@@ -48,16 +48,16 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
     context.setPreprocessorExtension(mock);
 
     when(mock.processUserFunction(eq("test"), any(Value[].class))).thenReturn(testResult);
-    when(mock.getUserFunctionArity(eq("test"))).thenReturn(Integer.valueOf(5));
+    when(mock.getUserFunctionArity(eq("test"))).thenReturn(5);
 
     assertEquals(testResult, Expression.evalExpression("$test(1,2,3,4,5+6)", context));
 
     verify(mock).processUserFunction(eq("test"), AdditionalMatchers.aryEq(new Value[] {
-        Value.valueOf(Long.valueOf(1L)),
-        Value.valueOf(Long.valueOf(2L)),
-        Value.valueOf(Long.valueOf(3L)),
-        Value.valueOf(Long.valueOf(4L)),
-        Value.valueOf(Long.valueOf(11L))}));
+        Value.valueOf(1L),
+        Value.valueOf(2L),
+        Value.valueOf(3L),
+        Value.valueOf(4L),
+        Value.valueOf(11L)}));
   }
 
   @Test
@@ -69,7 +69,7 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
     context.setPreprocessorExtension(mock);
 
     when(mock.processUserFunction(eq("test"), any(Value[].class))).thenReturn(testResult);
-    when(mock.getUserFunctionArity(eq("test"))).thenReturn(Integer.valueOf(0));
+    when(mock.getUserFunctionArity(eq("test"))).thenReturn(0);
 
     assertEquals(testResult, Expression.evalExpression("$test()", context));
 

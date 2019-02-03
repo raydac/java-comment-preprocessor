@@ -266,7 +266,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext, final VariablePair... globalVars) throws Exception {
     final List<String> preprocessingPart = parseStringForLines(text);
-    return insidePreprocessingAndMatching(THIS_CLASS_FILE, preprocessingPart, preprocessedText == null ? new ArrayList<String>() : preprocessedText, null, ext, null, false, globalVars);
+    return insidePreprocessingAndMatching(THIS_CLASS_FILE, preprocessingPart, preprocessedText == null ? new ArrayList<>() : preprocessedText, null, ext, null, false, globalVars);
   }
 
   public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger, final VariablePair... globalVars) throws Exception {
@@ -279,8 +279,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     final InputStream stream = new FileInputStream(file);
 
 
-    final List<String> preprocessingPart = new ArrayList<String>(100);
-    final List<String> etalonPart = new ArrayList<String>(100);
+    final List<String> preprocessingPart = new ArrayList<>(100);
+    final List<String> etalonPart = new ArrayList<>(100);
 
     boolean readFirestPart = true;
     try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF8"), 1024)) {
@@ -307,6 +307,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       }
     }
 
-    return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<String>(), etalonPart, ext, logger, keepLines, globalVars);
+    return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<>(), etalonPart, ext, logger, keepLines, globalVars);
   }
 }

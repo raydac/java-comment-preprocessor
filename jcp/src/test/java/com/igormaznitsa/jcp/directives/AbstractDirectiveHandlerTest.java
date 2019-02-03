@@ -32,7 +32,7 @@ public class AbstractDirectiveHandlerTest {
 
   @Test
   public void testPotentialConflictsBetweenDirectives() {
-    final List<String> processed = new ArrayList<String>();
+    final List<String> processed = new ArrayList<>();
     for (final AbstractDirectiveHandler h : AbstractDirectiveHandler.DIRECTIVES) {
       final String name = h.getName();
       for (final String p : processed) {

@@ -33,7 +33,7 @@ public class FunctionSTR2INTTest extends AbstractFunctionTest {
 
   @Test
   public void testExecute_Str() throws Exception {
-    assertFunction("str2int(\"100\")", Value.valueOf(Long.valueOf(100L)));
+    assertFunction("str2int(\"100\")", Value.valueOf(100L));
     assertFunction("str2int(\"0\")", Value.INT_ZERO);
     assertDestinationFolderEmpty();
   }

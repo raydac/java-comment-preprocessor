@@ -33,8 +33,8 @@ public class OperatorMULTest extends AbstractOperatorTest {
 
   @Override
   public void testExecution() throws Exception {
-    assertExecution(Value.valueOf(Long.valueOf(24L)), "3*8");
-    assertExecution(Value.valueOf(Float.valueOf(2.5f * 1.1f)), "2.5*1.1");
+    assertExecution(Value.valueOf(24L), "3*8");
+    assertExecution(Value.valueOf(2.5f * 1.1f), "2.5*1.1");
   }
 
   @Test

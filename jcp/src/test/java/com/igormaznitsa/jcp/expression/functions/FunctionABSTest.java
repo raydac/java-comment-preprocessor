@@ -40,7 +40,7 @@ public class FunctionABSTest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_Float() throws Exception {
-    assertFunction("abs(-10.5)", Value.valueOf(Float.valueOf(10.5f)));
+    assertFunction("abs(-10.5)", Value.valueOf(10.5f));
     assertDestinationFolderEmpty();
   }
 

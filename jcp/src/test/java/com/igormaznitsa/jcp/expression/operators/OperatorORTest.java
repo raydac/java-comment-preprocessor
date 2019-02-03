@@ -56,7 +56,7 @@ public class OperatorORTest extends AbstractOperatorTest {
     assertExecution(Value.BOOLEAN_TRUE, "true||false");
     assertExecution(Value.BOOLEAN_TRUE, "false||true");
     assertExecution(Value.BOOLEAN_TRUE, "true||true");
-    assertExecution(Value.valueOf(Long.valueOf(3L)), "1||2");
+    assertExecution(Value.valueOf(3L), "1||2");
   }
 
   @Override

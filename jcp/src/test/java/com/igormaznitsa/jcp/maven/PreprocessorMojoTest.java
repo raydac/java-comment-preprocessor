@@ -38,8 +38,8 @@ import static org.junit.Assert.assertArrayEquals;
 public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
   private static void assertArrayEqualsWithoutOrders(final Object[] array1, final Object[] array2) {
-    final List<Object> list1 = new ArrayList<Object>(Arrays.asList(array1));
-    final List<Object> list2 = new ArrayList<Object>(Arrays.asList(array2));
+    final List<Object> list1 = new ArrayList<>(Arrays.asList(array1));
+    final List<Object> list2 = new ArrayList<>(Arrays.asList(array2));
 
     while (!list1.isEmpty() && !list2.isEmpty()) {
       final Object list1obj = list1.get(0);

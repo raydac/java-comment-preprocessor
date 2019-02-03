@@ -131,7 +131,7 @@ public final class JCPreprocessorTest {
 
   @Test
   public void testCLIHandlerNameConflicts() {
-    final List<String> checked = new ArrayList<String>();
+    final List<String> checked = new ArrayList<>();
     for (final CommandLineHandler h : JCPreprocessor.COMMAND_LINE_HANDLERS) {
       final String name = h.getKeyName();
       for (final String l : checked) {

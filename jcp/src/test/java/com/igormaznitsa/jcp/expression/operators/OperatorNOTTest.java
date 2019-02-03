@@ -54,7 +54,7 @@ public class OperatorNOTTest extends AbstractOperatorTest {
   public void testExecution() throws Exception {
     assertExecution(Value.BOOLEAN_TRUE, "!false");
     assertExecution(Value.BOOLEAN_FALSE, "!true");
-    assertExecution(Value.valueOf(Long.valueOf(0xFFFFFFFFFFFFFFFFL ^ 10L)), "!10");
+    assertExecution(Value.valueOf(0xFFFFFFFFFFFFFFFFL ^ 10L), "!10");
   }
 
   @Override

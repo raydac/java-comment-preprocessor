@@ -77,12 +77,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
 
   protected PreprocessorContext preparePreprocessorContext(final String sourceFolder) throws Exception {
-    return this.preparePreprocessorContext(sourceFolder, new ContextDataProvider() {
-      @Override
-      public boolean getAllowSpaceBeforeDirectiveFlag() {
-        return false;
-      }
-    });
+    return this.preparePreprocessorContext(sourceFolder, () -> false);
   }
 
   protected PreprocessorContext preparePreprocessorContext(final String sourceFolder, final ContextDataProvider provider) throws Exception {

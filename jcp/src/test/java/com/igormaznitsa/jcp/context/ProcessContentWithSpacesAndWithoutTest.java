@@ -39,12 +39,7 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
 
   @Test
   public void testProcess_NoSpaced_SpacesAllowed() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), new ContextDataProvider() {
-      @Override
-      public boolean getAllowSpaceBeforeDirectiveFlag() {
-        return true;
-      }
-    });
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
     final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
     assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
   }
@@ -62,12 +57,7 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
 
   @Test
   public void testProcess_Spaced_SpacesAllowed() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), new ContextDataProvider() {
-      @Override
-      public boolean getAllowSpaceBeforeDirectiveFlag() {
-        return true;
-      }
-    });
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
     final String text = Expression.evalExpression("evalfile(\"./spacedFile.txt\")", context).asString();
     assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
   }

@@ -46,7 +46,7 @@ public class PreprocessorContextTest {
   private static final Random RND = new Random(776655);
 
   private static Set<Field> extractDeclaredNonStaticNonFinalFields(final Class<?> klazz) throws Exception {
-    final Set<Field> result = new HashSet<Field>();
+    final Set<Field> result = new HashSet<>();
     for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
       if ((f.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) != 0) {
         continue;
@@ -57,7 +57,7 @@ public class PreprocessorContextTest {
   }
 
   private static Map<Field, Object> extractValues(final PreprocessorContext context) throws Exception {
-    final Map<Field, Object> result = new HashMap<Field, Object>();
+    final Map<Field, Object> result = new HashMap<>();
     for (final Field f : extractDeclaredNonStaticNonFinalFields(PreprocessorContext.class)) {
       f.setAccessible(true);
       result.put(f, f.get(context));
@@ -198,7 +198,7 @@ public class PreprocessorContextTest {
           arr[i] = randomString();
         }
         try {
-          f.set(context, new HashSet<String>(Arrays.asList(arr)));
+          f.set(context, new HashSet<>(Arrays.asList(arr)));
         } catch (Exception ex) {
           ex.printStackTrace();
           fail("Can't set value to '" + f.getName() + '\'');

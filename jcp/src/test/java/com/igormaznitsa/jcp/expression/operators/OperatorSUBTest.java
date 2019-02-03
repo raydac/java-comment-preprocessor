@@ -54,9 +54,9 @@ public class OperatorSUBTest extends AbstractOperatorTest {
   public void testExecution() throws Exception {
     assertExecution(Value.INT_ZERO, "10-10");
     assertExecution(Value.INT_THREE, "7-4");
-    assertExecution(Value.valueOf(Float.valueOf(1.5f - 1.2f)), "1.5-1.2");
-    assertExecution(Value.valueOf(Float.valueOf(1.0f - 1.2f)), "1-1.2");
-    assertExecution(Value.valueOf(Float.valueOf(-1.2f)), "-1.2");
+    assertExecution(Value.valueOf(1.5f - 1.2f), "1.5-1.2");
+    assertExecution(Value.valueOf(1.0f - 1.2f), "1-1.2");
+    assertExecution(Value.valueOf(-1.2f), "-1.2");
   }
 
   @Override

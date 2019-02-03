@@ -33,9 +33,9 @@ public class OperatorDIVTest extends AbstractOperatorTest {
 
   @Override
   public void testExecution() throws Exception {
-    assertExecution(Value.valueOf(Long.valueOf(5L)), "10/2");
-    assertExecution(Value.valueOf(Float.valueOf(1.5f)), "3.0/2");
-    assertExecution(Value.valueOf(Long.valueOf(1L)), "3/2");
+    assertExecution(Value.valueOf(5L), "10/2");
+    assertExecution(Value.valueOf(1.5f), "3.0/2");
+    assertExecution(Value.valueOf(1L), "3/2");
   }
 
   @Test

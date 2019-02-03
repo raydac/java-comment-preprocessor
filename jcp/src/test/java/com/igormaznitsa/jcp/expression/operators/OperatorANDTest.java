@@ -33,9 +33,9 @@ public class OperatorANDTest extends AbstractOperatorTest {
 
   @Test
   public void testExecution() throws Exception {
-    assertExecution(Value.valueOf(Long.valueOf(1L)), "3 && 1");
-    assertExecution(Value.valueOf(Long.valueOf(0L)), "1 && 0");
-    assertExecution(Value.valueOf(Long.valueOf(1L)), "1 && 3");
+    assertExecution(Value.valueOf(1L), "3 && 1");
+    assertExecution(Value.valueOf(0L), "1 && 0");
+    assertExecution(Value.valueOf(1L), "1 && 3");
 
     assertExecution(Value.valueOf(Boolean.TRUE), "true && true");
     assertExecution(Value.valueOf(Boolean.FALSE), "false && true");

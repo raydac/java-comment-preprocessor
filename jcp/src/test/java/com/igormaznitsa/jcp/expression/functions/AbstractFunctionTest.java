@@ -43,7 +43,7 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
   }
 
   protected static Map<String, Value> var(final String name, final Value val) {
-    final Map<String, Value> result = new HashMap<String, Value>();
+    final Map<String, Value> result = new HashMap<>();
     result.put(name, val);
     return result;
   }
