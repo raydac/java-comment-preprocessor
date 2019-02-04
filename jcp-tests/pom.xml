@@ -16,6 +16,7 @@
         <module>jcp-test-ant</module>
         <module>jcp-test-maven</module>
         <module>jcp-test-static-site</module>
+        <module>jcp-test-javassist</module>
     </modules>
 
     <dependencies>
