@@ -81,6 +81,7 @@ public class FunctionBINFILE extends AbstractFunction {
         for (final byte b : array) {
           if (result.length() > 0) {
             result.append(',');
+            visibleLineCharsCounter++;
           }
 
           if (addNextLine) {
@@ -104,8 +105,9 @@ public class FunctionBINFILE extends AbstractFunction {
             default:
               throw new Error("Unexpected type : " + type);
           }
+          visibleLineCharsCounter += result.length() - initialBufferLength;
 
-          if (lineLength > 0 && result.length() >= endLinePos) {
+          if (lineLength > 0 && visibleLineCharsCounter >= lineLength) {
             addNextLine = true;
             endLinePos = result.length() + lineLength;
           }

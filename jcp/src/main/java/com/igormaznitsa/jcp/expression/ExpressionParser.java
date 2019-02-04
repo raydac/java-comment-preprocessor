@@ -298,6 +298,19 @@ public final class ExpressionParser {
     return result;
   }
 
+  private int hex2int(@Nonnull final PreprocessorContext context, final char chr) {
+    final int result;
+    if (Character.isDigit(chr)) {
+      result = chr - '0';
+    } else {
+      result = 10 + (chr - Character.toLowerCase(chr) - 'a');
+      if (result < 10 || result > 15) {
+        throw context.makeException("Unexpected hex digit detected: " + chr, null);
+      }
+    }
+    return result;
+  }
+
   /**
    * Read the next item from the reader
    *
@@ -400,6 +413,23 @@ public final class ExpressionParser {
           }
         }
         break;
+        case UNICODE_DIGIT0:
+          unicodeChar = (char) (hex2int(context, chr) << 12);
+          state = ParserState.UNICODE_DIGIT1;
+          break;
+        case UNICODE_DIGIT1:
+          unicodeChar = (char) (unicodeChar | (hex2int(context, chr) << 8));
+          state = ParserState.UNICODE_DIGIT2;
+          break;
+        case UNICODE_DIGIT2:
+          unicodeChar = (char) (unicodeChar | (hex2int(context, chr) << 4));
+          state = ParserState.UNICODE_DIGIT3;
+          break;
+        case UNICODE_DIGIT3:
+          unicodeChar = (char) (unicodeChar | hex2int(context, chr));
+          state = ParserState.STRING;
+          builder.append(unicodeChar);
+          break;
         case NUMBER: {
           if (Character.isDigit(chr)) {
             builder.append(chr);
@@ -478,6 +508,11 @@ public final class ExpressionParser {
 
     if (!found) {
       switch (state) {
+        case UNICODE_DIGIT0:
+        case UNICODE_DIGIT1:
+        case UNICODE_DIGIT2: {
+          throw context.makeException("Non-completed unicode char has been detected", null);
+        }
         case SPECIAL_CHAR:
         case STRING: {
           throw context.makeException("Unclosed string has been detected", null);
