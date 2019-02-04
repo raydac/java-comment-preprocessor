@@ -9,6 +9,7 @@
 
 # Changelog
 - **6.2.0 (SNAPSHOT)**
+  - added function `STR esc(STR)`
   - fixed build under JDK 9+
   - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)
   - **minimal needed Java version changed to 1.8**

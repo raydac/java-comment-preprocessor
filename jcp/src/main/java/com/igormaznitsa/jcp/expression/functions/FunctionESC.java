@@ -104,7 +104,7 @@ public final class FunctionESC extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "escapes string to be compatible with string values";
+    return "escapes string";
   }
 
   @Override
