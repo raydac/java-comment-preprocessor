@@ -66,8 +66,9 @@ public class FunctionBINFILE extends AbstractFunction {
       array = deflate(array);
     }
 
-    int endLinePos = lineLength;
     boolean addNextLine = false;
+
+    int visibleLineCharsCounter = 0;
 
     switch (type) {
       case BASE64: {
@@ -86,9 +87,11 @@ public class FunctionBINFILE extends AbstractFunction {
 
           if (addNextLine) {
             addNextLine = false;
+            visibleLineCharsCounter = 0;
             result.append(endOfLine);
           }
 
+          final int initialBufferLength = result.length();
           switch (type) {
             case BYTEARRAY: {
               result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
@@ -109,10 +112,8 @@ public class FunctionBINFILE extends AbstractFunction {
 
           if (lineLength > 0 && visibleLineCharsCounter >= lineLength) {
             addNextLine = true;
-            endLinePos = result.length() + lineLength;
           }
         }
-
       }
       break;
       default:

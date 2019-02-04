@@ -327,6 +327,7 @@ public final class ExpressionParser {
     final StringBuilder builder = new StringBuilder(12);
 
     boolean found = false;
+    char unicodeChar = 0;
 
     while (!found) {
       final int data = reader.read();
@@ -477,11 +478,14 @@ public final class ExpressionParser {
             case '\'':
               builder.append('\'');
               break;
+            case 'u':
+              state = ParserState.UNICODE_DIGIT0;
+              break;
             default: {
               throw context.makeException("Unsupported special char detected \'\\" + chr + '\'', null);
             }
           }
-          state = ParserState.STRING;
+          state = state == ParserState.SPECIAL_CHAR ? ParserState.STRING : state;
         }
         break;
         case STRING: {
@@ -515,7 +519,7 @@ public final class ExpressionParser {
         }
         case SPECIAL_CHAR:
         case STRING: {
-          throw context.makeException("Unclosed string has been detected", null);
+          throw context.makeException("Non-closed string has been detected", null);
         }
         default:
           return null;
@@ -597,9 +601,7 @@ public final class ExpressionParser {
   }
 
   /**
-   * The enumeration describes inside states of the parses
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+   * Internal parser states.
    */
   private enum ParserState {
 
@@ -609,6 +611,10 @@ public final class ExpressionParser {
     FLOAT_NUMBER,
     STRING,
     SPECIAL_CHAR,
+    UNICODE_DIGIT0,
+    UNICODE_DIGIT1,
+    UNICODE_DIGIT2,
+    UNICODE_DIGIT3,
     VALUE_OR_FUNCTION,
     OPERATOR
   }

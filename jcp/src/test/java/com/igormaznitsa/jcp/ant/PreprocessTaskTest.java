@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.ant;
 
+import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.ant.PreprocessTask.Global;
 import com.igormaznitsa.jcp.expression.Value;
 import org.apache.tools.ant.Project;
@@ -111,7 +112,7 @@ public class PreprocessTaskTest {
   @Test
   public void testSetDestination() throws Exception {
     antTask.setDestination(THIS_DIRECTORY);
-    assertEquals("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
+      TestUtils.assertFilePath("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
   }
 
   @Test

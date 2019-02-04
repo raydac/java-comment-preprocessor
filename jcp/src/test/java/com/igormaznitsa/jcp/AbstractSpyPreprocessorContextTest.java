@@ -81,18 +81,19 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
 
   protected PreprocessorContext preparePreprocessorContext(final String sourceFolder, final ContextDataProvider provider) throws Exception {
-    final PreprocessorContext preprocessorcontext = PowerMockito.spy(new PreprocessorContext());
+    final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext());
     final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
+    
     PowerMockito.when(stateMock.getRootFileInfo()).thenReturn(new FileInfoContainer(new File("src/fake.java"), "fake.java", false));
     PowerMockito.when(stateMock.getPrinter()).thenReturn(new ResetablePrinter(10));
 
-    PowerMockito.when(preprocessorcontext.getPreprocessingState()).thenReturn(stateMock);
+    PowerMockito.when(resultContext.getPreprocessingState()).thenReturn(stateMock);
 
-    preprocessorcontext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
-    preprocessorcontext.setSourceDirectories(sourceFolder);
-    preprocessorcontext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
-
-    return preprocessorcontext;
+    resultContext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
+    resultContext.setSourceDirectories(sourceFolder);
+    resultContext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
+    
+    return resultContext;
   }
 
   public interface ContextDataProvider {

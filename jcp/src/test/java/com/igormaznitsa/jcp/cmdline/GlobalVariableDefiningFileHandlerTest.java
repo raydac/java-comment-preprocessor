@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
@@ -52,7 +53,7 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
     final File[] configFiles = context.getConfigFiles();
 
     assertEquals("File must be added", 1, configFiles.length);
-    assertEquals("File must be equals", testFile, configFiles[0]);
+    TestUtils.assertFilePath("File must be equals", testFile, configFiles[0]);
   }
 
   @Test

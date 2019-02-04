@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
+import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import org.junit.Test;
@@ -34,14 +35,14 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
   public void testProcess_NoSpaced_SpacesNotAllowed() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
-    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 
   @Test
   public void testProcess_NoSpaced_SpacesAllowed() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
     final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
-    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 
   @Test
@@ -59,7 +60,7 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
   public void testProcess_Spaced_SpacesAllowed() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
     final String text = Expression.evalExpression("evalfile(\"./spacedFile.txt\")", context).asString();
-    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", text);
+    assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 
 

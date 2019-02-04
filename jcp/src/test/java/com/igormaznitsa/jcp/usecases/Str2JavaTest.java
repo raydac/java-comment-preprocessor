@@ -34,4 +34,8 @@ public class Str2JavaTest extends AbstractUseCaseTest {
     assertEquals(1, stat.getNumberOfPreprocessed());
   }
 
+    @Override
+    protected boolean isIgnoreEolInCheck() {
+        return true;
+    }
 }

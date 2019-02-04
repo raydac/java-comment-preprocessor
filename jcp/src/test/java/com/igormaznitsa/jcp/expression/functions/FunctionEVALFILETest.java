@@ -25,6 +25,8 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.io.File;
+import org.apache.commons.text.StringEscapeUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,11 +36,14 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   private static final FunctionEVALFILE HANDLER = new FunctionEVALFILE();
 
+  private static final String TEST_EVAL_PATH = "/eval/TestEval.java".replace('/', File.separatorChar);
+  private static final String TEST_EVAL_WITH_INCLUDED_PATH = "/eval/TestEvalWithIncluded.java".replace('/', File.separatorChar);
+  
   @Test
   public void testExecution_ErrorForUndefinedVariable() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     try {
-      Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
+      Expression.evalExpression(String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     } catch (Exception ex) {
       assertTrue(getRootCause(ex).getMessage().contains("hello_world"));
     }
@@ -59,7 +64,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final String theTestFolder = getCurrentTestFolder();
     final PreprocessorContext context = preparePreprocessorContext(theTestFolder);
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression("evalfile(\"" + theTestFolder + "/eval/TestEval.java\")", context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")", StringEscapeUtils.escapeJava(theTestFolder+TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
@@ -68,7 +73,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
   public void testExecution_IncludedEvalCall() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression("evalfile(\"./eval/TestEvalWithIncluded.java\")", context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")",StringEscapeUtils.escapeJava(TEST_EVAL_WITH_INCLUDED_PATH)), context);
     final String resultstr = result.asString().trim();
     assertTrue(resultstr.startsWith("System.out.println(\"Hello World!\");"));
     assertTrue(resultstr.endsWith("TestEvalWithIncluded.java"));
@@ -79,7 +84,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
   public void testExecution_VisibilityGlobalVariable() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")",StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
@@ -89,7 +94,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setGlobalVariable("includemeth", Value.valueOf(true));
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     assertTrue(result.asString().contains("public void main(String ... args){"));
     assertDestinationFolderEmpty();
   }

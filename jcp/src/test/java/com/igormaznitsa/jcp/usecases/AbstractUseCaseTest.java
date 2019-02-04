@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -75,7 +76,7 @@ public abstract class AbstractUseCaseTest {
 
   public abstract void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception;
 
-  private void assertFolder(final File folder1, final File folder2) throws Exception {
+  private void assertFolder(final File folder1, final File folder2, final boolean ignoreEOL) throws Exception {
     assertTrue("Folder 1 must be folder", folder1.isDirectory());
     assertTrue("Folder 2 must be folder", folder2.isDirectory());
 
@@ -94,13 +95,13 @@ public abstract class AbstractUseCaseTest {
         if (!f2.isDirectory()) {
           fail("Must be file : " + f2.getAbsolutePath());
         } else {
-          assertFolder(f, f2);
+          assertFolder(f, f2, ignoreEOL);
         }
       } else {
-        final boolean equalsLength = f.length() == f2.length();
+        final boolean equalsLength = ignoreEOL ? true : f.length() == f2.length();
         if (!equalsLength) {
-          final String fileOne = FileUtils.readFileToString(f, "UTF-8");
-          final String fileTwo = FileUtils.readFileToString(f2, "UTF-8");
+          String fileOne = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
+          String fileTwo = FileUtils.readFileToString(f2, StandardCharsets.UTF_8);
 
           System.err.println("FILE ONE=====================");
           System.err.println(fileOne);
@@ -110,9 +111,13 @@ public abstract class AbstractUseCaseTest {
           System.err.println(fileTwo);
           System.err.println("=============================");
 
-          assertEquals("File content must be same", fileOne, fileTwo);
+          if (ignoreEOL) {
+            assertEquals("File content must be same", fileOne.replace('\r', ' ').replace('\n', ' '), fileTwo.replace('\r', ' ').replace('\n', ' '));
+          } else {
+            assertEquals("File content must be same", fileOne, fileTwo);
+          }
         }
-        assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f), FileUtils.checksumCRC32(f2));
+        if (!ignoreEOL) assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f), FileUtils.checksumCRC32(f2));
       }
     }
   }
@@ -126,6 +131,10 @@ public abstract class AbstractUseCaseTest {
 
   }
 
+  protected boolean isIgnoreEolInCheck() {
+      return false;
+  }
+  
   @Test
   public final void main() throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
@@ -142,7 +151,7 @@ public abstract class AbstractUseCaseTest {
     JCPreprocessor preprocessor = new JCPreprocessor(context);
     final JCPreprocessor.PreprocessingStatistics stat = preprocessor.execute();
 
-    assertFolder(etalonFolder, tmpResultFolder.getRoot());
+    assertFolder(etalonFolder, tmpResultFolder.getRoot(), this.isIgnoreEolInCheck());
 
     check(context, stat);
   }

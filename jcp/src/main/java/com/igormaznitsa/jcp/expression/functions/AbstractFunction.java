@@ -72,6 +72,7 @@ public abstract class AbstractFunction implements ExpressionItem {
       allFunctions = new AbstractFunction[] {
           new FunctionABS(),
           new FunctionROUND(),
+          new FunctionESC(),
           new FunctionSTR2INT(),
           new FunctionSTR2WEB(),
           new FunctionSTR2CSV(),
