@@ -43,8 +43,8 @@ public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorCo
 
     final EnvironmentVariableProcessor test = new EnvironmentVariableProcessor();
 
-    assertEquals("Must be equals", javaVersion, test.getVariable("env.java.version", context).asString());
-    assertEquals("Must be equals", osName, test.getVariable("env.os.name", context).asString());
+    assertEquals("Must be equal", javaVersion, test.getVariable("env.java.version", context).asString());
+    assertEquals("Must be equal", osName, test.getVariable("env.os.name", context).asString());
   }
 
   @Test(expected = PreprocessorException.class)

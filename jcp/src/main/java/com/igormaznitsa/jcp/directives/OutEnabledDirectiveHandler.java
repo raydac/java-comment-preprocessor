@@ -42,7 +42,7 @@ public class OutEnabledDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "turn on text output";
+    return "activate preprocessing if inactive";
   }
 
   @Override

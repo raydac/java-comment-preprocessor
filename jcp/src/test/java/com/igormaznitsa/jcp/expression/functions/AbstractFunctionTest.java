@@ -106,7 +106,7 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
     }
 
     final Value result = Expression.evalExpression(expression, context);
-    assertEquals("Must be equals", expected, result);
+    assertEquals("Must be equal", expected, result);
   }
 
   protected Throwable getRootCause(final Throwable thr) {

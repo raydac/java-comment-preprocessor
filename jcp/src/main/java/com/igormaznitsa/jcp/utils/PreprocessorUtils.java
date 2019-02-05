@@ -65,8 +65,8 @@ public final class PreprocessorUtils {
   private static final Pattern PATTERN_MACROS_WITH_SPACES = Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
 
   static {
-    final String jcpLlineEnd = System.getProperty("jcp.line.separator");
-    LINE_END = jcpLlineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLlineEnd;
+    final String jcpLineEnd = System.getProperty("jcp.line.separator");
+    LINE_END = jcpLineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLineEnd;
   }
 
   private PreprocessorUtils() {
@@ -173,8 +173,8 @@ public final class PreprocessorUtils {
 
   @Nonnull
   public static String replacePartByChar(@Nonnull final String text, final char chr, final int startPosition, final int length) {
-    Assertions.assertTrue("Start position must be great or equals zero", startPosition >= 0);
-    Assertions.assertTrue("Length must be great or equals zero", length >= 0);
+    Assertions.assertTrue("Start position must be great or equal zero", startPosition >= 0);
+    Assertions.assertTrue("Length must be great or equal zero", length >= 0);
 
     final StringBuilder result = new StringBuilder(text.length());
 

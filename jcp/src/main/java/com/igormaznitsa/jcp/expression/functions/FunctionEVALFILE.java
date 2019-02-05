@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuetly;
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
 
 /**
  * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
@@ -53,7 +53,7 @@ public class FunctionEVALFILE extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "load and preprocess file and return text result as string";
+    return "preprocess file and get result as string";
   }
 
   @Override
@@ -86,8 +86,8 @@ public class FunctionEVALFILE extends AbstractFunction {
   }
 
   @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath) {
-    final String filePath = strfilePath.asString();
+  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strFilePath) {
+    final String filePath = strFilePath.asString();
 
     final File theFile;
     try {
@@ -105,7 +105,7 @@ public class FunctionEVALFILE extends AbstractFunction {
       final PreprocessingState state = fileContainer.preprocessFile(null, prepareContext(context));
       final StringWriter strWriter = new StringWriter(1024);
       state.writePrinterBuffers(strWriter);
-      closeQuetly(strWriter);
+      closeQuietly(strWriter);
       return Value.valueOf(strWriter.toString());
     } catch (Exception ex) {
       throw context.makeException("Unexpected exception", ex);

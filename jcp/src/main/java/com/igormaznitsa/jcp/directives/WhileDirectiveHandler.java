@@ -46,7 +46,7 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "start " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop structure";
+    return "starts " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop";
   }
 
   @Override

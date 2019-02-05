@@ -90,7 +90,7 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get element for XPath";
+    return "find single element with XPath, error if not found";
   }
 
   @Override

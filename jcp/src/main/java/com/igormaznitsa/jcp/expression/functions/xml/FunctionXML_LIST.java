@@ -76,7 +76,7 @@ public final class FunctionXML_LIST extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get element list by element tag";
+    return "get list of elements by tag name";
   }
 
   @Override

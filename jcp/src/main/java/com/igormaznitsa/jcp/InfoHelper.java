@@ -53,7 +53,7 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getCopyright() {
-    return "2002-2019 Author: Igor A. Maznitsa (igor.maznitsa@igormaznitsa.com)";
+    return "Copyright (C) 2002-2019 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
   @Nonnull
@@ -76,7 +76,7 @@ public final class InfoHelper {
 
     result.add("Command line");
     result.add(SHORT_DELIMITER);
-    result.add("Supported '/','-' and '--' prefixes, '--' doesn't support multiple commands at once");
+    result.add("allowed '/','-' and '--' prefixes, '--' doesn't support multiple commands at once");
     result.add(makeColumns("@cfgFile", "file contains global definition list", 14));
     result.addAll(JCPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
     result.add(DELIMITER);
@@ -89,8 +89,8 @@ public final class InfoHelper {
     result.add(DELIMITER);
     result.add("Special line directives");
     result.add(SHORT_DELIMITER);
-    result.add(makeSpecialDirectiveReference("//$", "replace all macroses in tail and uncomment"));
-    result.add(makeSpecialDirectiveReference("//$$", "like //$ but macroses are not processed"));
+    result.add(makeSpecialDirectiveReference("//$", "uncomment and process all following macroses"));
+    result.add(makeSpecialDirectiveReference("//$$", "like //$ but macroses ignored"));
     result.add(makeSpecialDirectiveReference("/*-*/", "truncate line"));
 
     result.add("Operators");
@@ -109,7 +109,7 @@ public final class InfoHelper {
     result.add(SHORT_DELIMITER);
     result.add(" BOOL: true,false");
     result.add("  INT: 2374,0x56FE (signed 64 bit)");
-    result.add("  STR: \"Hello World!\" (or $Hello World!$ for the command string)");
+    result.add("  STR: \"Hello World!\" (or $Hello World!$ if in CLI)");
     result.add("FLOAT: 0.745 (signed 32 bit)");
     result.add(DELIMITER);
     result.add("Special variables");

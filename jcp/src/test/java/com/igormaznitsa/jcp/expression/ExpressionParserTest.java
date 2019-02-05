@@ -169,7 +169,7 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     int index = 0;
     for (final ExpressionItem item : items) {
-      assertEquals("Position " + index + " must be equals", item, ExpressionParser.getInstance().nextItem(reader, context));
+      assertEquals("Position " + index + " must be equal", item, ExpressionParser.getInstance().nextItem(reader, context));
       index++;
     }
     assertNull(ExpressionParser.getInstance().nextItem(reader, context));

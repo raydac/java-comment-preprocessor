@@ -41,7 +41,7 @@ public final class OperatorDIV extends AbstractOperator {
   @Override
   @Nonnull
   public String getReference() {
-    return "division operator";
+    return "division";
   }
 
   @Override

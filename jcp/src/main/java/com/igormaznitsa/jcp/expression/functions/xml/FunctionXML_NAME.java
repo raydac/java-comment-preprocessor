@@ -46,8 +46,8 @@ public final class FunctionXML_NAME extends AbstractXMLFunction {
 
   @Nonnull
   public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value elementId) {
-    final Element cachedelement = getCachedElement(context, elementId.asString());
-    return Value.valueOf(cachedelement.getTagName());
+    final Element cachedElement = getCachedElement(context, elementId.asString());
+    return Value.valueOf(cachedElement.getTagName());
   }
 
   @Override

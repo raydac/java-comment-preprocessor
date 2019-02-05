@@ -57,12 +57,12 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "define global(!) variable as true (by default) or initialize it by expression result (if presented)";
+    return "add global BOOL variable and either set it TRUE (by default) or initialize by expression result";
   }
 
   protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
     if (exists) {
-      context.logWarning("Variable \'" + varName + "\' has been already defined");
+      context.logWarning("Variable \'" + varName + "\' already defined");
     }
     context.setGlobalVariable(varName, value);
   }

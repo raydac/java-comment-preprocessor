@@ -442,12 +442,12 @@ public final class JCPreprocessor {
           }
         } else {
           // a global variable
-          final String[] splitted = PreprocessorUtils.splitForEqualChar(trimmed);
-          if (splitted.length != 2) {
+          final String[] split = PreprocessorUtils.splitForEqualChar(trimmed);
+          if (split.length != 2) {
             PreprocessorUtils.throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
           }
-          final String name = splitted[0].trim().toLowerCase(Locale.ENGLISH);
-          final String expression = splitted[1].trim();
+          final String name = split[0].trim().toLowerCase(Locale.ENGLISH);
+          final String expression = split[1].trim();
           if (name.isEmpty()) {
             PreprocessorUtils.throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);
           }

@@ -125,7 +125,7 @@ public final class Deferrers {
 
         @Override
         public void executeDeferred() throws Exception {
-          IOUtils.closeQuetly(closeable);
+          IOUtils.closeQuietly(closeable);
         }
       });
     }

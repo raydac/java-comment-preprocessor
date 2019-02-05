@@ -42,7 +42,7 @@ public class PrefixDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "turn on(+) or turn off(-) writing into result file prefix";
+    return "turn on(+) or turn off(-) output into prefix section";
   }
 
   @Override

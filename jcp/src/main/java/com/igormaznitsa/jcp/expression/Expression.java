@@ -45,12 +45,12 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class Expression {
 
   /**
-   * Precreated array for speed up operations
+   * Pre-created array for speed up operations
    */
   private static final Class<?>[] OPERATOR_SIGNATURE_1 = new Class<?>[] {Value.class};
 
   /**
-   * Precreated array for speed up operations
+   * Pre-created array for speed up operations
    */
   private static final Class<?>[] OPERATOR_SIGNATURE_2 = new Class<?>[] {Value.class, Value.class};
 
@@ -250,27 +250,27 @@ public class Expression {
       argIndex++;
     }
 
-    Method executeMehod = null;
+    Method executeMethod = null;
 
     try {
-      executeMehod = operator.getClass().getMethod(signatureNormal.toString(), methodArguments);
+      executeMethod = operator.getClass().getMethod(signatureNormal.toString(), methodArguments);
     } catch (NoSuchMethodException ex) {
       try {
-        executeMehod = operator.getClass().getMethod(signatureAnyLeft.toString(), methodArguments);
+        executeMethod = operator.getClass().getMethod(signatureAnyLeft.toString(), methodArguments);
       } catch (NoSuchMethodException ex2) {
         try {
-          executeMehod = operator.getClass().getMethod(signatureAnyRight.toString(), methodArguments);
+          executeMethod = operator.getClass().getMethod(signatureAnyRight.toString(), methodArguments);
         } catch (NoSuchMethodException ex3) {
         }
       }
     }
 
-    if (executeMehod == null) {
+    if (executeMethod == null) {
       throw this.context.makeException("[Expression]Unsupported arguments detected for operator \'" + operator.getKeyword() + "\' " + Arrays.toString(arguments), null);
     }
 
     try {
-      return new ExpressionTreeElement((Value) executeMehod.invoke(operator, (Object[]) arguments), stack, sources);
+      return new ExpressionTreeElement((Value) executeMethod.invoke(operator, (Object[]) arguments), stack, sources);
     } catch (ArithmeticException arithEx) {
       throw arithEx;
     } catch (InvocationTargetException ex) {

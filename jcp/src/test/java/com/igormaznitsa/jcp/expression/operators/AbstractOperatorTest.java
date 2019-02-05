@@ -59,7 +59,7 @@ public abstract class AbstractOperatorTest extends AbstractSpyPreprocessorContex
 
   public PreprocessorContext assertExecution(final Value expectedResult, final String expression) throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
-    assertEquals("The expression result must be equals to the expected one", expectedResult, Expression.evalExpression(expression, context));
+    assertEquals("The expression result must be equal to the expected one", expectedResult, Expression.evalExpression(expression, context));
     return context;
   }
 

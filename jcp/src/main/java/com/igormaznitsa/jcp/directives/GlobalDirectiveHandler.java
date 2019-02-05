@@ -71,14 +71,14 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   private void processDefinition(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
+    final String[] split = PreprocessorUtils.splitForEqualChar(string);
 
-    if (splitted.length != 2) {
+    if (split.length != 2) {
       throw context.makeException("Can't find expression [" + string + ']', null);
     }
 
-    final String name = splitted[0].trim();
-    final Value newValue = Expression.evalExpression(splitted[1].trim(), context);
+    final String name = split[0].trim();
+    final Value newValue = Expression.evalExpression(split[1].trim(), context);
 
     context.setGlobalVariable(name, newValue);
   }

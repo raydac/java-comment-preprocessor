@@ -41,7 +41,7 @@ public final class OperatorMUL extends AbstractOperator {
   @Override
   @Nonnull
   public String getReference() {
-    return "multiplication operator";
+    return "multiplication";
   }
 
   @Override

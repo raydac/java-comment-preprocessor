@@ -104,7 +104,7 @@ public final class FunctionESC extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "escapes string";
+    return "escape string chars";
   }
 
   @Override

@@ -42,7 +42,7 @@ public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "turn on(+) or turn off(-) writing into result file postfix";
+    return "turn on(+) or turn off(-) output into postfix section";
   }
 
   @Override

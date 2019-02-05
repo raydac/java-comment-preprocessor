@@ -68,7 +68,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
     final Value result = environmentVars.get(varName);
     if (result == null) {
-      throw context.makeException("Reaing undefined environment record \'" + varName + '\'', null);
+      throw context.makeException("Can't find in environment: " + varName, null);
     }
     return result;
   }

@@ -42,7 +42,7 @@ public class WarningDirectiveHandler extends ErrorDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "log warning message";
+    return "following text will be logged as warning, macroses allowed";
   }
 
   @Override

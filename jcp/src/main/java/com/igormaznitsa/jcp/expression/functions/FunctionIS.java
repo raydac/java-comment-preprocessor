@@ -71,7 +71,7 @@ public final class FunctionIS extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "check that variable exists and compare value";
+    return "check that string is string form of value";
   }
 
   @Override

@@ -43,7 +43,7 @@ public class AbortDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "abort preprocessing and show the line tail as message (allows macroses)";
+    return "abort preprocessing and show following text as message (macroses allowed)";
   }
 
   @Override

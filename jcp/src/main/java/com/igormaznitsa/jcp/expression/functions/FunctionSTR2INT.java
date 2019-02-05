@@ -49,7 +49,7 @@ public final class FunctionSTR2INT extends AbstractStrConverter {
   @Override
   @Nonnull
   public String getReference() {
-    return "convert string into integet number";
+    return "string to integer";
   }
 
   @Override

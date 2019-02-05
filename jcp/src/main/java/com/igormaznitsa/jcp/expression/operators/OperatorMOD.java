@@ -41,7 +41,7 @@ public final class OperatorMOD extends AbstractOperator {
   @Override
   @Nonnull
   public String getReference() {
-    return "remainder operator";
+    return "remainder";
   }
 
   @Override

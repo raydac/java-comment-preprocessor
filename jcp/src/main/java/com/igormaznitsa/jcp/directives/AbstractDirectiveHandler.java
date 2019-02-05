@@ -58,13 +58,13 @@ public abstract class AbstractDirectiveHandler {
   /**
    * The array contains all directives of the preprocessor
    */
-  private static volatile AbstractDirectiveHandler[] allDiractives;
+  private static volatile AbstractDirectiveHandler[] allDirectives;
 
   @Nonnull
   @MustNotContainNull
   public static AbstractDirectiveHandler[] getAllDirectives() {
-    if (allDiractives == null) {
-      allDiractives = new AbstractDirectiveHandler[] {
+    if (allDirectives == null) {
+      allDirectives = new AbstractDirectiveHandler[] {
           new LocalDirectiveHandler(),
           new IfDefinedDirectiveHandler(),
           new IfNDefDirectiveHandler(),
@@ -104,7 +104,7 @@ public abstract class AbstractDirectiveHandler {
           new AbortDirectiveHandler()
       };
     }
-    return allDiractives;
+    return allDirectives;
   }
 
   /**

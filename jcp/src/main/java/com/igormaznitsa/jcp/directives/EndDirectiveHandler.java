@@ -46,7 +46,7 @@ public class EndDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "end of " + DIRECTIVE_PREFIX + "while..." + getFullName() + " loop, do jump to the loop start";
+    return "end of " + DIRECTIVE_PREFIX + "while..." + getFullName() + " loop, start the next iteration";
   }
 
   @Override

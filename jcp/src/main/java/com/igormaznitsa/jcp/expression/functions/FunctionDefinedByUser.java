@@ -88,7 +88,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "it's a user defined function";
+    return "user defined function";
   }
 
   @Override

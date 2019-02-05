@@ -69,7 +69,7 @@ public final class FunctionXML_ROOT extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get the document root element";
+    return "get root element of document";
   }
 
   @Override

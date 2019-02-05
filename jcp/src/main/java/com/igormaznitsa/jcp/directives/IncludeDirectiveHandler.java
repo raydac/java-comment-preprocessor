@@ -46,7 +46,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "include file and preprocess in the current file context";
+    return "include file content in current preprocess context";
   }
 
   @Override
@@ -64,11 +64,11 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     final String filePath = includingFilePath.toString();
 
     try {
-      final File thefile = context.findFileInSourceFolder(filePath);
+      final File theFile = context.findFileInSourceFolder(filePath);
       if (context.isVerbose()) {
-        context.logForVerbose("Including file '" + thefile.getCanonicalPath() + '\'');
+        context.logForVerbose("Including file '" + theFile.getCanonicalPath() + '\'');
       }
-      state.openFile(thefile);
+      state.openFile(theFile);
     } catch (IOException ex) {
       throw context.makeException("Can't open file '" + filePath + '\'', ex);
     }

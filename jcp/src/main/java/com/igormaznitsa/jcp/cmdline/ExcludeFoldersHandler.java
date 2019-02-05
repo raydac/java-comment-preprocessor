@@ -40,7 +40,7 @@ public class ExcludeFoldersHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "subfolders in source folders to be excluded from preprocessing, ANT patterns allowed, path separator should be used for multiple items";
+    return "excluded sub-folders list from sources, ANT patterns allowed, system path separator char for multiple items";
   }
 
   @Override

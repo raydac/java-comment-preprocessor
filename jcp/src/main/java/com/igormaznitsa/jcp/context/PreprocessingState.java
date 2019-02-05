@@ -59,7 +59,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuetly;
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
 
 /**
  * The class describes a preprocessor state also it contains inside buffers and save data on disk
@@ -454,7 +454,7 @@ public final class PreprocessingState {
       }
 
     } finally {
-      closeQuetly(writer);
+      closeQuietly(writer);
     }
 
     if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()) {

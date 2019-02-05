@@ -72,18 +72,18 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
   public static String buildPathForElement(@Nonnull final Element element) {
     final StringBuilder result = new StringBuilder();
 
-    Node thenode = element;
+    Node theNode = element;
 
-    while (thenode != null) {
+    while (theNode != null) {
       int level = 0;
-      Node sibling = thenode;
+      Node sibling = theNode;
       while (sibling != null) {
         level++;
         sibling = sibling.getPreviousSibling();
       }
 
-      result.append('/').append(thenode.getNodeName()).append('{').append(level).append('}');
-      thenode = thenode.getParentNode();
+      result.append('/').append(theNode.getNodeName()).append('{').append(level).append('}');
+      theNode = theNode.getParentNode();
     }
 
     return result.toString();

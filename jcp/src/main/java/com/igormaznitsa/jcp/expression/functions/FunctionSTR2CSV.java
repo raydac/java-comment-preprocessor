@@ -52,7 +52,7 @@ public final class FunctionSTR2CSV extends AbstractStrConverter {
   @Override
   @Nonnull
   public String getReference() {
-    return "escape string for Comma Separated Values";
+    return "escape string for CSV";
   }
 
   @Override

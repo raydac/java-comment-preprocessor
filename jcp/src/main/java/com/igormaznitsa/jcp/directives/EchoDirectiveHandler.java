@@ -48,7 +48,7 @@ public class EchoDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "macroses will be replaced in the text tail and the result will be out as info";
+    return "following text will be logged as info, macroses allowed";
   }
 
   @Override

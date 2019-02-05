@@ -46,7 +46,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "return to previous one in include stack if flag is true";
+    return "conditionally end current file preprocessing, return to the calling file if presented";
   }
 
   @Override
@@ -61,7 +61,7 @@ public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
     final PreprocessingState state = context.getPreprocessingState();
     AfterDirectiveProcessingBehaviour result = AfterDirectiveProcessingBehaviour.PROCESSED;
 
-    // To end processing the file processing immediatly if the value is true
+    // To end processing the file processing immediately if the value is true
     final Value condition = Expression.evalExpression(string, context);
     if (condition.getType() != ValueType.BOOLEAN) {
       throw context.makeException(getFullName() + " needs boolean argument", null);

@@ -68,7 +68,7 @@ public final class FunctionABS extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get absolute value of numeric value";
+    return "numeric absolute value";
   }
 
   @Override

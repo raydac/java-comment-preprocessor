@@ -41,7 +41,7 @@ public final class OperatorADD extends AbstractOperator {
   @Override
   @Nonnull
   public String getReference() {
-    return "additive operator (also used for string concatenation)";
+    return "additive operator (string concatenation supported)";
   }
 
   @Override

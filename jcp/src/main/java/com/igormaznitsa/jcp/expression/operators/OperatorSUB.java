@@ -41,7 +41,7 @@ public final class OperatorSUB extends AbstractOperator {
   @Override
   @Nonnull
   public String getReference() {
-    return "subtraction operator";
+    return "subtraction";
   }
 
   @Override

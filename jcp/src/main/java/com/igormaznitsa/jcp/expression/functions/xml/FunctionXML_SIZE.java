@@ -63,7 +63,7 @@ public final class FunctionXML_SIZE extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get element list size";
+    return "element list size";
   }
 
   @Override

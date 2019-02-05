@@ -39,7 +39,7 @@ public class IfDefDirectiveHandler extends IfDefinedDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "the short variant of " + DIRECTIVE_PREFIX + super.getName();
+    return "short variant of " + DIRECTIVE_PREFIX + super.getName();
   }
 
   @Override

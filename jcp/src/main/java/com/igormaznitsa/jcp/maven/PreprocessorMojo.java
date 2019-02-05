@@ -483,7 +483,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
   private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
     if (this.project != null) {
       final String sourceDirectories = context.getSourceDirectories();
-      final String[] splitted = sourceDirectories.split(";");
+      final String[] split = sourceDirectories.split(";");
 
       final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<>();
@@ -491,7 +491,7 @@ public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
       }
 
-      for (final String str : splitted) {
+      for (final String str : split) {
         int index = sourceRoots.indexOf(str);
         if (index < 0) {
           // check for canonical paths

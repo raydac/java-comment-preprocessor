@@ -63,7 +63,7 @@ public final class FunctionXML_GET extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get element from element list by its index (first 0)";
+    return "get positioned element from list by its index (0 is first)";
   }
 
   @Override

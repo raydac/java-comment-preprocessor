@@ -43,7 +43,7 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "check existence of variable in the current context, it starts " + DIRECTIVE_PREFIX + "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif control structure";
+    return "check variable exists in current context, it starts " + DIRECTIVE_PREFIX + "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif control structure";
   }
 
   protected boolean postprocessFlag(final boolean variableExists) {

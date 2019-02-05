@@ -111,7 +111,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "open XML file and parse as DOM";
+    return "open and parse XML file";
   }
 
   @Override

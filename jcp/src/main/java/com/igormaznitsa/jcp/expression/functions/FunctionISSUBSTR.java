@@ -65,7 +65,7 @@ public final class FunctionISSUBSTR extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "check that substring presented in string (case insensitive)";
+    return "check that string contains substring (case insensitive)";
   }
 
   @Override

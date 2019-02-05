@@ -55,13 +55,13 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
       if (!nameAndExpression.isEmpty()) {
 
-        final String[] splitted = PreprocessorUtils.splitForEqualChar(nameAndExpression);
-        if (splitted.length != 2) {
+        final String[] split = PreprocessorUtils.splitForEqualChar(nameAndExpression);
+        if (split.length != 2) {
           throw context.makeException("Illegal expression for directive '" + ARG_NAME + "' [" + nameAndExpression + ']', null);
         }
 
-        final String value = splitted[0];
-        final String expression = splitted[1];
+        final String value = split[0];
+        final String expression = split[1];
 
         if (context.containsGlobalVariable(value)) {
           throw context.makeException("Duplicated global definition [" + value + ']', null);

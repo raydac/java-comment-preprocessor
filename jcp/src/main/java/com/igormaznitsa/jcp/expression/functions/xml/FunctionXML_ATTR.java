@@ -63,7 +63,7 @@ public final class FunctionXML_ATTR extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get named attribute from element, nonexisting attribute returns empty string";
+    return "get value of named element attribute, if not found then empty string";
   }
 
   @Override

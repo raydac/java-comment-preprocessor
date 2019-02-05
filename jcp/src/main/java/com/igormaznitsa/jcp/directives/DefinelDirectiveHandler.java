@@ -42,7 +42,7 @@ public class DefinelDirectiveHandler extends DefineDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "define local(!) variable as true (by default) or initialize it by expression result (if presented)";
+    return "add local BOOL variable and either set it TRUE (by default) or initialize by expression result";
   }
 
   @Override

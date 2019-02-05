@@ -63,7 +63,7 @@ public final class FunctionTRIMLINES extends AbstractStrConverter {
   @Override
   @Nonnull
   public String getReference() {
-    return "trim each line in string, empty lines will be removed";
+    return "trim each line found in string, remove empty lines";
   }
 
   @Override

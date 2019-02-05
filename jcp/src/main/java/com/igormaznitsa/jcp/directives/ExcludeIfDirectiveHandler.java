@@ -44,7 +44,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "exclude file from preprocessing if flag is true";
+    return "if argument is TRUE then the file will be ignored by preprocessor";
   }
 
   @Override

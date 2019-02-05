@@ -43,7 +43,7 @@ public class ElseDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "invert condition result for " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "endif control structure";
+    return "invert condition result for " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "endif";
   }
 
   @Override

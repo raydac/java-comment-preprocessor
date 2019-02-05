@@ -53,7 +53,7 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
     final File[] configFiles = context.getConfigFiles();
 
     assertEquals("File must be added", 1, configFiles.length);
-    TestUtils.assertFilePath("File must be equals", testFile, configFiles[0]);
+    TestUtils.assertFilePath("File must be equal", testFile, configFiles[0]);
   }
 
   @Test
@@ -71,7 +71,7 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
     final File[] globalVarFiles = context.getConfigFiles();
 
     assertEquals("File must be added", 1, globalVarFiles.length);
-    assertEquals("File must be equals", testFile, globalVarFiles[0]);
+    assertEquals("File must be equal", testFile, globalVarFiles[0]);
   }
 
   @Test(expected = PreprocessorException.class)

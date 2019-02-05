@@ -161,7 +161,7 @@ public class FunctionBINFILE extends AbstractFunction {
       buffer.append(t.name);
     }
     buffer.append("[s|d|sd|ds]");
-    return "encode bin file into string representation, allowed types [" + buffer.toString() + "], s - split to lines, d - deflater compression";
+    return "encode binary file as string, allowed types [" + buffer.toString() + "], s - split lines, d - deflater compression";
   }
 
   @Override
@@ -183,8 +183,8 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strfilePath, @Nonnull final Value encodeType) {
-    final String filePath = strfilePath.asString();
+  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strFilePath, @Nonnull final Value encodeType) {
+    final String filePath = strFilePath.asString();
     final String encodeTypeAsString = encodeType.asString();
     final Type type = Type.find(encodeTypeAsString);
 

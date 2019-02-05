@@ -65,7 +65,7 @@ public final class FunctionXML_TEXT extends AbstractXMLFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "get element text content, text of children also included";
+    return "text of element (child element texts will be included)";
   }
 
   @Override

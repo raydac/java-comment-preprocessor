@@ -56,7 +56,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "call preprocessor user extension, arguments are comma separated";
+    return "call user extension with comma separated arguments";
   }
 
   @Override

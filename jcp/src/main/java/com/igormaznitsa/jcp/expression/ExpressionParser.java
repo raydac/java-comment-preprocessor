@@ -50,7 +50,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public final class ExpressionParser {
 
   /**
-   * It contains the instance for the parser, because the parser is a singletone
+   * It contains the instance for the parser, because the parser is a singleton
    */
   private static final ExpressionParser INSTANCE = new ExpressionParser();
 

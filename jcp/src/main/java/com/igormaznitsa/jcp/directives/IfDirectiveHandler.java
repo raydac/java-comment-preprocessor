@@ -46,7 +46,7 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "check flag and start " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
+    return "start of " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
   }
 
   @Override

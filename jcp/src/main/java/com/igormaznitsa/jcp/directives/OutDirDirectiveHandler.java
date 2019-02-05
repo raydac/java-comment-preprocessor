@@ -44,7 +44,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "change result file folder (works like change \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
+    return "change destination file folder (as change of \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
   }
 
   @Override

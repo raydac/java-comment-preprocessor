@@ -48,7 +48,7 @@ public class MsgDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "string tail macroses will be replaced and message will be printed as info";
+    return "following text will be logged as info, macroses allowed, if verbose is ON then stack info will be logged";
   }
 
   @Override

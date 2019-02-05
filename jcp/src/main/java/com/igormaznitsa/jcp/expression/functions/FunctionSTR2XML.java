@@ -52,7 +52,7 @@ public final class FunctionSTR2XML extends AbstractStrConverter {
   @Override
   @Nonnull
   public String getReference() {
-    return "escape string for XML 1.0";
+    return "escape string for XML(1.0)";
   }
 
   @Override

@@ -115,13 +115,13 @@ public final class FunctionSTR2GO extends AbstractFunction {
   public Value executeStrBool(@Nonnull final PreprocessorContext context, @Nonnull final Value source, @Nonnull final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()) {
       final boolean endsWithNextLine = source.asString().endsWith("\n");
-      final String[] splitted = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
+      final String[] split = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
       final StringBuilder result = new StringBuilder(source.asString().length() * 2);
       final String nextLineChars = PreprocessorUtils.getNextLineCodes();
 
       int index = 0;
-      for (final String s : splitted) {
-        final boolean last = ++index == splitted.length;
+      for (final String s : split) {
+        final boolean last = ++index == split.length;
         if (result.length() > 0) {
           result.append(nextLineChars).append('+');
         }
@@ -153,7 +153,7 @@ public final class FunctionSTR2GO extends AbstractFunction {
   @Override
   @Nonnull
   public String getReference() {
-    return "escapes a string to be compatible with  GoLang";
+    return "escape string for GoLang";
   }
 
   @Override
