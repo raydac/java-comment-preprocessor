@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.igormaznitsa.examples</groupId>
+  <artifactId>jep-238-jcp-example-java9</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <jdk.version>9</jdk.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>9</maven.compiler.source>
+    <maven.compiler.target>9</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${main.project.finalName}</finalName>
+    <sourceDirectory>${main.project.src.folder}/main/java</sourceDirectory>
+    <testSourceDirectory>${main.project.src.folder}/test/java</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${main.project.src.folder}/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${main.project.src.folder}/test/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins>
+      <!-- disable installation of the module because it is auxiliary one -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <outputDirectory>${main.project.target}</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <!-- make preprocessing of project sources for choosen JDK version -->
+      <plugin>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>jcp</artifactId>
+        <version>${jcp.version}</version>
+        <executions>
+          <!-- make preprocessing of sources -->
+          <execution>
+            <id>preprocess-sources</id>
+            <goals>
+              <goal>preprocess</goal>
+            </goals>
+          </execution>
+          <!-- make preprocessing of test sources -->
+          <execution>
+            <id>preprocess-test-sources</id>
+            <goals>
+              <goal>preprocessTests</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <globalVars>
+            <property>
+              <name>jdk.version</name>
+              <value>${jdk.version}</value>
+            </property>
+          </globalVars>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

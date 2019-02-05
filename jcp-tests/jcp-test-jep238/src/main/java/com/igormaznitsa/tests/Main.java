@@ -9,7 +9,7 @@ public class Main {
         // if you want have only one active piece of code, you can use '//$' which tells to preprocessor to uncoment marked string in preprocessing
         // and here I have both variants uncommented
 
-        //#if java.version>8
+        //#if jdk.version>8
             // we are in section for JDK 9 and great
             System.out.println("Hello New Java "+Runtime.version().toString()+" !");
         //#else

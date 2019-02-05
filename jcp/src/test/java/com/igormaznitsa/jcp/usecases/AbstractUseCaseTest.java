@@ -132,7 +132,7 @@ public abstract class AbstractUseCaseTest {
   }
 
   protected boolean isIgnoreEolInCheck() {
-      return false;
+      return true;
   }
   
   @Test

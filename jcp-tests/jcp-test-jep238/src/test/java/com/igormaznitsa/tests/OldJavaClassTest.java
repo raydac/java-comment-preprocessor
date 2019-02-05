@@ -1,4 +1,4 @@
-//#excludeif java.version>8
+//#excludeif jdk.version>8
 package com.igormaznitsa.tests;
 
 import org.junit.Test;

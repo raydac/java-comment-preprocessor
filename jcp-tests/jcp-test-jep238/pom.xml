@@ -11,12 +11,21 @@
     <artifactId>jcp-test-jep238</artifactId>
     <packaging>jar</packaging>
 
-
     <properties>
-        <maven.compiler.source>1.${java.version}</maven.compiler.source>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <sub.name.jdk9>${project.build.finalName}-jdk9</sub.name.jdk9>
+        <jdk.version>8</jdk.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
@@ -36,14 +45,17 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <pom>src/assembly/pom_jdk9.xml</pom>
+                            <pom>${basedir}${file.separator}pom.jdk9.xml</pom>
                             <mergeUserSettings>true</mergeUserSettings>
                             <profiles></profiles>
                             <!-- here we just provide some specific properties to executed pom -->
                             <properties>
+                                <maven.compiler.source>9</maven.compiler.source>
                                 <main.project.src.folder>${project.basedir}/src</main.project.src.folder>
                                 <main.project.target>${project.build.directory}</main.project.target>
                                 <main.project.finalName>${sub.name.jdk9}</main.project.finalName>
+                                <jcp.version>${jcp.test.version}</jcp.version>
+                                <jdk.version>9</jdk.version>
                             </properties>
                         </configuration>
                     </execution>
@@ -74,14 +86,13 @@
                 <configuration>
                     <globalVars>
                         <property>
-                            <name>java.version</name>
-                            <value>${java.version}</value>
+                            <name>jdk.version</name>
+                            <value>${jdk.version}</value>
                         </property>
                     </globalVars>
                 </configuration>
             </plugin>
 
-            <!-- this plugin just unzip all generated jar artifacts to prepare contetn for latest processing by assembly plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>truezip-maven-plugin</artifactId>
@@ -111,11 +122,9 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- final action to assembly multi-version JARfrom unpacked content -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.0.0</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
@@ -123,9 +132,7 @@
                     </descriptors>
                     <archive>
                         <manifestEntries>
-                            <!-- the flag shows that the JAR is multi-release one -->
                             <Multi-Release>true</Multi-Release>
-                            <!-- add main class name to make easier to start from command line -->
                             <Main-Class>com.igormaznitsa.tests.Main</Main-Class>
                         </manifestEntries>
                     </archive>
@@ -137,6 +144,52 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>delete-jdk9-temp-jar</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>${project.build.finalName}-jdk9.jar</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>meta-checker</artifactId>
+                <executions>
+                    <execution>
+                        <id>check-multiversion</id>
+                        <goals>
+                            <goal>check-jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <restrictClassFormat><![CDATA[<=9]]></restrictClassFormat>
+                            <manifestHas>
+                                <vaue>Multi-Release</vaue>
+                            </manifestHas>
+                            <expected>
+                                <path>META-INF/versions/9/*</path>
+                            </expected>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

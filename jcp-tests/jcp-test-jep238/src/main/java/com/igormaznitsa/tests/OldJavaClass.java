@@ -1,5 +1,5 @@
 // the string belows tells to the preprocessor to exclude the file from module variant for JDK 9
-//#excludeif java.version>8
+//#excludeif jdk.version>8
 package com.igormaznitsa.tests;
 
 /**

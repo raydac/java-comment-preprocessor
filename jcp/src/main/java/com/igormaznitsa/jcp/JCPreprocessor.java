@@ -228,6 +228,13 @@ public final class JCPreprocessor {
 
       try {
         val = Expression.evalExpression(condition, this.context);
+      } catch (PreprocessorException ex) {
+        throw new PreprocessorException(
+            ex.getMessage(),
+            condition,
+            new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())},
+            ex.getCause()
+        );
       } catch (IllegalArgumentException ex) {
         throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME,
             condition,
