@@ -123,7 +123,7 @@ public final class JCPreprocessor {
 
     try {
       preprocessorContext = processCommandLine(args, normalizedStrings);
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       System.err.println("Error during command line processing [" + ex.getMessage() + ']');
       System.exit(1);
       throw new RuntimeException("To show compiler executiion stop");
@@ -142,7 +142,7 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private static PreprocessorContext processCommandLine(@Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) throws IOException {
+  private static PreprocessorContext processCommandLine(@Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) {
     final PreprocessorContext result = new PreprocessorContext();
 
     for (int i = 0; i < normalizedStrings.length; i++) {
