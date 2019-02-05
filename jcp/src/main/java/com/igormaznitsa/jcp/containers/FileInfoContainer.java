@@ -175,7 +175,7 @@ public class FileInfoContainer {
 
     String leftTrimmedString = null;
     try {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         String nonTrimmedProcessingString = preprocessingState.nextLine();
 
         final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
@@ -325,10 +325,10 @@ public class FileInfoContainer {
 
     String leftTrimmedString = null;
 
-    TextFileDataContainer lastTextFileDataContainer;
+    TextFileDataContainer lastTextFileDataContainer = null;
 
     try {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         String rawString = preprocessingState.nextLine();
         final boolean presentedNextLine = preprocessingState.hasReadLineNextLineInEnd();
 

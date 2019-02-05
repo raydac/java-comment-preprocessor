@@ -52,6 +52,7 @@ public final class ThreadUtils {
       Thread.sleep(milliseconds);
     } catch (InterruptedException ex) {
       result = false;
+      Thread.currentThread().interrupt();
     }
     return result;
   }

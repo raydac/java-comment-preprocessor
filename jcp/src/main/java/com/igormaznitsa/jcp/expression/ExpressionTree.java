@@ -106,7 +106,7 @@ public class ExpressionTree {
       return this.last;
     } else {
       ExpressionTreeElement element = last;
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         final ExpressionTreeElement next = element.getParent();
         if (next == null) {
           return element;
@@ -115,6 +115,7 @@ public class ExpressionTree {
         }
       }
     }
+    return ExpressionTreeElement.EMPTY_SLOT;
   }
 
   /**

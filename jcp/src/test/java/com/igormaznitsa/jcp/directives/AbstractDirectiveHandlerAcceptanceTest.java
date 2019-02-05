@@ -151,7 +151,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
   }
 
   private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {
-    while (true) {
+    while (!Thread.currentThread().isInterrupted()) {
       final String line = reader.readLine();
       if (line == null) {
         break;

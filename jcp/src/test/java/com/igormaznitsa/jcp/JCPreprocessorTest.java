@@ -105,7 +105,7 @@ public final class JCPreprocessorTest {
       resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile), "UTF-8")));
       etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile), "UTF-8")));
 
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         final String resultStr = resultReader.readLine();
         final String etalonStr = etalonReader.readLine();
         if (resultStr == null && etalonStr == null) {

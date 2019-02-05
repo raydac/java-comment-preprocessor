@@ -104,7 +104,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     stack = state.makeIncludeStack();
     sources = state.getLastReadString();
 
-    while (true) {
+    while (!Thread.currentThread().isInterrupted()) {
       final ExpressionTree tree;
       tree = new ExpressionTree(stack, sources);
       final ExpressionItem delimiter = parser.readExpression(reader, tree, context, false, true);

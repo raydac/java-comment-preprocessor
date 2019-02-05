@@ -45,24 +45,24 @@ public class JavaCommentsRemover {
     this.dstWriter = dst;
   }
 
-  void skipUntilNextString() throws IOException {
-    while (true) {
+  private void skipUntilNextString() throws IOException {
+    while (!Thread.currentThread().isInterrupted()) {
       final int chr = srcReader.read();
       if (chr < 0) {
         return;
       }
 
       if (chr == '\n') {
-        dstWriter.write(chr);
+        this.dstWriter.write(chr);
         return;
       }
     }
   }
 
-  void skipUntilClosingComments() throws IOException {
+  private void skipUntilClosingComments() throws IOException {
     boolean starFound = false;
 
-    while (true) {
+    while (!Thread.currentThread().isInterrupted()) {
       final int chr = srcReader.read();
       if (chr < 0) {
         return;
@@ -88,8 +88,8 @@ public class JavaCommentsRemover {
 
     int state = STATE_NORMAL;
 
-    while (true) {
-      final int chr = srcReader.read();
+    while (!Thread.currentThread().isInterrupted()) {
+      final int chr = this.srcReader.read();
       if (chr < 0) {
         break;
       }
@@ -144,6 +144,7 @@ public class JavaCommentsRemover {
               state = STATE_NORMAL;
             }
             break;
+            default: break;
           }
           dstWriter.write(chr);
         }
@@ -153,6 +154,8 @@ public class JavaCommentsRemover {
           state = STATE_INSIDE_STRING;
         }
         break;
+        default:
+          throw new IllegalStateException("Unexpected state: " + state);
       }
     }
     return dstWriter;

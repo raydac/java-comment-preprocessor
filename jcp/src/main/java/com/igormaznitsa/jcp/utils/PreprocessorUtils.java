@@ -219,7 +219,7 @@ public final class PreprocessorUtils {
       }
       result = buffer.toString();
     } else {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         position = result.indexOf("/*$");
 
         if (position >= 0) {
@@ -265,7 +265,7 @@ public final class PreprocessorUtils {
 
       boolean meetCR = false;
 
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         final int chr = srcBufferedReader.read();
         if (chr < 0) {
           break;
