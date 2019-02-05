@@ -227,9 +227,12 @@ public final class JCPreprocessor {
       }
 
       try {
-        val = Expression.evalExpression(condition, context);
+        val = Expression.evalExpression(condition, this.context);
       } catch (IllegalArgumentException ex) {
-        throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME, condition, new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())}, ex);
+        throw new PreprocessorException("Wrong expression at " + DIRECTIVE_NAME,
+            condition,
+            new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())},
+            ex);
       }
 
       if (val.getType() != ValueType.BOOLEAN) {

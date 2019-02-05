@@ -1,0 +1,144 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>jcp-tests</artifactId>
+        <version>0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jcp-test-jep238</artifactId>
+    <packaging>jar</packaging>
+
+
+    <properties>
+        <maven.compiler.source>1.${java.version}</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <sub.name.jdk9>${project.build.finalName}-jdk9</sub.name.jdk9>
+    </properties>
+
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+
+        <plugins>
+            <!-- it is very important plugin because allows to make internal call to build another maven project with predefined properties, I use it to build version for Java 9 -->
+            <!-- NB! The Plugin is sensitive to Maven home and can not work if you build from IDE with bundled Maven, it there is an error try to use non-bundled one! -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>make-jdk9-version</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <pom>src/assembly/pom_jdk9.xml</pom>
+                            <mergeUserSettings>true</mergeUserSettings>
+                            <!-- here we just provide some specific properties to executed pom -->
+                            <properties>
+                                <main.project.src.folder>${project.basedir}/src</main.project.src.folder>
+                                <main.project.target>${project.build.directory}</main.project.target>
+                                <main.project.finalName>${sub.name.jdk9}</main.project.finalName>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- make preprocessing of project sources for choosen JDK version -->
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>jcp</artifactId>
+                <version>${jcp.test.version}</version>
+                <executions>
+                    <!-- make preprocessing of sources -->
+                    <execution>
+                        <id>preprocess-sources</id>
+                        <goals>
+                            <goal>preprocess</goal>
+                        </goals>
+                    </execution>
+                    <!-- make preprocessing of test sources -->
+                    <execution>
+                        <id>preprocess-test-sources</id>
+                        <goals>
+                            <goal>preprocessTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <globalVars>
+                        <property>
+                            <name>java.version</name>
+                            <value>${java.version}</value>
+                        </property>
+                    </globalVars>
+                </configuration>
+            </plugin>
+
+            <!-- this plugin just unzip all generated jar artifacts to prepare contetn for latest processing by assembly plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>truezip-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>unpack-main-jar</id>
+                        <goals>
+                            <goal>cp</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <from>${project.build.directory}/${project.build.finalName}.jar</from>
+                            <to>${project.build.directory}/unpacked/${project.build.finalName}</to>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-jdk9-jar</id>
+                        <goals>
+                            <goal>cp</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <from>${project.build.directory}/${sub.name.jdk9}.jar</from>
+                            <to>${project.build.directory}/unpacked/${sub.name.jdk9}</to>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- final action to assembly multi-version JARfrom unpacked content -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                    <archive>
+                        <manifestEntries>
+                            <!-- the flag shows that the JAR is multi-release one -->
+                            <Multi-Release>true</Multi-Release>
+                            <!-- add main class name to make easier to start from command line -->
+                            <Main-Class>com.igormaznitsa.tests.Main</Main-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assembly-multi-release-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

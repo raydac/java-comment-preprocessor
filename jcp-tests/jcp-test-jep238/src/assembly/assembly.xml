@@ -1,0 +1,27 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+  <id>mvjar</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>${project.build.directory}/unpacked/${sub.name.jdk9}</directory>
+      <outputDirectory>META-INF/versions/9</outputDirectory>
+      <!-- we should ignore content of /META-INF for sub module-->
+      <excludes>
+        <exclude>/META-INF/**</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.directory}/unpacked/${project.build.finalName}</directory>
+      <outputDirectory>/</outputDirectory>
+      <!-- we can ignore maven folder in the case to make result file smaller -->
+      <excludes>
+        <exclude>/META-INF/maven/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>

@@ -19,6 +19,18 @@
         <module>jcp-test-javassist</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>new-jdk</id>
+            <activation>
+                <jdk>(1.8,]</jdk>
+            </activation>
+            <modules>
+                <module>jcp-test-jep238</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <dependencies>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
