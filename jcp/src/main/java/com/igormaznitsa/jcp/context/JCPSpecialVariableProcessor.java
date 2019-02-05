@@ -78,7 +78,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     result.add(new NameReferencePair(VAR_LINE, "Number of preprocessing line, read only"));
     result.add(new NameReferencePair(VAR_DEST_FULLPATH, "Full destination file path, read only"));
     result.add(new NameReferencePair(VAR_DEST_DIR, "Destination folder, read only"));
-    result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "Destination file name, read-writing"));
+    result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "Destination file name, read-write"));
 
     result.add(new NameReferencePair(VAR_TIME, "Time (HH:mm:ss)"));
     result.add(new NameReferencePair(VAR_DATE, "Date (MMM dd yyyy)"));
