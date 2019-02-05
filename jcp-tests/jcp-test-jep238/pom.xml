@@ -27,7 +27,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>make-jdk9-version</id>
@@ -38,6 +38,7 @@
                         <configuration>
                             <pom>src/assembly/pom_jdk9.xml</pom>
                             <mergeUserSettings>true</mergeUserSettings>
+                            <profiles></profiles>
                             <!-- here we just provide some specific properties to executed pom -->
                             <properties>
                                 <main.project.src.folder>${project.basedir}/src</main.project.src.folder>

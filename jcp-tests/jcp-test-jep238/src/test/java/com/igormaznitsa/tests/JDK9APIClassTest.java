@@ -1,4 +1,4 @@
-//#excludeif java.version<9
+//#excludeif jdk.version<9
 package com.igormaznitsa.tests;
 
 import static org.junit.Assert.*;

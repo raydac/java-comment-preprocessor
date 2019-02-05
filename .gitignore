@@ -4,3 +4,4 @@
 *.iml
 /.idea/
 /.idea/libraries
+/jcp-tests/jcp-test-jep238/build.log
