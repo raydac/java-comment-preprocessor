@@ -81,13 +81,13 @@ public final class InfoHelper {
     result.addAll(JCPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
     result.add(DELIMITER);
 
-    result.add("Preprocessor directives");
+    result.add("Directives");
     result.add(SHORT_DELIMITER);
     for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.getAllDirectives()) {
       result.add(makeDirectiveReference(handler));
     }
     result.add(DELIMITER);
-    result.add("Special line directives");
+    result.add("Special directives");
     result.add(SHORT_DELIMITER);
     result.add(makeSpecialDirectiveReference("//$", "uncomment and process all following macroses"));
     result.add(makeSpecialDirectiveReference("//$$", "like //$ but macroses ignored"));
@@ -105,7 +105,7 @@ public final class InfoHelper {
       result.add(makeFunctionReference(handler));
     }
     result.add(DELIMITER);
-    result.add("Supported data types");
+    result.add("Allowed types");
     result.add(SHORT_DELIMITER);
     result.add(" BOOL: true,false");
     result.add("  INT: 2374,0x56FE (signed 64 bit)");

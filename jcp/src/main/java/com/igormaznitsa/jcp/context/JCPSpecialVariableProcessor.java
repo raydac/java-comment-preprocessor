@@ -67,22 +67,22 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   public static List<NameReferencePair> getReference() {
     final List<NameReferencePair> result = new ArrayList<>();
 
-    result.add(new NameReferencePair(VAR_VERSION, "The Preprocessor version"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to the current preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "The Synonym for '" + VAR_DEST_FULLPATH + "', read only"));
-    result.add(new NameReferencePair(VAR_SRC_DIR, "The Current preprocessing file folder, read only"));
-    result.add(new NameReferencePair(VAR_SRC_DIR2, "The Synonym for '" + VAR_SRC_DIR + "', read only"));
-    result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "The Current preprocessing file name, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "The Synonym for '" + VAR_SRC_FILE_NAME + "', read only"));
+    result.add(new NameReferencePair(VAR_VERSION, "Preprocessor version"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to preprocessing file, read only"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "Synonym for '" + VAR_DEST_FULLPATH + "', read only"));
+    result.add(new NameReferencePair(VAR_SRC_DIR, "Preprocessing file folder, read only"));
+    result.add(new NameReferencePair(VAR_SRC_DIR2, "Synonym for '" + VAR_SRC_DIR + "', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "Preprocessing file name, read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "Synonym for '" + VAR_SRC_FILE_NAME + "', read only"));
 
-    result.add(new NameReferencePair(VAR_LINE, "The Current preprocessing line number in the current source file, read only"));
-    result.add(new NameReferencePair(VAR_DEST_FULLPATH, "The Full Destination File path for the preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_DEST_DIR, "The Destination File path for the preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "The Destination File name for the preprocessing file, allowed for reading and writing"));
+    result.add(new NameReferencePair(VAR_LINE, "Number of preprocessing line, read only"));
+    result.add(new NameReferencePair(VAR_DEST_FULLPATH, "Full destination file path, read only"));
+    result.add(new NameReferencePair(VAR_DEST_DIR, "Destination folder, read only"));
+    result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "Destination file name, read-writing"));
 
-    result.add(new NameReferencePair(VAR_TIME, "The Current time"));
-    result.add(new NameReferencePair(VAR_DATE, "The Current date"));
-    result.add(new NameReferencePair(VAR_TIMESTAMP, "The Timestamp of the current source file"));
+    result.add(new NameReferencePair(VAR_TIME, "Time (HH:mm:ss)"));
+    result.add(new NameReferencePair(VAR_DATE, "Date (MMM dd yyyy)"));
+    result.add(new NameReferencePair(VAR_TIMESTAMP, "Source file timestamp (EEE MMM dd HH:mm:ss yyyy)"));
 
     return result;
   }
