@@ -47,7 +47,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>meta-check-jar</id>
+                                <id>meta-check-class-versions</id>
                                 <goals>
                                     <goal>check-jar</goal>
                                 </goals>
@@ -118,6 +118,42 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <plugin>
+                        <groupId>com.igormaznitsa</groupId>
+                        <artifactId>uber-pom</artifactId>
+                        <version>1.0.1</version>
+                        <configuration>
+                            <remove>
+                                <section>parent</section>
+                                <section>modules</section>
+                                <section>profiles/profile/modules</section>
+                            </remove>
+                            <removeSiblingDuplications>true</removeSiblingDuplications>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>upom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -395,20 +431,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
@@ -433,27 +455,6 @@
                         <phase>test</phase>
                         <goals>
                             <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.igormaznitsa</groupId>
-                <artifactId>uber-pom</artifactId>
-                <version>1.0.1</version>
-                <configuration>
-                    <remove>
-                        <section>parent</section>
-                        <section>modules</section>
-                        <section>profiles/profile/modules</section>
-                    </remove>
-                    <removeSiblingDuplications>true</removeSiblingDuplications>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>upom</goal>
                         </goals>
                     </execution>
                 </executions>
