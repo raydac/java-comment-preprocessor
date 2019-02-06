@@ -44,7 +44,7 @@ import java.util.List;
  * @author Igor Maznitsa (http://www.igormaznitsa.com)
  */
 @Mojo(name = "clear", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true, requiresProject = true)
-public class PreprocessorClearMojo extends AbstractMojo {
+public class ClearMojo extends AbstractMojo {
 
   /**
    * The Destination folder where generated sources can be placed in non-test mode and which will be removed.

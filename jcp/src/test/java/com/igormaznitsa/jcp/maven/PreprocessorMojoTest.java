@@ -71,7 +71,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
   public void testConfiguration() throws Exception {
     final File testPom = new File(this.getClass().getResource("preprocessor_mojo_test_cfg.xml").toURI());
     assertTrue("Must be existing", testPom.exists());
-    final PreprocessorMojo mojo = (PreprocessorMojo) lookupMojo("preprocess", testPom);
+    final PreprocessMojo mojo = (PreprocessMojo) lookupMojo("preprocess", testPom);
     assertNotNull("Must not be null", mojo);
 
     assertFalse(mojo.isSkip());

@@ -1,0 +1,25 @@
+apply plugin: 'com.igormaznitsa.gradle.jcp'
+
+buildscript{
+  repositories {
+      mavenLocal()
+
+      dependencies{
+        classpath 'com.igormaznitsa:jcp:'+project.getProperty('jcp.test.version')
+      }
+  }
+}
+
+group = 'com.igormaznitsa'
+version = '0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+

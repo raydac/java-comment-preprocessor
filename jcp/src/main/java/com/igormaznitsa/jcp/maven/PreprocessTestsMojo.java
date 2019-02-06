@@ -27,11 +27,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * The Mojo is auxiliary wrapper over the standard preprocess mojo to automate providing of TRUE as the 'useTestSources' flag.
  *
- * @see PreprocessorMojo
+ * @see PreprocessMojo
  * @since 6.1.1
  */
 @Mojo(name = "preprocessTests", defaultPhase = LifecyclePhase.GENERATE_TEST_SOURCES, threadSafe = true, requiresProject = true)
-public class PreprocessTestsMojo extends PreprocessorMojo {
+public class PreprocessTestsMojo extends PreprocessMojo {
 
   @Override
   public boolean getUseTestSources() {

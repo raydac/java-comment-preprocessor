@@ -53,7 +53,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 @Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresProject = true)
-public class PreprocessorMojo extends AbstractMojo implements PreprocessorLogger {
+public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
   /**
    * The Project source roots for non-test mode.
