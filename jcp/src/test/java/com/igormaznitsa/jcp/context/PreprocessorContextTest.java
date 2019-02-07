@@ -242,8 +242,11 @@ public class PreprocessorContextTest {
         };
 
         f.set(context, exx);
-      } else {
-        throw new Error("Unexpected field type : " + type.getName());
+      } else if (type.isAssignableFrom(List.class) || type.isAssignableFrom(Set.class)) {
+        // ignored
+      }
+      else {
+        throw new Error(String.format("Unexpected %s %s",f.getName(),type.getName()));
       }
     }
 

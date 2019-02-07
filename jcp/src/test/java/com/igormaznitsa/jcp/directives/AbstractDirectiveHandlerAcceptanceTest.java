@@ -42,7 +42,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -184,7 +186,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       context.setPreprocessorLogger(logger);
     }
     context.setFileOutputDisabled(true);
-    context.setSourceDirectories(srcfile.getParent());
+    context.setSourceFolders(Collections.singletonList(srcfile.getParent()));
     context.setKeepLines(keepLines);
     context.setPreprocessorExtension(extension);
 
@@ -201,9 +203,9 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
     state.saveBuffersToStreams(prefix, normal, postfix);
 
-    final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), "UTF8"));
-    final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), "UTF8"));
-    final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), "UTF8"));
+    final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), StandardCharsets.UTF_8));
+    final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), StandardCharsets.UTF_8));
+    final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), StandardCharsets.UTF_8));
 
     readWholeDataFromReader(prefixreader, result);
     readWholeDataFromReader(normalreader, result);

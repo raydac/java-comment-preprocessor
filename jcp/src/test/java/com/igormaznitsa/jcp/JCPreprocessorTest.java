@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
@@ -83,12 +84,12 @@ public final class JCPreprocessorTest {
     }
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setSourceDirectories(testDirectory.getCanonicalPath());
+    context.setSourceFolders(Collections.singletonList(testDirectory.getCanonicalPath()));
     context.setDestinationDirectory(testDirectory.getCanonicalPath());
     context.setClearDestinationDirBefore(false);
     context.setRemoveComments(true);
-    context.setProcessingFileExtensions("ppp");
-    context.setExcludedFileExtensions("etl");
+    context.setProcessingFileExtensions(Collections.singletonList("ppp"));
+    context.setExcludedFileExtensions(Collections.singletonList("etl"));
 
     final JCPreprocessor preprocessor = new JCPreprocessor(context);
     preprocessor.execute();

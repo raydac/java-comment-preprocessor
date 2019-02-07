@@ -196,7 +196,7 @@ public final class JCPreprocessor {
 
     processCfgFiles();
 
-    final File[] srcDirs = context.getSourceDirectoryAsFiles();
+    final List<File> srcDirs = context.getSourceDirectoryAsFiles();
     final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs, context.getExcludedFolderPatterns());
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
@@ -334,7 +334,7 @@ public final class JCPreprocessor {
 
   @Nonnull
   @MustNotContainNull
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final File[] srcDirs, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
+  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final List<File> srcDirs, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<>();
 
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -367,7 +367,7 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final String[] excludedFolderPatterns) throws IOException {
+  private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
     final Set<File> result = new HashSet<>();
     final File[] allowedFiles = dir.listFiles();
     if (allowedFiles != null) {
@@ -381,7 +381,7 @@ public final class JCPreprocessor {
 
           String excludingPattern = null;
 
-          if (excludedFolderPatterns.length != 0) {
+          if (!excludedFolderPatterns.isEmpty()) {
             final String subPathInBase = folderPath.substring(normalizedBasePath.length());
 
             for (final String s : excludedFolderPatterns) {

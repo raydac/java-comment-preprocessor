@@ -40,9 +40,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
@@ -59,13 +64,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * The Project source roots for non-test mode.
    */
   @Parameter(alias = "compileSourceRoots", defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
-  private List<String> compileSourceRoots;
+  private List<String> compileSourceRoots = new ArrayList<>();
 
   /**
    * The Project source roots for test mode.
    */
   @Parameter(alias = "testCompileSourceRoots", defaultValue = "${project.testCompileSourceRoots}", required = true, readonly = true)
-  private List<String> testCompileSourceRoots;
+  private List<String> testCompileSourceRoots = new ArrayList<>();
 
   /**
    * The Maven Project to be preprocessed.
@@ -77,7 +82,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * The Directly defined source directory, it will make plugin to preprocess the folder instead of project and maven defined ones. By default it is empty and is not used.
    */
   @Parameter(alias = "source", defaultValue = "")
-  private String source;
+  private List<String> source = new ArrayList<>();
 
   /**
    * Copy file attributes for copied and generated files.
@@ -85,31 +90,31 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * @since 6.1.2
    */
   @Parameter(alias = "copyFileAttributes", defaultValue = "false")
-  private boolean copyFileAttributes;
+  private boolean copyFileAttributes = false;
 
   /**
    * The Destination folder where generated sources will be placed in non-test mode.
    */
   @Parameter(alias = "destination", defaultValue = "${project.build.directory}/generated-sources/preprocessed")
-  private File destination;
+  private File destination = null;
 
   /**
    * Destination folder where generated sources will be placed in test-mode.
    */
   @Parameter(alias = "testDestination", defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
-  private File testDestination;
+  private File testDestination = null;
 
   /**
    * The Input text encoding to be used for preprocessing, by default it uses defined in project properties.
    */
   @Parameter(alias = "inEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String inEncoding;
+  private String inEncoding = StandardCharsets.UTF_8.name();
 
   /**
    * The Encoding for preprocessed text output, by default it uses defined in project properties.
    */
   @Parameter(alias = "outEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String outEncoding;
+  private String outEncoding = StandardCharsets.UTF_8.name();
 
   /**
    * Flag to ignore missing source folders, if false then mojo fail for any missing source folder, if true then missing folder will be ignored.
@@ -117,103 +122,103 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * @since 6.1.1
    */
   @Parameter(alias = "ignoreMissingSources", defaultValue = "false")
-  private boolean ignoreMissingSources;
+  private boolean ignoreMissingSources = false;
 
   /**
    * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
    */
   @Parameter(alias = "excluded")
-  private String excluded;
+  private List<String> excluded = new ArrayList<>();
 
   /**
    * List of file extensions to be preprocessed. By default java,txt,htm,html
    */
   @Parameter(alias = "processing")
-  private String processing;
+  private List<String> processing = new ArrayList<>();
 
   /**
    * Flag to interpret unknown variable as FALSE.
    */
   @Parameter(alias = "unknownVarAsFalse", defaultValue = "false")
-  private boolean unknownVarAsFalse;
+  private boolean unknownVarAsFalse = false;
 
   /**
    * Make dry run of the preprocessor without any saving of result.
    */
   @Parameter(alias = "disableOut", defaultValue = "false")
-  private boolean disableOut;
+  private boolean disableOut = false;
 
   /**
    * Turn on the verbose mode for preprocessing process.
    */
   @Parameter(alias = "verbose", defaultValue = "false")
-  private boolean verbose;
+  private boolean verbose = false;
 
   /**
    * Clear the destination folder before preprocessing (if it exists).
    */
   @Parameter(alias = "clear", defaultValue = "false")
-  private boolean clear;
+  private boolean clear = false;
 
   /**
    * Be precise in processing of the last next line char in files, it will not be added if it is not presented if to turn on the mode..
    */
   @Parameter(alias = "careForLastNextLine", defaultValue = "false")
-  private boolean careForLastNextLine;
+  private boolean careForLastNextLine = false;
 
   /**
    * Disable overriding of the source root folders for maven project after preprocessing.
    */
   @Parameter(alias = "keepSrcRoot", defaultValue = "false")
-  private boolean keepSrcRoot;
+  private boolean keepSrcRoot = false;
 
   /**
    * Remove all Java like commentaries from preprocessed sources.
    */
   @Parameter(alias = "removeComments", defaultValue = "false")
-  private boolean removeComments;
+  private boolean removeComments = false;
 
   /**
    * List of global preprocessing variables.
    */
   @Parameter(alias = "globalVars")
-  private Properties globalVars;
+  private Map<String, String> globalVars = new HashMap<>();
 
   /**
    * List of sub-folders in source folders to be excluded from preprocessing, ANT path pattern format allowed.
    */
   @Parameter(alias = "excludedFolders")
-  private String[] excludedFolders = new String[0];
+  private List<String> excludedFolders = new ArrayList<>();
 
   /**
    * List of external configuration files.
    */
   @Parameter(alias = "cfgFiles")
-  private File[] cfgFiles;
+  private List<File> cfgFiles = new ArrayList<>();
 
   /**
    * Disable removing lines from preprocessed files, it allows to keep line numeration similar to original sources.
    */
   @Parameter(alias = "keepLines", defaultValue = "true")
-  private boolean keepLines;
+  private boolean keepLines = true;
 
   /**
    * Manage mode to allow whitespace between the // and the #.
    */
   @Parameter(alias = "allowWhitespace", defaultValue = "false")
-  private boolean allowWhitespace;
+  private boolean allowWhitespace = false;
 
   /**
    * Preserve indents in lines marked by '//$' and '//$$' directives. The Directives will be replaced by white spaces chars.
    */
   @Parameter(alias = "preserveIndent", defaultValue = "false")
-  private boolean preserveIndent;
+  private boolean preserveIndent = false;
 
   /**
    * Allow usage of the preprocessor for test sources (since 5.3.4 version).
    */
   @Parameter(alias = "useTestSources", defaultValue = "false")
-  private boolean useTestSources;
+  private boolean useTestSources = false;
 
   /**
    * Skip preprocessing.
@@ -221,22 +226,22 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * @since 6.1.1
    */
   @Parameter(alias = "skip", property = "jcp.preprocess.skip", defaultValue = "false")
-  private boolean skip;
+  private boolean skip = false;
 
   /**
    * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
    */
   @Parameter(alias = "compareDestination", defaultValue = "false")
-  private boolean compareDestination;
+  private boolean compareDestination = false;
 
   @Nonnull
   @MustNotContainNull
-  public String[] getExcludedFolders() {
+  public List<String> getExcludedFolders() {
     return this.excludedFolders;
   }
 
   public void setExcludedFolders(@Nonnull @MustNotContainNull final String... antPatterns) {
-    this.excludedFolders = Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns));
+    this.excludedFolders = Arrays.asList(Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns)));
   }
 
   public boolean isIgnoreMissingSources() {
@@ -304,21 +309,21 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
   @Nonnull
-  public Properties getGlobalVars() {
+  public Map<String, String> getGlobalVars() {
     return this.globalVars;
   }
 
-  public void setGlobalVars(@Nonnull final Properties vars) {
+  public void setGlobalVars(@Nonnull final Map<String, String> vars) {
     this.globalVars = vars;
   }
 
   @Nonnull
   @MustNotContainNull
-  public File[] getCfgFiles() {
+  public List<File> getCfgFiles() {
     return this.cfgFiles;
   }
 
-  public void setCfgFiles(@Nonnull @MustNotContainNull final File[] files) {
+  public void setCfgFiles(@Nonnull @MustNotContainNull final List<File> files) {
     this.cfgFiles = files;
   }
 
@@ -331,11 +336,12 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
   @Nonnull
-  public String getSource() {
+  @MustNotContainNull
+  public List<String> getSource() {
     return this.source;
   }
 
-  public void setSource(@Nonnull final String source) {
+  public void setSource(@Nonnull @MustNotContainNull final List<String> source) {
     this.source = source;
   }
 
@@ -375,12 +381,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     this.outEncoding = value;
   }
 
-  @Nullable
-  public String getExcluded() {
+  @Nonnull
+  @MustNotContainNull
+  public List<String> getExcluded() {
     return this.excluded;
   }
 
-  public void setExcluded(@Nullable final String excluded) {
+  public void setExcluded(@Nonnull @MustNotContainNull final List<String> excluded) {
     this.excluded = excluded;
   }
 
@@ -392,12 +399,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     this.unknownVarAsFalse = flag;
   }
 
-  @Nullable
-  public String getProcessing() {
+  @Nonnull
+  @MustNotContainNull
+  public List<String> getProcessing() {
     return this.processing;
   }
 
-  public void setProcessing(@Nullable final String processing) {
+  public void setProcessing(@Nonnull @MustNotContainNull final List<String> processing) {
     this.processing = processing;
   }
 
@@ -441,49 +449,45 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     this.removeComments = value;
   }
 
-  @Nullable
-  private String makeSourceRootList() {
-    String result = null;
-    if (this.source != null && !this.source.isEmpty()) {
-      result = this.source;
-    } else if (this.project != null) {
-      final StringBuilder accum = new StringBuilder();
+  @Nonnull
+  @MustNotContainNull
+  private List<String> makeSourceRootList() {
+    List<String> result = new ArrayList<>();
+    if (this.source.isEmpty()) {
+      if (this.project != null) {
+        for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
+          final boolean folderPresented = new File(srcRoot).isDirectory();
 
-      for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
-        final boolean folderPresented = new File(srcRoot).isDirectory();
+          if (!folderPresented) {
+            getLog().debug("Can't find source folder : " + srcRoot);
+          }
 
-        if (!folderPresented) {
-          getLog().debug("Can't find source folder : " + srcRoot);
-        }
+          String textToAppend;
 
-        String textToAppend;
-
-        if (folderPresented) {
-          textToAppend = srcRoot;
-        } else {
-          if (this.isIgnoreMissingSources()) {
-            textToAppend = null;
-          } else {
+          if (folderPresented) {
             textToAppend = srcRoot;
+          } else {
+            if (this.isIgnoreMissingSources()) {
+              textToAppend = null;
+            } else {
+              textToAppend = srcRoot;
+            }
           }
-        }
 
-        if (textToAppend != null) {
-          if (accum.length() > 0) {
-            accum.append(';');
+          if (textToAppend != null) {
+            result.add(srcRoot);
           }
-          accum.append(srcRoot);
         }
       }
-      result = accum.toString();
+    } else {
+      result.addAll(this.source);
     }
     return result;
   }
 
   private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
     if (this.project != null) {
-      final String sourceDirectories = context.getSourceDirectories();
-      final String[] split = sourceDirectories.split(";");
+      final List<String> sourceFolders = context.getSourceFolders();
 
       final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<>();
@@ -491,7 +495,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
       }
 
-      for (final String str : split) {
+      for (final String str : sourceFolders) {
         int index = sourceRoots.indexOf(str);
         if (index < 0) {
           // check for canonical paths
@@ -513,7 +517,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
   @Nonnull
-  PreprocessorContext makePreprocessorContext(@Nonnull final String sourceFoldersInPreprocessorFormat) throws IOException {
+  PreprocessorContext makePreprocessorContext(@Nonnull @MustNotContainNull final List<String> sourceFolders) throws IOException {
     final PreprocessorContext context = new PreprocessorContext();
     context.setPreprocessorLogger(this);
 
@@ -522,23 +526,20 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    context.setSourceDirectories(sourceFoldersInPreprocessorFormat);
+    context.setSourceFolders(sourceFolders);
     context.setDestinationDirectory(assertNotNull(this.getUseTestSources() ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath()));
 
-    if (this.inEncoding != null) {
-      context.setInCharacterEncoding(this.inEncoding);
-    }
-    if (this.outEncoding != null) {
-      context.setOutCharacterEncoding(this.outEncoding);
-    }
-    if (this.excluded != null) {
+    context.setInCharacterEncoding(this.inEncoding);
+    context.setOutCharacterEncoding(this.outEncoding);
+
+    if (!this.excluded.isEmpty()) {
       context.setExcludedFileExtensions(this.excluded);
     }
-    if (this.processing != null) {
+    if (!this.processing.isEmpty()) {
       context.setProcessingFileExtensions(this.processing);
     }
 
-    info("Preprocess sources : " + context.getSourceDirectories());
+    info("Preprocess sources : " + context.getSourceFolders());
     info("Preprocess destination : " + context.getDestinationDirectory());
 
     context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
@@ -551,24 +552,19 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setFileOutputDisabled(this.disableOut);
     context.setAllowWhitespace(this.allowWhitespace);
     context.setPreserveIndent(this.preserveIndent);
-    context.setExcludedFolderPatterns(this.excludedFolders);
+    context.setExcludedFolderPatterns(this.excludedFolders.toArray(new String[0]));
     context.setCopyFileAttributes(this.copyFileAttributes);
 
     // process cfg files
-    if (this.cfgFiles != null && this.cfgFiles.length != 0) {
-      for (final File file : this.cfgFiles) {
-        assertNotNull("Detected null where a config file was expected", file);
-        context.addConfigFile(file);
-      }
+    for (final File file : this.cfgFiles) {
+      assertNotNull("Detected null in config file list", file);
+      context.addConfigFile(file);
     }
 
     // process global vars
-    if (this.globalVars != null && !this.globalVars.isEmpty()) {
-      for (final String key : this.globalVars.stringPropertyNames()) {
-        final String value = this.globalVars.getProperty(key);
-        assertNotNull("Can't find defined value for '" + key + "' global variable", value);
-        context.setGlobalVariable(key, Value.recognizeRawString(value));
-      }
+    for (final Map.Entry<String, String> v : this.globalVars.entrySet()) {
+      getLog().debug(String.format("Register global var: %s <- %s", v.getKey(), v.getValue()));
+      context.setGlobalVariable(v.getKey(), Value.recognizeRawString(v.getValue()));
     }
 
     return context;
@@ -581,11 +577,11 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     } else {
       PreprocessorContext context;
 
-      final String sourceFoldersInPreprocessingFormat = makeSourceRootList();
+      final List<String> sourceFoldersInPreprocessingFormat = makeSourceRootList();
 
       boolean skipPreprocessing = false;
 
-      if (sourceFoldersInPreprocessingFormat == null || sourceFoldersInPreprocessingFormat.isEmpty()) {
+      if (sourceFoldersInPreprocessingFormat.isEmpty()) {
         if (isIgnoreMissingSources()) {
           getLog().warn("Source folders are not provided, preprocessing is skipped.");
           skipPreprocessing = true;

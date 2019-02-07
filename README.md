@@ -8,7 +8,7 @@
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](http://yasobe.ru/na/iamoss)
 
 # Changelog
-- **6.2.0 (SNAPSHOT)**
+- **7.0.0 (SNAPSHOT)**
   - added function `STR esc(STR)`
   - fixed build under JDK 9+
   - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)

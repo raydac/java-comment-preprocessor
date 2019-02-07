@@ -25,7 +25,9 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * The handler for the excluded extension list (with comma)
@@ -39,7 +41,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "set (case insensitive) file extensions which will be be excluded from preprocessing, they won't be both preprocessed and copied (by default " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS + ')';
+    return "comma separated file extensions (case insensetive) to be excluded from preprocess and copy (by default " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS.stream().collect(Collectors.joining(",")) + ')';
   }
 
   @Override
@@ -49,7 +51,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!extensions.isEmpty()) {
-        context.setExcludedFileExtensions(extensions);
+        context.setExcludedFileExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

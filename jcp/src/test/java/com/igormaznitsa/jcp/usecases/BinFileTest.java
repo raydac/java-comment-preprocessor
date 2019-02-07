@@ -26,13 +26,15 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import javax.annotation.Nonnull;
 
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 
 public class BinFileTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
-    context.setExcludedFileExtensions("bin");
+    context.setExcludedFileExtensions(Collections.singletonList("bin"));
   }
 
   @Override

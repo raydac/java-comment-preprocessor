@@ -25,7 +25,9 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * The handler for the preprocessing file extension list (with comma)
@@ -39,7 +41,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "set (case insensitive) preprocessing file extension list (with comma) (by default " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS + ')';
+    return "comma separated list of allowed extensions (case insensitive) (by default " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS.stream().collect(Collectors.joining(",")) + ')';
   }
 
   @Override
@@ -50,7 +52,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!extensions.isEmpty()) {
-        context.setProcessingFileExtensions(extensions);
+        context.setProcessingFileExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

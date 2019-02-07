@@ -26,6 +26,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -69,7 +70,7 @@ public final class PreprocessorExceptionTest {
     final File file = new File(this.getClass().getResource("wrong_bracket_include.txt").toURI());
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setSourceDirectories(file.getParent());
+    context.setSourceFolders(Collections.singletonList(file.getParent()));
     context.setFileOutputDisabled(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);

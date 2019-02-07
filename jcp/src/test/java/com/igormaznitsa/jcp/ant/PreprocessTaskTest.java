@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -65,10 +66,10 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetSource() throws Exception {
-    final File[] sourceDirs = antTask.generatePreprocessorContext().getSourceDirectoryAsFiles();
-    assertEquals("There must be only root", 1, sourceDirs.length);
+    final List<File> sourceDirs = antTask.generatePreprocessorContext().getSourceDirectoryAsFiles();
+    assertEquals("There must be only root", 1, sourceDirs.size());
 
-    assertEquals("File must be equal the original", THIS_DIRECTORY, sourceDirs[0]);
+    assertEquals("File must be equal the original", THIS_DIRECTORY, sourceDirs.get(0));
   }
 
   @Test
@@ -80,9 +81,9 @@ public class PreprocessTaskTest {
 
   @Test
   public void testExcludedFolders() throws Exception {
-    assertArrayEquals(new String[0], antTask.generatePreprocessorContext().getExcludedFolderPatterns());
+    assertTrue(antTask.generatePreprocessorContext().getExcludedFolderPatterns().isEmpty());
     antTask.setExcludedFolders(".git" + File.pathSeparator + "**/.cvs" + File.pathSeparator + ".hg");
-    assertArrayEquals(new String[] {".git", "**/.cvs", ".hg"}, antTask.generatePreprocessorContext().getExcludedFolderPatterns());
+    assertEquals(Arrays.asList(".git", "**/.cvs", ".hg"), antTask.generatePreprocessorContext().getExcludedFolderPatterns());
   }
 
   @Test

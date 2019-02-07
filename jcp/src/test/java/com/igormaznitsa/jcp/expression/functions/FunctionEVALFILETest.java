@@ -26,6 +26,8 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
+import java.util.List;
+
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.Test;
 
@@ -61,10 +63,10 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_AbsolutePath() throws Exception {
-    final String theTestFolder = getCurrentTestFolder();
+    final List<String> theTestFolder = getCurrentTestFolder();
     final PreprocessorContext context = preparePreprocessorContext(theTestFolder);
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")", StringEscapeUtils.escapeJava(theTestFolder+TEST_EVAL_PATH)), context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")", StringEscapeUtils.escapeJava(theTestFolder.get(0)+TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }

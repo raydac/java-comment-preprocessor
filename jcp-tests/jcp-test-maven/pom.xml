@@ -29,10 +29,7 @@
                             <processing>java</processing>
                             <keepLines>true</keepLines>
                             <globalVars>
-                                <property>
-                                    <name>some.test.global</name>
-                                    <value>Some Test Global Value</value>
-                                </property>
+                                <some.test.global>Some Test Global Value</some.test.global>
                             </globalVars>
                         </configuration>
                     </execution>
@@ -44,10 +41,7 @@
                         </goals>
                         <configuration>
                             <globalVars>
-                                <property>
-                                    <name>some.test.global.test</name>
-                                    <value>Some Test</value>
-                                </property>
+                                <some.test.global.test>Some Test</some.test.global.test>
                             </globalVars>
                         </configuration>
                     </execution>

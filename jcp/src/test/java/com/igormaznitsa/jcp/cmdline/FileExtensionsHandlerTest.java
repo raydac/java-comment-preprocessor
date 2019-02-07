@@ -23,6 +23,8 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -44,10 +46,10 @@ public class FileExtensionsHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/f", mock));
     assertFalse(HANDLER.processCommandLineKey("/F:", mock));
 
-    verify(mock, never()).setExcludedFileExtensions(anyString());
+    verify(mock, never()).setExcludedFileExtensions(any());
 
     assertTrue(HANDLER.processCommandLineKey("/f:rrr,Ggg,bBb", mock));
-    verify(mock).setProcessingFileExtensions("rrr,Ggg,bBb");
+    verify(mock).setProcessingFileExtensions(Arrays.asList("rrr","Ggg","bBb"));
   }
 
   @Override

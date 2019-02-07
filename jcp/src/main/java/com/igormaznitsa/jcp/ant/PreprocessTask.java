@@ -38,11 +38,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
@@ -280,17 +282,17 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     if (this.sourceDirectory != null) {
-      context.setSourceDirectories(this.sourceDirectory.getAbsolutePath());
+      context.setSourceFolders(Collections.singletonList(this.sourceDirectory.getAbsolutePath()));
     } else {
-      context.setSourceDirectories(getProject().getBaseDir().getAbsolutePath());
+      context.setSourceFolders(Collections.singletonList(getProject().getBaseDir().getAbsolutePath()));
     }
 
     if (this.excludedExtensions != null) {
-      context.setExcludedFileExtensions(this.excludedExtensions);
+      context.setExcludedFileExtensions(Arrays.stream(this.excludedExtensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
     }
 
     if (this.processing != null) {
-      context.setProcessingFileExtensions(this.processing);
+      context.setProcessingFileExtensions(Arrays.stream(this.processing.split("\\,")).map(String::trim).collect(Collectors.toList()));
     }
 
     if (this.inCharSet != null) {

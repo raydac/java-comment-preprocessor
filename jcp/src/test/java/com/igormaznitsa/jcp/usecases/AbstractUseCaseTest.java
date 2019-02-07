@@ -31,6 +31,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -139,9 +140,9 @@ public abstract class AbstractUseCaseTest {
   public final void main() throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
     context.setClearDestinationDirBefore(true);
-    context.setSourceDirectories(sourceFolder.getAbsolutePath());
+    context.setSourceFolders(Collections.singletonList(this.sourceFolder.getAbsolutePath()));
     context.setDestinationDirectory(tmpResultFolder.getRoot().getAbsolutePath());
-    context.setExcludedFileExtensions("xml");
+    context.setExcludedFileExtensions(Collections.singletonList("xml"));
     context.setVerbose(true);
 
     tuneContext(context);

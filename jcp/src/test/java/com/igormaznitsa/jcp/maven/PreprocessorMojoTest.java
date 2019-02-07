@@ -31,9 +31,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.assertArrayEquals;
 
 public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
@@ -78,9 +77,9 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     mojo.setSkip(true);
     assertTrue(mojo.isSkip());
 
-    final PreprocessorContext context = mojo.makePreprocessorContext("/");
+    final PreprocessorContext context = mojo.makePreprocessorContext(Collections.singletonList("/"));
 
-    assertEquals("/", context.getSourceDirectories());
+    assertEquals("/", context.getSourceFolders());
     assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
     assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions());
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getProcessingFileExtensions());
@@ -98,7 +97,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Must be true", context.isCopyFileAttributes());
     assertTrue("Must be true", context.isUnknownVariableAsFalse());
 
-    assertArrayEquals(new String[] {".git", ".hg", "**/.cvs", "c:/hello/**/world"}, context.getExcludedFolderPatterns());
+    assertEquals(Arrays.asList(".git", ".hg", "**/.cvs", "c:/hello/**/world"), context.getExcludedFolderPatterns());
 
     final File[] cfgfiles = context.getConfigFiles();
     assertEquals("Must be two", 2, cfgfiles.length);

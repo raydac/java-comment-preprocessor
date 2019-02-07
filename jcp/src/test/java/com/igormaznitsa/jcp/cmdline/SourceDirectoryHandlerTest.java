@@ -23,6 +23,9 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
+import java.io.File;
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 
@@ -44,8 +47,8 @@ public class SourceDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/I:", mock));
     assertFalse(HANDLER.processCommandLineKey("/II", mock));
 
-    assertTrue(HANDLER.processCommandLineKey("/i:testdir", mock));
-    verify(mock).setSourceDirectories("testdir");
+    assertTrue(HANDLER.processCommandLineKey("/i:testdir"+ File.pathSeparatorChar+"somedir", mock));
+    verify(mock).setSourceFolders(Arrays.asList("testdir","somedir"));
   }
 
   @Override

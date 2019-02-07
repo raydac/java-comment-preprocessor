@@ -30,9 +30,11 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
 public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContextTest {
@@ -91,7 +93,7 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
   }
 
   protected void assertFunction(final String expression, final Value expected, final Map<String, Value> localVars, final Map<String, Value> globalVars) throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext("./");
+    final PreprocessorContext context = preparePreprocessorContext(singletonList("./"));
 
     if (localVars != null) {
       for (final Map.Entry<String, Value> e : localVars.entrySet()) {

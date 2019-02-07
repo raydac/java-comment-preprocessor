@@ -37,7 +37,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
+import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(PowerMockRunner.class)
@@ -62,10 +65,10 @@ public abstract class AbstractSpyPreprocessorContextTest {
     FileUtils.cleanDirectory(destinationFolder.getRoot());
   }
 
-  protected String getCurrentTestFolder() {
+  protected List<String> getCurrentTestFolder() {
     final String testFolder = FilenameUtils.normalizeNoEndSeparator(System.getProperty("test.folder"));
     final String fullClassPath = this.getClass().getName().replace('.', File.separatorChar);
-    return FilenameUtils.normalize(testFolder + File.separator + fullClassPath.substring(0, fullClassPath.lastIndexOf(File.separatorChar)));
+    return Collections.singletonList(normalize(testFolder + File.separator + fullClassPath.substring(0, fullClassPath.lastIndexOf(File.separatorChar))));
   }
 
   protected File getDestinationFolder() {
@@ -76,11 +79,11 @@ public abstract class AbstractSpyPreprocessorContextTest {
     assertEquals("Destination folder must be enpty", 0, destinationFolder.getRoot().list().length);
   }
 
-  protected PreprocessorContext preparePreprocessorContext(final String sourceFolder) throws Exception {
-    return this.preparePreprocessorContext(sourceFolder, () -> false);
+  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders) throws Exception {
+    return this.preparePreprocessorContext(sourceFolders, () -> false);
   }
 
-  protected PreprocessorContext preparePreprocessorContext(final String sourceFolder, final ContextDataProvider provider) throws Exception {
+  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders, final ContextDataProvider provider) throws Exception {
     final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext());
     final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
     
@@ -90,7 +93,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
     PowerMockito.when(resultContext.getPreprocessingState()).thenReturn(stateMock);
 
     resultContext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
-    resultContext.setSourceDirectories(sourceFolder);
+    resultContext.setSourceFolders(sourceFolders);
     resultContext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
     
     return resultContext;

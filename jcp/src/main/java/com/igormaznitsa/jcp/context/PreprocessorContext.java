@@ -32,7 +32,6 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.jcp.logger.SystemOutLogger;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.common.utils.Assertions;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.annotation.Nonnull;
@@ -41,15 +40,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.splitForChar;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
@@ -58,11 +63,11 @@ import static java.util.Arrays.asList;
  */
 public final class PreprocessorContext {
 
-  public static final String DEFAULT_SOURCE_DIRECTORY = "." + File.separatorChar;
+  public static final List<String> DEFAULT_SOURCE_DIRECTORY = Collections.singletonList("." + File.separatorChar);
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
-  public static final String DEFAULT_PROCESSING_EXTENSIONS = "java,txt,htm,html";
-  public static final String DEFAULT_EXCLUDED_EXTENSIONS = "xml";
-  public static final String DEFAULT_CHARSET = "UTF8";
+  public static final List<String> DEFAULT_PROCESSING_EXTENSIONS = unmodifiableList(asList("java", "txt", "htm", "html"));
+  public static final List<String> DEFAULT_EXCLUDED_EXTENSIONS = singletonList("xml");
+  public static final String DEFAULT_CHARSET = UTF_8.name();
   private final Map<String, Value> globalVarTable = new HashMap<>();
   private final Map<String, Value> localVarTable = new HashMap<>();
   private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<>();
@@ -81,25 +86,25 @@ public final class PreprocessorContext {
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
-  private String sourceDirectories;
+  private List<String> sourceFolders;
   private String destinationDirectory;
   private File destinationDirectoryFile;
-  private File[] sourceDirectoryFiles;
-  private Set<String> processingFileExtensions = new HashSet<>(asList(splitForChar(DEFAULT_PROCESSING_EXTENSIONS, ',')));
-  private Set<String> excludedFileExtensions = new HashSet<>(asList(splitForChar(DEFAULT_EXCLUDED_EXTENSIONS, ',')));
+  private List<File> sourceDirectoryFiles;
+  private Set<String> processingFileExtensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
+  private Set<String> excludedFileExtensions = new HashSet<>(DEFAULT_EXCLUDED_EXTENSIONS);
   private PreprocessorExtension preprocessorExtension;
   private String inCharacterEncoding = DEFAULT_CHARSET;
   private String outCharacterEncoding = DEFAULT_CHARSET;
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private transient PreprocessingState currentState;
-  private String[] excludedFolderPatterns = new String[0];
+  private List<String> excludedFolderPatterns = Collections.emptyList();
 
   /**
    * The constructor
    */
   public PreprocessorContext() {
     this.currentState = new PreprocessingState(this, this.inCharacterEncoding, this.outCharacterEncoding);
-    setSourceDirectories(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
+    setSourceFolders(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
@@ -121,10 +126,10 @@ public final class PreprocessorContext {
     this.keepNonExecutingLines = context.keepNonExecutingLines;
     this.allowWhitespace = context.allowWhitespace;
     this.preserveIndent = context.preserveIndent;
-    this.sourceDirectories = context.sourceDirectories;
+    this.sourceFolders = context.sourceFolders;
     this.destinationDirectory = context.destinationDirectory;
     this.destinationDirectoryFile = context.destinationDirectoryFile;
-    this.sourceDirectoryFiles = context.sourceDirectoryFiles.clone();
+    this.sourceDirectoryFiles = new ArrayList<>(context.sourceDirectoryFiles);
     this.copyFileAttributes = context.copyFileAttributes;
     this.careForLastNextLine = context.careForLastNextLine;
 
@@ -143,7 +148,7 @@ public final class PreprocessorContext {
 
     this.globalVarTable.putAll(context.globalVarTable);
     this.localVarTable.putAll(context.localVarTable);
-    this.excludedFolderPatterns = context.excludedFolderPatterns.clone();
+    this.excludedFolderPatterns = new ArrayList<>(context.excludedFolderPatterns);
 
     this.mapVariableNameToSpecialVarProcessor.putAll(context.mapVariableNameToSpecialVarProcessor);
     this.sharedResources.putAll(context.sharedResources);
@@ -203,8 +208,8 @@ public final class PreprocessorContext {
    */
   @Nonnull
   @MustNotContainNull
-  public String[] getExcludedFolderPatterns() {
-    return this.excludedFolderPatterns.clone();
+  public List<String> getExcludedFolderPatterns() {
+    return this.excludedFolderPatterns;
   }
 
   /**
@@ -213,12 +218,9 @@ public final class PreprocessorContext {
    * @param patterns array contains Ant path patterns
    */
   public void setExcludedFolderPatterns(@MustNotContainNull @Nonnull final String... patterns) {
-    final String[] value = Assertions.assertDoesntContainNull(Assertions.assertNotNull(patterns));
-    final String[] normalized = new String[value.length];
-    for (int i = 0; i < value.length; i++) {
-      normalized[i] = FilenameUtils.normalize(value[i], true);
-    }
-    this.excludedFolderPatterns = normalized;
+    this.excludedFolderPatterns = Arrays.stream(patterns)
+        .map(x -> FilenameUtils.normalize(x, true))
+        .collect(Collectors.toList());
   }
 
   public boolean isCareForLastNextLine() {
@@ -452,8 +454,9 @@ public final class PreprocessorContext {
    * @return the current source directories semi separated list
    */
   @Nonnull
-  public String getSourceDirectories() {
-    return sourceDirectories;
+  @MustNotContainNull
+  public List<String> getSourceFolders() {
+    return this.sourceFolders;
   }
 
   /**
@@ -463,10 +466,10 @@ public final class PreprocessorContext {
    * @return this preprocessor context instance
    */
   @Nonnull
-  public PreprocessorContext setSourceDirectories(@Nonnull final String directories) {
+  public PreprocessorContext setSourceFolders(@Nonnull @MustNotContainNull final List<String> directories) {
     assertNotNull("Source directory is null", directories);
 
-    this.sourceDirectories = directories;
+    this.sourceFolders = directories;
     this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
 
     return this;
@@ -479,8 +482,8 @@ public final class PreprocessorContext {
    */
   @Nonnull
   @MustNotContainNull
-  public File[] getSourceDirectoryAsFiles() {
-    return sourceDirectoryFiles;
+  public List<File> getSourceDirectoryAsFiles() {
+    return this.sourceDirectoryFiles;
   }
 
   /**
@@ -490,19 +493,14 @@ public final class PreprocessorContext {
    */
   @Nonnull
   @MustNotContainNull
-  private File[] getParsedSourceDirectoryAsFiles() {
-    final String[] splitted = splitForChar(sourceDirectories, ';');
-    final File[] result = new File[splitted.length];
-    int index = 0;
-    for (final String dirName : splitted) {
-      final File dir = new File(dirName);
-      if (!dir.isDirectory()) {
-        throw new IllegalStateException("Can't find a source directory [" + PreprocessorUtils.getFilePath(dir) + ']');
-      }
-      result[index++] = dir;
-    }
-
-    return result;
+  private List<File> getParsedSourceDirectoryAsFiles() {
+    return this.sourceFolders.stream()
+        .map(File::new)
+        .peek(x -> {
+          if (!x.isDirectory()) {
+            throw new IllegalStateException("Can't find a source directory [" + PreprocessorUtils.getFilePath(x) + ']');
+          }
+        }).collect(Collectors.toList());
   }
 
   /**
@@ -558,9 +556,8 @@ public final class PreprocessorContext {
    * @return this preprocessor context
    */
   @Nonnull
-  public PreprocessorContext setProcessingFileExtensions(@Nonnull final String extensions) {
-    assertNotNull("Argument is null", extensions);
-    processingFileExtensions = new HashSet<>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+  public PreprocessorContext setProcessingFileExtensions(@Nonnull @MustNotContainNull final List<String> extensions) {
+    processingFileExtensions = new HashSet<>(assertDoesntContainNull(extensions));
     return this;
   }
 
@@ -612,9 +609,8 @@ public final class PreprocessorContext {
    * @return this preprocessor context
    */
   @Nonnull
-  public PreprocessorContext setExcludedFileExtensions(@Nonnull final String extensions) {
-    assertNotNull("Argument is null", extensions);
-    excludedFileExtensions = new HashSet<>(asList(PreprocessorUtils.splitExtensionCommaList(extensions)));
+  public PreprocessorContext setExcludedFileExtensions(@Nonnull @MustNotContainNull final List<String> extensions) {
+    excludedFileExtensions = new HashSet<>(assertDoesntContainNull(extensions));
     return this;
   }
 

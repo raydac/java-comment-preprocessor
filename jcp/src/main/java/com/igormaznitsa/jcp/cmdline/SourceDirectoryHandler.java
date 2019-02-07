@@ -25,7 +25,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.extractTail;
 
 /**
  * The handler processing the key to set the source directory
@@ -49,7 +55,8 @@ public class SourceDirectoryHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!tail.isEmpty()) {
-        context.setSourceDirectories(PreprocessorUtils.extractTail(ARG_NAME, key));
+        context.setSourceFolders(Arrays.asList(extractTail(ARG_NAME, key).split(Pattern.quote(File.pathSeparator)))
+        .stream().map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }
