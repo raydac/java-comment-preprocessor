@@ -5,7 +5,7 @@ import org.gradle.api.tasks.TaskAction;
 
 public class JcpPreprocessTask extends DefaultTask {
 
-  public JcpPreprocessTask(){
+  public JcpPreprocessTask() {
     super();
   }
 

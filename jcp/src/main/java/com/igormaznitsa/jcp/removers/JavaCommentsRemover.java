@@ -144,7 +144,8 @@ public class JavaCommentsRemover {
               state = STATE_NORMAL;
             }
             break;
-            default: break;
+            default:
+              break;
           }
           dstWriter.write(chr);
         }

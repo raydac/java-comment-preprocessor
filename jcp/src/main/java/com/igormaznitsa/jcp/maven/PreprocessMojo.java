@@ -37,7 +37,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,8 +45,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
@@ -512,7 +509,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       final String destinationDir = context.getDestinationDirectoryAsFile().getCanonicalPath();
 
       sourceRoots.add(destinationDir);
-      info("The New compile source root has been added into the list [" + destinationDir + ']');
+      info("New source root has been listed [" + destinationDir + ']');
     }
   }
 
