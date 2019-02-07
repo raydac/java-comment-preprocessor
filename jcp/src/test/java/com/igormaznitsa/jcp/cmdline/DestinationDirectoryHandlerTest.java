@@ -41,7 +41,7 @@ public class DestinationDirectoryHandlerTest extends AbstractCommandLineHandlerT
     assertFalse(HANDLER.processCommandLineKey("/s:", mock));
     assertFalse(HANDLER.processCommandLineKey("/O:", mock));
     assertTrue(HANDLER.processCommandLineKey("/O:test", mock));
-    verify(mock).setDestinationDirectory("test");
+    verify(mock).setTargetFolder("test");
   }
 
   @Override

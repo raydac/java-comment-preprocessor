@@ -278,7 +278,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.registerSpecialVariableProcessor(this);
 
     if (this.destinationDirectory != null) {
-      context.setDestinationDirectory(this.destinationDirectory.getAbsolutePath());
+      context.setTargetFolder(this.destinationDirectory.getAbsolutePath());
     }
 
     if (this.sourceDirectory != null) {

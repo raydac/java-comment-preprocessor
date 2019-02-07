@@ -87,9 +87,9 @@ public final class PreprocessorContext {
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
   private List<String> sourceFolders;
-  private String destinationDirectory;
-  private File destinationDirectoryFile;
-  private List<File> sourceDirectoryFiles;
+  private String targetFolder;
+  private File targetFolderFile;
+  private List<File> sourceFolderFiles;
   private Set<String> processingFileExtensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
   private Set<String> excludedFileExtensions = new HashSet<>(DEFAULT_EXCLUDED_EXTENSIONS);
   private PreprocessorExtension preprocessorExtension;
@@ -104,7 +104,7 @@ public final class PreprocessorContext {
    */
   public PreprocessorContext() {
     this.currentState = new PreprocessingState(this, this.inCharacterEncoding, this.outCharacterEncoding);
-    setSourceFolders(DEFAULT_SOURCE_DIRECTORY).setDestinationDirectory(DEFAULT_DEST_DIRECTORY);
+    setSourceFolders(DEFAULT_SOURCE_DIRECTORY).setTargetFolder(DEFAULT_DEST_DIRECTORY);
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
@@ -127,9 +127,9 @@ public final class PreprocessorContext {
     this.allowWhitespace = context.allowWhitespace;
     this.preserveIndent = context.preserveIndent;
     this.sourceFolders = context.sourceFolders;
-    this.destinationDirectory = context.destinationDirectory;
-    this.destinationDirectoryFile = context.destinationDirectoryFile;
-    this.sourceDirectoryFiles = new ArrayList<>(context.sourceDirectoryFiles);
+    this.targetFolder = context.targetFolder;
+    this.targetFolderFile = context.targetFolderFile;
+    this.sourceFolderFiles = new ArrayList<>(context.sourceFolderFiles);
     this.copyFileAttributes = context.copyFileAttributes;
     this.careForLastNextLine = context.careForLastNextLine;
 
@@ -165,7 +165,11 @@ public final class PreprocessorContext {
   }
 
   @Nonnull
-  private static String makeStackView(@Nullable final TextFileDataContainer cloneSource, final boolean cloned, @Nullable @MustNotContainNull final List<TextFileDataContainer> list) {
+  private static String makeStackView(
+      @Nullable final TextFileDataContainer cloneSource,
+      final boolean cloned,
+      @Nullable @MustNotContainNull final List<TextFileDataContainer> list
+  ) {
     if (list == null || list.isEmpty()) {
       return "";
     }
@@ -470,7 +474,7 @@ public final class PreprocessorContext {
     assertNotNull("Source directory is null", directories);
 
     this.sourceFolders = directories;
-    this.sourceDirectoryFiles = getParsedSourceDirectoryAsFiles();
+    this.sourceFolderFiles = getParsedSourceDirectoryAsFiles();
 
     return this;
   }
@@ -483,7 +487,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   public List<File> getSourceDirectoryAsFiles() {
-    return this.sourceDirectoryFiles;
+    return this.sourceFolderFiles;
   }
 
   /**
@@ -510,7 +514,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public File getDestinationDirectoryAsFile() {
-    return destinationDirectoryFile;
+    return targetFolderFile;
   }
 
   /**
@@ -519,8 +523,8 @@ public final class PreprocessorContext {
    * @return the current destination directory as a String
    */
   @Nonnull
-  public String getDestinationDirectory() {
-    return destinationDirectory;
+  public String getTargetFolder() {
+    return targetFolder;
   }
 
   /**
@@ -530,10 +534,10 @@ public final class PreprocessorContext {
    * @return this preprocessor context instance
    */
   @Nonnull
-  public PreprocessorContext setDestinationDirectory(@Nonnull final String directory) {
+  public PreprocessorContext setTargetFolder(@Nonnull final String directory) {
     assertNotNull("Directory is null", directory);
-    this.destinationDirectory = directory;
-    destinationDirectoryFile = new File(this.destinationDirectory);
+    this.targetFolder = directory;
+    targetFolderFile = new File(this.targetFolder);
 
     return this;
   }

@@ -94,7 +94,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
 
     resultContext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
     resultContext.setSourceFolders(sourceFolders);
-    resultContext.setDestinationDirectory(destinationFolder.getRoot().getAbsolutePath());
+    resultContext.setTargetFolder(destinationFolder.getRoot().getAbsolutePath());
     
     return resultContext;
   }

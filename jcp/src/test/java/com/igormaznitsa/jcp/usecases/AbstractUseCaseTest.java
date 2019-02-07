@@ -141,7 +141,7 @@ public abstract class AbstractUseCaseTest {
     final PreprocessorContext context = new PreprocessorContext();
     context.setClearDestinationDirBefore(true);
     context.setSourceFolders(Collections.singletonList(this.sourceFolder.getAbsolutePath()));
-    context.setDestinationDirectory(tmpResultFolder.getRoot().getAbsolutePath());
+    context.setTargetFolder(tmpResultFolder.getRoot().getAbsolutePath());
     context.setExcludedFileExtensions(Collections.singletonList("xml"));
     context.setVerbose(true);
 

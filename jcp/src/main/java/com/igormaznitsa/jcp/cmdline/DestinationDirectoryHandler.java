@@ -49,7 +49,7 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!name.isEmpty()) {
-        context.setDestinationDirectory(PreprocessorUtils.extractTail(ARG_NAME, key));
+        context.setTargetFolder(PreprocessorUtils.extractTail(ARG_NAME, key));
         result = true;
       }
     }

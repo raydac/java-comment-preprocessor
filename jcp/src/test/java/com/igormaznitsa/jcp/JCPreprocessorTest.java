@@ -85,7 +85,7 @@ public final class JCPreprocessorTest {
 
     final PreprocessorContext context = new PreprocessorContext();
     context.setSourceFolders(Collections.singletonList(testDirectory.getCanonicalPath()));
-    context.setDestinationDirectory(testDirectory.getCanonicalPath());
+    context.setTargetFolder(testDirectory.getCanonicalPath());
     context.setClearDestinationDirBefore(false);
     context.setRemoveComments(true);
     context.setProcessingFileExtensions(Collections.singletonList("ppp"));

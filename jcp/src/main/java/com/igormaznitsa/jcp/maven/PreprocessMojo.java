@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
@@ -226,7 +227,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private boolean skip = false;
 
   /**
-   * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead
+   * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead.
    */
   @Parameter(alias = "compareDestination", defaultValue = "false")
   private boolean compareDestination = false;
@@ -524,43 +525,43 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     }
 
     context.setSourceFolders(sourceFolders);
-    context.setDestinationDirectory(assertNotNull(this.getUseTestSources() ? this.testDestination.getCanonicalPath() : this.destination.getCanonicalPath()));
+    context.setTargetFolder(assertNotNull(this.getUseTestSources() ? this.getTestDestination().getCanonicalPath() : this.getDestination().getCanonicalPath()));
 
-    context.setInCharacterEncoding(this.inEncoding);
-    context.setOutCharacterEncoding(this.outEncoding);
+    context.setInCharacterEncoding(this.getInEncoding());
+    context.setOutCharacterEncoding(this.getOutEncoding());
 
-    if (!this.excluded.isEmpty()) {
-      context.setExcludedFileExtensions(this.excluded);
+    if (!this.getExcluded().isEmpty()) {
+      context.setExcludedFileExtensions(this.getExcluded());
     }
-    if (!this.processing.isEmpty()) {
-      context.setProcessingFileExtensions(this.processing);
+    if (!this.getProcessing().isEmpty()) {
+      context.setProcessingFileExtensions(this.getProcessing());
     }
 
-    info("Preprocess sources : " + context.getSourceFolders());
-    info("Preprocess destination : " + context.getDestinationDirectory());
+    info("Source folders: " + String.join(File.pathSeparator, context.getSourceFolders()));
+    info(" Target folder: " + context.getTargetFolder());
 
-    context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
-    context.setCompareDestination(this.compareDestination);
-    context.setClearDestinationDirBefore(this.clear);
-    context.setCareForLastNextLine(this.careForLastNextLine);
-    context.setRemoveComments(this.removeComments);
-    context.setVerbose(getLog().isDebugEnabled() || this.verbose);
-    context.setKeepLines(this.keepLines);
-    context.setFileOutputDisabled(this.disableOut);
-    context.setAllowWhitespace(this.allowWhitespace);
-    context.setPreserveIndent(this.preserveIndent);
-    context.setExcludedFolderPatterns(this.excludedFolders.toArray(new String[0]));
-    context.setCopyFileAttributes(this.copyFileAttributes);
+    context.setUnknownVariableAsFalse(this.getUnknownVarAsFalse());
+    context.setCompareDestination(this.isCompareDestination());
+    context.setClearDestinationDirBefore(this.getClear());
+    context.setCareForLastNextLine(this.getCarForLastNextLine());
+    context.setRemoveComments(this.getRemoveComments());
+    context.setVerbose(getLog().isDebugEnabled() || this.getVerbose());
+    context.setKeepLines(this.getKeepLines());
+    context.setFileOutputDisabled(this.getDisableOut());
+    context.setAllowWhitespace(this.getAllowWhitespace());
+    context.setPreserveIndent(this.getPreserveIndent());
+    context.setExcludedFolderPatterns(this.getExcludedFolders().toArray(new String[0]));
+    context.setCopyFileAttributes(this.getCopyFileAttributes());
 
     // process cfg files
-    for (final File file : this.cfgFiles) {
+    for (final File file : this.getCfgFiles()) {
       assertNotNull("Detected null in config file list", file);
       context.addConfigFile(file);
     }
 
     // process global vars
-    for (final Map.Entry<String, String> v : this.globalVars.entrySet()) {
-      getLog().debug(String.format("Register global var: %s <- %s", v.getKey(), v.getValue()));
+    for (final Map.Entry<String, String> v : this.getGlobalVars().entrySet()) {
+      getLog().debug(String.format("Registering global var: %s <- %s", v.getKey(), v.getValue()));
       context.setGlobalVariable(v.getKey(), Value.recognizeRawString(v.getValue()));
     }
 
