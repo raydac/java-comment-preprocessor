@@ -69,6 +69,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 /**
@@ -119,14 +122,13 @@ public final class JCPreprocessor {
 
     final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[] {"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
 
-    final PreprocessorContext preprocessorContext;
+    PreprocessorContext preprocessorContext = null;
 
     try {
       preprocessorContext = processCommandLine(args, normalizedStrings);
     } catch (Exception ex) {
-      System.err.println("Error during command line processing [" + ex.getMessage() + ']');
+      System.err.println("Error during CLI processing: " + ex.getMessage());
       System.exit(1);
-      throw new RuntimeException("To show compiler executiion stop");
     }
 
     final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
@@ -160,9 +162,8 @@ public final class JCPreprocessor {
       }
 
       if (!processed) {
-        System.err.println("Can't process a command line argument, may be some wrong usage : " + originalStrings[i]);
+        System.err.println("Can't process CLI argument, see manual: " + originalStrings[i]);
         System.out.println();
-        System.out.println("Take a look at the CLI help below, please");
         help();
         System.exit(1);
       }
@@ -180,9 +181,7 @@ public final class JCPreprocessor {
   private static void help() {
     System.out.println();
 
-    for (final String str : InfoHelper.makeTextForHelpInfo()) {
-      System.out.println(str);
-    }
+    makeTextForHelpInfo().forEach(System.out::println);
   }
 
   @Nonnull
@@ -209,7 +208,7 @@ public final class JCPreprocessor {
 
     final long elapsedTime = System.currentTimeMillis() - timeStart;
     this.context.logInfo("-----------------------------------------------------------------");
-    this.context.logInfo("Completed, preprocessed " + stat.getNumberOfPreprocessed() + " files, copied " + stat.getNumberOfCopied() + " files, elapsed time " + elapsedTime + "ms");
+    this.context.logInfo(String.format("Preprocessed %d files, copied %d files, elapsed time %d ms", stat.getNumberOfPreprocessed(), stat.getNumberOfCopied(), elapsedTime));
     return stat;
   }
 
@@ -223,7 +222,7 @@ public final class JCPreprocessor {
       Value val;
 
       if (context.isVerbose()) {
-        context.logForVerbose("Processing condition '" + condition + "' for file '" + file.getAbsolutePath() + "'");
+        context.logForVerbose(String.format("Processing condition '%s' for file '%s'", condition, file.getAbsolutePath()));
       }
 
       try {
@@ -249,7 +248,7 @@ public final class JCPreprocessor {
       if (val.asBoolean()) {
         item.getFileInfoContainer().setExcluded(true);
         if (context.isVerbose()) {
-          context.logForVerbose("File '" + file.getAbsolutePath() + "' excluded because '" + condition + "' returns TRUE");
+          context.logForVerbose(String.format("File '%s' excluded for active '%s' condition", file.getAbsolutePath(), condition));
         }
       }
     }
@@ -265,7 +264,7 @@ public final class JCPreprocessor {
         result.addAll(fileRef.processGlobalDirectives(null, context));
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (context.isVerbose()) {
-          context.logForVerbose("Global search completed for file '" + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + "', elapsed time " + elapsedTime + "ms");
+          context.logForVerbose(String.format("Global phase completed for file '%s', elapsed time %d ms ", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
       }
     }
@@ -289,13 +288,13 @@ public final class JCPreprocessor {
           if (this.context.isCompareDestination() && PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
             doCopy = false;
             if (context.isVerbose()) {
-              context.logForVerbose("Ignore copying because exists with the same content : " + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + " -> {dst}" + fileRef.getDestinationFilePath());
+              context.logForVerbose(String.format("Copy skipped because same content: %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.getDestinationFilePath()));
             }
           }
 
           if (doCopy) {
             if (context.isVerbose()) {
-              context.logForVerbose("Copy file " + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + " -> {dst}" + fileRef.getDestinationFilePath());
+              context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.getDestinationFilePath()));
             }
             PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile, context.isCopyFileAttributes());
             copFileCounter++;
@@ -306,7 +305,7 @@ public final class JCPreprocessor {
         fileRef.preprocessFile(null, context);
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (context.isVerbose()) {
-          context.logForVerbose("File preprocessing completed  '" + PreprocessorUtils.getFilePath(fileRef.getSourceFile()) + "', elapsed time " + elapsedTime + "ms");
+          context.logForVerbose(String.format("File preprocessing completed  '%s', elapsed time %d ms", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
         prepFileCounter++;
       }
@@ -323,12 +322,12 @@ public final class JCPreprocessor {
       try {
         FileUtils.cleanDirectory(destination);
       } catch (IOException ex) {
-        throw new IOException("I can't clean the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']', ex);
+        throw new IOException("Folder can't be cleaned: " + PreprocessorUtils.getFilePath(destination), ex);
       }
     }
 
     if (!destinationExistsAndDirectory && !destination.mkdirs()) {
-      throw new IOException("I can't make the destination directory [" + PreprocessorUtils.getFilePath(destination) + ']');
+      throw new IOException("Folder can't be created: " + PreprocessorUtils.getFilePath(destination));
     }
   }
 
@@ -396,7 +395,7 @@ public final class JCPreprocessor {
           if (process) {
             result.addAll(findAllFiles(baseFolderCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
           } else {
-            this.context.logForVerbose("Folder '" + folderPath + "' excluded for pattern '" + excludingPattern + "'");
+            this.context.logForVerbose(String.format("Folder '%s' excluded for pattern '%s'", folderPath, excludingPattern));
           }
         } else {
           result.add(file);
@@ -409,7 +408,7 @@ public final class JCPreprocessor {
   void processCfgFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
-      final String[] wholeFile = PreprocessorUtils.readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
+      final String[] wholeFile = readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
 
       int readStringIndex = -1;
       for (final String curString : wholeFile) {
@@ -419,14 +418,14 @@ public final class JCPreprocessor {
         if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
           // do nothing
         } else if (trimmed.charAt(0) == '@') {
-          PreprocessorUtils.throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);
+          throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);
         } else if (trimmed.charAt(0) == '/') {
           // a command line argument
           boolean processed = false;
           try {
             for (CommandLineHandler handler : getCommandLineHandlers()) {
               if (context.isVerbose()) {
-                context.logForVerbose("Processing сonfig file key \'" + trimmed + "\' at " + file.getName() + ':' + (readStringIndex + 1));
+                context.logForVerbose(String.format("Processing сonfig file key '%s' at %s: %d", trimmed, file.getName(), readStringIndex + 1));
               }
               if (handler.processCommandLineKey(trimmed, context)) {
                 processed = true;
@@ -434,33 +433,33 @@ public final class JCPreprocessor {
               }
             }
           } catch (Exception unexpected) {
-            PreprocessorUtils.throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
+            throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
           }
 
           if (!processed) {
-            PreprocessorUtils.throwPreprocessorException("Unsupported or disallowed directive", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Unsupported or disallowed directive", trimmed, file, readStringIndex, null);
           }
         } else {
           // a global variable
           final String[] split = PreprocessorUtils.splitForEqualChar(trimmed);
           if (split.length != 2) {
-            PreprocessorUtils.throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
           }
           final String name = split[0].trim().toLowerCase(Locale.ENGLISH);
           final String expression = split[1].trim();
           if (name.isEmpty()) {
-            PreprocessorUtils.throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);
           }
 
           try {
-            final Value result = Expression.evalExpression(expression, context);
-            context.setGlobalVariable(name, result);
+            final Value result = Expression.evalExpression(expression, this.context);
+            this.context.setGlobalVariable(name, result);
 
-            if (context.isVerbose()) {
-              context.logForVerbose("Register global variable " + name + " = " + result.toString() + " (" + file.getName() + ':' + (readStringIndex + 1) + ')');
+            if (this.context.isVerbose()) {
+              this.context.logForVerbose(String.format("Register global variable '%s' = '%s' (%s:%d)", name, result.toString(), file.getName(), readStringIndex + 1));
             }
           } catch (Exception unexpected) {
-            PreprocessorUtils.throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
+            throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
           }
         }
       }
