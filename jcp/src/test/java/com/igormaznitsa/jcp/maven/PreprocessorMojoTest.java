@@ -81,7 +81,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
     assertEquals("/", context.getSourceFolders());
     assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
-    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions());
+    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions().toArray());
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getProcessingFileExtensions());
     assertEquals("UTF-16", context.getInCharacterEncoding());
     assertEquals("UTF-32", context.getOutCharacterEncoding());

@@ -357,7 +357,7 @@ public final class JCPreprocessor {
         final String filePath = file.getCanonicalPath();
         final String relativePath = filePath.substring(canonicalPathForSrcDirectory.length());
 
-        final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !this.context.isFileAllowedToBeProcessed(file));
+        final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !this.context.isFileAllowedForPreprocessing(file));
         result.add(reference);
       }
 

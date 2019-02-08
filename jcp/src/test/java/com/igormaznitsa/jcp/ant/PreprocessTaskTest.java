@@ -142,7 +142,7 @@ public class PreprocessTaskTest {
     final String TEST = "bin,vb,cpp";
     antTask.setExcluded(TEST);
     final String[] splitted = TEST.split(",");
-    final String[] contextExtensions = antTask.generatePreprocessorContext().getExcludedFileExtensions();
+    final String[] contextExtensions = antTask.generatePreprocessorContext().getExcludedFileExtensions().toArray(new String[0]);
     final Set<String> thoseExts = new HashSet<>(Arrays.asList(contextExtensions));
     assertEquals("Must have the same size", splitted.length, thoseExts.size());
     assertTrue("Must contains all extensions", new HashSet<>(Arrays.asList(splitted)).containsAll(thoseExts));

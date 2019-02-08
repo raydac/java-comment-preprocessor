@@ -502,7 +502,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
           index = sourceRootsAsCanonical.indexOf(canonicalPath);
         }
         if (index >= 0) {
-          info("A Compile source root has been removed from the root list [" + sourceRoots.get(index) + ']');
+          info("Source root is removed from the source root list: " + sourceRoots.get(index));
           sourceRoots.remove(index);
         }
       }
@@ -510,7 +510,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       final String destinationDir = context.getDestinationDirectoryAsFile().getCanonicalPath();
 
       sourceRoots.add(destinationDir);
-      info("New source root has been listed [" + destinationDir + ']');
+      info("Source root is enlisted: " + destinationDir);
     }
   }
 
@@ -553,17 +553,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setExcludedFolderPatterns(this.getExcludedFolders().toArray(new String[0]));
     context.setCopyFileAttributes(this.getCopyFileAttributes());
 
-    // process cfg files
-    for (final File file : this.getCfgFiles()) {
-      assertNotNull("Detected null in config file list", file);
-      context.addConfigFile(file);
-    }
+    this.cfgFiles.forEach(x->context.addConfigFile(x));
 
     // process global vars
-    for (final Map.Entry<String, String> v : this.getGlobalVars().entrySet()) {
-      getLog().debug(String.format("Registering global var: %s <- %s", v.getKey(), v.getValue()));
-      context.setGlobalVariable(v.getKey(), Value.recognizeRawString(v.getValue()));
-    }
+    this.getGlobalVars().forEach((key, value) -> {
+      getLog().debug(String.format("Register global var: '%s' <- '%s'", key, value));
+      context.setGlobalVariable(key, Value.recognizeRawString(value));
+    });
 
     return context;
   }
@@ -581,10 +577,10 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
       if (sourceFoldersInPreprocessingFormat.isEmpty()) {
         if (isIgnoreMissingSources()) {
-          getLog().warn("Source folders are not provided, preprocessing is skipped.");
+          getLog().warn("Source folders are not provided, skip preprocessing.");
           skipPreprocessing = true;
         } else {
-          throw new MojoFailureException("Can't find source folders to preprocess, check parameters and project type!");
+          throw new MojoFailureException("Can't find any source folder, check parameters and project type");
         }
       }
 
@@ -592,8 +588,8 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         try {
           context = makePreprocessorContext(Assertions.assertNotNull(sourceFoldersInPreprocessingFormat));
         } catch (Exception ex) {
-          final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-          throw new MojoExecutionException(pp == null ? ex.getMessage() : pp.toString(), pp == null ? ex : pp);
+          final PreprocessorException newException = PreprocessorException.extractPreprocessorException(ex);
+          throw new MojoExecutionException(newException == null ? ex.getMessage() : newException.toString(), newException == null ? ex : newException);
         }
 
         try {

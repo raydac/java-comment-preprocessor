@@ -524,7 +524,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public String getTargetFolder() {
-    return targetFolder;
+    return this.targetFolder;
   }
 
   /**
@@ -535,7 +535,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public PreprocessorContext setTargetFolder(@Nonnull final String directory) {
-    assertNotNull("Directory is null", directory);
+    assertNotNull("Target folder is null", directory);
     this.targetFolder = directory;
     targetFolderFile = new File(this.targetFolder);
 
@@ -550,7 +550,7 @@ public final class PreprocessorContext {
   @Nonnull
   @MustNotContainNull
   public String[] getProcessingFileExtensions() {
-    return processingFileExtensions.toArray(new String[0]);
+    return this.processingFileExtensions.toArray(new String[0]);
   }
 
   /**
@@ -571,12 +571,12 @@ public final class PreprocessorContext {
    * @param file a file to be checked
    * @return true if the file is allowed, false otherwise
    */
-  public final boolean isFileAllowedToBeProcessed(@Nullable final File file) {
-    if (file == null || !file.exists() || file.isDirectory() || file.length() == 0) {
-      return false;
+  public final boolean isFileAllowedForPreprocessing(@Nullable final File file) {
+    boolean result = false;
+    if (file != null && file.isFile() && file.length() != 0L) {
+      result = this.processingFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
     }
-
-    return processingFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
+    return result;
   }
 
   /**
@@ -588,7 +588,7 @@ public final class PreprocessorContext {
   public final boolean isFileExcludedFromProcess(@Nullable final File file) {
     final boolean result;
     if (file != null && file.isFile()) {
-      result = excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
+      result = this.excludedFileExtensions.contains(PreprocessorUtils.getFileExtension(file));
     } else {
       result = false;
     }
@@ -601,9 +601,8 @@ public final class PreprocessorContext {
    * @return a string array contains file extensions to be excluded from preprocessing act
    */
   @Nonnull
-  @MustNotContainNull
-  public String[] getExcludedFileExtensions() {
-    return excludedFileExtensions.toArray(new String[0]);
+  public Set<String> getExcludedFileExtensions() {
+    return this.excludedFileExtensions;
   }
 
   /**
