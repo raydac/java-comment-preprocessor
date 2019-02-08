@@ -63,7 +63,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
     if (docContainer == null) {
       File file;
       try {
-        file = context.findFileInSourceFolder(name);
+        file = context.findFileInSourceFolders(name);
       } catch (IOException unexpected) {
         throw context.makeException("Can't read \'" + name + '\'', null);
       }

@@ -296,11 +296,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     if (this.inCharSet != null) {
-      context.setInCharacterEncoding(this.inCharSet);
+      context.setInCharset(this.inCharSet);
     }
 
-    if (outCharSet != null) {
-      context.setOutCharacterEncoding(this.outCharSet);
+    if (this.outCharSet != null) {
+      context.setOutCharset(this.outCharSet);
     }
 
     context.setCompareDestination(this.compareDestination);

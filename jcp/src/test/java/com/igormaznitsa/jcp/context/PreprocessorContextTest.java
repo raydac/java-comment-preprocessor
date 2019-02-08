@@ -30,6 +30,8 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,8 +205,18 @@ public class PreprocessorContextTest {
           ex.printStackTrace();
           fail("Can't set value to '" + f.getName() + '\'');
         }
+      } else if (type == Charset.class) {
+          final Charset charset;
+          switch(RND.nextInt(4)){
+              case 0 : charset = StandardCharsets.ISO_8859_1;break;
+              case 1 : charset = StandardCharsets.US_ASCII;break;
+              case 2 : charset = StandardCharsets.UTF_16;break;
+              case 3 : charset = StandardCharsets.UTF_16BE;break;
+              default: charset = StandardCharsets.UTF_8;break;
+          }
+          f.set(context, charset);
       } else if (type == PreprocessingState.class) {
-        f.set(context, new PreprocessingState(context, "UTF-8", "UTF-8"));
+        f.set(context, new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8));
       } else if (type == PreprocessorLogger.class) {
         f.set(context, new PreprocessorLogger() {
           @Override

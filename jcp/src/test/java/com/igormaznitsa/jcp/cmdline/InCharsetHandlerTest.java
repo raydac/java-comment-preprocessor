@@ -44,12 +44,12 @@ public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/T:", mock));
     assertFalse(HANDLER.processCommandLineKey("/t", mock));
     assertTrue(HANDLER.processCommandLineKey("/t:HELLOWORLD", mock));
-    verify(mock).setInCharacterEncoding("HELLOWORLD");
+    verify(mock).setInCharset("HELLOWORLD");
 
     reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/T:NEW", mock));
-    Mockito.verify(mock).setInCharacterEncoding("NEW");
+    Mockito.verify(mock).setInCharset("NEW");
   }
 
   @Override

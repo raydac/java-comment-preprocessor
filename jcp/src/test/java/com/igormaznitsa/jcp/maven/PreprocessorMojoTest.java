@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,8 +84,8 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
     assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions().toArray());
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getProcessingFileExtensions());
-    assertEquals("UTF-16", context.getInCharacterEncoding());
-    assertEquals("UTF-32", context.getOutCharacterEncoding());
+    assertEquals(StandardCharsets.UTF_16.name(), context.getInCharset());
+    assertEquals(StandardCharsets.US_ASCII, context.getOutCharset());
     assertTrue("Must be true", context.isRemoveComments());
     assertTrue("Must be true", context.isVerbose());
     assertTrue("Must be true", context.isFileOutputDisabled());

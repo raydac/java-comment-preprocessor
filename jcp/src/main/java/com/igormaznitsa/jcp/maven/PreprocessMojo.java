@@ -485,7 +485,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
   private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
     if (this.project != null) {
-      final List<String> sourceFolders = context.getSourceFolders();
+      final List<PreprocessorContext.SourceFolder> sourceFolders = context.getSourceFolders();
 
       final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<>();
@@ -493,12 +493,11 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
       }
 
-      for (final String str : sourceFolders) {
-        int index = sourceRoots.indexOf(str);
+      for (final PreprocessorContext.SourceFolder folder : sourceFolders) {
+        int index = sourceRoots.indexOf(folder.getAsString());
         if (index < 0) {
           // check for canonical paths
-          final File src = new File(str);
-          final String canonicalPath = src.getCanonicalPath();
+          final String canonicalPath = folder.getAsFile().getCanonicalPath();
           index = sourceRootsAsCanonical.indexOf(canonicalPath);
         }
         if (index >= 0) {
@@ -527,8 +526,8 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setSourceFolders(sourceFolders);
     context.setTargetFolder(assertNotNull(this.getUseTestSources() ? this.getTestDestination().getCanonicalPath() : this.getDestination().getCanonicalPath()));
 
-    context.setInCharacterEncoding(this.getInEncoding());
-    context.setOutCharacterEncoding(this.getOutEncoding());
+    context.setInCharset(this.getInEncoding());
+    context.setOutCharset(this.getOutEncoding());
 
     if (!this.getExcluded().isEmpty()) {
       context.setExcludedFileExtensions(this.getExcluded());
@@ -537,7 +536,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       context.setProcessingFileExtensions(this.getProcessing());
     }
 
-    info("Source folders: " + String.join(File.pathSeparator, context.getSourceFolders()));
+    info("Source folders: " + context.getSourceFolders().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
     info(" Target folder: " + context.getTargetFolder());
 
     context.setUnknownVariableAsFalse(this.getUnknownVarAsFalse());

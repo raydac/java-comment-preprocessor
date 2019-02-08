@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
+import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.*;
 
 public final class JCPreprocessorTest {
@@ -64,7 +65,7 @@ public final class JCPreprocessorTest {
 
     assertEquals("Must have the variable", "hello world", context.findVariableForName("globalVar1", true).asString());
     assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2", true));
-    assertEquals("Character input encoding must be changed", "ISO-8859-1", context.getInCharacterEncoding());
+    assertEquals("Character input encoding must be changed", StandardCharsets.ISO_8859_1, context.getInCharset());
   }
 
   @Test
@@ -103,8 +104,8 @@ public final class JCPreprocessorTest {
     BufferedReader resultReader;
     BufferedReader etalonReader;
     try {
-      resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile), "UTF-8")));
-      etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile), "UTF-8")));
+      resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile), StandardCharsets.UTF_8)));
+      etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile), StandardCharsets.UTF_8)));
 
       while (!Thread.currentThread().isInterrupted()) {
         final String resultStr = resultReader.readLine();

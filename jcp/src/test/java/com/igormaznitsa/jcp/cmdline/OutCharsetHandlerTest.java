@@ -44,12 +44,12 @@ public class OutCharsetHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/TT:", mock));
     assertFalse(HANDLER.processCommandLineKey("/tT", mock));
     assertTrue(HANDLER.processCommandLineKey("/tt:HELLOWORLD", mock));
-    verify(mock).setOutCharacterEncoding("HELLOWORLD");
+    verify(mock).setOutCharset("HELLOWORLD");
 
     reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/TT:NEW", mock));
-    verify(mock).setOutCharacterEncoding("NEW");
+    verify(mock).setOutCharset("NEW");
   }
 
   @Override

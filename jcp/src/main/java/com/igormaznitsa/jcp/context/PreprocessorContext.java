@@ -51,23 +51,57 @@ import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.nio.charset.StandardCharsets;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * The preprocessor context class is a main class which contains all options of the preprocessor and allows to work with variables in expressions
- *
- * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * Preprocessor context class is a main class which contains all options for preprocessin and allow to work with variables in expressions.
  */
 public final class PreprocessorContext {
 
+  public final static class SourceFolder {
+      private final String path;
+      private final File pathFile;
+
+        public SourceFolder(@Nonnull final String path) {
+            this.path = assertNotNull(path);
+            this.pathFile = new File(path);
+        }
+        
+        @Nonnull
+        public String getAsString(){
+            return this.path;
+        }
+        
+        @Nonnull
+        public File getAsFile(){
+            return this.pathFile;
+        }
+  
+        @Nonnull
+        public String getNormalizedAbsolutePath(final boolean separatorCharEnded){
+            String result = FilenameUtils.normalizeNoEndSeparator(this.pathFile.getAbsolutePath());
+            if (separatorCharEnded) {
+                result += File.separatorChar;
+            }
+            return result;
+        }
+        
+        @Override
+        @Nonnull
+        public String toString(){
+            return String.format("%s[%s]",this.getClass().getSimpleName(),this.path);
+        }
+  }
+    
   public static final List<String> DEFAULT_SOURCE_DIRECTORY = Collections.singletonList("." + File.separatorChar);
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
   public static final List<String> DEFAULT_PROCESSING_EXTENSIONS = unmodifiableList(asList("java", "txt", "htm", "html"));
   public static final List<String> DEFAULT_EXCLUDED_EXTENSIONS = singletonList("xml");
-  public static final String DEFAULT_CHARSET = UTF_8.name();
+  public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private final Map<String, Value> globalVarTable = new HashMap<>();
   private final Map<String, Value> localVarTable = new HashMap<>();
   private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor = new HashMap<>();
@@ -86,15 +120,14 @@ public final class PreprocessorContext {
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
-  private List<String> sourceFolders;
+  private final List<SourceFolder> sourceFolders = new ArrayList<>();
   private String targetFolder;
   private File targetFolderFile;
-  private List<File> sourceFolderFiles;
   private Set<String> processingFileExtensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
   private Set<String> excludedFileExtensions = new HashSet<>(DEFAULT_EXCLUDED_EXTENSIONS);
   private PreprocessorExtension preprocessorExtension;
-  private String inCharacterEncoding = DEFAULT_CHARSET;
-  private String outCharacterEncoding = DEFAULT_CHARSET;
+  private Charset inCharset = DEFAULT_CHARSET;
+  private Charset outCharset = DEFAULT_CHARSET;
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private transient PreprocessingState currentState;
   private List<String> excludedFolderPatterns = Collections.emptyList();
@@ -103,7 +136,7 @@ public final class PreprocessorContext {
    * The constructor
    */
   public PreprocessorContext() {
-    this.currentState = new PreprocessingState(this, this.inCharacterEncoding, this.outCharacterEncoding);
+    this.currentState = new PreprocessingState(this, this.inCharset, this.outCharset);
     setSourceFolders(DEFAULT_SOURCE_DIRECTORY).setTargetFolder(DEFAULT_DEST_DIRECTORY);
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
@@ -126,10 +159,9 @@ public final class PreprocessorContext {
     this.keepNonExecutingLines = context.keepNonExecutingLines;
     this.allowWhitespace = context.allowWhitespace;
     this.preserveIndent = context.preserveIndent;
-    this.sourceFolders = context.sourceFolders;
+    this.sourceFolders.addAll(context.sourceFolders);
     this.targetFolder = context.targetFolder;
     this.targetFolderFile = context.targetFolderFile;
-    this.sourceFolderFiles = new ArrayList<>(context.sourceFolderFiles);
     this.copyFileAttributes = context.copyFileAttributes;
     this.careForLastNextLine = context.careForLastNextLine;
 
@@ -142,8 +174,8 @@ public final class PreprocessorContext {
     this.unknownVariableAsFalse = context.unknownVariableAsFalse;
 
     this.preprocessorExtension = context.preprocessorExtension;
-    this.inCharacterEncoding = context.inCharacterEncoding;
-    this.outCharacterEncoding = context.outCharacterEncoding;
+    this.inCharset = context.inCharset;
+    this.outCharset = context.outCharset;
     this.compareDestination = context.compareDestination;
 
     this.globalVarTable.putAll(context.globalVarTable);
@@ -459,52 +491,21 @@ public final class PreprocessorContext {
    */
   @Nonnull
   @MustNotContainNull
-  public List<String> getSourceFolders() {
+  public List<SourceFolder> getSourceFolders() {
     return this.sourceFolders;
   }
 
   /**
    * Set source directories
    *
-   * @param directories semi separated list of source directories, must not be null
+   * @param folderPaths list of source folder paths represented as strings
    * @return this preprocessor context instance
    */
   @Nonnull
-  public PreprocessorContext setSourceFolders(@Nonnull @MustNotContainNull final List<String> directories) {
-    assertNotNull("Source directory is null", directories);
-
-    this.sourceFolders = directories;
-    this.sourceFolderFiles = getParsedSourceDirectoryAsFiles();
-
+  public PreprocessorContext setSourceFolders(@Nonnull @MustNotContainNull final List<String> folderPaths) {
+    this.sourceFolders.clear();
+    this.sourceFolders.addAll(assertDoesntContainNull(folderPaths).stream().map(SourceFolder::new).collect(Collectors.toList()));
     return this;
-  }
-
-  /**
-   * Get the current source directories as a file array
-   *
-   * @return the current source directories as a file array
-   */
-  @Nonnull
-  @MustNotContainNull
-  public List<File> getSourceDirectoryAsFiles() {
-    return this.sourceFolderFiles;
-  }
-
-  /**
-   * Inside auxiliary method to parse the source directories list into file array
-   *
-   * @return parsed file list, each file must exist and be a directory
-   */
-  @Nonnull
-  @MustNotContainNull
-  private List<File> getParsedSourceDirectoryAsFiles() {
-    return this.sourceFolders.stream()
-        .map(File::new)
-        .peek(x -> {
-          if (!x.isDirectory()) {
-            throw new IllegalStateException("Can't find a source directory [" + PreprocessorUtils.getFilePath(x) + ']');
-          }
-        }).collect(Collectors.toList());
   }
 
   /**
@@ -1011,24 +1012,39 @@ public final class PreprocessorContext {
    * @return the current read texts character encoding as a String
    */
   @Nonnull
-  public String getInCharacterEncoding() {
-    return inCharacterEncoding;
+  public Charset getInCharset() {
+    return this.inCharset;
   }
 
+    @Nonnull
+    private static Charset decodeCharset(@Nonnull final String charsetName) {
+        final String normalized = charsetName.trim();
+        if (Charset.isSupported(normalized)) {
+            return Charset.forName(normalized);
+        } else {
+            throw new IllegalArgumentException("Unsupported charset: " + charsetName);
+        }
+    }
+
+    @Nonnull
+    public PreprocessorContext setInCharset(@Nonnull final String charsetName) {
+        return this.setInCharset(decodeCharset(charsetName));
+    }
+    
+    @Nonnull
+    public PreprocessorContext setOutCharset(@Nonnull final String charsetName) {
+        return this.setOutCharset(decodeCharset(charsetName));
+    }
+    
   /**
    * Set the character encoding for reading texts, it must be supported by the Java platform else an exception will be thrown
    *
-   * @param characterEncoding a character encoding as a String, it must not be null and must be supported by the Java platform
+   * @param charset a character encoding as a String, it must not be null and must be supported by the Java platform
    * @return this preprocessor context
    */
   @Nonnull
-  public PreprocessorContext setInCharacterEncoding(@Nonnull final String characterEncoding) {
-    assertNotNull("Value is null", characterEncoding);
-
-    if (!Charset.isSupported(characterEncoding)) {
-      throw makeException("Unsupported character encoding [" + characterEncoding + ']', null);
-    }
-    this.inCharacterEncoding = characterEncoding;
+  public PreprocessorContext setInCharset(@Nonnull final Charset charset) {
+    this.inCharset = assertNotNull(charset);
     return this;
   }
 
@@ -1038,8 +1054,8 @@ public final class PreprocessorContext {
    * @return the current text writing character encoding as a String
    */
   @Nonnull
-  public String getOutCharacterEncoding() {
-    return outCharacterEncoding;
+  public Charset getOutCharset() {
+    return this.outCharset;
   }
 
   /**
@@ -1049,11 +1065,8 @@ public final class PreprocessorContext {
    * @return this preprocessor context
    */
   @Nonnull
-  public PreprocessorContext setOutCharacterEncoding(@Nonnull final String characterEncoding) {
-    if (!Charset.isSupported(characterEncoding)) {
-      throw makeException("Unsupported character encoding [" + characterEncoding + ']', null);
-    }
-    this.outCharacterEncoding = characterEncoding;
+  public PreprocessorContext setOutCharset(@Nonnull final Charset characterEncoding) {
+    this.outCharset = assertNotNull(characterEncoding);
     return this;
   }
 
@@ -1075,25 +1088,25 @@ public final class PreprocessorContext {
   }
 
   /**
-   * It finds a file for its path among files in source folder, it is prohibited to return files out of preprocessing folders.
+   * Finds file in source folders, the file can be found only inside source folders and external placement is disabled for security purposes.
    *
-   * @param path the path to the needed file, it must not be null and the file must exist and be a file and be among files in preprocessing source folders
-   * @return detected file object for the path
+   * @param path the file path to find, it must not be null and must be existing file
+   * @return detected file object for the path, must not be null
    * @throws IOException if it is impossible to find a file for the path
    */
   @Nonnull
-  public File findFileInSourceFolder(@Nonnull final String path) throws IOException {
+  public File findFileInSourceFolders(@Nonnull final String path) throws IOException {
     if (path == null) {
-      throw makeException("Path is null", null);
+      throw makeException("File paath is null", null);
     }
 
-    if (path.isEmpty()) {
-      throw makeException("Path is empty", null);
+    if (path.trim().isEmpty()) {
+      throw makeException("File path is empty", null);
     }
 
     File result = null;
 
-    final TextFileDataContainer theFile = currentState.peekFile();
+    final TextFileDataContainer theFile = this.currentState.peekFile();
     final String parentDir = theFile == null ? null : theFile.getFile().getParent();
 
     final File resultFile = new File(path);
@@ -1102,9 +1115,8 @@ public final class PreprocessorContext {
 
       // check that the file is a child of a preprocessing source root else usage of the file is prohibited
       final String normalizedPath = FilenameUtils.normalizeNoEndSeparator(resultFile.getAbsolutePath());
-      for (final File root : getSourceDirectoryAsFiles()) {
-        final String rootNormalizedPath = FilenameUtils.normalizeNoEndSeparator(root.getAbsolutePath()) + File.separatorChar;
-        if (normalizedPath.startsWith(rootNormalizedPath)) {
+      for (final SourceFolder root : getSourceFolders()) {
+        if (normalizedPath.startsWith(root.getNormalizedAbsolutePath(true))) {
           result = resultFile;
           break;
         }
@@ -1121,12 +1133,9 @@ public final class PreprocessorContext {
       result = new File(parentDir, path);
     } else {
       final List<File> setOfFoundFiles = new ArrayList<>();
-      for (final File root : getSourceDirectoryAsFiles()) {
-        final File variant = new File(root, path);
-        if (variant.exists() && variant.isFile()) {
+      getSourceFolders().stream().map((root) -> new File(root.getAsFile(), path)).filter((variant) -> (variant.exists() && variant.isFile())).forEachOrdered((variant) -> {
           setOfFoundFiles.add(variant);
-        }
-      }
+        });
 
       if (setOfFoundFiles.size() == 1) {
         result = setOfFoundFiles.get(0);
@@ -1186,7 +1195,7 @@ public final class PreprocessorContext {
         logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
       }
     }
-    this.currentState = new PreprocessingState(this, fileContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
+    this.currentState = new PreprocessingState(this, fileContainer, getInCharset(), getOutCharset(), this.compareDestination);
     return this.currentState;
   }
 
@@ -1199,7 +1208,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public PreprocessingState produceNewPreprocessingState(@Nonnull final FileInfoContainer fileContainer, @Nonnull final TextFileDataContainer textContainer) {
-    this.currentState = new PreprocessingState(this, fileContainer, textContainer, getInCharacterEncoding(), getOutCharacterEncoding(), this.compareDestination);
+    this.currentState = new PreprocessingState(this, fileContainer, textContainer, getInCharset(), getOutCharset(), this.compareDestination);
     return this.currentState;
   }
 

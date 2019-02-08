@@ -57,7 +57,7 @@ public class OutCharsetHandler implements CommandLineHandler {
       final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!value.isEmpty()) {
-        context.setOutCharacterEncoding(value);
+        context.setOutCharset(value);
         result = true;
       }
     }

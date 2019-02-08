@@ -23,6 +23,7 @@ package com.igormaznitsa.jcp.ant;
 
 import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.ant.PreprocessTask.Global;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import org.apache.tools.ant.Project;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -66,10 +68,10 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetSource() throws Exception {
-    final List<File> sourceDirs = antTask.generatePreprocessorContext().getSourceDirectoryAsFiles();
+    final List<PreprocessorContext.SourceFolder> sourceDirs = antTask.generatePreprocessorContext().getSourceFolders();
     assertEquals("There must be only root", 1, sourceDirs.size());
 
-    assertEquals("File must be equal the original", THIS_DIRECTORY, sourceDirs.get(0));
+    assertEquals("File must be equal the original", THIS_DIRECTORY, sourceDirs.get(0).getAsFile());
   }
 
   @Test
@@ -118,23 +120,20 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetInCharset() throws Exception {
-    final String TEST = "ISO-8859-1";
-    antTask.setInCharset(TEST);
-    assertEquals("Must be the same charset", TEST, antTask.generatePreprocessorContext().getInCharacterEncoding());
+    antTask.setInCharset(StandardCharsets.UTF_16LE.name());
+    assertEquals("Must be the same charset", StandardCharsets.UTF_16LE, antTask.generatePreprocessorContext().getInCharset());
   }
 
   @Test
   public void testSetOutCharset() throws Exception {
-    final String TEST = "ISO-8859-1";
-    antTask.setOutCharset(TEST);
-    assertEquals("Must be the same charset", TEST, antTask.generatePreprocessorContext().getOutCharacterEncoding());
+      antTask.setOutCharset(StandardCharsets.UTF_16BE.name());
+      assertEquals("Must be the same charset", StandardCharsets.UTF_16BE, antTask.generatePreprocessorContext().getOutCharset());
   }
 
   @Test
   public void testSetUnknownAsFalse() throws Exception {
-    final String TEST = "ISO-8859-1";
-    antTask.setOutCharset(TEST);
-    assertEquals("Must be the same charset", TEST, antTask.generatePreprocessorContext().getOutCharacterEncoding());
+    antTask.setUnknownVarAsFalse(true);
+    assertTrue(antTask.generatePreprocessorContext().isUnknownVariableAsFalse());
   }
 
   @Test

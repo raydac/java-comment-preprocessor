@@ -285,7 +285,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     final List<String> etalonPart = new ArrayList<>(100);
 
     boolean readFirestPart = true;
-    try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF8"), 1024)) {
+    try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8), 1024)) {
       while (!Thread.currentThread().isInterrupted()) {
         final String line = reader.readLine();
         if (line == null) {

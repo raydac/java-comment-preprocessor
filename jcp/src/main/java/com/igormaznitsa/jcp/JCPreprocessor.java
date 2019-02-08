@@ -196,8 +196,8 @@ public final class JCPreprocessor {
 
     processCfgFiles();
 
-    final List<File> srcDirs = context.getSourceDirectoryAsFiles();
-    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcDirs, context.getExcludedFolderPatterns());
+    final List<PreprocessorContext.SourceFolder> srcFolders = context.getSourceFolders();
+    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcFolders, context.getExcludedFolderPatterns());
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
@@ -334,19 +334,19 @@ public final class JCPreprocessor {
 
   @Nonnull
   @MustNotContainNull
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final List<File> srcDirs, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
+  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final List<PreprocessorContext.SourceFolder> srcFolders, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<>();
 
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    for (final File dir : srcDirs) {
-      String canonicalPathForSrcDirectory = dir.getCanonicalPath();
+    for (final PreprocessorContext.SourceFolder dir : srcFolders) {
+      String canonicalPathForSrcDirectory = dir.getAsFile().getCanonicalPath();
 
       if (!canonicalPathForSrcDirectory.endsWith(File.separator)) {
         canonicalPathForSrcDirectory += File.separator;
       }
 
-      final Set<File> allFoundFiles = findAllFiles(canonicalPathForSrcDirectory, dir, antPathMatcher, excludedFolderPatterns);
+      final Set<File> allFoundFiles = findAllFiles(canonicalPathForSrcDirectory, dir.getAsFile(), antPathMatcher, excludedFolderPatterns);
 
       for (final File file : allFoundFiles) {
         if (context.isFileExcludedFromProcess(file)) {
