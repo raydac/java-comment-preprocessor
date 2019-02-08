@@ -118,7 +118,9 @@ public abstract class AbstractUseCaseTest {
             assertEquals("File content must be same", fileOne, fileTwo);
           }
         }
-        if (!ignoreEOL) assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f), FileUtils.checksumCRC32(f2));
+        if (!ignoreEOL) {
+          assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f), FileUtils.checksumCRC32(f2));
+        }
       }
     }
   }
@@ -133,9 +135,9 @@ public abstract class AbstractUseCaseTest {
   }
 
   protected boolean isIgnoreEolInCheck() {
-      return true;
+    return true;
   }
-  
+
   @Test
   public final void main() throws Exception {
     final PreprocessorContext context = new PreprocessorContext();

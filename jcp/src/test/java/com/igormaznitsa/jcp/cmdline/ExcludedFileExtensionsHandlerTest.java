@@ -49,7 +49,7 @@ public class ExcludedFileExtensionsHandlerTest extends AbstractCommandLineHandle
     verify(mock, never()).setExcludedFileExtensions(any());
 
     assertTrue(HANDLER.processCommandLineKey("/ef:rrr,Ggg,bBb", mock));
-    verify(mock).setExcludedFileExtensions(Arrays.asList("rrr","Ggg","bBb"));
+    verify(mock).setExcludedFileExtensions(Arrays.asList("rrr", "Ggg", "bBb"));
   }
 
   @Override

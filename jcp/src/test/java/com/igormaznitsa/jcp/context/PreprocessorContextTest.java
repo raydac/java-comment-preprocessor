@@ -206,15 +206,25 @@ public class PreprocessorContextTest {
           fail("Can't set value to '" + f.getName() + '\'');
         }
       } else if (type == Charset.class) {
-          final Charset charset;
-          switch(RND.nextInt(4)){
-              case 0 : charset = StandardCharsets.ISO_8859_1;break;
-              case 1 : charset = StandardCharsets.US_ASCII;break;
-              case 2 : charset = StandardCharsets.UTF_16;break;
-              case 3 : charset = StandardCharsets.UTF_16BE;break;
-              default: charset = StandardCharsets.UTF_8;break;
-          }
-          f.set(context, charset);
+        final Charset charset;
+        switch (RND.nextInt(4)) {
+          case 0:
+            charset = StandardCharsets.ISO_8859_1;
+            break;
+          case 1:
+            charset = StandardCharsets.US_ASCII;
+            break;
+          case 2:
+            charset = StandardCharsets.UTF_16;
+            break;
+          case 3:
+            charset = StandardCharsets.UTF_16BE;
+            break;
+          default:
+            charset = StandardCharsets.UTF_8;
+            break;
+        }
+        f.set(context, charset);
       } else if (type == PreprocessingState.class) {
         f.set(context, new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8));
       } else if (type == PreprocessorLogger.class) {
@@ -256,9 +266,8 @@ public class PreprocessorContextTest {
         f.set(context, exx);
       } else if (type.isAssignableFrom(List.class) || type.isAssignableFrom(Set.class)) {
         // ignored
-      }
-      else {
-        throw new Error(String.format("Unexpected %s %s",f.getName(),type.getName()));
+      } else {
+        throw new Error(String.format("Unexpected %s %s", f.getName(), type.getName()));
       }
     }
 

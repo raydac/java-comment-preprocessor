@@ -13,27 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.igormaznitsa.jcp;
 
-import java.io.File;
-import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.junit.Assert;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.nio.file.Path;
+
 public final class TestUtils {
-    private TestUtils(){}
-    
-    @Nullable
-    public static String normalizeNextLine(@Nullable final String text) {
-        return text == null ? null : text.replace("\r\n", "\n");
+  private TestUtils() {
+  }
+
+  @Nullable
+  public static String normalizeNextLine(@Nullable final String text) {
+    return text == null ? null : text.replace("\r\n", "\n");
+  }
+
+  public static void assertFilePath(@Nonnull final String message, @Nonnull final File expected, @Nonnull final File check) {
+    final Path pathExpected = expected.toPath().normalize();
+    final Path pathCheck = check.toPath().normalize();
+    if (!pathExpected.equals(pathCheck)) {
+      Assert.fail("Expected path '" + pathExpected.toString() + "' but detected path '" + pathCheck.toString() + "'");
     }
-    
-    public static void assertFilePath(@Nonnull final String message, @Nonnull final File expected, @Nonnull final File check) {
-        final Path pathExpected = expected.toPath().normalize();
-        final Path pathCheck = check.toPath().normalize();
-        if (!pathExpected.equals(pathCheck)){
-            Assert.fail("Expected path '"+pathExpected.toString()+"' but detected path '"+pathCheck.toString()+"'");
-        }
-    }
+  }
 }

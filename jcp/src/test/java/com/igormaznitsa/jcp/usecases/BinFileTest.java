@@ -25,7 +25,6 @@ import com.igormaznitsa.jcp.JCPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import javax.annotation.Nonnull;
-
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;

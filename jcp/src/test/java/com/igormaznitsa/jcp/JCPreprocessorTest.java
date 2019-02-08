@@ -32,12 +32,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
-import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.*;
 
 public final class JCPreprocessorTest {

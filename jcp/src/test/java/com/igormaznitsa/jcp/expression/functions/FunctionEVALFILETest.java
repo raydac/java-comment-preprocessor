@@ -25,11 +25,11 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.io.File;
-import java.util.List;
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +40,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   private static final String TEST_EVAL_PATH = "/eval/TestEval.java".replace('/', File.separatorChar);
   private static final String TEST_EVAL_WITH_INCLUDED_PATH = "/eval/TestEvalWithIncluded.java".replace('/', File.separatorChar);
-  
+
   @Test
   public void testExecution_ErrorForUndefinedVariable() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
@@ -66,7 +66,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final List<String> theTestFolder = getCurrentTestFolder();
     final PreprocessorContext context = preparePreprocessorContext(theTestFolder);
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")", StringEscapeUtils.escapeJava(theTestFolder.get(0)+TEST_EVAL_PATH)), context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")", StringEscapeUtils.escapeJava(theTestFolder.get(0) + TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }
@@ -75,7 +75,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
   public void testExecution_IncludedEvalCall() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")",StringEscapeUtils.escapeJava(TEST_EVAL_WITH_INCLUDED_PATH)), context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_WITH_INCLUDED_PATH)), context);
     final String resultstr = result.asString().trim();
     assertTrue(resultstr.startsWith("System.out.println(\"Hello World!\");"));
     assertTrue(resultstr.endsWith("TestEvalWithIncluded.java"));
@@ -86,7 +86,7 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
   public void testExecution_VisibilityGlobalVariable() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.setGlobalVariable("hello_world", Value.valueOf("Hello World!"));
-    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")",StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
+    final Value result = Expression.evalExpression(String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
     assertDestinationFolderEmpty();
   }

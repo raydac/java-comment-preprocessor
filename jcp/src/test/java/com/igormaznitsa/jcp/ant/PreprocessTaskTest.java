@@ -115,7 +115,7 @@ public class PreprocessTaskTest {
   @Test
   public void testSetDestination() throws Exception {
     antTask.setDestination(THIS_DIRECTORY);
-      TestUtils.assertFilePath("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
+    TestUtils.assertFilePath("Files must be equal", THIS_DIRECTORY.getCanonicalFile(), antTask.generatePreprocessorContext().getDestinationDirectoryAsFile());
   }
 
   @Test
@@ -126,8 +126,8 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetOutCharset() throws Exception {
-      antTask.setOutCharset(StandardCharsets.UTF_16BE.name());
-      assertEquals("Must be the same charset", StandardCharsets.UTF_16BE, antTask.generatePreprocessorContext().getOutCharset());
+    antTask.setOutCharset(StandardCharsets.UTF_16BE.name());
+    assertEquals("Must be the same charset", StandardCharsets.UTF_16BE, antTask.generatePreprocessorContext().getOutCharset());
   }
 
   @Test

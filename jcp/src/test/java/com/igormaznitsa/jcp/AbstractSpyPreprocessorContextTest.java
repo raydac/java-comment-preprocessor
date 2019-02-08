@@ -86,7 +86,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
   protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders, final ContextDataProvider provider) throws Exception {
     final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext());
     final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
-    
+
     PowerMockito.when(stateMock.getRootFileInfo()).thenReturn(new FileInfoContainer(new File("src/fake.java"), "fake.java", false));
     PowerMockito.when(stateMock.getPrinter()).thenReturn(new ResetablePrinter(10));
 
@@ -95,7 +95,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
     resultContext.setAllowWhitespace(provider.getAllowSpaceBeforeDirectiveFlag());
     resultContext.setSourceFolders(sourceFolders);
     resultContext.setTargetFolder(destinationFolder.getRoot().getAbsolutePath());
-    
+
     return resultContext;
   }
 
