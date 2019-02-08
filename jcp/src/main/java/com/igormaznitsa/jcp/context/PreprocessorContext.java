@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,8 +52,6 @@ import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
 import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import java.nio.charset.StandardCharsets;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -62,41 +61,6 @@ import static java.util.Collections.unmodifiableList;
  */
 public final class PreprocessorContext {
 
-  public final static class SourceFolder {
-      private final String path;
-      private final File pathFile;
-
-        public SourceFolder(@Nonnull final String path) {
-            this.path = assertNotNull(path);
-            this.pathFile = new File(path);
-        }
-        
-        @Nonnull
-        public String getAsString(){
-            return this.path;
-        }
-        
-        @Nonnull
-        public File getAsFile(){
-            return this.pathFile;
-        }
-  
-        @Nonnull
-        public String getNormalizedAbsolutePath(final boolean separatorCharEnded){
-            String result = FilenameUtils.normalizeNoEndSeparator(this.pathFile.getAbsolutePath());
-            if (separatorCharEnded) {
-                result += File.separatorChar;
-            }
-            return result;
-        }
-        
-        @Override
-        @Nonnull
-        public String toString(){
-            return String.format("%s[%s]",this.getClass().getSimpleName(),this.path);
-        }
-  }
-    
   public static final List<String> DEFAULT_SOURCE_DIRECTORY = Collections.singletonList("." + File.separatorChar);
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
   public static final List<String> DEFAULT_PROCESSING_EXTENSIONS = unmodifiableList(asList("java", "txt", "htm", "html"));
@@ -109,6 +73,7 @@ public final class PreprocessorContext {
   private final List<File> configFiles = new ArrayList<>();
   private final boolean cloned;
   private final TextFileDataContainer currentInCloneSource;
+  private final List<SourceFolder> sourceFolders = new ArrayList<>();
   private boolean verbose = false;
   private boolean removeComments = false;
   private boolean clearDestinationDirectoryBefore = false;
@@ -120,7 +85,6 @@ public final class PreprocessorContext {
   private boolean preserveIndent = false;
   private boolean copyFileAttributes = false;
   private boolean unknownVariableAsFalse = false;
-  private final List<SourceFolder> sourceFolders = new ArrayList<>();
   private String targetFolder;
   private File targetFolderFile;
   private Set<String> processingFileExtensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
@@ -131,7 +95,6 @@ public final class PreprocessorContext {
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private transient PreprocessingState currentState;
   private List<String> excludedFolderPatterns = Collections.emptyList();
-
   /**
    * The constructor
    */
@@ -235,6 +198,16 @@ public final class PreprocessorContext {
     }
 
     return builder.toString();
+  }
+
+  @Nonnull
+  private static Charset decodeCharset(@Nonnull final String charsetName) {
+    final String normalized = charsetName.trim();
+    if (Charset.isSupported(normalized)) {
+      return Charset.forName(normalized);
+    } else {
+      throw new IllegalArgumentException("Unsupported charset: " + charsetName);
+    }
   }
 
   /**
@@ -1016,26 +989,11 @@ public final class PreprocessorContext {
     return this.inCharset;
   }
 
-    @Nonnull
-    private static Charset decodeCharset(@Nonnull final String charsetName) {
-        final String normalized = charsetName.trim();
-        if (Charset.isSupported(normalized)) {
-            return Charset.forName(normalized);
-        } else {
-            throw new IllegalArgumentException("Unsupported charset: " + charsetName);
-        }
-    }
+  @Nonnull
+  public PreprocessorContext setInCharset(@Nonnull final String charsetName) {
+    return this.setInCharset(decodeCharset(charsetName));
+  }
 
-    @Nonnull
-    public PreprocessorContext setInCharset(@Nonnull final String charsetName) {
-        return this.setInCharset(decodeCharset(charsetName));
-    }
-    
-    @Nonnull
-    public PreprocessorContext setOutCharset(@Nonnull final String charsetName) {
-        return this.setOutCharset(decodeCharset(charsetName));
-    }
-    
   /**
    * Set the character encoding for reading texts, it must be supported by the Java platform else an exception will be thrown
    *
@@ -1056,6 +1014,11 @@ public final class PreprocessorContext {
   @Nonnull
   public Charset getOutCharset() {
     return this.outCharset;
+  }
+
+  @Nonnull
+  public PreprocessorContext setOutCharset(@Nonnull final String charsetName) {
+    return this.setOutCharset(decodeCharset(charsetName));
   }
 
   /**
@@ -1134,8 +1097,8 @@ public final class PreprocessorContext {
     } else {
       final List<File> setOfFoundFiles = new ArrayList<>();
       getSourceFolders().stream().map((root) -> new File(root.getAsFile(), path)).filter((variant) -> (variant.exists() && variant.isFile())).forEachOrdered((variant) -> {
-          setOfFoundFiles.add(variant);
-        });
+        setOfFoundFiles.add(variant);
+      });
 
       if (setOfFoundFiles.size() == 1) {
         result = setOfFoundFiles.get(0);
@@ -1247,6 +1210,41 @@ public final class PreprocessorContext {
       final String stack;
       stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
+    }
+  }
+
+  public final static class SourceFolder {
+    private final String path;
+    private final File pathFile;
+
+    public SourceFolder(@Nonnull final String path) {
+      this.path = assertNotNull(path);
+      this.pathFile = new File(path);
+    }
+
+    @Nonnull
+    public String getAsString() {
+      return this.path;
+    }
+
+    @Nonnull
+    public File getAsFile() {
+      return this.pathFile;
+    }
+
+    @Nonnull
+    public String getNormalizedAbsolutePath(final boolean separatorCharEnded) {
+      String result = FilenameUtils.normalizeNoEndSeparator(this.pathFile.getAbsolutePath());
+      if (separatorCharEnded) {
+        result += File.separatorChar;
+      }
+      return result;
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+      return String.format("%s[%s]", this.getClass().getSimpleName(), this.path);
     }
   }
 }

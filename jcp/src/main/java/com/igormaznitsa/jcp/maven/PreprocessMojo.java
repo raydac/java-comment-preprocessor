@@ -552,7 +552,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setExcludedFolderPatterns(this.getExcludedFolders().toArray(new String[0]));
     context.setCopyFileAttributes(this.getCopyFileAttributes());
 
-    this.cfgFiles.forEach(x->context.addConfigFile(x));
+    this.cfgFiles.forEach(x -> context.addConfigFile(x));
 
     // process global vars
     this.getGlobalVars().forEach((key, value) -> {
