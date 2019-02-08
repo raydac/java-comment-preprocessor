@@ -82,28 +82,6 @@ public final class PreprocessorUtils {
   }
 
   @Nonnull
-  @MustNotContainNull
-  @ThrowsRuntimeException(value = NullPointerException.class, reference = "if extensions are null")
-  public static String[] splitExtensionCommaList(@Nonnull final String extensions) {
-    assertNotNull("String of extensions is null", extensions);
-
-    final String trimmed = extensions.trim();
-
-    String[] result;
-
-    if (trimmed.isEmpty()) {
-      result = new String[0];
-    } else {
-      result = splitForChar(extensions, ',');
-      for (int li = 0; li < result.length; li++) {
-        result[li] = result[li].trim().toLowerCase(Locale.ENGLISH);
-      }
-    }
-
-    return result;
-  }
-
-  @Nonnull
   public static BufferedReader makeFileReader(@Nonnull final File file, @Nonnull final Charset charset, final int bufferSize) throws IOException {
     assertNotNull("File is null", file);
     assertNotNull("Charset is null", charset);
@@ -141,7 +119,7 @@ public final class PreprocessorUtils {
     assertNotNull("Value is null", value);
 
     if (prefix.length() > value.length()) {
-      throw new IllegalArgumentException("Prefix is taller than the value");
+      throw new IllegalArgumentException("Prefix is too long");
     }
 
     return value.substring(prefix.length());
@@ -311,27 +289,6 @@ public final class PreprocessorUtils {
     }
 
     return strContainer.toArray(new String[0]);
-  }
-
-  @Nonnull
-  public static byte[] readFileAsByteArray(@Nonnull final File file) throws IOException {
-    checkFile(file);
-
-    int len = (int) file.length();
-
-    final ByteBuffer buffer = ByteBuffer.allocate(len);
-
-    try (final FileChannel inChannel = new FileInputStream(file).getChannel()) {
-      while (len > 0 && !Thread.currentThread().isInterrupted()) {
-        final int read = inChannel.read(buffer);
-        if (read < 0) {
-          throw new IOException("Can't read whole file [" + getFilePath(file) + '\'');
-        }
-        len -= read;
-      }
-    }
-
-    return buffer.array();
   }
 
   @Nonnull
