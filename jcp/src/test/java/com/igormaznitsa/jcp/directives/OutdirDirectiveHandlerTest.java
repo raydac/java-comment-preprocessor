@@ -25,9 +25,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class OutDirDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class OutdirDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final OutDirDirectiveHandler HANDLER = new OutDirDirectiveHandler();
+  private static final OutdirDirectiveHandler HANDLER = new OutdirDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {

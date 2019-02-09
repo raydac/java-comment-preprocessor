@@ -25,14 +25,19 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import javax.annotation.Nonnull;
 
-public class CareForLastNextLineCharHandler implements CommandLineHandler {
+/**
+ * The handler keep file attributes of copied or generated files.
+ *
+ * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ */
+public class KeepAttributesHandler implements CommandLineHandler {
 
-  private static final String ARG_NAME = "/N";
+  private static final String ARG_NAME = "/A";
 
   @Override
   @Nonnull
   public String getDescription() {
-    return "accurate reproduction of the last line end char state (not the next line char!)";
+    return "copy original file attributes for result";
   }
 
   @Override
@@ -40,7 +45,7 @@ public class CareForLastNextLineCharHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setCareForLastNextLine(true);
+      context.setKeepAttributes(true);
       result = true;
     }
 

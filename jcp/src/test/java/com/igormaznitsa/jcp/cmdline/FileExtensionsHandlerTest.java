@@ -46,10 +46,10 @@ public class FileExtensionsHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/f", mock));
     assertFalse(HANDLER.processCommandLineKey("/F:", mock));
 
-    verify(mock, never()).setExcludedFileExtensions(any());
+    verify(mock, never()).setExcludeExtensions(any());
 
     assertTrue(HANDLER.processCommandLineKey("/f:rrr,Ggg,bBb", mock));
-    verify(mock).setProcessingFileExtensions(Arrays.asList("rrr", "Ggg", "bBb"));
+    verify(mock).setExtensions(Arrays.asList("rrr", "Ggg", "bBb"));
   }
 
   @Override

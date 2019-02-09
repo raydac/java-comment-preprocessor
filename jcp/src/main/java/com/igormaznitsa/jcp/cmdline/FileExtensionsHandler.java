@@ -52,7 +52,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!extensions.isEmpty()) {
-        context.setProcessingFileExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+        context.setExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

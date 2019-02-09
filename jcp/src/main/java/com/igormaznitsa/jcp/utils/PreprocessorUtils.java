@@ -28,7 +28,6 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.annotation.ThrowsRuntimeException;
 import com.igormaznitsa.meta.common.utils.Assertions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -41,8 +40,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -143,10 +140,12 @@ public final class PreprocessorUtils {
     }
   }
 
-  public static void copyFileAttributes(@Nonnull final File from, @Nonnull final File to) {
-    to.setExecutable(from.canExecute());
-    to.setReadable(from.canRead());
-    to.setWritable(from.canWrite());
+  public static boolean copyFileAttributes(@Nonnull final File from, @Nonnull final File to) {
+    boolean result = to.setExecutable(from.canExecute());
+    result = result && to.setReadable(from.canRead());
+    result = result && to.setWritable(from.canWrite());
+    result = result && to.setLastModified(from.lastModified());
+    return result;
   }
 
   @Nonnull
@@ -309,14 +308,17 @@ public final class PreprocessorUtils {
 
   @Nonnull
   @MustNotContainNull
-  public static String[] splitForCharAndHoldEmptyLine(@Nonnull final String string, final char delimiter) {
-    String[] result = splitForChar(string, delimiter);
-    return result.length == 0 ? new String[] {""} : result;
+  public static List<String> splitForCharAndHoldEmptyLine(@Nonnull final String string, final char delimiter) {
+    final List<String> result = splitForChar(string, delimiter);
+    if (result.isEmpty()) {
+      result.add("");
+    }
+    return result;
   }
 
   @Nonnull
   @MustNotContainNull
-  public static String[] splitForChar(@Nonnull final String string, final char delimiter) {
+  public static List<String> splitForChar(@Nonnull final String string, final char delimiter) {
     final char[] array = string.toCharArray();
     final StringBuilder buffer = new StringBuilder((array.length >> 1) == 0 ? 1 : array.length >> 1);
 
@@ -337,7 +339,7 @@ public final class PreprocessorUtils {
       tokens.add(buffer.toString());
     }
 
-    return tokens.toArray(new String[0]);
+    return tokens;
   }
 
   @Nullable

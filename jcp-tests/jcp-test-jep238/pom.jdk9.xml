@@ -77,17 +77,17 @@
           <execution>
             <id>preprocess-test-sources</id>
             <goals>
-              <goal>preprocessTests</goal>
+              <goal>preprocess</goal>
             </goals>
+            <configuration>
+              <useTestSources>true</useTestSources>
+            </configuration>
           </execution>
         </executions>
         <configuration>
-          <globalVars>
-            <property>
-              <name>jdk.version</name>
-              <value>${jdk.version}</value>
-            </property>
-          </globalVars>
+          <vars>
+            <jdk.version>${jdk.version}</jdk.version>
+          </vars>
         </configuration>
       </plugin>
 

@@ -22,12 +22,11 @@
 package com.igormaznitsa.jcp;
 
 import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
-import com.igormaznitsa.jcp.cmdline.CareForLastNextLineCharHandler;
-import com.igormaznitsa.jcp.cmdline.ClearDstDirectoryHandler;
+import com.igormaznitsa.jcp.cmdline.CareForLastEolHandler;
+import com.igormaznitsa.jcp.cmdline.ClearTargetHandler;
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
-import com.igormaznitsa.jcp.cmdline.CompareDestinationContentHandler;
-import com.igormaznitsa.jcp.cmdline.CopyFileAttributesHandler;
 import com.igormaznitsa.jcp.cmdline.DestinationDirectoryHandler;
+import com.igormaznitsa.jcp.cmdline.DontOverwriteSameContentHandler;
 import com.igormaznitsa.jcp.cmdline.ExcludeFoldersHandler;
 import com.igormaznitsa.jcp.cmdline.ExcludedFileExtensionsHandler;
 import com.igormaznitsa.jcp.cmdline.FileExtensionsHandler;
@@ -35,6 +34,7 @@ import com.igormaznitsa.jcp.cmdline.GlobalVariableDefiningFileHandler;
 import com.igormaznitsa.jcp.cmdline.GlobalVariableHandler;
 import com.igormaznitsa.jcp.cmdline.HelpHandler;
 import com.igormaznitsa.jcp.cmdline.InCharsetHandler;
+import com.igormaznitsa.jcp.cmdline.KeepAttributesHandler;
 import com.igormaznitsa.jcp.cmdline.KeepLineHandler;
 import com.igormaznitsa.jcp.cmdline.OutCharsetHandler;
 import com.igormaznitsa.jcp.cmdline.PreserveIndentDirectiveHandler;
@@ -86,7 +86,7 @@ public final class JCPreprocessor {
       new HelpHandler(),
       new InCharsetHandler(),
       new OutCharsetHandler(),
-      new ClearDstDirectoryHandler(),
+      new ClearTargetHandler(),
       new SourceDirectoryHandler(),
       new DestinationDirectoryHandler(),
       new FileExtensionsHandler(),
@@ -94,14 +94,14 @@ public final class JCPreprocessor {
       new AllowWhitespaceDirectiveHandler(),
       new RemoveCommentsHandler(),
       new KeepLineHandler(),
-      new CompareDestinationContentHandler(),
+      new DontOverwriteSameContentHandler(),
       new VerboseHandler(),
       new GlobalVariableDefiningFileHandler(),
       new GlobalVariableHandler(),
-      new CareForLastNextLineCharHandler(),
+      new CareForLastEolHandler(),
       new PreserveIndentDirectiveHandler(),
       new ExcludeFoldersHandler(),
-      new CopyFileAttributesHandler(),
+      new KeepAttributesHandler(),
       new UnknownAsFalseHandler()
   };
   private final PreprocessorContext context;
@@ -195,13 +195,13 @@ public final class JCPreprocessor {
 
     processCfgFiles();
 
-    final List<PreprocessorContext.SourceFolder> srcFolders = context.getSourceFolders();
-    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcFolders, context.getExcludedFolderPatterns());
+    final List<PreprocessorContext.SourceFolder> srcFolders = context.getSources();
+    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcFolders, context.getExcludeFolders());
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
     processFileExclusion(excludedIf);
-    if (!context.isFileOutputDisabled()) {
+    if (!context.isDryRun()) {
       createDestinationDirectory();
     }
     final PreprocessingStatistics stat = preprocessFiles(filesToBePreprocessed);
@@ -259,7 +259,7 @@ public final class JCPreprocessor {
   private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<>();
     for (final FileInfoContainer fileRef : files) {
-      if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isForCopyOnly())) {
+      if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isCopyOnly())) {
         final long startTime = System.currentTimeMillis();
         result.addAll(fileRef.processGlobalDirectives(null, context));
         final long elapsedTime = System.currentTimeMillis() - startTime;
@@ -278,34 +278,32 @@ public final class JCPreprocessor {
     for (final FileInfoContainer fileRef : files) {
       if (fileRef.isExcludedFromPreprocessing()) {
         // do nothing
-      } else if (fileRef.isForCopyOnly()) {
-        if (!context.isFileOutputDisabled()) {
-
-          final File destinationFile = context.createDestinationFileForPath(fileRef.getDestinationFilePath());
-
+      } else if (fileRef.isCopyOnly()) {
+        if (!context.isDryRun()) {
+          final File destinationFile = this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
           boolean doCopy = true;
 
-          if (this.context.isCompareDestination() && PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
+          if (this.context.isDontOverwriteSameContent() && PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
             doCopy = false;
-            if (context.isVerbose()) {
-              context.logForVerbose(String.format("Copy skipped because same content: %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.getDestinationFilePath()));
+            if (this.context.isVerbose()) {
+              this.context.logForVerbose(String.format("Copy skipped because same content: %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
             }
           }
 
           if (doCopy) {
-            if (context.isVerbose()) {
-              context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.getDestinationFilePath()));
+            if (this.context.isVerbose()) {
+              this.context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
             }
-            PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile, context.isCopyFileAttributes());
+            PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile, this.context.isKeepAttributes());
             copFileCounter++;
           }
         }
       } else {
         final long startTime = System.currentTimeMillis();
-        fileRef.preprocessFile(null, context);
+        fileRef.preprocessFile(null, this.context);
         final long elapsedTime = System.currentTimeMillis() - startTime;
-        if (context.isVerbose()) {
-          context.logForVerbose(String.format("File preprocessing completed  '%s', elapsed time %d ms", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
+        if (this.context.isVerbose()) {
+          this.context.logForVerbose(String.format("File preprocessing completed  '%s', elapsed time %d ms", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
         prepFileCounter++;
       }
@@ -314,11 +312,11 @@ public final class JCPreprocessor {
   }
 
   private void createDestinationDirectory() throws IOException {
-    final File destination = context.getDestinationDirectoryAsFile();
+    final File destination = context.getTarget();
 
     final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
 
-    if (context.doesClearDestinationDirBefore() && destinationExistsAndDirectory) {
+    if (context.isClearTarget() && destinationExistsAndDirectory) {
       try {
         FileUtils.cleanDirectory(destination);
       } catch (IOException ex) {

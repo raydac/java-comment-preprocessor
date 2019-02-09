@@ -123,7 +123,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
   private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException {
     final List<String> parsedText = parseStringForLines(encoding);
     final PreprocessorContext context = new PreprocessorContext();
-    context.setFileOutputDisabled(true);
+    context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
     final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[0]), false, 0);
@@ -141,7 +141,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
   public PreprocessorContext executeGlobalPhase(final String fileName, final List<ExcludeIfInfo> excludeIf) throws Exception {
     final File file = new File(getClass().getResource(fileName).toURI());
     final PreprocessorContext context = new PreprocessorContext();
-    context.setFileOutputDisabled(true);
+    context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
     final List<ExcludeIfInfo> result = reference.processGlobalDirectives(null, context);
@@ -185,8 +185,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     if (logger != null) {
       context.setPreprocessorLogger(logger);
     }
-    context.setFileOutputDisabled(true);
-    context.setSourceFolders(Collections.singletonList(srcfile.getParent()));
+    context.setDryRun(true);
+    context.setSources(Collections.singletonList(srcfile.getParent()));
     context.setKeepLines(keepLines);
     context.setPreprocessorExtension(extension);
 

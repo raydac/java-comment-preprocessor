@@ -76,7 +76,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         context.logForVerbose("Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  \'" + stringRest + '\'');
       }
       if (file.isFile()) {
-        context.addConfigFile(file);
+        context.registerConfigFile(file);
       } else {
         throw context.makeException("Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'', null);
       }

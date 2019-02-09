@@ -26,23 +26,26 @@
                         </goals>
                         <configuration>
                             <allowWhitespace>true</allowWhitespace>
-                            <processing>java</processing>
+                            <extensions>
+                                <extension>java</extension>
+                            </extensions>
                             <keepLines>true</keepLines>
-                            <globalVars>
+                            <vars>
                                 <some.test.global>Some Test Global Value</some.test.global>
-                            </globalVars>
+                            </vars>
                         </configuration>
                     </execution>
                     <execution>
                         <id>preprocess-test-sources</id>
                         <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>preprocessTests</goal>
+                            <goal>preprocess</goal>
                         </goals>
                         <configuration>
-                            <globalVars>
+                            <useTestSources>true</useTestSources>
+                            <vars>
                                 <some.test.global.test>Some Test</some.test.global.test>
-                            </globalVars>
+                            </vars>
                         </configuration>
                     </execution>
                 </executions>

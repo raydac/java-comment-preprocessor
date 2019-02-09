@@ -32,7 +32,7 @@ public class ExternalGlobalDefFileTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(PreprocessorContext context) {
-    context.addConfigFile(new File(sourceFolder.getParent(), "list.cfg"));
+    context.registerConfigFile(new File(sourceFolder.getParent(), "list.cfg"));
   }
 
   @Override

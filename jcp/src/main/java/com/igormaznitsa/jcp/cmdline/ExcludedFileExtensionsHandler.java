@@ -51,7 +51,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!extensions.isEmpty()) {
-        context.setExcludedFileExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+        context.setExcludeExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

@@ -51,13 +51,13 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
   @Nonnull
   public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
-    if (!context.isFileOutputDisabled()) {
-      final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().getDestinationFilePath());
+    if (!context.isDryRun()) {
+      final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().makeTargetFilePathAsString());
       try {
         if (context.isVerbose()) {
           context.logForVerbose("Flushing buffers into file '" + outFile + '\'');
         }
-        final boolean saved = state.saveBuffersToFile(outFile, context.isRemoveComments());
+        final boolean saved = state.saveBuffersToFile(outFile, context.isKeepComments());
         if (context.isVerbose()) {
           context.logForVerbose("Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "\'");
         }

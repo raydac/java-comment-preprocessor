@@ -22,8 +22,10 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -47,7 +49,9 @@ public class ExcludeFoldersHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/ED", mock));
 
     assertTrue(HANDLER.processCommandLineKey("/ed:testdir/**/hd" + File.pathSeparator + "zoom" + File.pathSeparator + "g?df", mock));
-    verify(mock).setExcludedFolderPatterns("testdir/**/hd", "zoom", "g?df");
+    final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+    verify(mock).setExcludeFolders(captor.capture());
+    assertArrayEquals(new String[] {"testdir/**/hd", "zoom", "g?df"}, captor.getValue().toArray(new String[0]));
   }
 
   @Override

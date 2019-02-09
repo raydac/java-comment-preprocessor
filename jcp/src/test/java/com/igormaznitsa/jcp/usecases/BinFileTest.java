@@ -33,7 +33,7 @@ public class BinFileTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
-    context.setExcludedFileExtensions(Collections.singletonList("bin"));
+    context.setExcludeExtensions(Collections.singletonList("bin"));
   }
 
   @Override

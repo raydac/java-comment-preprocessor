@@ -41,14 +41,14 @@ public class PreserveIndentDirectiveHandlerTest extends AbstractCommandLineHandl
 
     assertFalse(HANDLER.processCommandLineKey("/Pi:", mock));
     assertFalse(HANDLER.processCommandLineKey("/PI ", mock));
-    verify(mock, never()).setPreserveIndent(anyBoolean());
+    verify(mock, never()).setPreserveIndents(anyBoolean());
 
     assertTrue(HANDLER.processCommandLineKey("/PI", mock));
-    verify(mock).setPreserveIndent(true);
+    verify(mock).setPreserveIndents(true);
     reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/PI", mock));
-    verify(mock).setPreserveIndent(true);
+    verify(mock).setPreserveIndents(true);
     reset(mock);
   }
 

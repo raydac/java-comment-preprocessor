@@ -34,7 +34,7 @@ public class PreserveIndentOffTest extends AbstractUseCaseTest {
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
     context.setAllowWhitespace(true);
-    assertFalse(context.isPreserveIndent());
+    assertFalse(context.isPreserveIndents());
   }
 
   @Override

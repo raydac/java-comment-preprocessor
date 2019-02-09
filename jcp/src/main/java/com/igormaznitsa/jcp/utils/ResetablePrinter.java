@@ -65,7 +65,7 @@ public class ResetablePrinter {
 
   public void println(@Nonnull final String text) throws IOException {
     for (final char chr : text.toCharArray()) {
-      outStream.write(chr);
+      this.outStream.write(chr);
     }
     outStream.write(PreprocessorUtils.LINE_END, 0, PreprocessorUtils.LINE_END.length());
   }

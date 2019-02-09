@@ -30,7 +30,7 @@ public class AbortTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(PreprocessorContext context) {
-    context.setCareForLastNextLine(true);
+    context.setCareForLastEol(true);
   }
 
   @Override

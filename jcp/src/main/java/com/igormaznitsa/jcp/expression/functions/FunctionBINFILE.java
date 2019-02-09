@@ -197,7 +197,7 @@ public class FunctionBINFILE extends AbstractFunction {
 
     final File theFile;
     try {
-      theFile = context.findFileInSourceFolders(filePath);
+      theFile = context.findFileInSources(filePath);
     } catch (IOException ex) {
       throw context.makeException("Can't find bin file '" + filePath + '\'', null);
     }

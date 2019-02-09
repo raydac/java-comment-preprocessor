@@ -25,6 +25,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
@@ -57,8 +58,10 @@ public class OutCharsetHandler implements CommandLineHandler {
       final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!value.isEmpty()) {
-        context.setOutCharset(value);
-        result = true;
+        if (Charset.isSupported(value)) {
+          context.setTargetEncoding(Charset.forName(value));
+          result = true;
+        }
       }
     }
     return result;

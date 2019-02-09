@@ -25,19 +25,14 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import javax.annotation.Nonnull;
 
-/**
- * The handler keep file attributes of copied or generated files.
- *
- * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
- */
-public class CopyFileAttributesHandler implements CommandLineHandler {
+public class CareForLastEolHandler implements CommandLineHandler {
 
-  private static final String ARG_NAME = "/A";
+  private static final String ARG_NAME = "/N";
 
   @Override
   @Nonnull
   public String getDescription() {
-    return "copy file attributes";
+    return "carefully reproduce last line EOL in result";
   }
 
   @Override
@@ -45,7 +40,7 @@ public class CopyFileAttributesHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setCopyFileAttributes(true);
+      context.setCareForLastEol(true);
       result = true;
     }
 

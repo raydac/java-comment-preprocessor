@@ -27,9 +27,9 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.meta.annotation.ImplementationNote;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.GetUtils;
+import lombok.Data;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -37,8 +37,8 @@ import org.apache.tools.ant.Task;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -54,273 +54,123 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
+@Data
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
-
-  private final List<Global> globalVariables = new ArrayList<>();
-  private final List<CfgFile> configFiles = new ArrayList<>();
-  private File sourceDirectory = null;
-  private File destinationDirectory = null;
-  private String inCharSet = null;
-  private String outCharSet = null;
-  private String excludedExtensions = null;
-  private String processing = null;
-  private String excludedFolders = null;
-  private boolean disableOut = false;
-  private boolean verbose = false;
-  private boolean clearDstFlag = false;
-  private boolean removeComments = false;
-  private boolean keepLines = true;
-  private boolean careForLastNextLine = false;
-  private boolean compareDestination = false;
-  private boolean allowWhitespace = false;
-  private boolean preserveIndent = false;
-  private boolean copyFileAttributes = false;
+  private Sources sources = null;
+  private boolean keepAttributes = false;
+  private String target = null;
+  private String sourceEncoding = null;
+  private String targetEncoding = null;
+  private boolean ignoreMissingSources = false;
+  private ExcludedExtensions excludedExtensions = null;
+  private Extensions extensions = null;
   private boolean unknownVarAsFalse = false;
-  private Map<String, Value> antVariables;
+  private boolean dryRun = false;
+  private boolean verbose = false;
+  private boolean clearTarget = false;
+  private boolean careForLastEol = false;
+  private boolean keepComments = false;
+  private Vars vars = null;
+  private ExcludeFolders excludeFolders = null;
+  private ConfigFiles configFiles = null;
+  private boolean keepLines = true;
+  private boolean allowWhitespace = false;
+  private boolean preserveIndents = false;
+  private boolean dontOverwriteSameContent = false;
+  private Map<String, Value> antVariables = new HashMap<>();
 
-  /**
-   * Set the "copyfileattributes", it turns on mode to copy file attributes if file generated or copied.
-   *
-   * @param flag true if to copy attributes, false otherwise
-   */
-  public void setCopyFileAttributes(final boolean flag) {
-    this.copyFileAttributes = flag;
-  }
-
-  /**
-   * Set the "allowWhitespace", it allows to manage the mode to allow whitespace between the // and the #.
-   *
-   * @param flag true if whitespace is allowed, false otherwise
-   */
-  public void setAllowWhitespace(final boolean flag) {
-    this.allowWhitespace = flag;
-  }
-
-  /**
-   * Set the "preserveident" attribute, to preserve spaces occupied by '//$' and '//$$' directives.
-   *
-   * @param flag true to preserve positions of tail chars in lines marked by '//$$' and '//$', false otherwise
-   */
-  public void setPreserveIndent(final boolean flag) {
-    this.preserveIndent = flag;
-  }
-
-  /**
-   * Set the "compareDestination" attribute, it allows to turn on the mode to compare destination file content and to not override the file by generated one if there is the same
-   * content.
-   *
-   * @param flag true if to compare destination file content, false otherwise
-   */
-  public void setCompareDestiation(final boolean flag) {
-    this.compareDestination = flag;
-  }
-
-  /**
-   * Set the "source" attribute, it allows to define the source directory to be preprocessed
-   *
-   * @param src a directory to be used as the source one, must not be null
-   */
-  public void setSource(@Nonnull final File src) {
-    this.sourceDirectory = src;
-  }
-
-  /**
-   * Set the "careforlastnextline" attribute, it allows to make precise processing of last next line char
-   *
-   * @param flag shows to turn on or turn off the mode
-   */
-  public void setCareForLastNextLine(final boolean flag) {
-    this.careForLastNextLine = flag;
-  }
-
-  /**
-   * Set the "destination" attribute, it allows to define the destination directory where the preprocessed files will be placed in
-   *
-   * @param dst a directory to be used as the destination one, must not be null
-   */
-  public void setDestination(@Nonnull final File dst) {
-    this.destinationDirectory = dst;
-  }
-
-  /**
-   * Set the "inCharset" attribute, it allows to define the text encoding for the reading text files
-   *
-   * @param charSet the character set to be used to decode read texts, must not be null
-   */
-  public void setInCharset(@Nonnull final String charSet) {
-    this.inCharSet = charSet;
-  }
-
-  /**
-   * Set the "outCharset" attribute, it allows to define the text encoding for the writing text files
-   *
-   * @param charSet the character set to be used to encode written texts, must not be null
-   */
-  public void setOutCharset(@Nonnull final String charSet) {
-    this.outCharSet = charSet;
-  }
-
-  /**
-   * Set the "unknownVarAsFalse" attribute, it allows to interpret unknown variables as FALSE.
-   *
-   * @param flag true to turn on the mode, false otherwise.
-   */
-  public void setUnknownVarAsFalse(final boolean flag) {
-    this.unknownVarAsFalse = flag;
-  }
-
-  /**
-   * Set the "excluded" attribute, it defines the excluded file extensions which will be ignored by the preprocessor in its work (also those files will not be copied)
-   *
-   * @param ext the list of ignored file extensions, must not be null
-   */
-  public void setExcluded(@Nonnull final String ext) {
-    this.excludedExtensions = ext;
-  }
-
-  /**
-   * Set the "processing" attribute, it defines the file extensions to be processed
-   *
-   * @param ext the list of file extensions which should be preprocessed, must not be null
-   */
-  public void setProcessing(@Nonnull final String ext) {
-    this.processing = ext;
-  }
-
-  /**
-   * Set the "excludedfolders" attribute, sub-folders in source folders to be excluded from preprocessing, ANT patterns allowed, ${path.separator} should be used for multiple items
-   *
-   * @param value folder names as string
-   */
-  public void setExcludedFolders(@Nonnull final String value) {
-    this.excludedFolders = value;
-  }
-
-  /**
-   * Set the "clear" attribute, it is a boolean attribute allows to make the preprocessor to clear the destination directory before its work
-   *
-   * @param flag true if the destination directory must be cleared before preprocessing, otherwise false
-   */
-  public void setClear(final boolean flag) {
-    this.clearDstFlag = flag;
-  }
-
-  /**
-   * Set the "removeComments" attribute, it is a boolean attribute allows to make the preprocessor to remove all Java-like comments from the result files
-   *
-   * @param flag true if the result file must be cleared from comments, otherwise false
-   */
-  public void setRemoveComments(final boolean flag) {
-    this.removeComments = flag;
-  }
-
-  /**
-   * Set the "verbose" attribute, it is a boolean attribute allows to set the verbose level of preprocessor messages
-   *
-   * @param flag true if the verbose level must be set, otherwise false
-   */
-  public void setVerbose(final boolean flag) {
-    this.verbose = flag;
-  }
-
-  /**
-   * Set the "keepLines" attribute, it is a boolean attribute to keep non-executing lines as commented ones in the output
-   *
-   * @param flag true if preprocessor should keep the lines as commented ones, false otherwise
-   */
-  public void setKeepLines(final boolean flag) {
-    this.keepLines = flag;
-  }
-
-  /**
-   * Set the "disableOut" attribute, it is a boolean attribute allows to disable any output operations into the destination directory
-   *
-   * @param flag true if the output operations must be disabled, otherwise false
-   */
-  public void setDisableOut(final boolean flag) {
-    this.disableOut = flag;
-  }
-
-  @Nonnull
-  @ImplementationNote("Do not change because for ANT!")
-  public Global createGlobal() {
-    final Global result = new Global();
-    globalVariables.add(result);
-    return result;
-  }
-
-  @Nonnull
-  @ImplementationNote("Do not change because for ANT!")
-  public CfgFile createCfgFile() {
-    final CfgFile result = new CfgFile();
-    configFiles.add(result);
-    return result;
-  }
-
-  private void fillCfgFiles(@Nonnull final PreprocessorContext context) {
-    for (final CfgFile f : configFiles) {
-      context.addConfigFile(assertNotNull("File must not be null", f.getFile()));
+  private void registerConfigFiles(@Nonnull final PreprocessorContext context) {
+    if (this.getConfigFiles() != null) {
+      for (final Sources.Path f : this.getConfigFiles().getPaths()) {
+        context.registerConfigFile(assertNotNull("File must not be null", new File(f.getValue().trim())));
+      }
     }
   }
 
   private void fillGlobalVars(@Nonnull final PreprocessorContext context) {
-    for (final Global g : globalVariables) {
-      context.setGlobalVariable(assertNotNull("Name must not be null", g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null", g.getValue())));
+    if (this.getVars() != null) {
+      for (final Vars.Var g : this.getVars().getVars()) {
+        context.setGlobalVariable(assertNotNull("Name must not be null", g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null", g.getValue())));
+      }
     }
   }
 
   @Nonnull
-  PreprocessorContext generatePreprocessorContext() {
+  PreprocessorContext makePreprocessorContext() {
     fillAntVariables();
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(getProject().getBaseDir());
     context.setPreprocessorLogger(this);
     context.registerSpecialVariableProcessor(this);
 
-    if (this.destinationDirectory != null) {
-      context.setTargetFolder(this.destinationDirectory.getAbsolutePath());
+    if (this.getTarget() != null) {
+      context.setTarget(new File(this.getTarget()));
     }
 
-    if (this.sourceDirectory != null) {
-      context.setSourceFolders(Collections.singletonList(this.sourceDirectory.getAbsolutePath()));
-    } else {
-      context.setSourceFolders(Collections.singletonList(getProject().getBaseDir().getAbsolutePath()));
+    if (this.getSources() != null) {
+      context.setSources(this.getSources().getPaths()
+          .stream()
+          .map(Sources.Path::getValue)
+          .collect(Collectors.toList())
+      );
     }
 
-    if (this.excludedExtensions != null) {
-      context.setExcludedFileExtensions(Arrays.stream(this.excludedExtensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+    if (this.getExcludedExtensions() != null) {
+      context.setExcludeExtensions(this.getExcludedExtensions().extensions
+          .stream()
+          .map(x -> x.name.trim())
+          .filter(x -> !x.isEmpty())
+          .collect(Collectors.toList())
+      );
+    }
+    if (this.getExtensions() != null) {
+      context.setExtensions(this.getExtensions().extensions
+          .stream()
+          .map(x -> x.name.trim())
+          .filter(x -> !x.isEmpty())
+          .collect(Collectors.toList())
+      );
     }
 
-    if (this.processing != null) {
-      context.setProcessingFileExtensions(Arrays.stream(this.processing.split("\\,")).map(String::trim).collect(Collectors.toList()));
+    if (this.getConfigFiles() != null) {
+      this.getConfigFiles().getPaths().forEach(x -> {
+        final File configFile = new File(x.getValue());
+        log("Registering config file: " + configFile.getAbsolutePath());
+        context.registerConfigFile(configFile);
+      });
     }
 
-    if (this.inCharSet != null) {
-      context.setInCharset(this.inCharSet);
+    if (this.getSourceEncoding() != null) {
+      context.setSourceEncoding(Charset.forName(this.getSourceEncoding()));
     }
 
-    if (this.outCharSet != null) {
-      context.setOutCharset(this.outCharSet);
+    if (this.getTargetEncoding() != null) {
+      context.setTargetEncoding(Charset.forName(this.getTargetEncoding()));
     }
 
-    context.setCompareDestination(this.compareDestination);
-    context.setClearDestinationDirBefore(this.clearDstFlag);
-    context.setFileOutputDisabled(this.disableOut);
-    context.setRemoveComments(this.removeComments);
-    context.setVerbose(this.verbose);
-    context.setKeepLines(this.keepLines);
-    context.setCareForLastNextLine(this.careForLastNextLine);
-    context.setAllowWhitespace(this.allowWhitespace);
-    context.setPreserveIndent(this.preserveIndent);
-    context.setCopyFileAttributes(this.copyFileAttributes);
-    context.setUnknownVariableAsFalse(this.unknownVarAsFalse);
+    context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
+    context.setClearTarget(this.isClearTarget());
+    context.setDryRun(this.isDryRun());
+    context.setKeepComments(this.isKeepComments());
+    context.setVerbose(this.isVerbose());
+    context.setKeepLines(this.isKeepLines());
+    context.setCareForLastEol(this.isCareForLastEol());
+    context.setAllowWhitespace(this.isAllowWhitespace());
+    context.setPreserveIndents(this.isPreserveIndents());
+    context.setKeepAttributes(this.isKeepAttributes());
+    context.setUnknownVariableAsFalse(this.isUnknownVarAsFalse());
 
-    if (this.excludedFolders != null && !this.excludedFolders.isEmpty()) {
-      context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(this.excludedFolders, File.pathSeparatorChar));
+    if (this.getExcludeFolders() != null) {
+      context.setExcludeFolders(
+          this.getExcludeFolders().getFolders()
+              .stream()
+              .map(ExcludeFolders.Folder::getPath)
+              .collect(Collectors.toList())
+      );
     }
 
-    fillCfgFiles(context);
-    fillGlobalVars(context);
+    this.registerConfigFiles(context);
+    this.fillGlobalVars(context);
 
     return context;
   }
@@ -330,8 +180,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     PreprocessorContext context;
     JCPreprocessor preprocessor;
 
+    this.antVariables.clear();
+    this.antVariables.putAll(fillAntVariables());
+
     try {
-      context = generatePreprocessorContext();
+      context = makePreprocessorContext();
     } catch (Exception unexpected) {
       final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
       throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
@@ -367,15 +220,15 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     log(message, Project.MSG_WARN);
   }
 
-  private void fillAntVariables() {
+  @Nonnull
+  private Map<String, Value> fillAntVariables() {
     final Project theProject = getProject();
 
-    Map<String, Value> result;
+    final Map<String, Value> result;
 
     if (theProject == null) {
       result = Collections.emptyMap();
     } else {
-
       result = new HashMap<>();
 
       for (final Object key : getProject().getProperties().keySet()) {
@@ -386,7 +239,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         }
       }
     }
-    antVariables = result;
+    return result;
   }
 
   @Override
@@ -410,7 +263,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     if (antVariables == null) {
       throw context.makeException("Non-initialized ANT property map detected", null);
     }
-    final Value result = antVariables.get(varName);
+    final Value result = this.antVariables.get(varName);
 
     if (result == null) {
       throw context.makeException("Request for unsupported Ant property \'" + varName + '\'', null);
@@ -423,54 +276,119 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!", null);
   }
 
-  /**
-   * Inside class describes a "cfgfile" item, it has the only attribute "file", the attribute must be defined
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
-  public static class CfgFile {
+  @Nonnull
+  public Sources createSources() {
+    this.sources = new Sources();
+    return this.sources;
+  }
 
-    private File file;
+  @Nonnull
+  public ConfigFiles createConfigFiles() {
+    this.configFiles = new ConfigFiles();
+    return this.configFiles;
+  }
 
-    @Nullable
-    public File getFile() {
-      return this.file;
+  @Nonnull
+  public Vars createVars() {
+    this.vars = new Vars();
+    return this.vars;
+  }
+
+  @Data
+  public static class Sources {
+
+    protected List<Path> paths = new ArrayList<>();
+
+    @Nonnull
+    public Path createPath() {
+      final Path result = new Path();
+      paths.add(result);
+      return result;
     }
 
-    public void setFile(@Nonnull final File file) {
-      this.file = assertNotNull(file);
+    @Data
+    public static class Path {
+      private String value = "";
+
+      public void addText(@Nullable final String text) {
+        this.value += GetUtils.ensureNonNull(text, "");
+      }
+    }
+
+  }
+
+  @Data
+  public static class ConfigFiles extends Sources {
+
+  }
+
+  @Data
+  public static class ExcludeFolders {
+
+    private List<Folder> folders = new ArrayList<>();
+
+    @Nonnull
+    public Folder createFolder() {
+      final Folder result = new Folder();
+      this.folders.add(result);
+      return result;
+    }
+
+    @Data
+    public static class Folder {
+      private String path = "";
+
+      public void addText(@Nullable final String text) {
+        this.path = GetUtils.ensureNonNull(text, "");
+      }
     }
   }
 
-  /**
-   * Inside class describes a "global" item, it describes a global variable which will be added into the preprocessor context It has attributes "name" and "value", be careful in
-   * the value attribute usage because you have to use "&quot;" instead of \" symbol inside string values
-   *
-   * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
-   */
-  @ImplementationNote("It is mutable and with default constructor for calls from ANT")
-  public static class Global {
+  @Data
+  public static class ExcludedExtensions extends Extensions {
 
-    private String name;
-    private String value;
+  }
 
-    @Nullable
-    public String getName() {
-      return this.name;
+  @Data
+  public static class Extensions {
+    protected final List<Extension> extensions = new ArrayList<>();
+
+    @Nonnull
+    public Extension createExtension() {
+      final Extension result = new Extension();
+      this.extensions.add(result);
+      return result;
     }
 
-    public void setName(@Nonnull final String name) {
-      this.name = assertNotNull(name);
+    @Data
+    public static class Extension {
+      private String name = "";
+
+      public void addText(@Nullable final String text) {
+        this.name += GetUtils.ensureNonNull(text, "");
+      }
+    }
+  }
+
+  @Data
+  public static class Vars {
+    private List<Var> vars = new ArrayList<>();
+
+    @Nonnull
+    public Var createVar() {
+      final Var result = new Var();
+      this.vars.add(result);
+      return result;
     }
 
-    @Nullable
-    public String getValue() {
-      return this.value;
-    }
+    @Data
+    public static class Var {
+      private String name = "";
+      private String value = "";
 
-    public void setValue(@Nonnull final String value) {
-      this.value = assertNotNull(value);
+      public void addText(@Nonnull final String text) {
+        this.value += text;
+      }
     }
   }
 }

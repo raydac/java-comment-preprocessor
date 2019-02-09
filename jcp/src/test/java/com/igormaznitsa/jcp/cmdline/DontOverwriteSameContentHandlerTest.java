@@ -26,9 +26,8 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
-
-  private static final ClearDstDirectoryHandler HANDLER = new ClearDstDirectoryHandler();
+public class DontOverwriteSameContentHandlerTest extends AbstractCommandLineHandlerTest {
+  private static final DontOverwriteSameContentHandler HANDLER = new DontOverwriteSameContentHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -39,23 +38,23 @@ public class ClearDstDirectoryHandlerTest extends AbstractCommandLineHandlerTest
   public void testExecution() throws Exception {
     final PreprocessorContext mock = prepareMockContext();
 
-    assertFalse(HANDLER.processCommandLineKey("/c:", mock));
-    assertFalse(HANDLER.processCommandLineKey("/CC", mock));
-    assertFalse(HANDLER.processCommandLineKey("/C ", mock));
-    verify(mock, never()).setClearDestinationDirBefore(anyBoolean());
+    assertFalse(HANDLER.processCommandLineKey("/z:", mock));
+    assertFalse(HANDLER.processCommandLineKey("/ZZ", mock));
+    assertFalse(HANDLER.processCommandLineKey("/Z ", mock));
+    verify(mock, never()).setDontOverwriteSameContent(anyBoolean());
 
-    assertTrue(HANDLER.processCommandLineKey("/C", mock));
-    verify(mock).setClearDestinationDirBefore(true);
+    assertTrue(HANDLER.processCommandLineKey("/Z", mock));
+    verify(mock).setDontOverwriteSameContent(true);
     reset(mock);
 
-    assertTrue(HANDLER.processCommandLineKey("/c", mock));
-    verify(mock).setClearDestinationDirBefore(true);
+    assertTrue(HANDLER.processCommandLineKey("/z", mock));
+    verify(mock).setDontOverwriteSameContent(true);
     reset(mock);
   }
 
   @Override
   public void testName() {
-    assertEquals("/C", HANDLER.getKeyName());
+    assertEquals("/Z", HANDLER.getKeyName());
   }
 
   @Override

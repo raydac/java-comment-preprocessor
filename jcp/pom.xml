@@ -36,6 +36,10 @@
                             <ignoreClasses>
                                 <class>*.HelpMojo</class>
                                 <class>com.igormaznitsa.meta.*</class>
+                                <class>com.igormaznitsa.jcp.maven.PreprocessMojo</class>
+                                <class>com.igormaznitsa.jcp.context.PreprocessorContext</class>
+                                <class>com.igormaznitsa.jcp.ant.PreprocessTask*</class>
+                                <class>com.igormaznitsa.jcp.containers.FileInfoContainer</class>
                             </ignoreClasses>
                         </configuration>
                         <executions>
@@ -232,7 +236,12 @@
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.4</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
           <groupId>org.junit.vintage</groupId>
           <artifactId>junit-vintage-engine</artifactId>
@@ -331,9 +340,23 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.4.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.4</version>
+                <version>3.5.2</version>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
@@ -482,7 +505,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgument>-Xlint:all</compilerArgument>
-                    <verbose>true</verbose>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <excludes>

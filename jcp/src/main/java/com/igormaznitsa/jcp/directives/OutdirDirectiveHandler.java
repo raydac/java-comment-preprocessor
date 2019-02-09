@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
+public class OutdirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   @Nonnull
@@ -44,7 +44,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   @Nonnull
   public String getReference() {
-    return "change destination file folder (as change of \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
+    return "change target file folder (same as change \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
   }
 
   @Override
@@ -61,7 +61,7 @@ public class OutDirDirectiveHandler extends AbstractDirectiveHandler {
     if (context.isVerbose()) {
       context.logForVerbose("Change result file folder '" + nameAsString + "\'");
     }
-    context.getPreprocessingState().getRootFileInfo().setDestinationDir(nameAsString);
+    context.getPreprocessingState().getRootFileInfo().setTargetFolder(nameAsString);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

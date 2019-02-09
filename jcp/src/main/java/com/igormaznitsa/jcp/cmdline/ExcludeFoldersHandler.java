@@ -40,7 +40,7 @@ public class ExcludeFoldersHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "excluded sub-folders list from sources, ANT patterns allowed, system path separator char for multiple items";
+    return "folders to be excluded from preprocessing, ANT matcher format allowed. Use system path separator as delimiter.";
   }
 
   @Override
@@ -51,7 +51,7 @@ public class ExcludeFoldersHandler implements CommandLineHandler {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!tail.isEmpty()) {
-        context.setExcludedFolderPatterns(PreprocessorUtils.splitForChar(tail, File.pathSeparatorChar));
+        context.setExcludeFolders(PreprocessorUtils.splitForChar(tail, File.pathSeparatorChar));
         result = true;
       }
     }

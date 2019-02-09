@@ -32,6 +32,9 @@ public class TestAntTaskResult {
 
   @Test
   public void testPreprocessResult() throws Exception {
+
+    System.out.println("RESULT FOLDER: " + RESULT_FOLDER);
+
     assertTrue(RESULT_FOLDER.isDirectory(), "Target folder must be created");
     final File folder = new File(RESULT_FOLDER, "com/igormaznitsa/dummyproject");
     final File originalFile = new File(folder, "main.java");

@@ -38,7 +38,7 @@ public final class PreprocessorExceptionTest {
     final File file = new File(this.getClass().getResource("wrong_bracket.txt").toURI());
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setFileOutputDisabled(true);
+    context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
@@ -54,7 +54,7 @@ public final class PreprocessorExceptionTest {
     final File file = new File(this.getClass().getResource("wrong_bracket_closing.txt").toURI());
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setFileOutputDisabled(true);
+    context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
@@ -70,8 +70,8 @@ public final class PreprocessorExceptionTest {
     final File file = new File(this.getClass().getResource("wrong_bracket_include.txt").toURI());
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setSourceFolders(Collections.singletonList(file.getParent()));
-    context.setFileOutputDisabled(true);
+    context.setSources(Collections.singletonList(file.getParent()));
+    context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {

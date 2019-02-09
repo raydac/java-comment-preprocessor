@@ -28,6 +28,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -50,10 +51,10 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
     HANDLER.processCommandLineKey(param, context);
 
-    final File[] configFiles = context.getConfigFiles();
+    final List<File> configFiles = context.getConfigFiles();
 
-    assertEquals("File must be added", 1, configFiles.length);
-    TestUtils.assertFilePath("File must be equal", testFile, configFiles[0]);
+    assertEquals("File must be added", 1, configFiles.size());
+    TestUtils.assertFilePath("File must be equal", testFile, configFiles.get(0));
   }
 
   @Test
@@ -68,10 +69,10 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
     HANDLER.processCommandLineKey(param, context);
 
-    final File[] globalVarFiles = context.getConfigFiles();
+    final List<File> configFiles = context.getConfigFiles();
 
-    assertEquals("File must be added", 1, globalVarFiles.length);
-    assertEquals("File must be equal", testFile, globalVarFiles[0]);
+    assertEquals("File must be added", 1, configFiles.size());
+    assertEquals("File must be equal", testFile, configFiles.get(0));
   }
 
   @Test(expected = PreprocessorException.class)

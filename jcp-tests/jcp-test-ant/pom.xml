@@ -47,12 +47,16 @@
               </goals>
               <phase>generate-test-resources</phase>
               <configuration>
-                <tasks>
-                  <ant antfile="${basedir}${file.separator}src${file.separator}test${file.separator}resources${file.separator}build.xml"
-                        dir="${basedir}${file.separator}src${file.separator}test${file.separator}resources">
+                <target>
+                  <ant
+                          dir="${project.basedir}${file.separator}src${file.separator}test${file.separator}resources"
+                          antfile="build.xml"
+                          inheritall="false"
+                       useNativeBasedir="false"
+                  >
                     <property name="jcp.target.folder" value="${project.build.directory}${file.separator}preprocessResult"/>
                   </ant>
-                </tasks>
+                </target>
               </configuration>
             </execution>
           </executions>

@@ -20,52 +20,53 @@
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
+                <version>7.0.0-SNAPSHOT</version>
                 <goals>
                     <goal>preprocess</goal>
                 </goals>
                 <configuration>
-                    <source>
+                    <sources>
                         <folder>/</folder>
                         <folder>/some</folder>
                         <folder>/another/some</folder>
-                    </source>
-                    <copyFileAttributes>true</copyFileAttributes>
-                    <destination>destination_dir</destination>
-                    <excluded>
-                        <ext>xml</ext>
-                        <ext>html</ext>
-                    </excluded>
-                    <processing>
+                    </sources>
+                    <keepAttributes>true</keepAttributes>
+                    <target>destination_dir</target>
+                    <excludeExtensions>
+                        <extension>xml</extension>
+                        <extension>html</extension>
+                    </excludeExtensions>
+                    <extensions>
                         <ext>java</ext>
                         <ext>txt</ext>
-                    </processing>
-                    <inEncoding>UTF-16</inEncoding>
-                    <outEncoding>US-ASCII</outEncoding>
-                    <keepSrcRoot>true</keepSrcRoot>
-                    <removeComments>true</removeComments>
-                    <disableOut>true</disableOut>
+                    </extensions>
+                    <sourceEncoding>UTF-16</sourceEncoding>
+                    <targetEncoding>US-ASCII</targetEncoding>
+                    <replaceSources>true</replaceSources>
+                    <keepComments>true</keepComments>
+                    <dryRun>true</dryRun>
                     <verbose>true</verbose>
-                    <compareDestination>true</compareDestination>
-                    <clear>true</clear>
+                    <dontOverwriteSameContent>true</dontOverwriteSameContent>
+                    <clearTarget>true</clearTarget>
                     <keepLines>true</keepLines>
-                    <careForLastNextLine>true</careForLastNextLine>
+                    <careForLastEol>true</careForLastEol>
                     <allowWhitespace>true</allowWhitespace>
-                    <preserveIndent>true</preserveIndent>
+                    <preserveIndents>true</preserveIndents>
                     <unknownVarAsFalse>true</unknownVarAsFalse>>
-                    <excludedFolders>
+                    <excludeFolders>
                       <folder>.git</folder>
                       <folder>.hg</folder>
                       <folder>**/.cvs</folder>
                       <folder>c:\hello\**\world</folder>
-                    </excludedFolders>
-                    <cfgFiles>
+                    </excludeFolders>
+                    <configFiles>
                         <file>test1.cfg</file>
                         <file>test2.cfg</file>
-                    </cfgFiles>    
-                    <globalVars>
+                    </configFiles>
+                    <vars>
                         <globalvar1>3</globalvar1>
                         <globalvar2>hello world</globalvar2>
-                    </globalVars>
+                    </vars>
                 </configuration>
             </plugin>
         </plugins>

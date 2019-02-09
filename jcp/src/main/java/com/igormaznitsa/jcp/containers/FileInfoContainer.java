@@ -31,6 +31,7 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import lombok.Data;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,6 +49,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
+@Data
 public class FileInfoContainer {
 
   private static final Pattern DIRECTIVE_HASH_PREFIXED = Pattern.compile("^\\s*//\\s*#(.*)$");
@@ -63,7 +65,7 @@ public class FileInfoContainer {
   /**
    * The flag shows that the file should be just copied into the destination place without any preprocessing
    */
-  private final boolean forCopyOnly;
+  private final boolean copyOnly;
 
   /**
    * The flag shows that the file has been excluded from preprocessing and it will not be preprocessed and copied
@@ -73,32 +75,32 @@ public class FileInfoContainer {
   /**
    * The destination directory for the file
    */
-  private String destFolder;
+  private String targetFolder;
 
   /**
    * The destination name for the file
    */
-  private String destFileName;
+  private String targetFileName;
 
-  public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String dstFileName, final boolean copyOnly) {
-    assertNotNull("The source file is null", srcFile);
-    assertNotNull("The destination file name is null", dstFileName);
+  public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String targetFileName, final boolean copyOnly) {
+    assertNotNull("Source file is null", srcFile);
+    assertNotNull("Target file name is null", targetFileName);
 
-    forCopyOnly = copyOnly;
+    this.copyOnly = copyOnly;
     excludedFromPreprocessing = false;
     sourceFile = srcFile;
 
-    int lastDirSeparator = dstFileName.lastIndexOf('/');
+    int lastDirSeparator = targetFileName.lastIndexOf('/');
     if (lastDirSeparator < 0) {
-      lastDirSeparator = dstFileName.lastIndexOf('\\');
+      lastDirSeparator = targetFileName.lastIndexOf('\\');
     }
 
     if (lastDirSeparator < 0) {
-      destFolder = "." + File.separatorChar;
-      destFileName = dstFileName;
+      this.targetFolder = "." + File.separatorChar;
+      this.targetFileName = targetFileName;
     } else {
-      destFolder = dstFileName.substring(0, lastDirSeparator);
-      destFileName = dstFileName.substring(lastDirSeparator + 1);
+      this.targetFolder = targetFileName.substring(0, lastDirSeparator);
+      this.targetFileName = targetFileName.substring(lastDirSeparator + 1);
     }
   }
 
@@ -119,53 +121,28 @@ public class FileInfoContainer {
     return result;
   }
 
-  @Nonnull
-  public File getSourceFile() {
-    return sourceFile;
+  public void setTargetFolder(@Nonnull final String targetFolder) {
+    this.targetFolder = assertNotNull("Target folder must not be null", targetFolder);
   }
 
-  public boolean isExcludedFromPreprocessing() {
-    return excludedFromPreprocessing;
-  }
-
-  public boolean isForCopyOnly() {
-    return forCopyOnly;
+  public void setTargetName(@Nonnull final String targetName) {
+    this.targetFileName = assertNotNull("Target file name must not be null", targetFileName);
   }
 
   @Nonnull
-  public String getDestinationDir() {
-    return destFolder;
-  }
-
-  public void setDestinationDir(@Nonnull final String destDir) {
-    assertNotNull("String is null", destDir);
-    destFolder = destDir;
-  }
-
-  @Nonnull
-  public String getDestinationName() {
-    return destFileName;
-  }
-
-  public void setDestinationName(@Nonnull final String destName) {
-    assertNotNull("String is null", destName);
-    destFileName = destName;
-  }
-
-  @Nonnull
-  public String getDestinationFilePath() {
-    String dir = this.destFolder;
-    if (!dir.isEmpty() && dir.charAt(dir.length() - 1) != File.separatorChar) {
-      dir = dir + File.separatorChar;
+  public String makeTargetFilePathAsString() {
+    String targetFolder = this.getTargetFolder();
+    if (!targetFolder.isEmpty() && targetFolder.charAt(targetFolder.length() - 1) != File.separatorChar) {
+      targetFolder = targetFolder + File.separatorChar;
     }
 
-    return dir + destFileName;
+    return targetFolder + this.getTargetFileName();
   }
 
   @Override
   @Nonnull
   public String toString() {
-    return "FileInfoContainer: source=" + PreprocessorUtils.getFilePath(sourceFile) + " destFolder=" + destFolder + " destFile=" + destFileName;
+    return String.format("%s: source=%s, targetFolder=%s, targetName=%s", this.getClass().getSimpleName(), PreprocessorUtils.getFilePath(this.getSourceFile()), this.getTargetFolder(), this.getTargetFileName());
   }
 
   @Nonnull
@@ -279,7 +256,7 @@ public class FileInfoContainer {
       tail = PreprocessorUtils.extractTail("//$$", line);
     }
 
-    if (context.isPreserveIndent()) {
+    if (context.isPreserveIndents()) {
       tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
     return tail;
@@ -299,7 +276,7 @@ public class FileInfoContainer {
       tail = PreprocessorUtils.extractTail("//$", line);
     }
 
-    if (context.isPreserveIndent()) {
+    if (context.isPreserveIndents()) {
       tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
     return tail;
@@ -372,7 +349,7 @@ public class FileInfoContainer {
 
         String stringToBeProcessed = leftTrimmedString;
 
-        final boolean usePrintLn = presentedNextLine || !context.isCareForLastNextLine();
+        final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
         if (isHashPrefixed(stringToBeProcessed, context)) {
           final String extractedDirective = extractHashPrefixedDirective(stringToBeProcessed, context);
@@ -382,7 +359,7 @@ public class FileInfoContainer {
               if (context.isKeepLines()) {
                 final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
                 final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
-                if (usePrintLn) {
+                if (doPrintLn) {
                   thePrinter.println(text);
                 } else {
                   thePrinter.print(text);
@@ -393,7 +370,7 @@ public class FileInfoContainer {
             case SHOULD_BE_COMMENTED: {
               final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
               final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
-              if (usePrintLn) {
+              if (doPrintLn) {
                 thePrinter.println(text);
               } else {
                 thePrinter.print(text);
@@ -417,7 +394,7 @@ public class FileInfoContainer {
             // Output the tail of the string to the output stream without comments and macroses
             thePrinter.print(stringPrefix);
             final String text = extractDoubleDollarPrefixedDirective(leftTrimmedString, context);
-            if (usePrintLn) {
+            if (doPrintLn) {
               thePrinter.println(text);
             } else {
               thePrinter.print(text);
@@ -428,7 +405,7 @@ public class FileInfoContainer {
 
             final String text = extractSingleDollarPrefixedDirective(stringToBeProcessed, context);
 
-            if (usePrintLn) {
+            if (doPrintLn) {
               thePrinter.println(text);
             } else {
               thePrinter.print(text);
@@ -443,7 +420,7 @@ public class FileInfoContainer {
             }
 
             thePrinter.print(stringPrefix);
-            if (usePrintLn) {
+            if (doPrintLn) {
               thePrinter.println(strToOut);
             } else {
               thePrinter.print(strToOut);
@@ -451,7 +428,7 @@ public class FileInfoContainer {
           }
         } else if (context.isKeepLines()) {
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
-          if (usePrintLn) {
+          if (doPrintLn) {
             thePrinter.println(text);
           } else {
             thePrinter.print(text);
@@ -474,17 +451,17 @@ public class FileInfoContainer {
           "", new FilePositionInfo[] {new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isFileOutputDisabled() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
-      final File outFile = context.createDestinationFileForPath(getDestinationFilePath());
+    if (!context.isDryRun() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
+      final File outFile = context.createDestinationFileForPath(makeTargetFilePathAsString());
 
-      final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isRemoveComments());
+      final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isKeepComments());
 
       if (context.isVerbose()) {
-        context.logForVerbose("Content was " + (wasSaved ? "saved" : "not saved") + " into file '" + outFile + "\'");
+        context.logForVerbose(String.format("Content was %s into file '%s'", (wasSaved ? "saved" : "not saved"), outFile.toString()));
       }
 
-      if (this.sourceFile != null && context.isCopyFileAttributes()) {
-        PreprocessorUtils.copyFileAttributes(this.sourceFile, outFile);
+      if (this.sourceFile != null && context.isKeepAttributes() && !PreprocessorUtils.copyFileAttributes(this.getSourceFile(), outFile)) {
+        throw new IOException("Can't copy attributes in result file: " + outFile);
       }
     }
     return preprocessingState;

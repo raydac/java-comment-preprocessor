@@ -26,9 +26,9 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class CareForLastNextLineCharHandlerTest extends AbstractCommandLineHandlerTest {
+public class ClearTargetFolderHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final CareForLastNextLineCharHandler HANDLER = new CareForLastNextLineCharHandler();
+  private static final ClearTargetHandler HANDLER = new ClearTargetHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -39,28 +39,27 @@ public class CareForLastNextLineCharHandlerTest extends AbstractCommandLineHandl
   public void testExecution() throws Exception {
     final PreprocessorContext mock = prepareMockContext();
 
-    assertFalse(HANDLER.processCommandLineKey("/n:", mock));
-    assertFalse(HANDLER.processCommandLineKey("/NN", mock));
-    assertFalse(HANDLER.processCommandLineKey("/N ", mock));
-    verify(mock, never()).setClearDestinationDirBefore(anyBoolean());
+    assertFalse(HANDLER.processCommandLineKey("/c:", mock));
+    assertFalse(HANDLER.processCommandLineKey("/CC", mock));
+    assertFalse(HANDLER.processCommandLineKey("/C ", mock));
+    verify(mock, never()).setClearTarget(anyBoolean());
 
-    assertTrue(HANDLER.processCommandLineKey("/N", mock));
-    verify(mock).setCareForLastNextLine(true);
+    assertTrue(HANDLER.processCommandLineKey("/C", mock));
+    verify(mock).setClearTarget(true);
     reset(mock);
 
-    assertTrue(HANDLER.processCommandLineKey("/n", mock));
-    verify(mock).setCareForLastNextLine(true);
+    assertTrue(HANDLER.processCommandLineKey("/c", mock));
+    verify(mock).setClearTarget(true);
     reset(mock);
   }
 
   @Override
   public void testName() {
-    assertEquals("/N", HANDLER.getKeyName());
+    assertEquals("/C", HANDLER.getKeyName());
   }
 
   @Override
   public void testDescription() {
     assertDescription(HANDLER);
   }
-
 }

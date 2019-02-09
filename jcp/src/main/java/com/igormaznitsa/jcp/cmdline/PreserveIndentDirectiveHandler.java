@@ -43,7 +43,7 @@ public class PreserveIndentDirectiveHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setPreserveIndent(true);
+      context.setPreserveIndents(true);
       result = true;
     }
 

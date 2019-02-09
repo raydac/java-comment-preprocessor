@@ -28,6 +28,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
@@ -50,13 +51,13 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
   public Value executeStrBool(@Nonnull final PreprocessorContext context, @Nonnull final Value source, @Nonnull final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()) {
       final boolean endsWithNextLine = source.asString().endsWith("\n");
-      final String[] split = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
+      final List<String> split = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
       final StringBuilder result = new StringBuilder(source.asString().length() * 2);
       final String nextLineChars = PreprocessorUtils.getNextLineCodes();
 
       int index = 0;
       for (final String s : split) {
-        final boolean last = ++index == split.length;
+        final boolean last = ++index == split.size();
         if (result.length() > 0) {
           result.append(nextLineChars).append('+');
         }

@@ -25,6 +25,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -49,7 +50,8 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!name.isEmpty()) {
-        context.setTargetFolder(PreprocessorUtils.extractTail(ARG_NAME, key));
+        final String path = PreprocessorUtils.extractTail(ARG_NAME, key);
+        context.setTarget(new File(path));
         result = true;
       }
     }

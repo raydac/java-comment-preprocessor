@@ -77,11 +77,11 @@ public class FunctionEVALFILE extends AbstractFunction {
   @Nonnull
   private PreprocessorContext prepareContext(@Nonnull final PreprocessorContext base) {
     final PreprocessorContext result = new PreprocessorContext(base);
-    result.setFileOutputDisabled(true);
+    result.setDryRun(true);
     result.setKeepLines(false);
-    result.setClearDestinationDirBefore(false);
-    result.setRemoveComments(true);
-    result.setCareForLastNextLine(true);
+    result.setClearTarget(false);
+    result.setKeepComments(false);
+    result.setCareForLastEol(true);
     return result;
   }
 
@@ -91,7 +91,7 @@ public class FunctionEVALFILE extends AbstractFunction {
 
     final File theFile;
     try {
-      theFile = context.findFileInSourceFolders(filePath);
+      theFile = context.findFileInSources(filePath);
     } catch (IOException ex) {
       throw context.makeException("Can't get get source file '" + filePath + '\'', null);
     }

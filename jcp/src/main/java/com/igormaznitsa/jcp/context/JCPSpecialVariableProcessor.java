@@ -116,11 +116,11 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
     switch (varName) {
       case VAR_DEST_DIR:
-        return Value.valueOf(state.getRootFileInfo().getDestinationDir());
+        return Value.valueOf(state.getRootFileInfo().getTargetFolder());
       case VAR_DEST_FILE_NAME:
-        return Value.valueOf(state.getRootFileInfo().getDestinationName());
+        return Value.valueOf(state.getRootFileInfo().getTargetFileName());
       case VAR_DEST_FULLPATH:
-        return Value.valueOf(state.getRootFileInfo().getDestinationFilePath());
+        return Value.valueOf(state.getRootFileInfo().makeTargetFilePathAsString());
       case VAR_SRC_DIR:
       case VAR_SRC_DIR2:
         return Value.valueOf(state.getRootFileInfo().getSourceFile().getParent());
@@ -168,13 +168,13 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         if (value.getType() != ValueType.STRING) {
           throw new IllegalArgumentException("Only STRING type allowed");
         }
-        state.getRootFileInfo().setDestinationDir(value.asString());
+        state.getRootFileInfo().setTargetFolder(value.asString());
         break;
       case VAR_DEST_FILE_NAME:
         if (value.getType() != ValueType.STRING) {
           throw new IllegalArgumentException("Only STRING type allowed");
         }
-        state.getRootFileInfo().setDestinationName(value.asString());
+        state.getRootFileInfo().setTargetFileName(value.asString());
         break;
       case VAR_DEST_FULLPATH:
       case VAR_SRC_DIR:

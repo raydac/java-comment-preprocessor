@@ -44,7 +44,7 @@ public final class JCPreprocessorTest {
 
   private void assertGVDFPreprocessorException(final String file, final int stringIndexStartedFromOne) throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
-    context.addConfigFile(new File(this.getClass().getResource(file).toURI()));
+    context.registerConfigFile(new File(this.getClass().getResource(file).toURI()));
     final JCPreprocessor preprocessor = new JCPreprocessor(context);
     try {
       preprocessor.processCfgFiles();
@@ -59,13 +59,13 @@ public final class JCPreprocessorTest {
   @Test
   public void testProcessGlobalVarDefiningFiles() throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
-    context.addConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
+    context.registerConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
     final JCPreprocessor preprocessor = new JCPreprocessor(context);
     preprocessor.processCfgFiles();
 
     assertEquals("Must have the variable", "hello world", context.findVariableForName("globalVar1", true).asString());
     assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2", true));
-    assertEquals("Character input encoding must be changed", StandardCharsets.ISO_8859_1, context.getInCharset());
+    assertEquals("Character input encoding must be changed", StandardCharsets.ISO_8859_1, context.getSourceEncoding());
   }
 
   @Test
@@ -85,12 +85,12 @@ public final class JCPreprocessorTest {
     }
 
     final PreprocessorContext context = new PreprocessorContext();
-    context.setSourceFolders(Collections.singletonList(testDirectory.getCanonicalPath()));
-    context.setTargetFolder(testDirectory.getCanonicalPath());
-    context.setClearDestinationDirBefore(false);
-    context.setRemoveComments(true);
-    context.setProcessingFileExtensions(Collections.singletonList("ppp"));
-    context.setExcludedFileExtensions(Collections.singletonList("etl"));
+    context.setSources(Collections.singletonList(testDirectory.getCanonicalPath()));
+    context.setTarget(testDirectory);
+    context.setClearTarget(false);
+    context.setKeepComments(false);
+    context.setExtensions(Collections.singletonList("ppp"));
+    context.setExcludeExtensions(Collections.singletonList("etl"));
 
     final JCPreprocessor preprocessor = new JCPreprocessor(context);
     preprocessor.execute();

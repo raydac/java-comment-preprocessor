@@ -26,8 +26,9 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class CompareDestinationContentHandlerTest extends AbstractCommandLineHandlerTest {
-  private static final CompareDestinationContentHandler HANDLER = new CompareDestinationContentHandler();
+public class CareForLastEolHandlerTest extends AbstractCommandLineHandlerTest {
+
+  private static final CareForLastEolHandler HANDLER = new CareForLastEolHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -38,27 +39,28 @@ public class CompareDestinationContentHandlerTest extends AbstractCommandLineHan
   public void testExecution() throws Exception {
     final PreprocessorContext mock = prepareMockContext();
 
-    assertFalse(HANDLER.processCommandLineKey("/z:", mock));
-    assertFalse(HANDLER.processCommandLineKey("/ZZ", mock));
-    assertFalse(HANDLER.processCommandLineKey("/Z ", mock));
-    verify(mock, never()).setCompareDestination(anyBoolean());
+    assertFalse(HANDLER.processCommandLineKey("/n:", mock));
+    assertFalse(HANDLER.processCommandLineKey("/NN", mock));
+    assertFalse(HANDLER.processCommandLineKey("/N ", mock));
+    verify(mock, never()).setClearTarget(anyBoolean());
 
-    assertTrue(HANDLER.processCommandLineKey("/Z", mock));
-    verify(mock).setCompareDestination(true);
+    assertTrue(HANDLER.processCommandLineKey("/N", mock));
+    verify(mock).setCareForLastEol(true);
     reset(mock);
 
-    assertTrue(HANDLER.processCommandLineKey("/z", mock));
-    verify(mock).setCompareDestination(true);
+    assertTrue(HANDLER.processCommandLineKey("/n", mock));
+    verify(mock).setCareForLastEol(true);
     reset(mock);
   }
 
   @Override
   public void testName() {
-    assertEquals("/Z", HANDLER.getKeyName());
+    assertEquals("/N", HANDLER.getKeyName());
   }
 
   @Override
   public void testDescription() {
     assertDescription(HANDLER);
   }
+
 }

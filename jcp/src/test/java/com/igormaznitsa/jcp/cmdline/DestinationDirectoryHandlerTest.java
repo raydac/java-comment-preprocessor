@@ -22,6 +22,9 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import org.mockito.ArgumentCaptor;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -41,7 +44,11 @@ public class DestinationDirectoryHandlerTest extends AbstractCommandLineHandlerT
     assertFalse(HANDLER.processCommandLineKey("/s:", mock));
     assertFalse(HANDLER.processCommandLineKey("/O:", mock));
     assertTrue(HANDLER.processCommandLineKey("/O:test", mock));
-    verify(mock).setTargetFolder("test");
+
+    ArgumentCaptor<File> captor = ArgumentCaptor.forClass(File.class);
+    verify(mock).setTarget(captor.capture());
+
+    assertEquals("test", captor.getValue().getPath());
   }
 
   @Override

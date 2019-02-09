@@ -23,6 +23,8 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -43,13 +45,13 @@ public class OutCharsetHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/o:UUU", mock));
     assertFalse(HANDLER.processCommandLineKey("/TT:", mock));
     assertFalse(HANDLER.processCommandLineKey("/tT", mock));
-    assertTrue(HANDLER.processCommandLineKey("/tt:HELLOWORLD", mock));
-    verify(mock).setOutCharset("HELLOWORLD");
+    assertTrue(HANDLER.processCommandLineKey("/tt:" + StandardCharsets.UTF_16.name(), mock));
+    verify(mock).setTargetEncoding(StandardCharsets.UTF_16);
 
     reset(mock);
 
-    assertTrue(HANDLER.processCommandLineKey("/TT:NEW", mock));
-    verify(mock).setOutCharset("NEW");
+    assertTrue(HANDLER.processCommandLineKey("/TT:" + StandardCharsets.UTF_16LE.name(), mock));
+    verify(mock).setTargetEncoding(StandardCharsets.UTF_16LE);
   }
 
   @Override

@@ -26,37 +26,35 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import javax.annotation.Nonnull;
 
 /**
- * the Handler processes command to disable overriding of existing file if content the same.
+ * The handler to process the key signals that the preprocessor must clear the
+ * destination directory before preprocessing
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
- * @since 6.0.1
  */
-public class CompareDestinationContentHandler implements CommandLineHandler {
+public class ClearTargetHandler implements CommandLineHandler {
 
-  private static final String ARG_NAME = "/Z";
-
-  @Override
-  @Nonnull
-  public String getKeyName() {
-    return ARG_NAME;
-  }
+  private static final String ARG_NAME = "/C";
 
   @Override
   @Nonnull
   public String getDescription() {
-    return "to compare destination file content if it is detected and to not override if the content the same (makes overhead)";
+    return "clear target folder before preprocessing";
   }
 
   @Override
   public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
     boolean result = false;
-
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setCompareDestination(true);
+      context.setClearTarget(true);
       result = true;
     }
-
     return result;
+  }
+
+  @Override
+  @Nonnull
+  public String getKeyName() {
+    return ARG_NAME;
   }
 
 }

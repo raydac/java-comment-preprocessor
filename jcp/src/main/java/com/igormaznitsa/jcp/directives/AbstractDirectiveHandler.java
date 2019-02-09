@@ -78,7 +78,7 @@ public abstract class AbstractDirectiveHandler {
           new EndDirectiveHandler(),
           new ExitIfDirectiveHandler(),
           new ExitDirectiveHandler(),
-          new OutDirDirectiveHandler(),
+          new OutdirDirectiveHandler(),
           new OutEnabledDirectiveHandler(),
           new OutNameDirectiveHandler(),
           new OutDisabledDirectiveHandler(),

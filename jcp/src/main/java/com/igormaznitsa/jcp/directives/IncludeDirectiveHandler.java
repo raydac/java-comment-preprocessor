@@ -64,7 +64,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
     final String filePath = includingFilePath.toString();
 
     try {
-      final File theFile = context.findFileInSourceFolders(filePath);
+      final File theFile = context.findFileInSources(filePath);
       if (context.isVerbose()) {
         context.logForVerbose("Including file '" + theFile.getCanonicalPath() + '\'');
       }

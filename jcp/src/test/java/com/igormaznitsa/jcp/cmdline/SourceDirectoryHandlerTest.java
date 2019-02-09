@@ -48,7 +48,7 @@ public class SourceDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/II", mock));
 
     assertTrue(HANDLER.processCommandLineKey("/i:testdir" + File.pathSeparatorChar + "somedir", mock));
-    verify(mock).setSourceFolders(Arrays.asList("testdir", "somedir"));
+    verify(mock).setSources(Arrays.asList("testdir", "somedir"));
   }
 
   @Override

@@ -32,11 +32,12 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public final class PreprocessorMojoTest extends AbstractMojoTestCase {
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertArrayEquals;
+
+public final class PreprocessMojoTest extends AbstractMojoTestCase {
 
   private static void assertArrayEqualsWithoutOrders(final Object[] array1, final Object[] array2) {
     final List<Object> list1 = new ArrayList<>(Arrays.asList(array1));
@@ -56,11 +57,13 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Different values in arrays", list1.isEmpty() && list2.isEmpty());
   }
 
+  @Before
   @Override
   protected void setUp() throws Exception {
     super.setUp();
   }
 
+  @After
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
@@ -68,7 +71,7 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
   @Test
   public void testConfiguration() throws Exception {
-    final File testPom = new File(this.getClass().getResource("preprocessor_mojo_test_cfg.xml").toURI());
+    final File testPom = new File(this.getClass().getResource("test.pom.xml").toURI());
     assertTrue("Must be existing", testPom.exists());
     final PreprocessMojo mojo = (PreprocessMojo) lookupMojo("preprocess", testPom);
     assertNotNull("Must not be null", mojo);
@@ -79,32 +82,35 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
     final PreprocessorContext context = mojo.makePreprocessorContext();
 
-    final String [] sources = context.getSourceFolders().stream().map(x->x.getAsString()).collect(Collectors.toList()).toArray(new String[0]);
+    final String[] sources = context.getSources()
+        .stream()
+        .map(PreprocessorContext.SourceFolder::getAsString)
+        .collect(toList()).toArray(new String[0]);
 
-    assertArrayEqualsWithoutOrders(new String[]{"/","/some","/another/some"}, sources);
-    assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
-    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions().toArray());
-    assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getProcessingFileExtensions());
-    assertEquals(StandardCharsets.UTF_16, context.getInCharset());
-    assertEquals(StandardCharsets.US_ASCII, context.getOutCharset());
-    assertTrue(context.isRemoveComments());
+    assertArrayEqualsWithoutOrders(new String[] {"/", "/some", "/another/some"}, sources);
+    assertEquals("destination_dir", context.getTarget().getName());
+    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludeExtensions().toArray());
+    assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getExtensions());
+    assertEquals(StandardCharsets.UTF_16, context.getSourceEncoding());
+    assertEquals(StandardCharsets.US_ASCII, context.getTargetEncoding());
+    assertTrue(context.isKeepComments());
     assertTrue(context.isVerbose());
-    assertTrue(context.isFileOutputDisabled());
-    assertTrue(context.doesClearDestinationDirBefore());
+    assertTrue(context.isDryRun());
+    assertTrue(context.isClearTarget());
     assertTrue(context.isKeepLines());
-    assertTrue(context.isCareForLastNextLine());
-    assertTrue(context.isCompareDestination());
+    assertTrue(context.isCareForLastEol());
+    assertTrue(context.isDontOverwriteSameContent());
     assertTrue(context.isAllowWhitespace());
-    assertTrue(context.isPreserveIndent());
-    assertTrue(context.isCopyFileAttributes());
+    assertTrue(context.isPreserveIndents());
+    assertTrue(context.isKeepAttributes());
     assertTrue(context.isUnknownVariableAsFalse());
 
-    assertEquals(Arrays.asList(".git", ".hg", "**/.cvs", "c:/hello/**/world"), context.getExcludedFolderPatterns());
+    assertArrayEquals(Arrays.asList(".git", ".hg", "**/.cvs", "c:\\hello\\**\\world").toArray(new String[0]), context.getExcludeFolders().toArray(new String[0]));
 
-    final File[] cfgfiles = context.getConfigFiles();
-    assertEquals("Must be two", 2, cfgfiles.length);
-    assertEquals("Must be test1.cfg", "test1.cfg", cfgfiles[0].getName());
-    assertEquals("Must be test2.cfg", "test2.cfg", cfgfiles[1].getName());
+    final List<File> configFiles = context.getConfigFiles();
+    assertEquals("Must be two", 2, configFiles.size());
+    assertEquals("Must be test1.cfg", "test1.cfg", configFiles.get(0).getName());
+    assertEquals("Must be test2.cfg", "test2.cfg", configFiles.get(1).getName());
 
     assertEquals("Must be 3", Value.INT_THREE, context.findVariableForName("globalvar1", true));
     assertEquals("Must be 'hello world'", Value.valueOf("hello world"), context.findVariableForName("globalvar2", true));

@@ -408,7 +408,7 @@ public final class PreprocessingState {
     postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
   }
 
-  public boolean saveBuffersToFile(@Nonnull final File outFile, final boolean removeComments) throws IOException {
+  public boolean saveBuffersToFile(@Nonnull final File outFile, final boolean keepComments) throws IOException {
     final File path = outFile.getParentFile();
 
     if (path != null && !path.exists() && !path.mkdirs()) {
@@ -424,7 +424,7 @@ public final class PreprocessingState {
 
       if (this.overrideOnlyIfContentChanged) {
         String content = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
-        if (removeComments) {
+        if (!keepComments) {
           content = new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process().toString();
         }
 
@@ -442,7 +442,7 @@ public final class PreprocessingState {
         } else {
           this.context.logDebug("Ignore writing data for " + outFile + " because its content has not been changed");
         }
-      } else if (removeComments) {
+      } else if (!keepComments) {
         final String joinedBufferContent = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
         new JavaCommentsRemover(new StringReader(joinedBufferContent), writer).process();
@@ -457,7 +457,7 @@ public final class PreprocessingState {
       closeQuietly(writer);
     }
 
-    if (wasSaved && this.context.isCopyFileAttributes() && outFile.exists()) {
+    if (wasSaved && this.context.isKeepAttributes() && outFile.exists()) {
       PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
     }
 

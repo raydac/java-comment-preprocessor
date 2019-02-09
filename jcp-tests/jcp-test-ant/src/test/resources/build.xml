@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="firstbuild" default="preprocess" >
-  <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties"/>
+<project name="firstbuild" default="preprocess">
+    <taskdef resource="com/igormaznitsa/jcp/ant/tasks.properties"/>
 
-  <target name="preprocess">
-    <preprocess
-      source="./src"
-      destination="${jcp.target.folder}"
-      verbose="true"
-      inCharset="UTF8"
-      outCharset="UTF8"
-      excluded="txt,cfg,xml"
-      processing="java"
-      clear="true"
-      removeComments="true"
-      disableOut="false"
-      keepLines="false"
-      careforlastnextline="true"
-      allowWhitespace="true">
-      <global name="globalvar" value="antdefined"/>
-      <cfgFile file="./config.cfg"/>
-    </preprocess>
-  </target>
-    
+    <echo>basedir=${basedir}</echo>
+
+    <target name="preprocess">
+        <preprocess
+                target="${jcp.target.folder}"
+                verbose="true"
+                clearTarget="true"
+                keepComments="false"
+                dryRun="false"
+                keepLines="true"
+                careForLastEol="true"
+                allowWhiteSpace="true"
+        >
+            <configFiles>
+                <path>./config.cfg</path>
+            </configFiles>
+            <sources>
+                <path>./src</path>
+            </sources>
+            <vars>
+                <var name="globalvar">antdefined</var>
+            </vars>
+        </preprocess>
+    </target>
+
 </project>

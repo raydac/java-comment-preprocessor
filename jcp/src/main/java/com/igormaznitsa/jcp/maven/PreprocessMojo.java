@@ -27,7 +27,9 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import com.igormaznitsa.meta.common.utils.Assertions;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,82 +39,97 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
 
 /**
- * The Mojo makes preprocessing of defined or project root source folders and place result in defined or predefined folder, also it can replace the source folder for a maven
- * project to use the preprocessed sources.
- *
- * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * Mojo to preprocess either standard maven project source roots or custom source roots and place prepsocessed result into defined target folder.
  */
-@Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true, requiresProject = true)
+@Data
+@Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
   /**
-   * The Project source roots for non-test mode.
+   * Maven project source roots for compilation phase.
    */
+  @Setter(AccessLevel.NONE)
   @Parameter(alias = "compileSourceRoots", defaultValue = "${project.compileSourceRoots}", required = true, readonly = true)
   private List<String> compileSourceRoots = new ArrayList<>();
 
   /**
-   * The Project source roots for test mode.
+   * Maven project test source roots for test phase.
    */
+  @Setter(AccessLevel.NONE)
   @Parameter(alias = "testCompileSourceRoots", defaultValue = "${project.testCompileSourceRoots}", required = true, readonly = true)
   private List<String> testCompileSourceRoots = new ArrayList<>();
 
   /**
-   * The Maven Project to be preprocessed.
+   * Maven project to be preprocessed.
    */
+  @Setter(AccessLevel.NONE)
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
   private MavenProject project;
 
   /**
-   * The Directly defined source directory, it will make plugin to preprocess the folder instead of project and maven defined ones. By default it is empty and is not used.
-   */
-  @Parameter(alias = "source", defaultValue = "")
-  private List<String> source = new ArrayList<>();
-
-  /**
-   * Copy file attributes for copied and generated files.
+   * Source root folders for preprocessing, it it is empty then project provided folders will be used.
    *
-   * @since 6.1.2
+   * @since 7.0.0
    */
-  @Parameter(alias = "copyFileAttributes", defaultValue = "false")
-  private boolean copyFileAttributes = false;
+  @Parameter(alias = "sources")
+  private List<String> sources = new ArrayList<>();
 
   /**
-   * The Destination folder where generated sources will be placed in non-test mode.
+   * Keep attributes for preprocessing file and copy them to result one.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "destination", defaultValue = "${project.build.directory}/generated-sources/preprocessed")
-  private File destination = null;
+  @Parameter(alias = "keepAttributes", defaultValue = "false")
+  private boolean keepAttributes = false;
 
   /**
-   * Destination folder where generated sources will be placed in test-mode.
+   * Target folder to place preprocessing result in regular source processing phase.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "testDestination", defaultValue = "${project.build.directory}/generated-test-sources/preprocessed")
-  private File testDestination = null;
+  @Parameter(alias = "target", defaultValue = "${project.build.directory}${file.separator}generated-sources${file.separator}preprocessed")
+  private File target = null;
 
   /**
-   * The Input text encoding to be used for preprocessing, by default it uses defined in project properties.
+   * Target folder to place preprocessing result in test source processing phase.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "inEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String inEncoding = StandardCharsets.UTF_8.name();
+  @Parameter(alias = "targetTest", defaultValue = "${project.build.directory}${file.separator}generated-test-sources${file.separator}preprocessed")
+  private File targetTest = null;
 
   /**
-   * The Encoding for preprocessed text output, by default it uses defined in project properties.
+   * Encoding for text read operations.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "outEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String outEncoding = StandardCharsets.UTF_8.name();
+  @Parameter(alias = "sourceEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String sourceEncoding = StandardCharsets.UTF_8.name();
+
+  /**
+   * Encoding for text write operations.
+   *
+   * @since 7.0.0
+   */
+  @Parameter(alias = "targetEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String targetEncoding = StandardCharsets.UTF_8.name();
 
   /**
    * Flag to ignore missing source folders, if false then mojo fail for any missing source folder, if true then missing folder will be ignored.
@@ -123,103 +140,133 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private boolean ignoreMissingSources = false;
 
   /**
-   * List of file extensions to be excluded from the preprocessing process. By default excluded XML files.
+   * List of file extensions to be excluded from preprocessing. By default excluded xml.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "excluded")
-  private List<String> excluded = new ArrayList<>();
+  @Parameter(alias = "excludeExtensions")
+  private List<String> excludeExtensions = Collections.singletonList("xml");
 
   /**
-   * List of file extensions to be preprocessed. By default java,txt,htm,html
+   * List of file extensions to be included into preprocessing. By default java,txt,htm,html
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "processing")
-  private List<String> processing = new ArrayList<>();
+  @Parameter(alias = "extensions")
+  private List<String> extensions = new ArrayList<>(Arrays.asList("java", "txt", "htm", "html"));
 
   /**
-   * Flag to interpret unknown variable as FALSE.
+   * Interpretate unknown variable as containing boolean false flag.
    */
   @Parameter(alias = "unknownVarAsFalse", defaultValue = "false")
   private boolean unknownVarAsFalse = false;
 
   /**
-   * Make dry run of the preprocessor without any saving of result.
+   * Dry run, making preprocessing but without output
+   *
+   * @since 7.0.0.
    */
-  @Parameter(alias = "disableOut", defaultValue = "false")
-  private boolean disableOut = false;
+  @Parameter(alias = "dryRun", defaultValue = "false")
+  private boolean dryRun = false;
 
   /**
-   * Turn on the verbose mode for preprocessing process.
+   * Verbose mode.
    */
   @Parameter(alias = "verbose", defaultValue = "false")
   private boolean verbose = false;
 
   /**
-   * Clear the destination folder before preprocessing (if it exists).
+   * Clear target folder if it exists.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "clear", defaultValue = "false")
-  private boolean clear = false;
+  @Parameter(alias = "clearTarget", defaultValue = "false")
+  private boolean clearTarget = false;
 
   /**
-   * Be precise in processing of the last next line char in files, it will not be added if it is not presented if to turn on the mode..
+   * Set base directory which will be used for relative source paths.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "careForLastNextLine", defaultValue = "false")
-  private boolean careForLastNextLine = false;
+  @Parameter(alias = "baseDir", defaultValue = "${project.basedir}")
+  private File baseDir = new File(".");
 
   /**
-   * Disable overriding of the source root folders for maven project after preprocessing.
+   * Carefully reproduce last EOL in result files.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "keepSrcRoot", defaultValue = "false")
-  private boolean keepSrcRoot = false;
+  @Parameter(alias = "careForLastEol", defaultValue = "false")
+  private boolean careForLastEol = false;
 
   /**
-   * Remove all Java like commentaries from preprocessed sources.
+   * Replace source root folders in maven project after preprocessing for following processing.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "removeComments", defaultValue = "false")
-  private boolean removeComments = false;
+  @Parameter(alias = "replaceSources", defaultValue = "true")
+  private boolean replaceSources = true;
 
   /**
-   * List of global preprocessing variables.
+   * Keep comments in result files.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "globalVars")
-  private Map<String, String> globalVars = new HashMap<>();
+  @Parameter(alias = "keepComments", defaultValue = "true")
+  private boolean keepComments = true;
 
   /**
-   * List of sub-folders in source folders to be excluded from preprocessing, ANT path pattern format allowed.
+   * List of variables to be registered in preprocessor as global ones.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "excludedFolders")
-  private List<String> excludedFolders = new ArrayList<>();
+  @Parameter(alias = "vars")
+  private Map<String, String> vars = new HashMap<>();
 
   /**
-   * List of external configuration files.
+   * List of patterns of folder paths to be excluded from preprocessing, It uses ANT path pattern format.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "cfgFiles")
-  private List<String> cfgFiles = new ArrayList<>();
+  @Parameter(alias = "excludeFolders")
+  private List<String> excludeFolders = new ArrayList<>();
 
   /**
-   * Disable removing lines from preprocessed files, it allows to keep line numeration similar to original sources.
+   * List of external files containing variable definitions.
+   *
+   * @since 7.0.0
+   */
+  @Parameter(alias = "configFiles")
+  private List<String> configFiles = new ArrayList<>();
+
+  /**
+   * Keep preprocessing directives in result files as commented ones, it is useful to not break line numeration in result files.
    */
   @Parameter(alias = "keepLines", defaultValue = "true")
   private boolean keepLines = true;
 
   /**
-   * Manage mode to allow whitespace between the // and the #.
+   * Turn on support of white spaces in preprocessor directives between '//' and the '#'.
    */
   @Parameter(alias = "allowWhitespace", defaultValue = "false")
   private boolean allowWhitespace = false;
 
   /**
-   * Preserve indents in lines marked by '//$' and '//$$' directives. The Directives will be replaced by white spaces chars.
+   * Preserve indents in lines marked by '//$' and '//$$' directives. Directives will be replaced by white spaces chars.
    */
-  @Parameter(alias = "preserveIndent", defaultValue = "false")
-  private boolean preserveIndent = false;
+  @Parameter(alias = "preserveIndents", defaultValue = "false")
+  private boolean preserveIndents = false;
 
   /**
-   * Allow usage of the preprocessor for test sources (since 5.3.4 version).
+   * Turn on test sources root use.
+   *
+   * @since 5.3.4
    */
   @Parameter(alias = "useTestSources", defaultValue = "false")
   private boolean useTestSources = false;
 
   /**
-   * Skip preprocessing.
+   * Skip preprocessing. Also can be defined by property 'jcp.preprocess.skip'
    *
    * @since 6.1.1
    */
@@ -227,267 +274,42 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private boolean skip = false;
 
   /**
-   * Flag to compare generated content with existing file and if it is the same then to not override the file, it brings overhead.
+   * Turn on check of content body compare with existing result file to prevent overwriting, if content is the same then preprocessor will not be writing new result content.
+   *
+   * @since 7.0.0
    */
-  @Parameter(alias = "compareDestination", defaultValue = "false")
-  private boolean compareDestination = false;
+  @Parameter(alias = "dontOverwriteSameContent", defaultValue = "false")
+  private boolean dontOverwriteSameContent = false;
 
   @Nonnull
   @MustNotContainNull
-  public List<String> getExcludedFolders() {
-    return this.excludedFolders;
-  }
-
-  public void setExcludedFolders(@Nonnull @MustNotContainNull final String... antPatterns) {
-    this.excludedFolders = Arrays.asList(Assertions.assertDoesntContainNull(Assertions.assertNotNull(antPatterns)));
-  }
-
-  public boolean isIgnoreMissingSources() {
-    return this.ignoreMissingSources;
-  }
-
-  public void setIgnoreMissingSources(final boolean flag) {
-    this.ignoreMissingSources = flag;
-  }
-
-  public boolean isSkip() {
-    return this.skip;
-  }
-
-  public void setSkip(final boolean flag) {
-    this.skip = flag;
-  }
-
-  public boolean getPreserveIndent() {
-    return this.preserveIndent;
-  }
-
-  public void setPreserveIndent(final boolean flag) {
-    this.preserveIndent = flag;
-  }
-
-  public boolean getCopyFileAttributes() {
-    return this.copyFileAttributes;
-  }
-
-  public void setCopyFileAttributes(final boolean flag) {
-    this.copyFileAttributes = flag;
-  }
-
-  public boolean getUseTestSources() {
-    return this.useTestSources;
-  }
-
-  public void setUseTestSources(final boolean flag) {
-    this.useTestSources = flag;
-  }
-
-  public boolean getClear() {
-    return this.clear;
-  }
-
-  public void setClear(final boolean flag) {
-    this.clear = flag;
-  }
-
-  public void setCareForLastNextLine(final boolean flag) {
-    this.careForLastNextLine = flag;
-  }
-
-  public boolean getCarForLastNextLine() {
-    return this.careForLastNextLine;
-  }
-
-  public boolean getKeepSrcRoot() {
-    return this.keepSrcRoot;
-  }
-
-  public void setKeepSrcRoot(final boolean flag) {
-    this.keepSrcRoot = flag;
-  }
-
-  @Nonnull
-  public Map<String, String> getGlobalVars() {
-    return this.globalVars;
-  }
-
-  public void setGlobalVars(@Nonnull final Map<String, String> vars) {
-    this.globalVars = vars;
-  }
-
-  @Nonnull
-  @MustNotContainNull
-  public List<String> getCfgFiles() {
-    return this.cfgFiles;
-  }
-
-  public void setCfgFiles(@Nonnull @MustNotContainNull final List<String> files) {
-    this.cfgFiles = files;
-  }
-
-  public boolean isCompareDestination() {
-    return this.compareDestination;
-  }
-
-  public void setCompareDestination(final boolean flag) {
-    this.compareDestination = flag;
-  }
-
-  @Nonnull
-  @MustNotContainNull
-  public List<String> getSource() {
-    return this.source;
-  }
-
-  public void setSource(@Nonnull @MustNotContainNull final List<String> source) {
-    this.source = source;
-  }
-
-  @Nonnull
-  public File getDestination() {
-    return this.destination;
-  }
-
-  public void setDestination(@Nonnull final File destination) {
-    this.destination = destination;
-  }
-
-  @Nonnull
-  public File getTestDestination() {
-    return this.testDestination;
-  }
-
-  public void setTestDestination(@Nonnull final File destination) {
-    this.testDestination = destination;
-  }
-
-  @Nonnull
-  public String getInEncoding() {
-    return this.inEncoding;
-  }
-
-  public void setInEncoding(@Nonnull final String value) {
-    this.inEncoding = value;
-  }
-
-  @Nonnull
-  public String getOutEncoding() {
-    return this.outEncoding;
-  }
-
-  public void setOutEncoding(@Nonnull final String value) {
-    this.outEncoding = value;
-  }
-
-  @Nonnull
-  @MustNotContainNull
-  public List<String> getExcluded() {
-    return this.excluded;
-  }
-
-  public void setExcluded(@Nonnull @MustNotContainNull final List<String> excluded) {
-    this.excluded = excluded;
-  }
-
-  public boolean getUnknownVarAsFalse() {
-    return this.unknownVarAsFalse;
-  }
-
-  public void setUnknownVarAsFalse(final boolean flag) {
-    this.unknownVarAsFalse = flag;
-  }
-
-  @Nonnull
-  @MustNotContainNull
-  public List<String> getProcessing() {
-    return this.processing;
-  }
-
-  public void setProcessing(@Nonnull @MustNotContainNull final List<String> processing) {
-    this.processing = processing;
-  }
-
-  public boolean getDisableOut() {
-    return this.disableOut;
-  }
-
-  public void setDisableOut(final boolean value) {
-    this.disableOut = value;
-  }
-
-  public boolean getVerbose() {
-    return this.verbose;
-  }
-
-  public void setVerbose(final boolean verbose) {
-    this.verbose = verbose;
-  }
-
-  public boolean getKeepLines() {
-    return this.keepLines;
-  }
-
-  public void setKeepLines(final boolean keepLines) {
-    this.keepLines = keepLines;
-  }
-
-  public boolean getAllowWhitespace() {
-    return this.allowWhitespace;
-  }
-
-  public void setAllowWhitespace(final boolean flag) {
-    this.allowWhitespace = flag;
-  }
-
-  public boolean getRemoveComments() {
-    return this.removeComments;
-  }
-
-  public void setRemoveComments(final boolean value) {
-    this.removeComments = value;
-  }
-
-  @Nonnull
-  @MustNotContainNull
-  private List<String> makeSourceRootList() {
-    List<String> result = new ArrayList<>();
-    if (this.source.isEmpty()) {
+  private List<String> formSourceRootList() {
+    List<String> result = Collections.emptyList();
+    if (this.getSources().isEmpty()) {
       if (this.project != null) {
-        for (final String srcRoot : (this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)) {
-          final boolean folderPresented = new File(srcRoot).isDirectory();
-
-          if (!folderPresented) {
-            getLog().debug("Can't find source folder : " + srcRoot);
-          }
-
-          String textToAppend;
-
-          if (folderPresented) {
-            textToAppend = srcRoot;
-          } else {
-            if (this.isIgnoreMissingSources()) {
-              textToAppend = null;
-            } else {
-              textToAppend = srcRoot;
-            }
-          }
-
-          if (textToAppend != null) {
-            result.add(srcRoot);
-          }
-        }
+        result = (this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots).stream()
+            .filter(Objects::nonNull)
+            .map(File::new)
+            .peek(x -> {
+              if (!x.isDirectory()) {
+                getLog().debug(String.format("Src.folder doesn't exist: %s", x));
+              }
+            })
+            .filter(x -> !this.isIgnoreMissingSources() || x.isDirectory())
+            .map(File::getAbsolutePath)
+            .collect(Collectors.toList());
       }
     } else {
-      result.addAll(this.source);
+      result = new ArrayList<>(this.getSources());
     }
     return result;
   }
 
   private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
     if (this.project != null) {
-      final List<PreprocessorContext.SourceFolder> sourceFolders = context.getSourceFolders();
+      final List<PreprocessorContext.SourceFolder> sourceFolders = context.getSources();
 
-      final List<String> sourceRoots = this.getUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
+      final List<String> sourceRoots = this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<>();
       for (final String src : sourceRoots) {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
@@ -506,7 +328,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         }
       }
 
-      final String destinationDir = context.getDestinationDirectoryAsFile().getCanonicalPath();
+      final String destinationDir = context.getTarget().getCanonicalPath();
 
       sourceRoots.add(destinationDir);
       info("Source root is enlisted: " + destinationDir);
@@ -515,47 +337,45 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
   @Nonnull
   PreprocessorContext makePreprocessorContext() throws IOException {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(this.getBaseDir());
     context.setPreprocessorLogger(this);
 
     if (this.project != null) {
-      final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project, getVerbose() || getLog().isDebugEnabled());
+      final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project, isVerbose() || getLog().isDebugEnabled());
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    context.setSourceFolders(makeSourceRootList());
-    context.setTargetFolder(assertNotNull(this.getUseTestSources() ? this.getTestDestination().getCanonicalPath() : this.getDestination().getCanonicalPath()));
+    context.setSources(formSourceRootList());
+    context.setTarget((this.isUseTestSources() ? this.getTargetTest() : this.getTarget()));
 
-    context.setInCharset(this.getInEncoding());
-    context.setOutCharset(this.getOutEncoding());
+    context.setSourceEncoding(Charset.forName(this.getSourceEncoding().trim()));
+    context.setTargetEncoding(Charset.forName(this.getTargetEncoding().trim()));
 
-    if (!this.getExcluded().isEmpty()) {
-      context.setExcludedFileExtensions(this.getExcluded());
-    }
-    if (!this.getProcessing().isEmpty()) {
-      context.setProcessingFileExtensions(this.getProcessing());
-    }
+    context.setExcludeFolders(this.getExcludeFolders());
+    context.setExcludeExtensions(this.getExcludeExtensions());
+    context.setExtensions(this.getExtensions());
 
-    info("Source folders: " + context.getSourceFolders().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
-    info("Target folder: " + context.getTargetFolder());
 
-    context.setUnknownVariableAsFalse(this.getUnknownVarAsFalse());
-    context.setCompareDestination(this.isCompareDestination());
-    context.setClearDestinationDirBefore(this.getClear());
-    context.setCareForLastNextLine(this.getCarForLastNextLine());
-    context.setRemoveComments(this.getRemoveComments());
-    context.setVerbose(getLog().isDebugEnabled() || this.getVerbose());
-    context.setKeepLines(this.getKeepLines());
-    context.setFileOutputDisabled(this.getDisableOut());
-    context.setAllowWhitespace(this.getAllowWhitespace());
-    context.setPreserveIndent(this.getPreserveIndent());
-    context.setExcludedFolderPatterns(this.getExcludedFolders().toArray(new String[0]));
-    context.setCopyFileAttributes(this.getCopyFileAttributes());
+    info("Source folders: " + context.getSources().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
+    info("Target folder: " + context.getTarget());
 
-    this.cfgFiles.forEach(x -> context.addConfigFile(new File(x)));
+    context.setUnknownVariableAsFalse(this.isUnknownVarAsFalse());
+    context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
+    context.setClearTarget(this.isClearTarget());
+    context.setCareForLastEol(this.isCareForLastEol());
+    context.setKeepComments(this.isKeepComments());
+    context.setVerbose(getLog().isDebugEnabled() || this.isVerbose());
+    context.setKeepLines(this.isKeepLines());
+    context.setDryRun(this.isDryRun());
+    context.setAllowWhitespace(this.isAllowWhitespace());
+    context.setPreserveIndents(this.isPreserveIndents());
+    context.setExcludeFolders(this.getExcludeFolders());
+    context.setKeepAttributes(this.isKeepAttributes());
+
+    this.configFiles.forEach(x -> context.registerConfigFile(new File(x)));
 
     // process global vars
-    this.getGlobalVars().forEach((key, value) -> {
+    this.getVars().forEach((key, value) -> {
       getLog().debug(String.format("Register global var: '%s' <- '%s'", key, value));
       context.setGlobalVariable(key, Value.recognizeRawString(value));
     });
@@ -571,12 +391,12 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       final PreprocessorContext context;
       try {
         context = makePreprocessorContext();
-      }catch (Exception ex){
+      } catch (Exception ex) {
         final PreprocessorException newException = PreprocessorException.extractPreprocessorException(ex);
         throw new MojoExecutionException(newException == null ? ex.getMessage() : newException.toString(), newException == null ? ex : newException);
       }
 
-      if (context.getSourceFolders().isEmpty()) {
+      if (context.getSources().isEmpty()) {
         if (this.isIgnoreMissingSources()) {
           getLog().warn("Source folders are not provided, preprocessing is ignored.");
         } else {
@@ -586,7 +406,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         try {
           final JCPreprocessor preprocessor = new JCPreprocessor(context);
           preprocessor.execute();
-          if (!getKeepSrcRoot()) {
+          if (this.isReplaceSources()) {
             replaceSourceRootByPreprocessingDestinationFolder(context);
           }
         } catch (Exception ex) {
@@ -598,22 +418,22 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
   @Override
-  public void error(@Nonnull final String message) {
-    getLog().error(message);
+  public void error(@Nullable final String message) {
+    getLog().error(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void info(@Nonnull final String message) {
-    getLog().info(message);
+  public void info(@Nullable final String message) {
+    getLog().info(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void warning(@Nonnull final String message) {
-    getLog().warn(message);
+  public void warning(@Nullable final String message) {
+    getLog().warn(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void debug(@Nonnull final String message) {
-    getLog().debug(message);
+  public void debug(@Nullable final String message) {
+    getLog().debug(ensureNonNull(message, "<null>"));
   }
 }
