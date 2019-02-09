@@ -20,15 +20,27 @@
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>6.2.0-SNAPSHOT</version>
+                <goals>
+                    <goal>preprocess</goal>
+                </goals>
                 <configuration>
-                    <source>/</source>
+                    <source>
+                        <folder>/</folder>
+                        <folder>/some</folder>
+                        <folder>/another/some</folder>
+                    </source>
                     <copyFileAttributes>true</copyFileAttributes>
                     <destination>destination_dir</destination>
-                    <excluded>xml,html</excluded>
-                    <processing>java,txt</processing>
+                    <excluded>
+                        <ext>xml</ext>
+                        <ext>html</ext>
+                    </excluded>
+                    <processing>
+                        <ext>java</ext>
+                        <ext>txt</ext>
+                    </processing>
                     <inEncoding>UTF-16</inEncoding>
-                    <outEncoding>US_ASCII</outEncoding>
+                    <outEncoding>US-ASCII</outEncoding>
                     <keepSrcRoot>true</keepSrcRoot>
                     <removeComments>true</removeComments>
                     <disableOut>true</disableOut>
@@ -51,24 +63,10 @@
                         <file>test2.cfg</file>
                     </cfgFiles>    
                     <globalVars>
-                        <property>
-                            <name>globalvar1</name>
-                            <value>3</value>
-                        </property>    
-                        <property>
-                            <name>globalvar2</name>
-                            <value>hello world</value>
-                        </property>    
+                        <globalvar1>3</globalvar1>
+                        <globalvar2>hello world</globalvar2>
                     </globalVars>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>preprocess</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
             

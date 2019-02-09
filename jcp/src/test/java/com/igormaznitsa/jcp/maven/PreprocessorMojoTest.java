@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class PreprocessorMojoTest extends AbstractMojoTestCase {
 
@@ -55,13 +56,11 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     assertTrue("Different values in arrays", list1.isEmpty() && list2.isEmpty());
   }
 
-  @Before
   @Override
   protected void setUp() throws Exception {
     super.setUp();
   }
 
-  @After
   @Override
   protected void tearDown() throws Exception {
     super.tearDown();
@@ -78,25 +77,27 @@ public final class PreprocessorMojoTest extends AbstractMojoTestCase {
     mojo.setSkip(true);
     assertTrue(mojo.isSkip());
 
-    final PreprocessorContext context = mojo.makePreprocessorContext(Collections.singletonList("/"));
+    final PreprocessorContext context = mojo.makePreprocessorContext();
 
-    assertEquals("/", context.getSourceFolders());
+    final String [] sources = context.getSourceFolders().stream().map(x->x.getAsString()).collect(Collectors.toList()).toArray(new String[0]);
+
+    assertArrayEqualsWithoutOrders(new String[]{"/","/some","/another/some"}, sources);
     assertEquals("destination_dir", context.getDestinationDirectoryAsFile().getName());
     assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludedFileExtensions().toArray());
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getProcessingFileExtensions());
-    assertEquals(StandardCharsets.UTF_16.name(), context.getInCharset());
+    assertEquals(StandardCharsets.UTF_16, context.getInCharset());
     assertEquals(StandardCharsets.US_ASCII, context.getOutCharset());
-    assertTrue("Must be true", context.isRemoveComments());
-    assertTrue("Must be true", context.isVerbose());
-    assertTrue("Must be true", context.isFileOutputDisabled());
-    assertTrue("Must be true", context.doesClearDestinationDirBefore());
-    assertTrue("Must be true", context.isKeepLines());
-    assertTrue("Must be true", context.isCareForLastNextLine());
-    assertTrue("Must be true", context.isCompareDestination());
-    assertTrue("Must be true", context.isAllowWhitespace());
-    assertTrue("Must be true", context.isPreserveIndent());
-    assertTrue("Must be true", context.isCopyFileAttributes());
-    assertTrue("Must be true", context.isUnknownVariableAsFalse());
+    assertTrue(context.isRemoveComments());
+    assertTrue(context.isVerbose());
+    assertTrue(context.isFileOutputDisabled());
+    assertTrue(context.doesClearDestinationDirBefore());
+    assertTrue(context.isKeepLines());
+    assertTrue(context.isCareForLastNextLine());
+    assertTrue(context.isCompareDestination());
+    assertTrue(context.isAllowWhitespace());
+    assertTrue(context.isPreserveIndent());
+    assertTrue(context.isCopyFileAttributes());
+    assertTrue(context.isUnknownVariableAsFalse());
 
     assertEquals(Arrays.asList(".git", ".hg", "**/.cvs", "c:/hello/**/world"), context.getExcludedFolderPatterns());
 

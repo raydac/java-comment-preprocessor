@@ -192,7 +192,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * List of external configuration files.
    */
   @Parameter(alias = "cfgFiles")
-  private List<File> cfgFiles = new ArrayList<>();
+  private List<String> cfgFiles = new ArrayList<>();
 
   /**
    * Disable removing lines from preprocessed files, it allows to keep line numeration similar to original sources.
@@ -317,11 +317,11 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
   @Nonnull
   @MustNotContainNull
-  public List<File> getCfgFiles() {
+  public List<String> getCfgFiles() {
     return this.cfgFiles;
   }
 
-  public void setCfgFiles(@Nonnull @MustNotContainNull final List<File> files) {
+  public void setCfgFiles(@Nonnull @MustNotContainNull final List<String> files) {
     this.cfgFiles = files;
   }
 
@@ -514,7 +514,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
   @Nonnull
-  PreprocessorContext makePreprocessorContext(@Nonnull @MustNotContainNull final List<String> sourceFolders) throws IOException {
+  PreprocessorContext makePreprocessorContext() throws IOException {
     final PreprocessorContext context = new PreprocessorContext();
     context.setPreprocessorLogger(this);
 
@@ -523,7 +523,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    context.setSourceFolders(sourceFolders);
+    context.setSourceFolders(makeSourceRootList());
     context.setTargetFolder(assertNotNull(this.getUseTestSources() ? this.getTestDestination().getCanonicalPath() : this.getDestination().getCanonicalPath()));
 
     context.setInCharset(this.getInEncoding());
@@ -537,7 +537,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     }
 
     info("Source folders: " + context.getSourceFolders().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
-    info(" Target folder: " + context.getTargetFolder());
+    info("Target folder: " + context.getTargetFolder());
 
     context.setUnknownVariableAsFalse(this.getUnknownVarAsFalse());
     context.setCompareDestination(this.isCompareDestination());
@@ -552,7 +552,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setExcludedFolderPatterns(this.getExcludedFolders().toArray(new String[0]));
     context.setCopyFileAttributes(this.getCopyFileAttributes());
 
-    this.cfgFiles.forEach(x -> context.addConfigFile(x));
+    this.cfgFiles.forEach(x -> context.addConfigFile(new File(x)));
 
     // process global vars
     this.getGlobalVars().forEach((key, value) -> {
@@ -568,29 +568,21 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     if (this.isSkip()) {
       getLog().info("Skip preprocessing");
     } else {
-      PreprocessorContext context;
-
-      final List<String> sourceFoldersInPreprocessingFormat = makeSourceRootList();
-
-      boolean skipPreprocessing = false;
-
-      if (sourceFoldersInPreprocessingFormat.isEmpty()) {
-        if (isIgnoreMissingSources()) {
-          getLog().warn("Source folders are not provided, skip preprocessing.");
-          skipPreprocessing = true;
-        } else {
-          throw new MojoFailureException("Can't find any source folder, check parameters and project type");
-        }
+      final PreprocessorContext context;
+      try {
+        context = makePreprocessorContext();
+      }catch (Exception ex){
+        final PreprocessorException newException = PreprocessorException.extractPreprocessorException(ex);
+        throw new MojoExecutionException(newException == null ? ex.getMessage() : newException.toString(), newException == null ? ex : newException);
       }
 
-      if (!skipPreprocessing) {
-        try {
-          context = makePreprocessorContext(Assertions.assertNotNull(sourceFoldersInPreprocessingFormat));
-        } catch (Exception ex) {
-          final PreprocessorException newException = PreprocessorException.extractPreprocessorException(ex);
-          throw new MojoExecutionException(newException == null ? ex.getMessage() : newException.toString(), newException == null ? ex : newException);
+      if (context.getSourceFolders().isEmpty()) {
+        if (this.isIgnoreMissingSources()) {
+          getLog().warn("Source folders are not provided, preprocessing is ignored.");
+        } else {
+          throw new MojoFailureException("Source folders are not provided, check parameters and project type");
         }
-
+      } else {
         try {
           final JCPreprocessor preprocessor = new JCPreprocessor(context);
           preprocessor.execute();
