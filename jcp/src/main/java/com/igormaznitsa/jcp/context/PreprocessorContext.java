@@ -158,13 +158,17 @@ public final class PreprocessorContext {
     this.dontOverwriteSameContent = context.isDontOverwriteSameContent();
     this.eol = context.getEol();
 
+    this.globalVarTable.clear();
     this.globalVarTable.putAll(context.getGlobalVarTable());
+
+    this.localVarTable.clear();
     this.localVarTable.putAll(context.getLocalVarTable());
     this.excludeFolders = new ArrayList<>(context.getExcludeFolders());
 
     this.mapVariableNameToSpecialVarProcessor.putAll(context.getMapVariableNameToSpecialVarProcessor());
     this.sharedResources.putAll(context.getSharedResources());
 
+    this.configFiles.clear();
     this.configFiles.addAll(context.getConfigFiles());
 
     this.currentState = assertNotNull(context.getCurrentState());
@@ -792,7 +796,7 @@ public final class PreprocessorContext {
    */
   public void registerConfigFile(@Nonnull final File file) {
     assertNotNull("File is null", file);
-    configFiles.add(file.isAbsolute() ? file : new File(this.getBaseDir(), file.getPath()));
+    this.configFiles.add(file.isAbsolute() ? file : new File(this.getBaseDir(), file.getPath()));
   }
 
   /**

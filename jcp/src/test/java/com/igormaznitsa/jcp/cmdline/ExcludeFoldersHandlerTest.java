@@ -30,6 +30,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings("unchecked")
 public class ExcludeFoldersHandlerTest extends AbstractCommandLineHandlerTest {
 
   private static final ExcludeFoldersHandler HANDLER = new ExcludeFoldersHandler();
@@ -49,7 +50,9 @@ public class ExcludeFoldersHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/ED", mock));
 
     assertTrue(HANDLER.processCommandLineKey("/ed:testdir/**/hd" + File.pathSeparator + "zoom" + File.pathSeparator + "g?df", mock));
+
     final ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+
     verify(mock).setExcludeFolders(captor.capture());
     assertArrayEquals(new String[] {"testdir/**/hd", "zoom", "g?df"}, captor.getValue().toArray(new String[0]));
   }

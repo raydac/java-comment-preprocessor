@@ -21,6 +21,202 @@
 
 package com.igormaznitsa.jcp.ant;
 
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.expression.Value;
+import org.apache.tools.ant.Project;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class PreprocessTaskTest {
 
+  static File THIS_DIRECTORY;
+
+  final static Project projectMock = mock(Project.class);
+
+  static {
+    when(projectMock.getBaseDir()).thenReturn(new File("base/dir"));
+    when(projectMock.getProperties()).thenReturn(new Hashtable<String, Object>());
+  }
+
+  PreprocessTask antTask;
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    THIS_DIRECTORY = new File(com.igormaznitsa.jcp.ant.PreprocessTaskTest.class.getResource("./").toURI());
+  }
+
+  @Before
+  public void beforeTest() {
+    antTask = new PreprocessTask();
+    antTask.setProject(projectMock);
+
+    final PreprocessTask.Sources sources = new PreprocessTask.Sources();
+    sources.createPath().setValue(THIS_DIRECTORY.getAbsolutePath());
+
+    antTask.setSources(sources);
+  }
+
+  @Test
+  public void testSetSources() {
+    final List<PreprocessorContext.SourceFolder> sourceDirs = antTask.makePreprocessorContext().getSources();
+    assertEquals(1, sourceDirs.size());
+    assertEquals(THIS_DIRECTORY, sourceDirs.get(0).getAsFile());
+  }
+
+  @Test
+  public void testTarget() {
+    antTask.setTarget(THIS_DIRECTORY.getAbsolutePath());
+    assertEquals(THIS_DIRECTORY, antTask.makePreprocessorContext().getTarget());
+  }
+
+  @Test
+  public void testSourceEncoding() {
+    final String TEST = "ISO-8859-1";
+    antTask.setSourceEncoding(TEST);
+    assertEquals(StandardCharsets.ISO_8859_1, antTask.makePreprocessorContext().getSourceEncoding());
+  }
+
+  @Test
+  public void testTargetEncoding() {
+    final String TEST = "ISO-8859-1";
+    antTask.setTargetEncoding(TEST);
+    assertEquals(StandardCharsets.ISO_8859_1, antTask.makePreprocessorContext().getTargetEncoding());
+  }
+
+  @Test
+  public void testExcludedExtensions() {
+    final PreprocessTask.ExcludeExtensions antextensions = antTask.createExcludeExtensions();
+    antextensions.createExtension().addText("bin");
+    antextensions.createExtension().addText("vb");
+    antextensions.createExtension().addText("cpp");
+    final Set<String> extensions = antTask.makePreprocessorContext().getExcludeExtensions();
+    assertEquals(3, extensions.size());
+    assertTrue(extensions.contains("bin"));
+    assertTrue(extensions.contains("vb"));
+    assertTrue(extensions.contains("cpp"));
+  }
+
+  @Test
+  public void testExtensions() {
+    final PreprocessTask.Extensions antextensions = antTask.createExtensions();
+    antextensions.createExtension().addText("bin");
+    antextensions.createExtension().addText("vb");
+    antextensions.createExtension().addText("cpp");
+    final Set<String> extensions = antTask.makePreprocessorContext().getExtensions();
+    assertEquals(3, extensions.size());
+    assertTrue(extensions.contains("bin"));
+    assertTrue(extensions.contains("vb"));
+    assertTrue(extensions.contains("cpp"));
+  }
+
+
+  @Test
+  public void testClearTarget() {
+    antTask.setClearTarget(true);
+    assertTrue(antTask.makePreprocessorContext().isClearTarget());
+    antTask.setClearTarget(false);
+    assertFalse(antTask.makePreprocessorContext().isClearTarget());
+  }
+
+  @Test
+  public void testKeepComments() throws Exception {
+    antTask.setKeepComments(true);
+    assertTrue(antTask.makePreprocessorContext().isKeepComments());
+    antTask.setKeepComments(false);
+    assertFalse(antTask.makePreprocessorContext().isKeepComments());
+  }
+
+  @Test
+  public void testVerbose() throws Exception {
+    antTask.setVerbose(true);
+    assertTrue(antTask.makePreprocessorContext().isVerbose());
+    antTask.setVerbose(false);
+    assertFalse(antTask.makePreprocessorContext().isVerbose());
+  }
+
+  @Test
+  public void testAllowWhitespace() {
+    antTask.setAllowWhitespace(true);
+    assertTrue(antTask.makePreprocessorContext().isAllowWhitespace());
+    antTask.setAllowWhitespace(false);
+    assertFalse(antTask.makePreprocessorContext().isVerbose());
+  }
+
+  @Test
+  public void testCareForLastEol() {
+    antTask.setCareForLastEol(true);
+    assertTrue(antTask.makePreprocessorContext().isCareForLastEol());
+    antTask.setCareForLastEol(false);
+    assertFalse(antTask.makePreprocessorContext().isCareForLastEol());
+  }
+
+  @Test
+  public void testEol() {
+    antTask.setEol("someeol\\r\\n");
+    assertEquals("someeol\r\n",antTask.makePreprocessorContext().getEol());
+  }
+
+  @Test
+  public void testPreserveIndents() {
+    antTask.setPreserveIndents(true);
+    assertTrue(antTask.makePreprocessorContext().isPreserveIndents());
+    antTask.setPreserveIndents(false);
+    assertFalse(antTask.makePreprocessorContext().isPreserveIndents());
+  }
+
+  @Test
+  public void testDontOverwriteSameContent() {
+    antTask.setDontOverwriteSameContent(true);
+    assertTrue(antTask.makePreprocessorContext().isDontOverwriteSameContent());
+    antTask.setDontOverwriteSameContent(false);
+    assertFalse(antTask.makePreprocessorContext().isDontOverwriteSameContent());
+  }
+
+  @Test
+  public void testDryRun() {
+    antTask.setDryRun(true);
+    assertTrue(antTask.makePreprocessorContext().isDryRun());
+    antTask.setDryRun(false);
+    assertFalse(antTask.makePreprocessorContext().isDryRun());
+  }
+
+  @Test
+  public void testUnknownVarAsFalse() {
+    antTask.setUnknownVarAsFalse(true);
+    assertTrue(antTask.makePreprocessorContext().isUnknownVariableAsFalse());
+    antTask.setUnknownVarAsFalse(false);
+    assertFalse(antTask.makePreprocessorContext().isUnknownVariableAsFalse());
+  }
+
+  @Test
+  public void testAddGlobal() {
+    final PreprocessTask.Vars vars = antTask.createVars();
+    final PreprocessTask.Vars.Var var = vars.createVar();
+    var.setName("hello_world");
+    var.setValue("4");
+    assertEquals(Value.INT_FOUR, antTask.makePreprocessorContext().findVariableForName("hello_world", false));
+  }
+
+  @Test
+  public void testAddCfgFile() {
+    final PreprocessTask.ConfigFiles configFiles = antTask.createConfigFiles();
+    configFiles.createPath().setValue("what/that");
+    configFiles.createPath().setValue("what/those");
+
+    final List<File> foundConfigFiles = antTask.makePreprocessorContext().getConfigFiles();
+    assertEquals("Must be 2", 2, foundConfigFiles.size());
+    assertEquals("base/dir/what/that", foundConfigFiles.get(0).getPath());
+    assertEquals("base/dir/what/those", foundConfigFiles.get(1).getPath());
+  }
 }

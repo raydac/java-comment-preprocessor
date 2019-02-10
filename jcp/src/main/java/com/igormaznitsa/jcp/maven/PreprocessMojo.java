@@ -29,6 +29,7 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -60,6 +61,7 @@ import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
  * Mojo to preprocess either standard maven project source roots or custom source roots and place prepsocessed result into defined target folder.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 

@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.GetUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -56,6 +57,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
   private Sources sources = null;
   private String eol = null;
@@ -84,6 +86,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private void registerConfigFiles(@Nonnull final PreprocessorContext context) {
     if (this.getConfigFiles() != null) {
       for (final Sources.Path f : this.getConfigFiles().getPaths()) {
+        log("Registering config file: " + f.getValue());
         context.registerConfigFile(assertNotNull("File must not be null", new File(f.getValue().trim())));
       }
     }
@@ -132,14 +135,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
           .filter(x -> !x.isEmpty())
           .collect(Collectors.toList())
       );
-    }
-
-    if (this.getConfigFiles() != null) {
-      this.getConfigFiles().getPaths().forEach(x -> {
-        final File configFile = new File(x.getValue());
-        log("Registering config file: " + configFile.getAbsolutePath());
-        context.registerConfigFile(configFile);
-      });
     }
 
     if (this.getSourceEncoding() != null) {
@@ -313,6 +308,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class Sources {
 
     protected List<Path> paths = new ArrayList<>();
@@ -336,11 +332,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class ConfigFiles extends Sources {
 
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class ExcludeFolders {
 
     private List<Folder> folders = new ArrayList<>();
@@ -363,11 +361,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class ExcludeExtensions extends Extensions {
 
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class Extensions {
     protected final List<Extension> extensions = new ArrayList<>();
 
@@ -389,6 +389,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
+  @EqualsAndHashCode(callSuper=false)
   public static class Vars {
     private List<Var> vars = new ArrayList<>();
 
@@ -400,6 +401,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     @Data
+    @EqualsAndHashCode(callSuper=false)
     public static class Var {
       private String name = "";
       private String value = "";
