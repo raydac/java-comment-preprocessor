@@ -64,7 +64,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private String sourceEncoding = null;
   private String targetEncoding = null;
   private boolean ignoreMissingSources = false;
-  private ExcludedExtensions excludedExtensions = null;
+  private ExcludeExtensions excludeExtensions = null;
   private Extensions extensions = null;
   private boolean unknownVarAsFalse = false;
   private boolean dryRun = false;
@@ -117,8 +117,8 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       );
     }
 
-    if (this.getExcludedExtensions() != null) {
-      context.setExcludeExtensions(this.getExcludedExtensions().extensions
+    if (this.getExcludeExtensions() != null) {
+      context.setExcludeExtensions(this.getExcludeExtensions().extensions
           .stream()
           .map(x -> x.name.trim())
           .filter(x -> !x.isEmpty())
@@ -283,6 +283,18 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Nonnull
+  public Extensions createExtensions() {
+    this.extensions = new Extensions();
+    return this.extensions;
+  }
+
+  @Nonnull
+  public ExcludeExtensions createExcludeExtensions() {
+    this.excludeExtensions = new ExcludeExtensions();
+    return this.excludeExtensions;
+  }
+
+  @Nonnull
   public Sources createSources() {
     this.sources = new Sources();
     return this.sources;
@@ -351,7 +363,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
-  public static class ExcludedExtensions extends Extensions {
+  public static class ExcludeExtensions extends Extensions {
 
   }
 

@@ -48,9 +48,12 @@
                             </sources>
                             <target>${project.build.directory}${file.separator}gensite</target>
                             <keepLines>false</keepLines>
-                            <excluded>xml</excluded>
-                            <inEncoding>CP1251</inEncoding>
-                            <outEncoding>CP1251</outEncoding>
+                            <eol>\r\n</eol>
+                            <excludedExtensions>
+                                <extension>xml</extension>
+                            </excludedExtensions>
+                            <sourceEncoding>CP1251</sourceEncoding>
+                            <targetEncoding>CP1251</targetEncoding>
                         </configuration>
                     </execution>
                 </executions>

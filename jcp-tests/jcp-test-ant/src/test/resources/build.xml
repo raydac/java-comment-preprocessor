@@ -14,7 +14,17 @@
                 keepLines="true"
                 careForLastEol="true"
                 allowWhiteSpace="true"
+                eol="\r\n"
+                sourceEncoding="UTF-8"
+                targetEncoding="UTF-8"
         >
+            <excludeExtensions>
+                <extension>cpp</extension>
+                <extension>xml</extension>
+            </excludeExtensions>
+            <extensions>
+                <extension>java</extension>
+            </extensions>
             <configFiles>
                 <path>./config.cfg</path>
             </configFiles>

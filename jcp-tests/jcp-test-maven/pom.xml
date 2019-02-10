@@ -17,6 +17,9 @@
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
                 <version>${jcp.test.version}</version>
+                <configuration>
+                    <eol>\r\n</eol>
+                </configuration>
                 <executions>
                     <execution>
                         <id>preprocess-sources</id>
