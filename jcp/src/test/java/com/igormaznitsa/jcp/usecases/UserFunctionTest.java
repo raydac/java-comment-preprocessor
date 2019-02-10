@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
@@ -40,11 +40,11 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
   }
 
   @Override
-  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
+  public void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception {
     assertEquals("User function must be called once", 1, calledfunc);
     assertEquals("User action must be called twice", 2, calledaction);
-    assertEquals(0, stat.getNumberOfCopied());
-    assertEquals(1, stat.getNumberOfPreprocessed());
+    assertEquals(0, stat.getCopied());
+    assertEquals(1, stat.getPreprocessed());
   }
 
   @Override

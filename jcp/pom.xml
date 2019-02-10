@@ -39,6 +39,7 @@
                                 <class>com.igormaznitsa.jcp.maven.PreprocessMojo</class>
                                 <class>com.igormaznitsa.jcp.context.PreprocessorContext</class>
                                 <class>com.igormaznitsa.jcp.ant.PreprocessTask*</class>
+                                <class>com.igormaznitsa.jcp.JcpPreprocessor*</class>
                                 <class>com.igormaznitsa.jcp.containers.FileInfoContainer</class>
                             </ignoreClasses>
                         </configuration>
@@ -471,7 +472,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.igormaznitsa.jcp.JCPreprocessor</mainClass>
+                            <mainClass>com.igormaznitsa.jcp.JcpPreprocessor</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Automatic-Module-Name>igormaznitsa.jcp</Automatic-Module-Name>

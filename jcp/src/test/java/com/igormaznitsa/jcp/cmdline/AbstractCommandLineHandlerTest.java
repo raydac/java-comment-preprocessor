@@ -22,7 +22,7 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -48,7 +48,7 @@ public abstract class AbstractCommandLineHandlerTest extends AbstractMockPreproc
   }
 
   protected void assertHandlerInTheHandlerList(final CommandLineHandler handler) {
-    for (final CommandLineHandler h : JCPreprocessor.getCommandLineHandlers()) {
+    for (final CommandLineHandler h : JcpPreprocessor.getCommandLineHandlers()) {
       if (handler.getClass() == h.getClass()) {
         return;
       }

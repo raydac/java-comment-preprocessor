@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -75,7 +75,7 @@ public abstract class AbstractUseCaseTest {
     return true;
   }
 
-  public abstract void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception;
+  public abstract void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception;
 
   private void assertFolder(final File folder1, final File folder2, final boolean ignoreEOL) throws Exception {
     assertTrue("Folder 1 must be folder", folder1.isDirectory());
@@ -151,8 +151,8 @@ public abstract class AbstractUseCaseTest {
 
     System.setProperty("jcp.line.separator", "\n");
 
-    JCPreprocessor preprocessor = new JCPreprocessor(context);
-    final JCPreprocessor.PreprocessingStatistics stat = preprocessor.execute();
+    JcpPreprocessor preprocessor = new JcpPreprocessor(context);
+    final JcpPreprocessor.Statistics stat = preprocessor.execute();
 
     assertFolder(etalonFolder, tmpResultFolder.getRoot(), this.isIgnoreEolInCheck());
 

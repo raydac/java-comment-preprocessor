@@ -63,10 +63,10 @@ public class ResetablePrinter {
     }
   }
 
-  public void println(@Nonnull final String text) throws IOException {
+  public void println(@Nonnull final String text, @Nonnull final String eol) throws IOException {
     for (final char chr : text.toCharArray()) {
       this.outStream.write(chr);
     }
-    outStream.write(PreprocessorUtils.LINE_END, 0, PreprocessorUtils.LINE_END.length());
+    outStream.write(eol, 0, eol.length());
   }
 }

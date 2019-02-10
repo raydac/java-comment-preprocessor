@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import static org.junit.Assert.assertEquals;
@@ -34,9 +34,9 @@ public class AbortTest extends AbstractUseCaseTest {
   }
 
   @Override
-  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
-    assertEquals(1, stat.getNumberOfPreprocessed());
-    assertEquals(0, stat.getNumberOfCopied());
+  public void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception {
+    assertEquals(1, stat.getPreprocessed());
+    assertEquals(0, stat.getCopied());
   }
 
 }

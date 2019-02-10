@@ -71,14 +71,14 @@ public final class InfoHelper {
   public static List<String> makeTextForHelpInfo() {
     final List<String> result = new ArrayList<>();
 
-    result.add(JCPreprocessor.class.getCanonicalName() + " [@cfgFile] [cliCommands]");
+    result.add(JcpPreprocessor.class.getCanonicalName() + " [@cfgFile] [cliCommands]");
     result.add("");
 
     result.add("Command line");
     result.add(SHORT_DELIMITER);
     result.add("allowed '/','-' and '--' prefixes, '--' doesn't support multiple commands at once");
     result.add(makeColumns("@cfgFile", "file contains global definition list", 14));
-    result.addAll(JCPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
+    result.addAll(JcpPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
     result.add(DELIMITER);
 
     result.add("Directives");

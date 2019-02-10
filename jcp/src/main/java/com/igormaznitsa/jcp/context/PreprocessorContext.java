@@ -32,6 +32,7 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.jcp.logger.SystemOutLogger;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import com.igormaznitsa.meta.common.utils.GetUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -82,6 +83,7 @@ public final class PreprocessorContext {
   private final TextFileDataContainer currentInCloneSource;
   private final List<SourceFolder> sources = new ArrayList<>();
   private final File baseDir;
+  private String eol = GetUtils.ensureNonNull(System.getProperty("jcp.line.separator", System.getProperty("line.separator")), "\n");
   private boolean verbose = false;
   private boolean keepComments = false;
   private boolean clearTarget = false;
@@ -154,6 +156,7 @@ public final class PreprocessorContext {
     this.sourceEncoding = context.getSourceEncoding();
     this.targetEncoding = context.getTargetEncoding();
     this.dontOverwriteSameContent = context.isDontOverwriteSameContent();
+    this.eol = context.getEol();
 
     this.globalVarTable.putAll(context.getGlobalVarTable());
     this.localVarTable.putAll(context.getLocalVarTable());
@@ -222,6 +225,10 @@ public final class PreprocessorContext {
     } else {
       throw new IllegalArgumentException("Unsupported charset: " + charsetName);
     }
+  }
+
+  public void setEol(@Nonnull final String eol) {
+    this.eol = assertNotNull(eol);
   }
 
   public void setTarget(@Nonnull final File file) {
@@ -372,8 +379,8 @@ public final class PreprocessorContext {
    */
   @Nonnull
   @MustNotContainNull
-  public String[] getExtensions() {
-    return this.extensions.toArray(new String[0]);
+  public Set<String> getExtensions() {
+    return this.extensions;
   }
 
   /**
@@ -408,14 +415,8 @@ public final class PreprocessorContext {
    * @param file a file to be checked
    * @return true if th file must be excluded, otherwise false
    */
-  public final boolean isFileExcludedFromProcess(@Nullable final File file) {
-    final boolean result;
-    if (file != null && file.isFile()) {
-      result = this.excludeExtensions.contains(PreprocessorUtils.getFileExtension(file));
-    } else {
-      result = false;
-    }
-    return result;
+  public final boolean isFileExcludedByExtension(@Nullable final File file) {
+    return file == null || !file.isFile() || this.excludeExtensions.contains(PreprocessorUtils.getFileExtension(file));
   }
 
   /**
@@ -874,7 +875,8 @@ public final class PreprocessorContext {
 
     public SourceFolder(@Nonnull final File baseDir, @Nonnull final String path) {
       this.path = assertNotNull(path);
-      this.pathFile = new File(baseDir, path);
+      final File pathAsFile = new File(path);
+      this.pathFile = pathAsFile.isAbsolute() ? pathAsFile : new File(baseDir, path);
     }
 
     @Nonnull

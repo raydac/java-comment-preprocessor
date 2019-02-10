@@ -45,9 +45,9 @@ public final class JCPreprocessorTest {
   private void assertGVDFPreprocessorException(final String file, final int stringIndexStartedFromOne) throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
     context.registerConfigFile(new File(this.getClass().getResource(file).toURI()));
-    final JCPreprocessor preprocessor = new JCPreprocessor(context);
+    final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     try {
-      preprocessor.processCfgFiles();
+      preprocessor.processConfigFiles();
       fail("Must throw a PreprocessorException");
     } catch (PreprocessorException expected) {
       if (stringIndexStartedFromOne != expected.getLineNumber()) {
@@ -60,8 +60,8 @@ public final class JCPreprocessorTest {
   public void testProcessGlobalVarDefiningFiles() throws Exception {
     final PreprocessorContext context = new PreprocessorContext();
     context.registerConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
-    final JCPreprocessor preprocessor = new JCPreprocessor(context);
-    preprocessor.processCfgFiles();
+    final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
+    preprocessor.processConfigFiles();
 
     assertEquals("Must have the variable", "hello world", context.findVariableForName("globalVar1", true).asString());
     assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2", true));
@@ -92,7 +92,7 @@ public final class JCPreprocessorTest {
     context.setExtensions(Collections.singletonList("ppp"));
     context.setExcludeExtensions(Collections.singletonList("etl"));
 
-    final JCPreprocessor preprocessor = new JCPreprocessor(context);
+    final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     preprocessor.execute();
 
     assertTrue("There must be the result file", resultFile.exists());
@@ -134,7 +134,7 @@ public final class JCPreprocessorTest {
   @Test
   public void testCLIHandlerNameConflicts() {
     final List<String> checked = new ArrayList<>();
-    for (final CommandLineHandler h : JCPreprocessor.COMMAND_LINE_HANDLERS) {
+    for (final CommandLineHandler h : JcpPreprocessor.COMMAND_LINE_HANDLERS) {
       final String name = h.getKeyName();
       for (final String l : checked) {
         if (l.startsWith(name) || name.startsWith(l)) {

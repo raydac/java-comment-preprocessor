@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import javax.annotation.Nonnull;
@@ -36,9 +36,9 @@ public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
   }
 
   @Override
-  public void check(@Nonnull final PreprocessorContext context, @Nonnull final JCPreprocessor.PreprocessingStatistics stat) throws Exception {
-    assertEquals(1, stat.getNumberOfPreprocessed());
-    assertEquals(0, stat.getNumberOfCopied());
+  public void check(@Nonnull final PreprocessorContext context, @Nonnull final JcpPreprocessor.Statistics stat) throws Exception {
+    assertEquals(1, stat.getPreprocessed());
+    assertEquals(0, stat.getCopied());
   }
 
 }

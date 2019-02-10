@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.maven;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -30,6 +30,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -89,7 +90,15 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * @since 7.0.0
    */
   @Parameter(alias = "sources")
-  private List<String> sources = new ArrayList<>();
+  private List<String> sources = null;
+
+  /**
+   * End of line string to be used in reprocessed results. It supports java escaping chars.
+   *
+   * @since 7.0.0
+   */
+  @Parameter(alias = "eol", property = "jcp.line.separator", defaultValue = "${line.separator}")
+  private String eol = null;
 
   /**
    * Keep attributes for preprocessing file and copy them to result one.
@@ -285,7 +294,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   @MustNotContainNull
   private List<String> formSourceRootList() {
     List<String> result = Collections.emptyList();
-    if (this.getSources().isEmpty()) {
+    if (this.getSources() == null) {
       if (this.project != null) {
         result = (this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots).stream()
             .filter(Objects::nonNull)
@@ -355,6 +364,9 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setExcludeExtensions(this.getExcludeExtensions());
     context.setExtensions(this.getExtensions());
 
+    if (this.getEol() != null) {
+      context.setEol(StringEscapeUtils.unescapeJava(this.getEol()));
+    }
 
     info("Source folders: " + context.getSources().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
     info("Target folder: " + context.getTarget());
@@ -404,7 +416,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
         }
       } else {
         try {
-          final JCPreprocessor preprocessor = new JCPreprocessor(context);
+          final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
           preprocessor.execute();
           if (this.isReplaceSources()) {
             replaceSourceRootByPreprocessingDestinationFolder(context);

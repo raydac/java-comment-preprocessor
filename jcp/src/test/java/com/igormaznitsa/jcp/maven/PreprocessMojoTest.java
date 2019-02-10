@@ -90,7 +90,7 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     assertArrayEqualsWithoutOrders(new String[] {"/", "/some", "/another/some"}, sources);
     assertEquals("destination_dir", context.getTarget().getName());
     assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludeExtensions().toArray());
-    assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getExtensions());
+    assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getExtensions().toArray());
     assertEquals(StandardCharsets.UTF_16, context.getSourceEncoding());
     assertEquals(StandardCharsets.US_ASCII, context.getTargetEncoding());
     assertTrue(context.isKeepComments());

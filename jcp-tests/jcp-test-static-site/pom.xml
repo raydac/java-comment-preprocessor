@@ -37,14 +37,16 @@
                 <version>${jcp.test.version}</version>
                 <executions>
                     <execution>
-                        <id>gen-static-site</id>
+                        <id>preprocess-gen-static-site</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>preprocess</goal>
                         </goals>
                         <configuration>
-                            <source>${basedir}${file.separator}src${file.separator}main${file.separator}resources</source>
-                            <destination>${project.build.directory}${file.separator}gensite</destination>
+                            <sources>
+                               <folder>${basedir}${file.separator}src${file.separator}main${file.separator}resources</folder>
+                            </sources>
+                            <target>${project.build.directory}${file.separator}gensite</target>
                             <keepLines>false</keepLines>
                             <excluded>xml</excluded>
                             <inEncoding>CP1251</inEncoding>

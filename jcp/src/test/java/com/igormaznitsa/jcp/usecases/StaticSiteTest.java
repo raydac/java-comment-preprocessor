@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 import static org.junit.Assert.assertEquals;
@@ -29,9 +29,9 @@ import static org.junit.Assert.assertEquals;
 public class StaticSiteTest extends AbstractUseCaseTest {
 
   @Override
-  public void check(PreprocessorContext context, JCPreprocessor.PreprocessingStatistics stat) throws Exception {
-    assertEquals(10, stat.getNumberOfPreprocessed());
-    assertEquals(205, stat.getNumberOfCopied());
+  public void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception {
+    assertEquals(10, stat.getPreprocessed());
+    assertEquals(205, stat.getCopied());
   }
 
 }

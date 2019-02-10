@@ -58,13 +58,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  */
 public final class PreprocessorUtils {
 
-  public static final String LINE_END;
   private static final Pattern PATTERN_MACROS_WITH_SPACES = Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
-
-  static {
-    final String jcpLineEnd = System.getProperty("jcp.line.separator");
-    LINE_END = jcpLineEnd == null ? System.getProperty("line.separator", "\r\n") : jcpLineEnd;
-  }
 
   private PreprocessorUtils() {
   }

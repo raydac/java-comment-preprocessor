@@ -32,7 +32,7 @@ public class CareForLastEolHandler implements CommandLineHandler {
   @Override
   @Nonnull
   public String getDescription() {
-    return "carefully reproduce last line EOL in result";
+    return "carefully reproduce last line aEOL in result";
   }
 
   @Override

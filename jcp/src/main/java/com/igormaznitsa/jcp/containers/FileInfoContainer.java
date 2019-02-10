@@ -360,7 +360,7 @@ public class FileInfoContainer {
                 final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
                 final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
                 if (doPrintLn) {
-                  thePrinter.println(text);
+                  thePrinter.println(text, context.getEol());
                 } else {
                   thePrinter.print(text);
                 }
@@ -371,7 +371,7 @@ public class FileInfoContainer {
               final String text = stringPrefix + AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES + extractedDirective;
               final ResetablePrinter thePrinter = assertNotNull(preprocessingState.getPrinter());
               if (doPrintLn) {
-                thePrinter.println(text);
+                thePrinter.println(text, context.getEol());
               } else {
                 thePrinter.print(text);
               }
@@ -395,7 +395,7 @@ public class FileInfoContainer {
             thePrinter.print(stringPrefix);
             final String text = extractDoubleDollarPrefixedDirective(leftTrimmedString, context);
             if (doPrintLn) {
-              thePrinter.println(text);
+              thePrinter.println(text, context.getEol());
             } else {
               thePrinter.print(text);
             }
@@ -406,7 +406,7 @@ public class FileInfoContainer {
             final String text = extractSingleDollarPrefixedDirective(stringToBeProcessed, context);
 
             if (doPrintLn) {
-              thePrinter.println(text);
+              thePrinter.println(text, context.getEol());
             } else {
               thePrinter.print(text);
             }
@@ -421,7 +421,7 @@ public class FileInfoContainer {
 
             thePrinter.print(stringPrefix);
             if (doPrintLn) {
-              thePrinter.println(strToOut);
+              thePrinter.println(strToOut, context.getEol());
             } else {
               thePrinter.print(strToOut);
             }
@@ -429,7 +429,7 @@ public class FileInfoContainer {
         } else if (context.isKeepLines()) {
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
           if (doPrintLn) {
-            thePrinter.println(text);
+            thePrinter.println(text, context.getEol());
           } else {
             thePrinter.print(text);
           }

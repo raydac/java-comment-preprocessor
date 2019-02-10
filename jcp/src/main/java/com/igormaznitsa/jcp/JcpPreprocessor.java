@@ -54,6 +54,7 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -80,7 +81,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public final class JCPreprocessor {
+public final class JcpPreprocessor {
 
   static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[] {
       new HelpHandler(),
@@ -106,7 +107,7 @@ public final class JCPreprocessor {
   };
   private final PreprocessorContext context;
 
-  public JCPreprocessor(@Nonnull final PreprocessorContext context) {
+  public JcpPreprocessor(@Nonnull final PreprocessorContext context) {
     assertNotNull("Configurator is null", context);
     this.context = context;
   }
@@ -131,7 +132,7 @@ public final class JCPreprocessor {
       System.exit(1);
     }
 
-    final JCPreprocessor preprocessor = new JCPreprocessor(preprocessorContext);
+    final JcpPreprocessor preprocessor = new JcpPreprocessor(preprocessorContext);
 
     try {
       preprocessor.execute();
@@ -186,29 +187,37 @@ public final class JCPreprocessor {
 
   @Nonnull
   public PreprocessorContext getContext() {
-    return context;
+    return this.context;
   }
 
   @Nonnull
-  public PreprocessingStatistics execute() throws IOException {
+  public Statistics execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
+    processConfigFiles();
 
-    processCfgFiles();
+    this.context.logInfo(String.format("File extensions: %s excluded %s", this.context.getExtensions(), this.context.getExcludeExtensions()));
+    final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
+    this.context.logDebug("Source folders: " + srcFolders);
 
-    final List<PreprocessorContext.SourceFolder> srcFolders = context.getSources();
-    final Collection<FileInfoContainer> filesToBePreprocessed = findAllFilesToBePreprocessed(srcFolders, context.getExcludeFolders());
+    if (srcFolders.isEmpty()) {
+      this.context.logWarning("Source folder list is empty!");
+    }
+
+    final Collection<FileInfoContainer> filesToBePreprocessed = collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
     processFileExclusion(excludedIf);
-    if (!context.isDryRun()) {
-      createDestinationDirectory();
+    if (!this.context.isDryRun()) {
+      createTargetFolder();
+    } else {
+      this.context.logInfo("Dry run mode is ON");
     }
-    final PreprocessingStatistics stat = preprocessFiles(filesToBePreprocessed);
+    final Statistics stat = preprocessFiles(filesToBePreprocessed);
 
     final long elapsedTime = System.currentTimeMillis() - timeStart;
     this.context.logInfo("-----------------------------------------------------------------");
-    this.context.logInfo(String.format("Preprocessed %d files, copied %d files, elapsed time %d ms", stat.getNumberOfPreprocessed(), stat.getNumberOfCopied(), elapsedTime));
+    this.context.logInfo(String.format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms", stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
     return stat;
   }
 
@@ -272,12 +281,14 @@ public final class JCPreprocessor {
   }
 
   @Nonnull
-  private PreprocessingStatistics preprocessFiles(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
-    int prepFileCounter = 0;
-    int copFileCounter = 0;
+  private Statistics preprocessFiles(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
+    int preprocessedCounter = 0;
+    int copiedCounter = 0;
+    int excludedCounter = 0;
+
     for (final FileInfoContainer fileRef : files) {
       if (fileRef.isExcludedFromPreprocessing()) {
-        // do nothing
+        excludedCounter++;
       } else if (fileRef.isCopyOnly()) {
         if (!context.isDryRun()) {
           final File destinationFile = this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
@@ -295,7 +306,7 @@ public final class JCPreprocessor {
               this.context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
             }
             PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile, this.context.isKeepAttributes());
-            copFileCounter++;
+            copiedCounter++;
           }
         }
       } else {
@@ -305,95 +316,103 @@ public final class JCPreprocessor {
         if (this.context.isVerbose()) {
           this.context.logForVerbose(String.format("File preprocessing completed  '%s', elapsed time %d ms", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
-        prepFileCounter++;
+        preprocessedCounter++;
       }
     }
-    return new PreprocessingStatistics(prepFileCounter, copFileCounter);
+    return new Statistics(preprocessedCounter, copiedCounter, excludedCounter);
   }
 
-  private void createDestinationDirectory() throws IOException {
-    final File destination = context.getTarget();
+  private void createTargetFolder() throws IOException {
+    final File target = context.getTarget();
 
-    final boolean destinationExistsAndDirectory = destination.exists() && destination.isDirectory();
+    final boolean targetExists = target.isDirectory();
 
-    if (context.isClearTarget() && destinationExistsAndDirectory) {
+    if (context.isClearTarget() && targetExists) {
+      this.context.logForVerbose("Cleaining target folder: " + target);
       try {
-        FileUtils.cleanDirectory(destination);
+        FileUtils.cleanDirectory(target);
       } catch (IOException ex) {
-        throw new IOException("Folder can't be cleaned: " + PreprocessorUtils.getFilePath(destination), ex);
+        throw new IOException("Can't clean folder: " + PreprocessorUtils.getFilePath(target), ex);
       }
     }
 
-    if (!destinationExistsAndDirectory && !destination.mkdirs()) {
-      throw new IOException("Folder can't be created: " + PreprocessorUtils.getFilePath(destination));
+    if (!targetExists && !target.mkdirs()) {
+      throw new IOException("Can't make folder: " + PreprocessorUtils.getFilePath(target));
     }
+
+    this.context.logForVerbose("Target folder has been prepared: " + target);
   }
 
   @Nonnull
   @MustNotContainNull
-  private Collection<FileInfoContainer> findAllFilesToBePreprocessed(@Nonnull @MustNotContainNull final List<PreprocessorContext.SourceFolder> srcFolders, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
+  private Collection<FileInfoContainer> collectFilesToPreprocess(@Nonnull @MustNotContainNull final List<PreprocessorContext.SourceFolder> sources, @Nonnull @MustNotContainNull final List<String> excluded) throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<>();
 
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    for (final PreprocessorContext.SourceFolder dir : srcFolders) {
-      String canonicalPathForSrcDirectory = dir.getAsFile().getCanonicalPath();
+    for (final PreprocessorContext.SourceFolder sourceFolder : sources) {
+      String canonicalSourcePath = sourceFolder.getAsFile().getCanonicalPath();
 
-      if (!canonicalPathForSrcDirectory.endsWith(File.separator)) {
-        canonicalPathForSrcDirectory += File.separator;
+      this.context.logDebug("Processing folder: " + sourceFolder);
+
+      if (!canonicalSourcePath.endsWith(File.separator)) {
+        canonicalSourcePath += File.separator;
       }
 
-      final Set<File> allFoundFiles = findAllFiles(canonicalPathForSrcDirectory, dir.getAsFile(), antPathMatcher, excludedFolderPatterns);
-
-      for (final File file : allFoundFiles) {
-        if (context.isFileExcludedFromProcess(file)) {
-          // ignore excluded file
-          continue;
+      for (final File file : findAllFiles(canonicalSourcePath, sourceFolder.getAsFile(), antPathMatcher, excluded)) {
+        if (this.context.isFileExcludedByExtension(file)) {
+          this.context.logForVerbose(String.format("File '%s' excluded by its extension", file.getPath()));
+        } else {
+          final String canonicalFilePath = file.getCanonicalPath();
+          final String canonicalRelativePath = canonicalFilePath.substring(canonicalSourcePath.length());
+          final FileInfoContainer reference = new FileInfoContainer(file, canonicalRelativePath, !this.context.isFileAllowedForPreprocessing(file));
+          result.add(reference);
+          this.context.logDebug("File added to preprocess list: " + reference);
         }
-
-        final String filePath = file.getCanonicalPath();
-        final String relativePath = filePath.substring(canonicalPathForSrcDirectory.length());
-
-        final FileInfoContainer reference = new FileInfoContainer(file, relativePath, !this.context.isFileAllowedForPreprocessing(file));
-        result.add(reference);
       }
-
     }
 
     return result;
   }
 
   @Nonnull
-  private Set<File> findAllFiles(@Nonnull final String baseFolderCanonicalPath, @Nonnull final File dir, @Nonnull final AntPathMatcher antPathMatcher, @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns) throws IOException {
+  private Set<File> findAllFiles(
+      @Nonnull final String sourceCanonicalPath,
+      @Nonnull final File dir,
+      @Nonnull final AntPathMatcher antPathMatcher,
+      @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns
+  ) throws IOException {
+
     final Set<File> result = new HashSet<>();
+
+    this.context.logDebug("Looking for files in folder: " + dir);
+
     final File[] allowedFiles = dir.listFiles();
-    if (allowedFiles != null) {
-      final String normalizedBasePath = FilenameUtils.normalize(baseFolderCanonicalPath, true);
+    if (allowedFiles == null) {
+      this.context.logWarning("Can't find files in folder: " + dir);
+    } else {
+      final String normalizedBasePath = FilenameUtils.normalize(sourceCanonicalPath, true);
 
       for (final File file : allowedFiles) {
         if (file.isDirectory()) {
-          boolean process = true;
-
           final String folderPath = file.getCanonicalPath();
-
-          String excludingPattern = null;
+          String excludedFolderPattern = null;
 
           if (!excludedFolderPatterns.isEmpty()) {
             final String subPathInBase = folderPath.substring(normalizedBasePath.length());
 
-            for (final String s : excludedFolderPatterns) {
-              if (antPathMatcher.match(s, subPathInBase)) {
-                excludingPattern = s;
-                process = false;
+            for (final String pattern : excludedFolderPatterns) {
+              if (antPathMatcher.match(pattern, subPathInBase)) {
+                excludedFolderPattern = pattern;
                 break;
               }
             }
           }
 
-          if (process) {
-            result.addAll(findAllFiles(baseFolderCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
+          if (excludedFolderPattern == null) {
+            result.addAll(findAllFiles(sourceCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
           } else {
-            this.context.logForVerbose(String.format("Folder '%s' excluded for pattern '%s'", folderPath, excludingPattern));
+            this.context.logForVerbose(String.format("Folder '%s' excluded by '%s'", folderPath, excludedFolderPattern));
           }
         } else {
           result.add(file);
@@ -403,27 +422,27 @@ public final class JCPreprocessor {
     return result;
   }
 
-  void processCfgFiles() throws IOException {
+  void processConfigFiles() throws IOException {
 
     for (final File file : context.getConfigFiles()) {
-      final String[] wholeFile = readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
+      final String[] lines = readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
 
       int readStringIndex = -1;
-      for (final String curString : wholeFile) {
+      for (final String curString : lines) {
         final String trimmed = curString.trim();
         readStringIndex++;
 
         if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
           // do nothing
         } else if (trimmed.charAt(0) == '@') {
-          throwPreprocessorException("You can't start any string in a global variable defining file with \'@\'", trimmed, file, readStringIndex, null);
+          throwPreprocessorException("Config file doesn't allow have lines started with '@'", trimmed, file, readStringIndex, null);
         } else if (trimmed.charAt(0) == '/') {
           // a command line argument
           boolean processed = false;
           try {
             for (CommandLineHandler handler : getCommandLineHandlers()) {
               if (context.isVerbose()) {
-                context.logForVerbose(String.format("Processing сonfig file key '%s' at %s: %d", trimmed, file.getName(), readStringIndex + 1));
+                context.logForVerbose(String.format("Processing сonfig file key '%s' at %s:%d", trimmed, file.getName(), readStringIndex + 1));
               }
               if (handler.processCommandLineKey(trimmed, context)) {
                 processed = true;
@@ -454,7 +473,7 @@ public final class JCPreprocessor {
             this.context.setGlobalVariable(name, result);
 
             if (this.context.isVerbose()) {
-              this.context.logForVerbose(String.format("Register global variable '%s' = '%s' (%s:%d)", name, result.toString(), file.getName(), readStringIndex + 1));
+              this.context.logForVerbose(String.format("Registering global variable '%s' = '%s' (%s:%d)", name, result.toString(), file.getName(), readStringIndex + 1));
             }
           } catch (Exception unexpected) {
             throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
@@ -464,22 +483,10 @@ public final class JCPreprocessor {
     }
   }
 
-  public static final class PreprocessingStatistics {
-
-    private final int numberOfPreprocessed;
-    private final int numberOfCopied;
-
-    public PreprocessingStatistics(final int numberOfPreprocessed, final int numberOfCopied) {
-      this.numberOfPreprocessed = numberOfPreprocessed;
-      this.numberOfCopied = numberOfCopied;
-    }
-
-    public int getNumberOfCopied() {
-      return this.numberOfCopied;
-    }
-
-    public int getNumberOfPreprocessed() {
-      return this.numberOfPreprocessed;
-    }
+  @Data
+  public static final class Statistics {
+    private final int preprocessed;
+    private final int copied;
+    private final int excluded;
   }
 }

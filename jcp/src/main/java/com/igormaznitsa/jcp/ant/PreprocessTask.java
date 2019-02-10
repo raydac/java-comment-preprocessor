@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.ant;
 
-import com.igormaznitsa.jcp.JCPreprocessor;
+import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.GetUtils;
 import lombok.Data;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -57,6 +58,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 @Data
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
   private Sources sources = null;
+  private String eol = null;
   private boolean keepAttributes = false;
   private String target = null;
   private String sourceEncoding = null;
@@ -160,6 +162,10 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setKeepAttributes(this.isKeepAttributes());
     context.setUnknownVariableAsFalse(this.isUnknownVarAsFalse());
 
+    if (this.getEol() != null) {
+      context.setEol(StringEscapeUtils.unescapeJava(this.getEol()));
+    }
+
     if (this.getExcludeFolders() != null) {
       context.setExcludeFolders(
           this.getExcludeFolders().getFolders()
@@ -178,7 +184,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Override
   public void execute() throws BuildException {
     PreprocessorContext context;
-    JCPreprocessor preprocessor;
+    JcpPreprocessor preprocessor;
 
     this.antVariables.clear();
     this.antVariables.putAll(fillAntVariables());
@@ -190,7 +196,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
     }
 
-    preprocessor = new JCPreprocessor(context);
+    preprocessor = new JcpPreprocessor(context);
 
     try {
       preprocessor.execute();
