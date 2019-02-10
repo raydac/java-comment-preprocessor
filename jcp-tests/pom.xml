@@ -17,7 +17,6 @@
         <module>jcp-test-maven</module>
         <module>jcp-test-static-site</module>
         <module>jcp-test-javassist</module>
-        <module>jcp-test-gradle</module>
     </modules>
 
     <profiles>
