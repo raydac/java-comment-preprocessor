@@ -67,6 +67,25 @@
     <module>jcp</module>
   </modules>
 
+    <profiles>
+    <profile>
+      <id>it</id>
+      <modules>
+        <module>jcp-tests</module>
+      </modules>
+    </profile>
+        <profile>
+            <id>jdk-eight</id>
+            <activation>
+                <jdk>[1.8,9)</jdk>
+            </activation>
+            <modules>
+                <module>jcp-gradle-plugin</module>
+            </modules>
+        </profile>
+    </profiles>
+
+
   <dependencies>
     <dependency>
       <groupId>org.apache.ant</groupId>
@@ -74,15 +93,6 @@
       <version>1.8.2</version>
     </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>it</id>
-      <modules>
-        <module>jcp-tests</module>
-      </modules>
-    </profile>
-  </profiles>
 
   <build>
     <pluginManagement>

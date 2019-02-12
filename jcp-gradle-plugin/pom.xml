@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>jcp-pom</artifactId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jcp-gradle-plugin</artifactId>
+    <packaging>pom</packaging>
+
+    <dependencies>
+    </dependencies>
+
+    <properties>
+        <gradleGoal>install</gradleGoal>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>publishGradle</id>
+            <properties>
+                <gradleGoal>publishPlugins</gradleGoal>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/gradle</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}</directory>
+                            <includes>
+                                <include>gradlew</include>
+                                <include>gradlew.bat</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/downloaded</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/build</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/out</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>set-system-properties</goal>
+                        </goals>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>gradle.prop.jbbp_plugin_version</name>
+                                    <value>${project.version}</value>
+                                </property>
+                                <property>
+                                    <name>gradle.prop.meta_lib_version</name>
+                                    <value>${meta.version}</value>
+                                </property>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.fortasoft</groupId>
+                <artifactId>gradle-maven-plugin</artifactId>
+                <version>1.0.8</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.gradle</groupId>
+                        <artifactId>gradle-tooling-api</artifactId>
+                        <version>4.3</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <gradleVersion>4.3</gradleVersion>
+                    <tasks>
+                        <task>clean</task>
+                        <task>${gradleGoal}</task>
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>invoke</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

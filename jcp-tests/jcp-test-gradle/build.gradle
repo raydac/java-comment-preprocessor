@@ -1,0 +1,17 @@
+buildscript {
+  repositories {
+     mavenLocal()
+     mavenCentral()
+  }
+
+  dependencies {
+    classpath files(project.jcp_plugin_path)
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.igormaznitsa.jcp'
+
+
+mainClassName = 'hello.world'
