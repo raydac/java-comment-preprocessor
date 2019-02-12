@@ -28,16 +28,16 @@
 
   <build>
     <finalName>${main.project.finalName}</finalName>
-    <sourceDirectory>${main.project.src.folder}/main/java</sourceDirectory>
-    <testSourceDirectory>${main.project.src.folder}/test/java</testSourceDirectory>
+    <sourceDirectory>${main.project.src.folder}${file.separator}main${file.separator}java</sourceDirectory>
+    <testSourceDirectory>${main.project.src.folder}${file.separator}test${file.separator}java</testSourceDirectory>
     <resources>
       <resource>
-        <directory>${main.project.src.folder}/main/resources</directory>
+        <directory>${main.project.src.folder}${file.separator}main${file.separator}resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>${main.project.src.folder}/test/resources</directory>
+        <directory>${main.project.src.folder}${file.separator}test${file.separator}resources</directory>
       </testResource>
     </testResources>
     <plugins>

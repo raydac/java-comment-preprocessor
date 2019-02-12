@@ -8,19 +8,19 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${project.build.directory}/unpacked/${sub.name.jdk9}</directory>
-      <outputDirectory>META-INF/versions/9</outputDirectory>
+      <directory>${project.build.directory}${file.separator}unpacked${file.separator}${sub.name.jdk9}</directory>
+      <outputDirectory>META-INF${file.separator}versions${file.separator}9</outputDirectory>
       <!-- we should ignore content of /META-INF for sub module-->
       <excludes>
-        <exclude>/META-INF/**</exclude>
+        <exclude>${file.separator}META-INF${file.separator}**</exclude>
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${project.build.directory}/unpacked/${project.build.finalName}</directory>
-      <outputDirectory>/</outputDirectory>
+      <directory>${project.build.directory}${file.separator}unpacked${file.separator}${project.build.finalName}</directory>
+      <outputDirectory>${file.separator}</outputDirectory>
       <!-- we can ignore maven folder in the case to make result file smaller -->
       <excludes>
-        <exclude>/META-INF/maven/**</exclude>
+        <exclude>${file.separator}META-INF${file.separator}maven${file.separator}**</exclude>
       </excludes>
     </fileSet>
   </fileSets>

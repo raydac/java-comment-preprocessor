@@ -216,7 +216,7 @@ public class PreprocessTaskTest {
 
     final List<File> foundConfigFiles = antTask.makePreprocessorContext().getConfigFiles();
     assertEquals("Must be 2", 2, foundConfigFiles.size());
-    assertEquals("base/dir/what/that", foundConfigFiles.get(0).getPath());
-    assertEquals("base/dir/what/those", foundConfigFiles.get(1).getPath());
+    assertEquals("base/dir/what/that".replace('/', File.separatorChar), foundConfigFiles.get(0).getPath());
+    assertEquals("base/dir/what/those".replace('/', File.separatorChar), foundConfigFiles.get(1).getPath());
   }
 }

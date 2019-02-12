@@ -105,8 +105,8 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <from>${project.build.directory}/${project.build.finalName}.jar</from>
-                            <to>${project.build.directory}/unpacked/${project.build.finalName}</to>
+                            <from>${project.build.directory}${file.separator}${project.build.finalName}.jar</from>
+                            <to>${project.build.directory}${file.separator}unpacked${file.separator}${project.build.finalName}</to>
                         </configuration>
                     </execution>
                     <execution>
@@ -116,8 +116,8 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <from>${project.build.directory}/${sub.name.jdk9}.jar</from>
-                            <to>${project.build.directory}/unpacked/${sub.name.jdk9}</to>
+                            <from>${project.build.directory}${file.separator}${sub.name.jdk9}.jar</from>
+                            <to>${project.build.directory}${file.separator}unpacked${file.separator}${sub.name.jdk9}</to>
                         </configuration>
                     </execution>
                 </executions>
@@ -128,7 +128,7 @@
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
-                        <descriptor>src/assembly/assembly.xml</descriptor>
+                        <descriptor>src${file.separator}assembly${file.separator}assembly.xml</descriptor>
                     </descriptors>
                     <archive>
                         <manifestEntries>

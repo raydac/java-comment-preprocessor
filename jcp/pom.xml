@@ -317,7 +317,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5.2</version>
                 <configuration>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
@@ -470,7 +469,7 @@
                     <showWarnings>true</showWarnings>
                     <excludes>
                         <exclude>
-                            **/JCPreprocessor/src/test/resources/com/igormaznitsa/jcp/it/maven/dummy_maven_project/**/*.java
+                            **${file.separator}JCPreprocessor${file.separator}src${file.separator}test${file.separator}resources${file.separator}com${file.separator}igormaznitsa${file.separator}jcp${file.separator}it${file.separator}maven${file.separator}dummy_maven_project${file.separator}**${file.separator}*.java
                         </exclude>
                     </excludes>
                 </configuration>
