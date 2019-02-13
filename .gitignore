@@ -1,3 +1,5 @@
+**/.gradle/
+**/build/
 **/target/
 /nbproject/
 **/dependency-reduced-pom.xml

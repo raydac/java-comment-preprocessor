@@ -15,3 +15,10 @@ apply plugin: 'com.igormaznitsa.jcp'
 
 
 mainClassName = 'hello.world'
+
+
+preprocessSettings {
+  message = 'Hello Preprocessing!'
+}
+
+compileJava.dependsOn preprocess
