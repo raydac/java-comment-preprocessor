@@ -12,11 +12,10 @@
     <artifactId>jcp-gradle-plugin</artifactId>
     <packaging>pom</packaging>
 
-    <dependencies>
-    </dependencies>
 
     <properties>
         <gradleGoal>install</gradleGoal>
+        <gradle.version>5.0</gradle.version>
     </properties>
 
     <profiles>
@@ -27,6 +26,39 @@
             </properties>
         </profile>
     </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.5.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-core</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-base-services</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-base-services-groovy</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-tooling-api</artifactId>
+            <version>2.13</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -94,14 +126,15 @@
                     <dependency>
                         <groupId>org.gradle</groupId>
                         <artifactId>gradle-tooling-api</artifactId>
-                        <version>4.3</version>
+                        <version>${gradle.version}</version>
                     </dependency>
                 </dependencies>
 
                 <configuration>
-                    <gradleVersion>4.3</gradleVersion>
+                    <gradleVersion>${gradle.version}</gradleVersion>
                     <tasks>
                         <task>clean</task>
+                        <task>test</task>
                         <task>${gradleGoal}</task>
                     </tasks>
                 </configuration>

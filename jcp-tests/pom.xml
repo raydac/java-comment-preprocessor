@@ -30,15 +30,6 @@
                 <module>jcp-test-jep238</module>
             </modules>
         </profile>
-        <profile>
-            <id>jdk-eight</id>
-            <activation>
-                <jdk>[1.8,9)</jdk>
-            </activation>
-            <modules>
-                <module>jcp-test-gradle</module>
-            </modules>
-        </profile>
     </profiles>
 
     <dependencies>

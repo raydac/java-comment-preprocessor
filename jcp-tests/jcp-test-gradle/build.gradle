@@ -1,20 +1,47 @@
 buildscript {
-  repositories {
-     mavenLocal()
-     mavenCentral()
-  }
-
   dependencies {
     classpath files(project.jcp_plugin_path)
   }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.igormaznitsa.jcp'
 
-
 mainClassName = 'hello.world'
+
+dependencies {
+    def junit4Version        = '4.12'
+    def junitVintageVersion  = '5.4.0'
+    def junitJupiterVersion  = '5.4.0'
+    def junitPlatformVersion = '1.4.0'
+
+    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
+
+    testCompile("junit:junit:${junit4Version}")
+    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
+
+    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+}
+
+test {
+    useJUnitPlatform {
+        // includeEngines 'junit-jupiter', 'junit-vintage'
+        // excludeEngines 'custom-engine'
+
+        // includeTags 'fast'
+        excludeTags 'slow'
+    }
+
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
 
 
 preprocessSettings {

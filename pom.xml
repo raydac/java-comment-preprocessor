@@ -65,6 +65,7 @@
 
   <modules>
     <module>jcp</module>
+    <module>jcp-gradle-plugin</module>
   </modules>
 
     <profiles>
@@ -74,25 +75,8 @@
         <module>jcp-tests</module>
       </modules>
     </profile>
-        <profile>
-            <id>jdk-eight</id>
-            <activation>
-                <jdk>[1.8,9)</jdk>
-            </activation>
-            <modules>
-                <module>jcp-gradle-plugin</module>
-            </modules>
-        </profile>
     </profiles>
 
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.8.2</version>
-    </dependency>
-  </dependencies>
 
   <build>
     <pluginManagement>
@@ -165,5 +149,38 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <repositories>
+    <repository>
+      <id>repo.gradle.org</id>
+      <url>http://repo.gradle.org/gradle/libs-releases-local</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>repo.gradle.plugins</id>
+      <url>https://plugins.gradle.org/m2/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>repo.spring.io</id>
+      <url>http://repo.spring.io/plugins-release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
 </project>
