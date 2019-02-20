@@ -89,6 +89,9 @@
 
                 <configuration>
                     <gradleVersion>5.0</gradleVersion>
+                    <args>
+                        <arg>--stacktrace</arg>
+                    </args>
                     <tasks>
                         <task>clean</task>
                         <task>test</task>

@@ -50,7 +50,7 @@
                     <clearTarget>true</clearTarget>
                     <keepLines>true</keepLines>
                     <careForLastEol>true</careForLastEol>
-                    <allowWhitespace>true</allowWhitespace>
+                    <allowWhitespaces>true</allowWhitespaces>
                     <preserveIndents>true</preserveIndents>
                     <unknownVarAsFalse>true</unknownVarAsFalse>>
                     <excludeFolders>

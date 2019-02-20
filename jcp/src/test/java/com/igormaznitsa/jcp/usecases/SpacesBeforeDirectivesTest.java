@@ -32,7 +32,7 @@ public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
-    context.setAllowWhitespace(true);
+    context.setAllowWhitespaces(true);
   }
 
   @Override

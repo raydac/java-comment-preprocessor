@@ -13,7 +13,7 @@
                 dryRun="false"
                 keepLines="true"
                 careForLastEol="true"
-                allowWhiteSpace="true"
+                allowWhiteSpaces="true"
                 eol="\r\n"
                 sourceEncoding="UTF-8"
                 targetEncoding="UTF-8"

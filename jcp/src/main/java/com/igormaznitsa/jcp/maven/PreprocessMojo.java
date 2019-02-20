@@ -61,7 +61,7 @@ import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
  * Mojo to preprocess either standard maven project source roots or custom source roots and place prepsocessed result into defined target folder.
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Mojo(name = "preprocess", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
@@ -87,7 +87,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private MavenProject project;
 
   /**
-   * Source root folders for preprocessing, it it is empty then project provided folders will be used.
+   * Source root folders for preprocessing, if it is empty then project provided folders will be used.
    *
    * @since 7.0.0
    */
@@ -259,8 +259,8 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   /**
    * Turn on support of white spaces in preprocessor directives between '//' and the '#'.
    */
-  @Parameter(alias = "allowWhitespace", defaultValue = "false")
-  private boolean allowWhitespace = false;
+  @Parameter(alias = "allowWhitespaces", defaultValue = "false")
+  private boolean allowWhitespaces = false;
 
   /**
    * Preserve indents in lines marked by '//$' and '//$$' directives. Directives will be replaced by white spaces chars.
@@ -381,7 +381,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setVerbose(getLog().isDebugEnabled() || this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setDryRun(this.isDryRun());
-    context.setAllowWhitespace(this.isAllowWhitespace());
+    context.setAllowWhitespaces(this.isAllowWhitespaces());
     context.setPreserveIndents(this.isPreserveIndents());
     context.setExcludeFolders(this.getExcludeFolders());
     context.setKeepAttributes(this.isKeepAttributes());

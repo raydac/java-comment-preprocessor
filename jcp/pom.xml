@@ -37,6 +37,7 @@
                                 <class>com.igormaznitsa.jcp.ant.PreprocessTask*</class>
                                 <class>com.igormaznitsa.jcp.JcpPreprocessor*</class>
                                 <class>com.igormaznitsa.jcp.containers.FileInfoContainer</class>
+                                <class>com.igormaznitsa.jcp.gradle.*</class>
                             </ignoreClasses>
                         </configuration>
                         <executions>
@@ -302,6 +303,45 @@
             <version>1.7.25</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-core</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-base-services</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-base-services-groovy</artifactId>
+            <version>${gradle.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-plugins</artifactId>
+            <version>3.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-tooling-api</artifactId>
+            <version>2.13</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.5.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>

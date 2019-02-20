@@ -107,7 +107,7 @@ public class FileInfoContainer {
   @Nonnull
   private static String findTailRemover(@Nonnull final String str, @Nonnull final PreprocessorContext context) {
     String result = str;
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       final Matcher matcher = DIRECTIVE_TAIL_REMOVER.matcher(str);
       if (matcher.find()) {
         result = str.substring(0, matcher.start());
@@ -205,7 +205,7 @@ public class FileInfoContainer {
   }
 
   private boolean isDoubleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith("//$$");
@@ -213,7 +213,7 @@ public class FileInfoContainer {
   }
 
   private boolean isSingleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith("//$");
@@ -221,7 +221,7 @@ public class FileInfoContainer {
   }
 
   private boolean isHashPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
@@ -230,7 +230,7 @@ public class FileInfoContainer {
 
   @Nonnull
   private String extractHashPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       final Matcher matcher = DIRECTIVE_HASH_PREFIXED.matcher(line);
       if (matcher.find()) {
         return matcher.group(1);
@@ -245,7 +245,7 @@ public class FileInfoContainer {
   @Nonnull
   private String extractDoubleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
     String tail;
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       final Matcher matcher = DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
       if (matcher.find()) {
         tail = matcher.group(1);
@@ -265,7 +265,7 @@ public class FileInfoContainer {
   @Nonnull
   private String extractSingleDollarPrefixedDirective(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
     String tail;
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       final Matcher matcher = DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
       if (matcher.find()) {
         tail = matcher.group(1);

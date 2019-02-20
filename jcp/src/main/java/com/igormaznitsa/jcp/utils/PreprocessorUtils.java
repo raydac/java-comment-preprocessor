@@ -172,7 +172,7 @@ public final class PreprocessorUtils {
     int position;
     String result = processingString;
 
-    if (context.isAllowWhitespace()) {
+    if (context.isAllowWhitespaces()) {
       final Matcher matcher = PATTERN_MACROS_WITH_SPACES.matcher(processingString);
       final StringBuilder buffer = new StringBuilder();
       int end = 0;

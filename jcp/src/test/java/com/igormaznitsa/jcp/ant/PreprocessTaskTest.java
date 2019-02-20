@@ -147,9 +147,9 @@ public class PreprocessTaskTest {
 
   @Test
   public void testAllowWhitespace() {
-    antTask.setAllowWhitespace(true);
-    assertTrue(antTask.makePreprocessorContext().isAllowWhitespace());
-    antTask.setAllowWhitespace(false);
+    antTask.setAllowWhitespaces(true);
+    assertTrue(antTask.makePreprocessorContext().isAllowWhitespaces());
+    antTask.setAllowWhitespaces(false);
     assertFalse(antTask.makePreprocessorContext().isVerbose());
   }
 

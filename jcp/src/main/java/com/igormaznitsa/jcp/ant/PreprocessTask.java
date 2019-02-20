@@ -57,7 +57,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class PreprocessTask extends Task implements PreprocessorLogger, SpecialVariableProcessor {
   private Sources sources = null;
   private String eol = null;
@@ -78,7 +78,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private ExcludeFolders excludeFolders = null;
   private ConfigFiles configFiles = null;
   private boolean keepLines = true;
-  private boolean allowWhitespace = false;
+  private boolean allowWhitespaces = false;
   private boolean preserveIndents = false;
   private boolean dontOverwriteSameContent = false;
   private Map<String, Value> antVariables = new HashMap<>();
@@ -152,7 +152,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setVerbose(this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setCareForLastEol(this.isCareForLastEol());
-    context.setAllowWhitespace(this.isAllowWhitespace());
+    context.setAllowWhitespaces(this.isAllowWhitespaces());
     context.setPreserveIndents(this.isPreserveIndents());
     context.setKeepAttributes(this.isKeepAttributes());
     context.setUnknownVariableAsFalse(this.isUnknownVarAsFalse());
@@ -308,7 +308,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class Sources {
 
     protected List<Path> paths = new ArrayList<>();
@@ -332,13 +332,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class ConfigFiles extends Sources {
 
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class ExcludeFolders {
 
     private List<Folder> folders = new ArrayList<>();
@@ -361,13 +361,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class ExcludeExtensions extends Extensions {
 
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class Extensions {
     protected final List<Extension> extensions = new ArrayList<>();
 
@@ -389,7 +389,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Data
-  @EqualsAndHashCode(callSuper=false)
+  @EqualsAndHashCode(callSuper = false)
   public static class Vars {
     private List<Var> vars = new ArrayList<>();
 
@@ -401,7 +401,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     @Data
-    @EqualsAndHashCode(callSuper=false)
+    @EqualsAndHashCode(callSuper = false)
     public static class Var {
       private String name = "";
       private String value = "";

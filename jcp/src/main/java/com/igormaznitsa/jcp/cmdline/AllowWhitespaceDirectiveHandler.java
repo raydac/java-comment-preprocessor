@@ -45,7 +45,7 @@ public class AllowWhitespaceDirectiveHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
-      context.setAllowWhitespace(true);
+      context.setAllowWhitespaces(true);
       result = true;
     }
 

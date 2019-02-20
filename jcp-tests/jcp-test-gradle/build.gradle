@@ -1,13 +1,13 @@
 buildscript {
-  dependencies {
-    classpath files(project.jcp_plugin_path)
-  }
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath group: 'com.igormaznitsa', name: 'jcp', version: '7.0.0-SNAPSHOT'
+    }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -15,10 +15,14 @@ apply plugin: 'com.igormaznitsa.jcp'
 
 mainClassName = 'hello.world'
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    def junit4Version        = '4.12'
-    def junitVintageVersion  = '5.4.0'
-    def junitJupiterVersion  = '5.4.0'
+    def junit4Version = '4.12'
+    def junitVintageVersion = '5.4.0'
+    def junitJupiterVersion = '5.4.0'
     def junitPlatformVersion = '1.4.0'
 
     testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
@@ -45,7 +49,7 @@ test {
 
 
 preprocessSettings {
-  message = 'Hello Preprocessing!'
+
 }
 
 compileJava.dependsOn preprocess

@@ -47,14 +47,14 @@ public class AllowWhitespaceDirectiveHandlerTest extends AbstractCommandLineHand
     assertFalse(HANDLER.processCommandLineKey("/es:", mock));
     assertFalse(HANDLER.processCommandLineKey("/EK", mock));
     assertFalse(HANDLER.processCommandLineKey("/E ", mock));
-    verify(mock, never()).setAllowWhitespace(anyBoolean());
+    verify(mock, never()).setAllowWhitespaces(anyBoolean());
 
     assertTrue(HANDLER.processCommandLineKey("/ES", mock));
-    verify(mock).setAllowWhitespace(true);
+    verify(mock).setAllowWhitespaces(true);
     reset(mock);
 
     assertTrue(HANDLER.processCommandLineKey("/es", mock));
-    verify(mock).setAllowWhitespace(true);
+    verify(mock).setAllowWhitespaces(true);
     reset(mock);
   }
 

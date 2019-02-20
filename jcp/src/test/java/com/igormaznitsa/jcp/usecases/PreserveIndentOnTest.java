@@ -32,7 +32,7 @@ public class PreserveIndentOnTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
-    context.setAllowWhitespace(true);
+    context.setAllowWhitespaces(true);
     context.setPreserveIndents(true);
   }
 

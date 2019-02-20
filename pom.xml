@@ -17,6 +17,7 @@
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     <min.maven.api>3.0</min.maven.api>
     <junit.version>5.4.0-RC2</junit.version>
+    <gradle.version>3.0</gradle.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
@@ -65,7 +66,6 @@
 
   <modules>
     <module>jcp</module>
-    <module>jcp-gradle-plugin</module>
   </modules>
 
     <profiles>

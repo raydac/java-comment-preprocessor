@@ -28,7 +28,7 @@
                             <goal>preprocess</goal>
                         </goals>
                         <configuration>
-                            <allowWhitespace>true</allowWhitespace>
+                            <allowWhitespaces>true</allowWhitespaces>
                             <extensions>
                                 <extension>java</extension>
                             </extensions>

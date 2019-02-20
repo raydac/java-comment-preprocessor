@@ -100,7 +100,7 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     assertTrue(context.isKeepLines());
     assertTrue(context.isCareForLastEol());
     assertTrue(context.isDontOverwriteSameContent());
-    assertTrue(context.isAllowWhitespace());
+    assertTrue(context.isAllowWhitespaces());
     assertTrue(context.isPreserveIndents());
     assertTrue(context.isKeepAttributes());
     assertTrue(context.isUnknownVariableAsFalse());

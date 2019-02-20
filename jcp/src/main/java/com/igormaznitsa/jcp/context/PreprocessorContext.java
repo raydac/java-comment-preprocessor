@@ -91,7 +91,7 @@ public final class PreprocessorContext {
   private boolean keepLines = false;
   private boolean careForLastEol = false;
   private boolean dontOverwriteSameContent = false;
-  private boolean allowWhitespace = false;
+  private boolean allowWhitespaces = false;
   private boolean preserveIndents = false;
   private boolean keepAttributes = false;
   private boolean unknownVariableAsFalse = false;
@@ -137,7 +137,7 @@ public final class PreprocessorContext {
     this.clearTarget = context.isClearTarget();
     this.dryRun = context.isDryRun();
     this.keepLines = context.isKeepLines();
-    this.allowWhitespace = context.isAllowWhitespace();
+    this.allowWhitespaces = context.isAllowWhitespaces();
     this.preserveIndents = context.isPreserveIndents();
     this.sources.addAll(context.sources);
     this.target = context.getTarget();
