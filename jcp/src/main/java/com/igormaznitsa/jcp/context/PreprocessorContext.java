@@ -109,8 +109,13 @@ public final class PreprocessorContext {
   @Setter(AccessLevel.NONE)
   private transient PreprocessingState currentState;
 
+  /**
+   * Constructor
+   *
+   * @param baseDir the base folder for process, it must not be null
+   */
   public PreprocessorContext(@Nonnull final File baseDir) {
-    this.baseDir = assertNotNull("Basedir must not be null", baseDir);
+    this.baseDir = assertNotNull("Base folder must not be null", baseDir);
     this.currentState = new PreprocessingState(this, this.sourceEncoding, this.targetEncoding);
     setSources(DEFAULT_SOURCE_DIRECTORY).setTarget(new File(DEFAULT_DEST_DIRECTORY));
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
