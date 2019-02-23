@@ -43,7 +43,7 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
 
     final File testFile = new File(this.getClass().getResource("./global_variable_def.txt").toURI());
 
@@ -59,7 +59,7 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Test
   public void testExecution_Expression() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
 
     final File testFile = new File(this.getClass().getResource("./global_variable_def.txt").toURI());
 
@@ -77,25 +77,25 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFileWithExpression() {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@@\"undefinded_file.111111.txtt\"", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFile() {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@undefinded_file.111111.txtt", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFile() {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFileForExpressionMode() {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@@", context);
   }
 

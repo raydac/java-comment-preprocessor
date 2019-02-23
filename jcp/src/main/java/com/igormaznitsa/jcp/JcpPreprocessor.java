@@ -78,8 +78,7 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
  * method and can be started from a command string
- *
- * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * Base directory for preprocessing can be provided through System property 'jcp.base.dir'
  */
 public final class JcpPreprocessor {
 
@@ -125,8 +124,11 @@ public final class JcpPreprocessor {
 
     PreprocessorContext preprocessorContext = null;
 
+    final File baseDir = getBaseDir();
+    System.out.println("Base directory: " + baseDir);
+
     try {
-      preprocessorContext = processCommandLine(args, normalizedStrings);
+      preprocessorContext = processCommandLine(baseDir, args, normalizedStrings);
     } catch (Exception ex) {
       System.err.println("Error during CLI processing: " + ex.getMessage());
       System.exit(1);
@@ -145,8 +147,24 @@ public final class JcpPreprocessor {
   }
 
   @Nonnull
-  private static PreprocessorContext processCommandLine(@Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) {
-    final PreprocessorContext result = new PreprocessorContext();
+  private static File getBaseDir() {
+    String baseDirInProperties = System.getProperty("jcp.base.dir");
+    if (baseDirInProperties == null) {
+      File result;
+      try {
+        result = new File(JcpPreprocessor.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+      } catch (Exception ex) {
+        result = new File("");
+      }
+      return result;
+    } else {
+      return new File(baseDirInProperties);
+    }
+  }
+
+  @Nonnull
+  private static PreprocessorContext processCommandLine(@Nonnull final File baseDir, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) {
+    final PreprocessorContext result = new PreprocessorContext(baseDir);
 
     for (int i = 0; i < normalizedStrings.length; i++) {
       final String arg = normalizedStrings[i];

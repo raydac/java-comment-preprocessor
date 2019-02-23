@@ -122,7 +122,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException {
     final List<String> parsedText = parseStringForLines(encoding);
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
@@ -140,7 +140,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   public PreprocessorContext executeGlobalPhase(final String fileName, final List<ExcludeIfInfo> excludeIf) throws Exception {
     final File file = new File(getClass().getResource(fileName).toURI());
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
@@ -181,7 +181,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     assertNotNull("Preprocessing text is null", preprocessingText);
     assertNotNull("Result container is null", result);
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     if (logger != null) {
       context.setPreprocessorLogger(logger);
     }

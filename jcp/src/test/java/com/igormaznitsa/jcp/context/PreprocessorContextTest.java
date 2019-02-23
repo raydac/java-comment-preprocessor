@@ -294,7 +294,7 @@ public class PreprocessorContextTest {
 
   @Test
   public void testConstuctorWithBaseContext_DefaultValues() throws Exception {
-    final PreprocessorContext baseContext = new PreprocessorContext();
+    final PreprocessorContext baseContext = new PreprocessorContext(new File("some_impossible_folder_121212"));
 
     final Map<Field, Object> baseContextValues = extractValues(baseContext);
     assertFalse(baseContextValues.isEmpty());
@@ -311,7 +311,7 @@ public class PreprocessorContextTest {
   @Test
   public void testConstructorWithBaseContext_RandomValues() throws Exception {
     for (int i = 0; i < 100; i++) {
-      final PreprocessorContext etalon = new PreprocessorContext();
+      final PreprocessorContext etalon = new PreprocessorContext(new File("some_impossible_folder_121212"));
       fillByRandomValues(etalon);
       final PreprocessorContext cloned = new PreprocessorContext(etalon);
       assertFalse(etalon.isCloned());

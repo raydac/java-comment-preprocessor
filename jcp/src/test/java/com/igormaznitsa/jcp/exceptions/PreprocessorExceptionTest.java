@@ -37,7 +37,7 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracket() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
@@ -53,7 +53,7 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracketClosing() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket_closing.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
@@ -69,7 +69,7 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracketInIncluded() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket_include.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setSources(Collections.singletonList(file.getParent()));
     context.setDryRun(true);
 

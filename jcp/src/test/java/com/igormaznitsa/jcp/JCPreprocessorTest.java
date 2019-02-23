@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 public final class JCPreprocessorTest {
 
   private void assertGVDFPreprocessorException(final String file, final int stringIndexStartedFromOne) throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.registerConfigFile(new File(this.getClass().getResource(file).toURI()));
     final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     try {
@@ -58,7 +58,7 @@ public final class JCPreprocessorTest {
 
   @Test
   public void testProcessGlobalVarDefiningFiles() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.registerConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
     final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     preprocessor.processConfigFiles();
@@ -84,7 +84,7 @@ public final class JCPreprocessorTest {
       assertTrue("We have to remove the existing result file", resultFile.delete());
     }
 
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setSources(Collections.singletonList(testDirectory.getCanonicalPath()));
     context.setTarget(testDirectory);
     context.setClearTarget(false);

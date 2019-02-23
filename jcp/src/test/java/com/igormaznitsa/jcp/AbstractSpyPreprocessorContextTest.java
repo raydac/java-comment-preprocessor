@@ -84,7 +84,7 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
 
   protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders, final ContextDataProvider provider) throws Exception {
-    final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext());
+    final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
     final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
 
     PowerMockito.when(stateMock.getRootFileInfo()).thenReturn(new FileInfoContainer(new File("src/fake.java"), "fake.java", false));

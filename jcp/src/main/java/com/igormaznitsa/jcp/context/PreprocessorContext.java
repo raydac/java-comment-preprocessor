@@ -109,10 +109,6 @@ public final class PreprocessorContext {
   @Setter(AccessLevel.NONE)
   private transient PreprocessingState currentState;
 
-  public PreprocessorContext() {
-    this(new File(FilenameUtils.normalize(".")));
-  }
-
   public PreprocessorContext(@Nonnull final File baseDir) {
     this.baseDir = assertNotNull("Basedir must not be null", baseDir);
     this.currentState = new PreprocessingState(this, this.sourceEncoding, this.targetEncoding);

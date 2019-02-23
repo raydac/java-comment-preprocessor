@@ -39,7 +39,7 @@ public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
 
   @Before
   public void initTest() throws Exception {
-    SPY_CONTEXT = spy(new PreprocessorContext());
+    SPY_CONTEXT = spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
     final File thisRoot = new File(this.getClass().getResource("./").toURI());
 
     doAnswer((Answer<Object>) invocation -> {

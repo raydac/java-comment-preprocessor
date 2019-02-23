@@ -140,7 +140,7 @@ public abstract class AbstractUseCaseTest {
 
   @Test
   public final void main() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext();
+    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setClearTarget(true);
     context.setSources(Collections.singletonList(this.sourceFolder.getAbsolutePath()));
     context.setTarget(tmpResultFolder.getRoot());
