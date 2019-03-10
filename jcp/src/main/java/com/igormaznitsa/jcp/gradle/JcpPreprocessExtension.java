@@ -4,26 +4,26 @@ import lombok.Data;
 import org.gradle.api.Project;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.gradle.execution.commandline.TaskConfigurationException;
 
 @Data
 public class JcpPreprocessExtension {
 
   /**
-   * Source root folders for preprocessing, if it is empty then project provided folders will be used.
-   *
-   * @since 7.0.0
+   * Source root folders for preprocessing, if it is empty then project provided
+   * folders will be used.
    */
   private List<String> sources = null;
 
   /**
-   * End of line string to be used in reprocessed results. It supports java escaping chars.
+   * End of line string to be used in reprocessed results. It supports java
+   * escaping chars.
    */
   private String eol = null;
 
@@ -33,14 +33,10 @@ public class JcpPreprocessExtension {
   private boolean keepAttributes = false;
 
   /**
-   * Target folder to place preprocessing result in regular source processing phase.
+   * Target folder to place preprocessing result in regular source processing
+   * phase.
    */
   private File target = null;
-
-  /**
-   * Target folder to place preprocessing result in test source processing phase.
-   */
-  private File targetTest = null;
 
   /**
    * Encoding for text read operations.
@@ -53,19 +49,22 @@ public class JcpPreprocessExtension {
   private String targetEncoding = StandardCharsets.UTF_8.name();
 
   /**
-   * Flag to ignore missing source folders, if false then mojo fail for any missing source folder, if true then missing folder will be ignored.
+   * Flag to ignore missing source folders, if false then mojo fail for any
+   * missing source folder, if true then missing folder will be ignored.
    */
   private boolean ignoreMissingSources = false;
 
   /**
-   * List of file extensions to be excluded from preprocessing. By default excluded xml.
+   * List of file extensions to be excluded from preprocessing. By default
+   * excluded xml.
    */
-  private List<String> excludeExtensions = Collections.singletonList("xml");
+  private List<String> excludeExtensions = null;
 
   /**
-   * List of file extensions to be included into preprocessing. By default java,txt,htm,html
+   * List of file extensions to be included into preprocessing. By default
+   * java,txt,htm,html
    */
-  private List<String> extensions = new ArrayList<>(Arrays.asList("java", "txt", "htm", "html"));
+  private List<String> extensions = null;
 
   /**
    * Interpretate unknown variable as containing boolean false flag.
@@ -90,17 +89,12 @@ public class JcpPreprocessExtension {
   /**
    * Set base directory which will be used for relative source paths.
    */
-  private File baseDir = new File(".");
+  private File baseDir = null;
 
   /**
    * Carefully reproduce last EOL in result files.
    */
   private boolean careForLastEol = false;
-
-  /**
-   * Replace source root folders in maven project after preprocessing for following processing.
-   */
-  private boolean replaceSources = true;
 
   /**
    * Keep comments in result files.
@@ -113,7 +107,8 @@ public class JcpPreprocessExtension {
   private Map<String, String> vars = new HashMap<>();
 
   /**
-   * List of patterns of folder paths to be excluded from preprocessing, It uses ANT path pattern format.
+   * List of patterns of folder paths to be excluded from preprocessing, It uses
+   * ANT path pattern format.
    */
   private List<String> excludeFolders = new ArrayList<>();
 
@@ -123,17 +118,20 @@ public class JcpPreprocessExtension {
   private List<String> configFiles = new ArrayList<>();
 
   /**
-   * Keep preprocessing directives in result files as commented ones, it is useful to not break line numeration in result files.
+   * Keep preprocessing directives in result files as commented ones, it is
+   * useful to not break line numeration in result files.
    */
   private boolean keepLines = true;
 
   /**
-   * Turn on support of white spaces in preprocessor directives between '//' and the '#'.
+   * Turn on support of white spaces in preprocessor directives between '//' and
+   * the '#'.
    */
   private boolean allowWhitespaces = false;
 
   /**
-   * Preserve indents in lines marked by '//$' and '//$$' directives. Directives will be replaced by white spaces chars.
+   * Preserve indents in lines marked by '//$' and '//$$' directives. Directives
+   * will be replaced by white spaces chars.
    */
   private boolean preserveIndents = false;
 
@@ -148,19 +146,48 @@ public class JcpPreprocessExtension {
   private boolean skip = false;
 
   /**
-   * Turn on check of content body compare with existing result file to prevent overwriting, if content is the same then preprocessor will not be writing new result content.
+   * Turn on check of content body compare with existing result file to prevent
+   * overwriting, if content is the same then preprocessor will not be writing
+   * new result content.
    */
   private boolean dontOverwriteSameContent = false;
 
-
   public JcpPreprocessExtension(final Project project) {
+    if (this.baseDir == null) {
+      this.baseDir = project.getProjectDir();
+      project.getLogger().debug("Got basedir from project: " + this.baseDir);
+    }
+  }
+
+  private void assertCharSet(final String name) {
+    if (!Charset.isSupported(name)) {
+      throw new TaskConfigurationException("preprocess", "Unsupported charset: " + name, null);
+    }
   }
 
   public void validate(final Project project) {
-//    if (this.sources == null) {
-//      throw new GradleException("Sources are not provided");
-//    }
-  }
+    if (this.baseDir == null) {
+      throw new TaskConfigurationException("preprocess", "Basedir must be defined", null);
+    }
 
+    if (!this.baseDir.isDirectory()) {
+      throw new TaskConfigurationException("preprocess", "Basedir doesn't exist: " + this.baseDir, null);
+    }
+
+    assertCharSet(this.sourceEncoding);
+    assertCharSet(this.targetEncoding);
+
+    if (this.sources == null) {
+      throw new TaskConfigurationException("preprocess", "Source folders are not deined in 'sources'", null);
+    }
+
+    if (this.sources.isEmpty()) {
+      throw new TaskConfigurationException("preprocess", "Source folders are empty", null);
+    }
+
+    if (this.target == null) {
+      throw new TaskConfigurationException("preprocess", "Target folder is not deined in 'target'", null);
+    }
+  }
 
 }

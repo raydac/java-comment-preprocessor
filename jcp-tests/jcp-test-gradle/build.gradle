@@ -1,13 +1,11 @@
 buildscript {
     repositories {
-        mavenLocal()
+        flatDir dirs: "../../jcp/target"
     }
-
     dependencies {
-        classpath group: 'com.igormaznitsa', name: 'jcp', version: '7.0.0-SNAPSHOT'
+        classpath "com.igormaznitsa:jcp:7.0.0-SNAPSHOT"
     }
 }
-
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -15,41 +13,37 @@ apply plugin: 'com.igormaznitsa.jcp'
 
 mainClassName = 'hello.world'
 
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    def junit4Version = '4.12'
-    def junitVintageVersion = '5.4.0'
-    def junitJupiterVersion = '5.4.0'
-    def junitPlatformVersion = '1.4.0'
-
-    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
-
-    testCompile("junit:junit:${junit4Version}")
-    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
-
-    testRuntime("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.0'
 }
 
-test {
-    useJUnitPlatform {
-        // includeEngines 'junit-jupiter', 'junit-vintage'
-        // excludeEngines 'custom-engine'
-
-        // includeTags 'fast'
-        excludeTags 'slow'
-    }
-
-    testLogging {
-        events 'passed', 'skipped', 'failed'
-    }
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'com.igormaznitsa.jcp.it.gradle.MainTwo'
+    )
+  }
 }
-
 
 preprocessSettings {
+  def targetFolder = 'build/preprocessed/java'
 
+  allowWhitespaces = true
+
+  sources = ['src/main/java']
+  target = file(targetFolder)
+  vars = ['some.test.global': 'Some Test Global Value']
+
+  sourceSets.main.java.srcDirs = [targetFolder]
 }
 
 compileJava.dependsOn preprocess
+

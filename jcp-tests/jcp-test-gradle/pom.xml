@@ -91,10 +91,12 @@
                     <gradleVersion>5.0</gradleVersion>
                     <args>
                         <arg>--stacktrace</arg>
+                        <arg>--info</arg>
                     </args>
                     <tasks>
                         <task>clean</task>
                         <task>test</task>
+                        <task>jar</task>
                     </tasks>
                 </configuration>
                 <executions>
