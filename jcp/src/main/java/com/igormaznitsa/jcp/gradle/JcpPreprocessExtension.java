@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import org.gradle.execution.commandline.TaskConfigurationException;
 
 @Data
 public class JcpPreprocessExtension {
+
+  public static final String ID = "preprocessSettings";
 
   /**
    * Source root folders for preprocessing, if it is empty then project provided
@@ -72,7 +75,7 @@ public class JcpPreprocessExtension {
   private boolean unknownVarAsFalse = false;
 
   /**
-   * Dry run, making preprocessing but without output
+   * Dry run, making pre-processing but without output
    */
   private boolean dryRun = false;
 
@@ -155,38 +158,38 @@ public class JcpPreprocessExtension {
   public JcpPreprocessExtension(final Project project) {
     if (this.baseDir == null) {
       this.baseDir = project.getProjectDir();
-      project.getLogger().debug("Got basedir from project: " + this.baseDir);
+      project.getLogger().debug("Basedir of the project: " + this.baseDir);
     }
   }
 
-  private void assertCharSet(final String name) {
-    if (!Charset.isSupported(name)) {
-      throw new TaskConfigurationException("preprocess", "Unsupported charset: " + name, null);
+  private void assertCharSet(@Nullable final String name) {
+    if (name == null || !Charset.isSupported(name)) {
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Unsupported charset: " + name, null);
     }
   }
 
   public void validate(final Project project) {
     if (this.baseDir == null) {
-      throw new TaskConfigurationException("preprocess", "Basedir must be defined", null);
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Basedir must be defined", null);
     }
 
     if (!this.baseDir.isDirectory()) {
-      throw new TaskConfigurationException("preprocess", "Basedir doesn't exist: " + this.baseDir, null);
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Basedir doesn't exist: " + this.baseDir, null);
     }
 
     assertCharSet(this.sourceEncoding);
     assertCharSet(this.targetEncoding);
 
     if (this.sources == null) {
-      throw new TaskConfigurationException("preprocess", "Source folders are not deined in 'sources'", null);
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Source folders are not deined in 'sources'", null);
     }
 
     if (this.sources.isEmpty()) {
-      throw new TaskConfigurationException("preprocess", "Source folders are empty", null);
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Source folder list is empty", null);
     }
 
     if (this.target == null) {
-      throw new TaskConfigurationException("preprocess", "Target folder is not deined in 'target'", null);
+      throw new TaskConfigurationException(JcpPreprocessTask.ID, "Target folder is not deined in 'target'", null);
     }
   }
 

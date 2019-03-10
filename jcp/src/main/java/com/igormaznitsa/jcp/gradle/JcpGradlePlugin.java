@@ -1,11 +1,14 @@
 package com.igormaznitsa.jcp.gradle;
 
+import javax.annotation.Nonnull;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 public class JcpGradlePlugin implements Plugin<Project> {
-  public void apply(Project project) {
-    project.getTasks().create("preprocess", JcpPreprocessTask.class);
-    project.getExtensions().create("preprocessSettings", JcpPreprocessExtension.class, project);
+
+  @Override
+  public void apply(@Nonnull final Project project) {
+    project.getTasks().create(JcpPreprocessTask.ID, JcpPreprocessTask.class);
+    project.getExtensions().create(JcpPreprocessExtension.ID, JcpPreprocessExtension.class, project);
   }
 }

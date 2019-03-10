@@ -2,6 +2,7 @@ package com.igormaznitsa.jcp.gradle;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import org.gradle.api.DefaultTask;
@@ -12,8 +13,11 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.tasks.TaskExecutionException;
 
 public class JcpPreprocessTask extends DefaultTask {
+
+  public static final String ID = "preprocess";
 
   @TaskAction
   public void preprocessTask() throws IOException {
@@ -51,13 +55,16 @@ public class JcpPreprocessTask extends DefaultTask {
     preprocessorContext.setTarget(preprocessExtension.getTarget());
     preprocessorContext.setSources(preprocessExtension.getSources());
 
-    if (preprocessExtension.getEol() != null) {
-      preprocessorContext.setEol(preprocessExtension.getEol());
-    } else {
+    if (preprocessExtension.getEol() == null) {
       logger.debug("Using default EOL");
+    } else {
+      preprocessorContext.setEol(preprocessExtension.getEol());
     }
 
-    preprocessorContext.setExcludeFolders(preprocessExtension.getExcludeFolders());
+    if (preprocessExtension.getExcludeFolders() != null) {
+      preprocessorContext.setExcludeFolders(preprocessExtension.getExcludeFolders());
+    }
+
     preprocessorContext.setDontOverwriteSameContent(preprocessExtension.isDontOverwriteSameContent());
     preprocessorContext.setClearTarget(preprocessExtension.isClearTarget());
     preprocessorContext.setCareForLastEol(preprocessExtension.isCareForLastEol());
@@ -77,9 +84,11 @@ public class JcpPreprocessTask extends DefaultTask {
       preprocessorContext.setExtensions(preprocessExtension.getExtensions());
     }
 
-    for (final Map.Entry<String, String> var : preprocessExtension.getVars().entrySet()) {
-      logger.debug(String.format("Registering global variable: %s=%s", var.getKey(), var.getValue()));
-      preprocessorContext.setGlobalVariable(var.getKey(), Value.recognizeRawString(var.getValue()));
+    if (preprocessExtension.getVars() != null) {
+      for (final Map.Entry<String, String> var : preprocessExtension.getVars().entrySet()) {
+        logger.debug(String.format("Registering global variable: %s=%s", var.getKey(), var.getValue()));
+        preprocessorContext.setGlobalVariable(var.getKey(), Value.recognizeRawString(var.getValue()));
+      }
     }
 
     preprocessorContext.setPreserveIndents(preprocessExtension.isPreserveIndents());
@@ -90,6 +99,11 @@ public class JcpPreprocessTask extends DefaultTask {
 
     final JcpPreprocessor preprocessor = new JcpPreprocessor(preprocessorContext);
     logger.debug("Start preprocessing...");
-    preprocessor.execute();
+
+    try {
+      preprocessor.execute();
+    } catch (final PreprocessorException ex) {
+      throw new TaskExecutionException(this, ex);
+    }
   }
 }
