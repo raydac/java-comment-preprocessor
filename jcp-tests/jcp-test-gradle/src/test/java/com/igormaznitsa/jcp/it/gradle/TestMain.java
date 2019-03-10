@@ -1,14 +1,13 @@
 package com.igormaznitsa.jcp.it.gradle;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.Test;
+import org.junit.Assert;
 
 public class TestMain {
 
   @Test
   public void testMain(){
-      assertEquals("Some Test", new MainTwo().getValue());
+      Assert.assertEquals("Some Test Global Value", new MainTwo().getValue());
   }
 
 }
