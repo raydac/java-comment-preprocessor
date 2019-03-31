@@ -1,6 +1,7 @@
 7.0.0 (31 mar 2019)
  - reworked some parameters for Maven and ANT plug-ins
  - added embedded Gradle plugin `com.igormaznitsa.jcp`
+ - removed maven `clear` goal
  - added function `STR esc(STR)`
  - fixed build under JDK 9+
  - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)
