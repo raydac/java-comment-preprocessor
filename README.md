@@ -10,7 +10,7 @@
 
 # Changelog
 - **7.0.0 (31 mar 2019)**
-  - **reworked some parameters for Maven and ANT plug-ins**
+  - **reworked and renamed some parameters for Maven and ANT plug-ins**
   - **removed maven `clear` goal**
   - added embedded Gradle plugin `com.igormaznitsa.jcp`
   - added function `STR esc(STR)`
