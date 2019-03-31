@@ -241,12 +241,6 @@ public final class PreprocessorContext {
   }
 
   /**
-   * Get patterns for excluded folders.
-   *
-   * @return array of patterns in Ant pattern format
-   */
-
-  /**
    * Check that the preprocessor context is a clone of another context.
    *
    * @return true if the context is a clone, false otherwise

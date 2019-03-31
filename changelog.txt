@@ -1,4 +1,6 @@
 7.0.0 (SNAPSHOT)
+ - added embedded Gradle plugin `com.igormaznitsa.jcp`
+ - reworked some parameters for Maven and ANT plug-ins
  - added function `STR esc(STR)`
  - fixed build under JDK 9+
  - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)

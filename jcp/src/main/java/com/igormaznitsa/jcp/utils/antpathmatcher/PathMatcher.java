@@ -26,16 +26,6 @@ import java.util.Map;
 
 /**
  * Strategy interface for {@code String}-based path matching.
- *
- * <p>
- * Used by {@link org.springframework.core.io.support.PathMatchingResourcePatternResolver},
- * {@link org.springframework.web.servlet.handler.AbstractUrlHandlerMapping},
- * and {@link org.springframework.web.servlet.mvc.WebContentInterceptor}.
- *
- * <p>
- * The default implementation is {@link AntPathMatcher}, supporting the
- * Ant-style pattern syntax.
- *
  * @author Juergen Hoeller
  * @see AntPathMatcher
  * @since 1.2
