@@ -4,14 +4,14 @@
 
   <groupId>com.igormaznitsa</groupId>
   <artifactId>jcp-pom</artifactId>
-  <version>7.0.0</version>
+  <version>7.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <url>https://github.com/raydac/java-comment-preprocessor</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jcp.test.version>7.0.0</jcp.test.version>
+    <jcp.test.version>7.0.1-SNAPSHOT</jcp.test.version>
     <main.project.version>${project.version}</main.project.version>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
