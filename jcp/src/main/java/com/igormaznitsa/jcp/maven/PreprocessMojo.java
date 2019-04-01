@@ -167,7 +167,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private List<String> extensions = new ArrayList<>(Arrays.asList("java", "txt", "htm", "html"));
 
   /**
-   * Interpretate unknown variable as containing boolean false flag.
+   * Recognize a unknown variable as containing boolean false flag.
    */
   @Parameter(alias = "unknownVarAsFalse", defaultValue = "false")
   private boolean unknownVarAsFalse = false;

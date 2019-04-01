@@ -69,7 +69,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
     result.add(new NameReferencePair(VAR_VERSION, "Preprocessor version"));
     result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "Synonym for '" + VAR_DEST_FULLPATH + "', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "Synonym for '" + VAR_SRC_FULLPATH + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_DIR, "Preprocessing file folder, read only"));
     result.add(new NameReferencePair(VAR_SRC_DIR2, "Synonym for '" + VAR_SRC_DIR + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "Preprocessing file name, read only"));
@@ -77,7 +77,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
     result.add(new NameReferencePair(VAR_LINE, "Number of preprocessing line, read only"));
     result.add(new NameReferencePair(VAR_DEST_FULLPATH, "Full destination file path, read only"));
-    result.add(new NameReferencePair(VAR_DEST_DIR, "Destination folder, read only"));
+    result.add(new NameReferencePair(VAR_DEST_DIR, "Destination folder, read-write"));
     result.add(new NameReferencePair(VAR_DEST_FILE_NAME, "Destination file name, read-write"));
 
     result.add(new NameReferencePair(VAR_TIME, "Time (HH:mm:ss)"));
