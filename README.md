@@ -12,6 +12,7 @@
 - **7.0.0 (31 mar 2019)**
   - **reworked and renamed some parameters for Maven and ANT plug-ins**
   - **removed maven `clear` goal**
+  - **removed maven `preprocessTest` goal (use flag `useTestSources` instead)**
   - added embedded Gradle plugin `com.igormaznitsa.jcp`
   - added function `STR esc(STR)`
   - fixed build under JDK 9+
