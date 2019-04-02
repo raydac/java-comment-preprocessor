@@ -7,7 +7,7 @@ public class TestMain {
 
   @Test
   public void testMain(){
-      Assert.assertEquals("Some Test Global Value", new MainTwo().getValue());
+      Assert.assertEquals("Some Test Global ValueHUZZAA!", new MainTwo().getValue());
   }
 
 }

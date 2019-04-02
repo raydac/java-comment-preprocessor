@@ -3,7 +3,7 @@ buildscript {
         flatDir dirs: "../../jcp/target"
     }
     dependencies {
-        classpath "com.igormaznitsa:jcp:7.0.0"
+        classpath "com.igormaznitsa:jcp:7.0.1-SNAPSHOT"
     }
 }
 
@@ -26,23 +26,42 @@ dependencies {
 }
 
 jar {
-  manifest {
-    attributes(
-      'Main-Class': 'com.igormaznitsa.jcp.it.gradle.MainTwo'
-    )
-  }
+    manifest {
+        attributes(
+                'Main-Class': 'com.igormaznitsa.jcp.it.gradle.MainTwo'
+        )
+    }
 }
 
 preprocessSettings {
-  def targetFolder = 'build/preprocessed/java'
+    def targetFolder = 'build/preprocessed/java'
 
-  allowWhitespaces = true
+    sources = ['src/main/java']
+    target = file(targetFolder)
 
-  sources = ['src/main/java']
-  target = file(targetFolder)
-  vars = ['some.test.global': 'Some Test Global Value']
+    allowWhitespaces = true
+    eol = '\r\n'
+    keepAttributes=true
+    sourceEncoding='UTF-8'
+    targetEncoding='UTF-8'
+    ignoreMissingSources=false
+    excludeExtensions=['txt','xml']
+    extensions=['java']
+    unknownVarAsFalse=false
+    dryRun=false
+    verbose=true
+    clearTarget=true
+    careForLastEol=true
+    keepComments=true
+    excludeFolders=['**/some1','**/some2']
+    configFiles=['./configFile.txt']
+    keepLines=true
+    allowWhitespaces=true
+    preserveIndents=true
+    dontOverwriteSameContent=false
+    vars = ['some.test.global': 'Some Test Global Value']
 
-  sourceSets.main.java.srcDirs = [targetFolder]
+    sourceSets.main.java.srcDirs = [targetFolder]
 }
 
 compileJava.dependsOn preprocess

@@ -139,11 +139,6 @@ public class JcpPreprocessExtension {
   private boolean preserveIndents = false;
 
   /**
-   * Turn on test sources root use.
-   */
-  private boolean useTestSources = false;
-
-  /**
    * Skip preprocessing. Also can be defined by property 'jcp.preprocess.skip'
    */
   private boolean skip = false;

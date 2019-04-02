@@ -12,17 +12,17 @@ public class Main {
       throw new Error("Must be MainTwo but detected"+this.getClass().getName());
     }
 
-    final String test = /*$"\""+some.test.global+"\";"$*/ /*-*/ "";
+    final String test = /*$"\""+some.test.global+someGlobalVar+"\";"$*/ /*-*/ "";
 
-    if ("Some Test Global Value".equals(test)){
-      System.out.println("All ok, detected value '/*$some.test.global$*/'");
+    if ("Some Test Global ValueHUZZAA!".equals(test)){
+      System.out.println("All ok, detected value '/*$some.test.global+someGlobalVar$*/'");
     } else {
       throw new Error("Unexpected value: "+test);
     }
   }
 
   public String getValue(){
-    return /*$"\""+some.test.global+"\";"$*/ /*-*/ "";
+    return /*$"\""+some.test.global+someGlobalVar+"\";"$*/ /*-*/ "";
   }
   
   public static void main(String [] args) {

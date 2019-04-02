@@ -5,15 +5,17 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskExecutionException;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
-import org.gradle.api.logging.Logger;
-import org.gradle.api.tasks.TaskExecutionException;
 
 public class JcpPreprocessTask extends DefaultTask {
 
@@ -29,7 +31,9 @@ public class JcpPreprocessTask extends DefaultTask {
     }
     preprocessExtension.validate(getProject());
 
-    final PreprocessorContext preprocessorContext = new PreprocessorContext(getProject().getProjectDir());
+    final File baseDir = getProject().getProjectDir();
+
+    final PreprocessorContext preprocessorContext = new PreprocessorContext(baseDir);
     preprocessorContext.setPreprocessorLogger(new PreprocessorLogger() {
       @Override
       public void error(@Nullable final String message) {
@@ -51,6 +55,18 @@ public class JcpPreprocessTask extends DefaultTask {
         logger.warn(message);
       }
     });
+
+    if (preprocessExtension.getConfigFiles() != null) {
+      for (final String configFile : preprocessExtension.getConfigFiles()) {
+        final File cfgFile = new File(baseDir, configFile);
+        if (cfgFile.isFile()) {
+          logger.debug("Registering config file: " + cfgFile);
+          preprocessorContext.registerConfigFile(cfgFile);
+        } else {
+          throw new TaskExecutionException(this, new IOException("Can't find config file: " + FilenameUtils.normalize(cfgFile.getAbsolutePath())));
+        }
+      }
+    }
 
     preprocessorContext.setTarget(preprocessExtension.getTarget());
     preprocessorContext.setSources(preprocessExtension.getSources());

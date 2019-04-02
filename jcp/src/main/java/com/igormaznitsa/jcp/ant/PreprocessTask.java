@@ -290,6 +290,12 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Nonnull
+  public ExcludeFolders createExcludeFolders() {
+    this.excludeFolders = new ExcludeFolders();
+    return this.excludeFolders;
+  }
+
+  @Nonnull
   public Sources createSources() {
     this.sources = new Sources();
     return this.sources;
