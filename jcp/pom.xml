@@ -126,27 +126,6 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>com.igormaznitsa</groupId>
-                        <artifactId>uber-pom</artifactId>
-                        <version>1.0.1</version>
-                        <configuration>
-                            <remove>
-                                <section>parent</section>
-                                <section>modules</section>
-                                <section>profiles/profile/modules</section>
-                            </remove>
-                            <removeSiblingDuplications>true</removeSiblingDuplications>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>upom</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <executions>
@@ -346,6 +325,32 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.igormaznitsa</groupId>
+                <artifactId>uber-pom</artifactId>
+                <version>1.0.2</version>
+                <configuration>
+                    <removeDependencies>
+                        <dependency>
+                            <systemPath>*</systemPath>
+                        </dependency>
+                    </removeDependencies>
+                    <remove>
+                        <section>parent</section>
+                        <section>modules</section>
+                        <section>profiles/profile/modules</section>
+                    </remove>
+                    <removeSiblingDuplications>true</removeSiblingDuplications>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>upom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
