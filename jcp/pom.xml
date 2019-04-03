@@ -286,38 +286,51 @@
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-core</artifactId>
-            <version>${gradle.version}</version>
-            <scope>provided</scope>
+            <version>3.0</version>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-core-3.0.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-logging</artifactId>
+            <version>3.0</version>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-logging-3.0.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-base-services</artifactId>
-            <version>${gradle.version}</version>
-            <scope>provided</scope>
+            <version>3.0</version>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-3.0.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-base-services-groovy</artifactId>
-            <version>${gradle.version}</version>
-            <scope>provided</scope>
+            <version>3.0</version>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-groovy-3.0.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-plugins</artifactId>
             <version>3.4</version>
-            <scope>provided</scope>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-plugins-3.4.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-tooling-api</artifactId>
             <version>2.13</version>
-            <scope>provided</scope>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-tooling-api-2.13.jar</systemPath>
+            <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>2.5.5</version>
-            <scope>provided</scope>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}groovy-2.5.5.jar</systemPath>
+            <scope>system</scope>
         </dependency>
 
 

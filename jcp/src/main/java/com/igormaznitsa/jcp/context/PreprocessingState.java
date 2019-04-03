@@ -241,6 +241,11 @@ public final class PreprocessingState {
     return stack;
   }
 
+  @Nullable
+  public TextFileDataContainer getCurrentIncludeFileContainer() {
+    return this.includeStack.isEmpty() ? null :  this.includeStack.get(this.includeStack.size()-1);
+  }
+
   @Nonnull
   public TextFileDataContainer popTextContainer() {
     if (includeStack.isEmpty()) {
