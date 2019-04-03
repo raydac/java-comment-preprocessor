@@ -31,7 +31,7 @@ public class JcpPreprocessTask extends DefaultTask {
     }
     preprocessExtension.validate(getProject());
 
-    final File baseDir = getProject().getProjectDir();
+    final File baseDir = preprocessExtension.getBaseDir();
 
     final PreprocessorContext preprocessorContext = new PreprocessorContext(baseDir);
     preprocessorContext.setPreprocessorLogger(new PreprocessorLogger() {

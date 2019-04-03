@@ -91,6 +91,7 @@ public class JcpPreprocessExtension {
 
   /**
    * Set base directory which will be used for relative source paths.
+   * By default it is '$projectDir'.
    */
   private File baseDir = null;
 
@@ -153,7 +154,6 @@ public class JcpPreprocessExtension {
   public JcpPreprocessExtension(final Project project) {
     if (this.baseDir == null) {
       this.baseDir = project.getProjectDir();
-      project.getLogger().debug("Basedir of the project: " + this.baseDir);
     }
   }
 
