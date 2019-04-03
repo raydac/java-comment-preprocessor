@@ -14,10 +14,17 @@
                 keepLines="true"
                 careForLastEol="true"
                 allowWhiteSpaces="true"
+                unknownVarAsFalse="false"
                 eol="\r\n"
                 sourceEncoding="UTF-8"
                 targetEncoding="UTF-8"
+                preserveIndents="true"
+                dontOverwriteSameContent="false"
         >
+            <excludeFolders>
+                <folder>**/excluded1</folder>
+                <folder>**/excluded2</folder>
+            </excludeFolders>
             <excludeExtensions>
                 <extension>cpp</extension>
                 <extension>xml</extension>
