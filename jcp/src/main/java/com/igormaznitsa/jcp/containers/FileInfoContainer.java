@@ -176,9 +176,6 @@ public class FileInfoContainer {
         leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
 
         if (isHashPrefixed(leftTrimmedString, context)) {
-
-          checkAndLogWarningIfNotAllowedWhitespaceSituation(context, preprocessingState, leftTrimmedString);
-
           switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString, context), context, true)) {
             case PROCESSED:
             case READ_NEXT_LINE:
@@ -207,17 +204,6 @@ public class FileInfoContainer {
     return preprocessingState.popAllExcludeIfInfoData();
   }
 
-  private void checkAndLogWarningIfNotAllowedWhitespaceSituation(@Nonnull final PreprocessorContext context, @Nonnull final PreprocessingState state, @Nonnull final String leftTrimmedHashPrefixedString) {
-    if (!leftTrimmedHashPrefixedString.startsWith("//#") && !context.isAllowWhitespaces()) {
-      final TextFileDataContainer textContainer = state.getCurrentIncludeFileContainer();
-      String lineInfo = "<NONE>";
-      if (textContainer != null) {
-        lineInfo = String.format("%s:%d)",textContainer.getFile().getAbsolutePath(), textContainer.getNextStringIndex());
-      }
-      context.logWarning("Detected line with hash prefixed by whitespace but whitespace is not allowed and directive will be ignored: " + lineInfo);
-    }
-  }
-
   private boolean isDoubleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
     if (context.isAllowWhitespaces()) {
       return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
@@ -238,7 +224,18 @@ public class FileInfoContainer {
     if (context.isAllowWhitespaces()) {
       return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
     } else {
-      return line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
+      final boolean result = line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
+
+      if (!result && line.startsWith("// ") && DIRECTIVE_HASH_PREFIXED.matcher(line).matches()) {
+        final TextFileDataContainer textContainer = context.getCurrentState().getCurrentIncludeFileContainer();
+        String lineInfo = "<NONE>";
+        if (textContainer != null) {
+          lineInfo = String.format("%s:%d)", textContainer.getFile().getAbsolutePath(), textContainer.getNextStringIndex());
+        }
+        context.logWarning("Detected hash prefixed comment line with whitespace, directive may be lost: " + lineInfo);
+      }
+
+      return result;
     }
   }
 
@@ -366,8 +363,6 @@ public class FileInfoContainer {
         final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
         if (isHashPrefixed(stringToBeProcessed, context)) {
-          checkAndLogWarningIfNotAllowedWhitespaceSituation(context, preprocessingState, stringToBeProcessed);
-
           final String extractedDirective = extractHashPrefixedDirective(stringToBeProcessed, context);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
             case PROCESSED:
