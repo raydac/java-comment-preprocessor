@@ -243,7 +243,7 @@ public final class PreprocessingState {
 
   @Nullable
   public TextFileDataContainer getCurrentIncludeFileContainer() {
-    return this.includeStack.isEmpty() ? null :  this.includeStack.get(this.includeStack.size()-1);
+    return this.includeStack.isEmpty() ? null : this.includeStack.get(this.includeStack.size() - 1);
   }
 
   @Nonnull
