@@ -1,0 +1,7 @@
+//#local SOME=true
+// #if SOME
+text1
+// #else
+text2
+// #endif
+

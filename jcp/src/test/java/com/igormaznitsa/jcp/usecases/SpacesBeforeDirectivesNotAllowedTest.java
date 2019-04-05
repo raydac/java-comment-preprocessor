@@ -34,7 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
 
-public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
+public class SpacesBeforeDirectivesNotAllowedTest extends AbstractUseCaseTest {
 
   private static class WarnLogPreprocessorContext extends PreprocessorContext {
     private final List<String> warnings = new CopyOnWriteArrayList<>();
@@ -63,7 +63,7 @@ public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
 
   @Override
   protected void tuneContext(@Nonnull final PreprocessorContext context) {
-    context.setAllowWhitespaces(true);
+    context.setAllowWhitespaces(false);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
 
     final WarnLogPreprocessorContext warnContext = (WarnLogPreprocessorContext) context;
 
-    assertEquals(0, warnContext.getWarnings().stream().filter(x -> x != null && x.startsWith(FileInfoContainer.WARNING_SPACE_BEFORE_HASH)).count());
+    assertEquals(3, warnContext.getWarnings().stream().filter(x -> x != null && x.startsWith(FileInfoContainer.WARNING_SPACE_BEFORE_HASH)).count());
   }
 
 }

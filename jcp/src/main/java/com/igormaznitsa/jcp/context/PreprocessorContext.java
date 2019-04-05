@@ -35,6 +35,7 @@ import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.GetUtils;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
 
@@ -51,6 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
@@ -63,7 +65,7 @@ import static java.util.Collections.unmodifiableList;
  * Preprocessor context class is a main class which contains all options for preprocessin and allow to work with variables in expressions.
  */
 @Data
-public final class PreprocessorContext {
+public class PreprocessorContext {
 
   public static final List<String> DEFAULT_SOURCE_DIRECTORY = Collections.singletonList("." + File.separatorChar);
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
@@ -107,7 +109,8 @@ public final class PreprocessorContext {
   private List<String> excludeFolders = new ArrayList<>();
 
   @Setter(AccessLevel.NONE)
-  private transient PreprocessingState currentState;
+  @Getter(AccessLevel.NONE)
+  private final AtomicReference<PreprocessingState> preprocessingState = new AtomicReference<>();
 
   /**
    * Constructor
@@ -116,7 +119,7 @@ public final class PreprocessorContext {
    */
   public PreprocessorContext(@Nonnull final File baseDir) {
     this.baseDir = assertNotNull("Base folder must not be null", baseDir);
-    this.currentState = new PreprocessingState(this, this.sourceEncoding, this.targetEncoding);
+    this.preprocessingState.set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
     setSources(DEFAULT_SOURCE_DIRECTORY).setTarget(new File(DEFAULT_DEST_DIRECTORY));
     registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
@@ -172,13 +175,12 @@ public final class PreprocessorContext {
     this.configFiles.clear();
     this.configFiles.addAll(context.getConfigFiles());
 
-    this.currentState = assertNotNull(context.getCurrentState());
+    this.preprocessingState.set(assertNotNull(context.getPreprocessingState()));
     this.cloned = true;
 
     this.preprocessorLogger = context.getPreprocessorLogger();
 
-    final PreprocessingState theState = context.getPreprocessingState();
-    this.currentInCloneSource = theState.peekFile();
+    this.currentInCloneSource = context.getPreprocessingState().peekFile();
   }
 
   @Nonnull
@@ -735,7 +737,7 @@ public final class PreprocessorContext {
 
     File result = null;
 
-    final TextFileDataContainer theFile = this.currentState.peekFile();
+    final TextFileDataContainer theFile = this.getPreprocessingState().peekFile();
     final String parentDir = theFile == null ? null : theFile.getFile().getParent();
 
     final File resultFile = new File(path);
@@ -813,8 +815,9 @@ public final class PreprocessorContext {
         logInfo("Start preprocessing '" + PreprocessorUtils.getFilePath(fileContainer.getSourceFile()) + '\'');
       }
     }
-    this.currentState = new PreprocessingState(this, fileContainer, getSourceEncoding(), getTargetEncoding(), this.isDontOverwriteSameContent());
-    return this.currentState;
+    this.preprocessingState.set(new PreprocessingState(this, fileContainer, getSourceEncoding(), getTargetEncoding(), this.isDontOverwriteSameContent()));
+
+    return this.getPreprocessingState();
   }
 
   /**
@@ -826,8 +829,8 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public PreprocessingState produceNewPreprocessingState(@Nonnull final FileInfoContainer fileContainer, @Nonnull final TextFileDataContainer textContainer) {
-    this.currentState = new PreprocessingState(this, fileContainer, textContainer, getSourceEncoding(), getTargetEncoding(), this.isDontOverwriteSameContent());
-    return this.currentState;
+    this.preprocessingState.set(new PreprocessingState(this, fileContainer, textContainer, getSourceEncoding(), getTargetEncoding(), this.isDontOverwriteSameContent()));
+    return this.getPreprocessingState();
   }
 
   /**
@@ -837,7 +840,7 @@ public final class PreprocessorContext {
    */
   @Nonnull
   public PreprocessingState getPreprocessingState() {
-    return this.currentState;
+    return this.preprocessingState.get();
   }
 
   /**
@@ -855,15 +858,15 @@ public final class PreprocessorContext {
 
     final FilePositionInfo[] includeStack;
     final String sourceLine;
-    includeStack = this.currentState.makeIncludeStack();
-    sourceLine = this.currentState.getLastReadString();
+    includeStack = this.getPreprocessingState().makeIncludeStack();
+    sourceLine = this.getPreprocessingState().getLastReadString();
     return new PreprocessorException(text, sourceLine, includeStack, cause);
   }
 
   public void logForVerbose(@Nonnull final String str) {
     if (isVerbose()) {
       final String stack;
-      stack = makeStackView(this.currentInCloneSource, this.cloned, this.currentState.getCurrentIncludeStack());
+      stack = makeStackView(this.currentInCloneSource, this.cloned, this.getPreprocessingState().getCurrentIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
   }

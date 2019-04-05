@@ -91,6 +91,7 @@ public final class PreprocessingState {
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
   private String lastReadString;
+  private boolean globalPhase;
 
   PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final Charset inEncoding, @Nonnull final Charset outEncoding) {
     this.fake = true;
@@ -133,13 +134,12 @@ public final class PreprocessingState {
     includeStack.push(rootContainer);
   }
 
-  @Nonnull
-  private static Charset decodeCharset(@Nonnull final String name) {
-    try {
-      return Charset.forName(name);
-    } catch (Exception ex) {
-      throw new IllegalArgumentException("Can't decode charset name: " + name);
-    }
+  public void setGlobalPhase(final boolean flag) {
+    this.globalPhase = flag;
+  }
+
+  public boolean isGlobalPhase() {
+    return this.globalPhase;
   }
 
   @Nullable
@@ -489,13 +489,6 @@ public final class PreprocessingState {
   @Nonnull
   public PreprocessorException makeException(@Nullable final String message, @Nullable final String causeString, @Nullable final Throwable cause) {
     return new PreprocessorException(message, causeString, makeIncludeStack(), cause);
-  }
-
-  public void dispose() {
-    this.deferredExcludeStack.clear();
-    this.ifStack.clear();
-    this.includeStack.clear();
-    this.whileStack.clear();
   }
 
   public enum PrinterType {

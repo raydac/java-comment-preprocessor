@@ -57,6 +57,8 @@ public class FileInfoContainer {
   private static final Pattern DIRECTIVE_SINGLE_DOLLAR_PREFIXED = Pattern.compile("^\\s*//\\s*\\$(.*)$");
   private static final Pattern DIRECTIVE_TAIL_REMOVER = Pattern.compile("\\/\\*\\s*-\\s*\\*\\/");
 
+  public static final String WARNING_SPACE_BEFORE_HASH = "Detected hash prefixed comment line with whitespace, directive may be lost: ";
+
   /**
    * The source file for the container
    */
@@ -149,59 +151,63 @@ public class FileInfoContainer {
   @MustNotContainNull
   public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nullable final PreprocessingState state, @Nonnull final PreprocessorContext context) throws IOException {
     final PreprocessingState preprocessingState = state == null ? context.produceNewPreprocessingState(this, 0) : state;
+    preprocessingState.setGlobalPhase(true);
 
     String leftTrimmedString = null;
     try {
-      while (!Thread.currentThread().isInterrupted()) {
-        String nonTrimmedProcessingString = preprocessingState.nextLine();
+      try {
+        while (!Thread.currentThread().isInterrupted()) {
+          String nonTrimmedProcessingString = preprocessingState.nextLine();
 
-        final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
+          final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
 
-        if (processFlags.contains(PreprocessingFlag.END_PROCESSING) || processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
-          if (!processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
-            processFlags.remove(PreprocessingFlag.END_PROCESSING);
+          if (processFlags.contains(PreprocessingFlag.END_PROCESSING) || processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+            if (!processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
+              processFlags.remove(PreprocessingFlag.END_PROCESSING);
+            }
+            nonTrimmedProcessingString = null;
           }
-          nonTrimmedProcessingString = null;
-        }
 
-        if (nonTrimmedProcessingString == null) {
-          preprocessingState.popTextContainer();
-          if (preprocessingState.isIncludeStackEmpty()) {
-            break;
-          } else {
-            continue;
-          }
-        }
-
-        leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
-
-        if (isHashPrefixed(leftTrimmedString, context)) {
-          switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString, context), context, true)) {
-            case PROCESSED:
-            case READ_NEXT_LINE:
-            case SHOULD_BE_COMMENTED:
+          if (nonTrimmedProcessingString == null) {
+            preprocessingState.popTextContainer();
+            if (preprocessingState.isIncludeStackEmpty()) {
+              break;
+            } else {
               continue;
-            default:
-              throw new Error("Unsupported result");
+            }
+          }
+
+          leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
+
+          if (isHashPrefixed(leftTrimmedString, context)) {
+            switch (processDirective(preprocessingState, extractHashPrefixedDirective(leftTrimmedString, context), context, true)) {
+              case PROCESSED:
+              case READ_NEXT_LINE:
+              case SHOULD_BE_COMMENTED:
+                continue;
+              default:
+                throw new Error("Unsupported result");
+            }
           }
         }
+      } catch (Exception unexpected) {
+        final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
+        if (pp == null) {
+          throw preprocessingState.makeException("Unexpected exception detected", leftTrimmedString, unexpected);
+        } else {
+          throw pp;
+        }
       }
-    } catch (Exception unexpected) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
-      if (pp == null) {
-        throw preprocessingState.makeException("Unexpected exception detected", leftTrimmedString, unexpected);
-      } else {
-        throw pp;
+      if (!preprocessingState.isIfStackEmpty()) {
+        final TextFileDataContainer lastIf = assertNotNull(preprocessingState.peekIf());
+        throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
+            "", new FilePositionInfo[] {new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
       }
-    }
 
-    if (!preprocessingState.isIfStackEmpty()) {
-      final TextFileDataContainer lastIf = assertNotNull(preprocessingState.peekIf());
-      throw new PreprocessorException("Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
-          "", new FilePositionInfo[] {new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
+      return preprocessingState.popAllExcludeIfInfoData();
+    } finally {
+      preprocessingState.setGlobalPhase(false);
     }
-
-    return preprocessingState.popAllExcludeIfInfoData();
   }
 
   private boolean isDoubleDollarPrefixed(@Nonnull final String line, @Nonnull final PreprocessorContext context) {
@@ -226,13 +232,13 @@ public class FileInfoContainer {
     } else {
       final boolean result = line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
 
-      if (!result && line.startsWith("// ") && DIRECTIVE_HASH_PREFIXED.matcher(line).matches()) {
-        final TextFileDataContainer textContainer = context.getCurrentState().getCurrentIncludeFileContainer();
+      if (context.getPreprocessingState().isGlobalPhase() && !result && line.startsWith("// ") && DIRECTIVE_HASH_PREFIXED.matcher(line).matches()) {
+        final TextFileDataContainer textContainer = context.getPreprocessingState().getCurrentIncludeFileContainer();
         String lineInfo = "<NONE>";
         if (textContainer != null) {
           lineInfo = String.format("%s:%d)", textContainer.getFile().getAbsolutePath(), textContainer.getNextStringIndex());
         }
-        context.logWarning("Detected hash prefixed comment line with whitespace, directive may be lost: " + lineInfo);
+        context.logWarning(WARNING_SPACE_BEFORE_HASH + lineInfo);
       }
 
       return result;

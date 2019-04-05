@@ -134,19 +134,26 @@ public abstract class AbstractUseCaseTest {
 
   }
 
-  protected boolean isIgnoreEolInCheck() {
-    return true;
-  }
-
-  @Test
-  public final void main() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+  protected void tuneDefaultContextOptions(final PreprocessorContext context) {
     context.setClearTarget(true);
     context.setSources(Collections.singletonList(this.sourceFolder.getAbsolutePath()));
     context.setTarget(tmpResultFolder.getRoot());
     context.setExcludeExtensions(Collections.singletonList("xml"));
     context.setVerbose(true);
+  }
 
+  protected boolean isIgnoreEolInCheck() {
+    return true;
+  }
+
+  protected PreprocessorContext createPreprocessorContext(final File baseFolder) {
+    return new PreprocessorContext(baseFolder);
+  }
+
+  @Test
+  public final void main() throws Exception {
+    final PreprocessorContext context = createPreprocessorContext(new File("some_impossible_folder_121212"));
+    tuneDefaultContextOptions(context);
     tuneContext(context);
 
     System.setProperty("jcp.line.separator", "\n");
