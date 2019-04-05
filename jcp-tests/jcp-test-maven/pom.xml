@@ -29,13 +29,36 @@
                         </goals>
                         <configuration>
                             <allowWhitespaces>true</allowWhitespaces>
+                            <eol>\r\n</eol>
+                            <excludeExtensions>
+                                <extension>xml</extension>
+                                <extension>txt</extension>
+                            </excludeExtensions>
                             <extensions>
                                 <extension>java</extension>
                             </extensions>
+                            <keepAttributes>true</keepAttributes>
+                            <keepComments>false</keepComments>
                             <keepLines>true</keepLines>
                             <vars>
                                 <some.test.global>Some Test Global Value</some.test.global>
                             </vars>
+                            <sourceEncoding>UTF-8</sourceEncoding>
+                            <targetEncoding>UTF-8</targetEncoding>
+                            <ignoreMissingSources>false</ignoreMissingSources>
+                            <unknownVarAsFalse>true</unknownVarAsFalse>
+                            <dryRun>false</dryRun>
+                            <verbose>true</verbose>
+                            <clearTarget>true</clearTarget>
+                            <replaceSources>true</replaceSources>
+                            <careForLastEol>true</careForLastEol>
+                            <excludeFolders>
+                                <folder>./some1</folder>
+                                <folder>./**/some2</folder>
+                            </excludeFolders>
+                            <preserveIndents>true</preserveIndents>
+                            <dontOverwriteSameContent>false</dontOverwriteSameContent>
+                            <skip>false</skip>
                         </configuration>
                     </execution>
                     <execution>
