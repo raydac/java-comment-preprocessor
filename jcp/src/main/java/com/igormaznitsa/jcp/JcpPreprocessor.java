@@ -52,11 +52,11 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.jcp.utils.antpathmatcher.AntPathMatcher;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.Nonnull;
 import java.io.File;

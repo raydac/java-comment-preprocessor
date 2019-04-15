@@ -284,6 +284,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.1.6.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-core</artifactId>
             <version>3.0</version>
@@ -301,14 +307,16 @@
             <groupId>org.gradle</groupId>
             <artifactId>gradle-base-services</artifactId>
             <version>3.0</version>
-            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-3.0.jar</systemPath>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-3.0.jar
+            </systemPath>
             <scope>system</scope>
         </dependency>
         <dependency>
             <groupId>org.gradle</groupId>
             <artifactId>gradle-base-services-groovy</artifactId>
             <version>3.0</version>
-            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-groovy-3.0.jar</systemPath>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-groovy-3.0.jar
+            </systemPath>
             <scope>system</scope>
         </dependency>
         <dependency>
@@ -322,7 +330,8 @@
             <groupId>org.gradle</groupId>
             <artifactId>gradle-tooling-api</artifactId>
             <version>2.13</version>
-            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-tooling-api-2.13.jar</systemPath>
+            <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-tooling-api-2.13.jar
+            </systemPath>
             <scope>system</scope>
         </dependency>
         <dependency>
@@ -471,9 +480,14 @@
                                     <pattern>trax</pattern>
                                     <shadedPattern>hidden.jcp.trax</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.springframework</pattern>
+                                    <shadedPattern>hidden.jcp.org.springframework</shadedPattern>
+                                </relocation>
                             </relocations>
                             <artifactSet>
                                 <includes>
+                                    <include>org.springframework:*</include>
                                     <include>commons-io:*</include>
                                     <include>commons-codec:*</include>
                                     <include>commons-text:*</include>
@@ -484,6 +498,25 @@
                                     <include>xml-apis:*</include>
                                 </includes>
                             </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.springframework:spring-core</artifact>
+                                    <includes>
+                                        <include>org/springframework/util/StringUtils.class</include>
+                                        <include>org/springframework/util/PathMatcher*.class</include>
+                                        <include>org/springframework/util/AntPathMatcher*.class</include>
+                                        <include>org/springframework/lang/Nullable.class</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

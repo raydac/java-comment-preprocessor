@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.utils.antpathmatcher;
 
 import org.junit.Test;
+import org.springframework.util.AntPathMatcher;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
