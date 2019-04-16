@@ -510,7 +510,7 @@
                                 <filter>
                                     <artifact>org.springframework:spring-core</artifact>
                                     <includes>
-                                        <include>org/springframework/util/StringUtils.class</include>
+                                        <include>org/springframework/util/StringUtils*.class</include>
                                         <include>org/springframework/util/PathMatcher*.class</include>
                                         <include>org/springframework/util/AntPathMatcher*.class</include>
                                         <include>org/springframework/lang/Nullable.class</include>
