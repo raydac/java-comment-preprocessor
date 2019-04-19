@@ -8,7 +8,7 @@
 [![PayPal donation](https://img.shields.io/badge/donation-PayPal-red.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)   
 [![Yandex.Money donation](https://img.shields.io/badge/donation-Я.деньги-yellow.svg)](http://yasobe.ru/na/iamoss)   
 
-[!Logo](assets/logo.png)
+[![Logo](assets/logo.png)]
 
 # Changelog
 - **7.0.0 (31 mar 2019)**
