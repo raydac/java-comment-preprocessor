@@ -1,3 +1,6 @@
+7.0.1 (19 apr 2019)
+ - minor refactoring
+
 7.0.0 (31 mar 2019)
  - reworked some parameters for Maven and ANT plug-ins
  - added embedded Gradle plugin `com.igormaznitsa.jcp`

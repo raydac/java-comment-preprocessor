@@ -11,6 +11,9 @@
 ![Logo](assets/logo.png)
 
 # Changelog
+- **7.0.1 (19 apr 2019)**
+  - minor refactoring
+  
 - **7.0.0 (31 mar 2019)**
   - **reworked and renamed some parameters for Maven and ANT plug-ins**
   - **removed maven `clear` goal**
@@ -35,9 +38,9 @@ On start the preprocessor was implemented as a CLI tool but then Maven, ANT and 
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
 
 The Preprocessor can be used by different ways:
-  - as ANT task, and with Android SDK
+  - as ANT task
   - as Maven plugin
-  - [with Gradle through ANT task](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
+  - [with Gradle](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
   - as Java framework with direct class calls
   - as external utility through CLI (command line interface)
 The Preprocessor is published in the Maven Central so that can be added in Maven projects without any problems
