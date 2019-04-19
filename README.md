@@ -31,23 +31,23 @@
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
 # Introduction
-Initially the preprocessor was developed for automation of mobile game development process and it was in very active use for several years for J2ME development. Since 2011 the preprocessor is OSS project.   
-On start the preprocessor was implemented as a CLI tool but then Maven, ANT and Gradle plug-ins were injected in the uber-jar.
+Since 2001 I was strongly involved in development for J2ME mobile devices, it was too expensive to support the same sources for different devices if to use standard Java OOP approach, so that I choosed C/C++ approach and developed preprocessor which made my life much easier. Inintially it was a proprietary project but since 2011 it became OSS project.   
+I guess at present it is the most powerful Java preprocessor with support of two-pass preprocessing, document part support, loops and even XML file processing ([I generated static files with it](jcp-tests/jcp-test-static-site)). Now it is implemented as a Fat-Jar and includes Maven, ANT and Gradle interfaces and can be used with these tools.
 
 # Documap
 
 ![Documap](assets/documap.png)
 
 # How to use
-[The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
 
-The Preprocessor can be used by different ways:
-  - as ANT task
-  - as Maven plugin
-  - [with Gradle](https://github.com/raydac/java-comment-preprocessor/wiki/AndroidGradlePreprocessing)
-  - as Java framework with direct class calls
-  - as external utility through CLI (command line interface)
-The Preprocessor is published in the Maven Central so that can be added in Maven projects without any problems
+The Preprocessor can work as:
+  - a CLI tool
+  - a Java library
+  - [a Maven goal](jcp-tests/jcp-test-maven)
+  - [an ANT task](jcp-tests/jcp-test-ant)
+  - [a Gradle task](jcp-tests/jcp-test-gradle)
+
+The Preprocessor is published in the Maven Central (it is not published in Gradle central, so that use the Maven central)
 ```
     <build>
         <plugins>
@@ -93,9 +93,13 @@ java -jar jcp-7.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - --z turn on checking of file content before replacement, if the same content then preprocessor will not replace the file  
 - --es allow whitespace between comment and directive (by default it is turned off)
 
-# The Main idea
-The Java language was born without any preprocessor in creator's mind and even now there are not any plans to include preprocessing into Java. It was good until mass usage Java on mobile and TV devices where we have bunches of half-compatible devices with (sometime) very bizarre standard framework implementations. In the case, preprocessing allows to decrease support of sources dramatically.  
-The only possible way to include preprocessing directives into Java and to not break standard processes and Java tool chain is to inject them into comments, take a look at the example below:
+# Internal test examples
+- [Prepare sources for Javassist](jcp-tests/jcp-test-javassist)
+- [Make multi-versioned JAR  for JEP-238](jcp-tests/jcp-test-jep238)
+- [Generate static file from XML sources](jcp-tests/jcp-test-static-site)
+
+# Example of Java sources with directives
+In Java the only allowed way to inject directives and to not break work of tools and conpilers - is to use commented space, so that the preprocessor uses it.
 ```Java
 //#local TESTVAR="TEST LOCAL VARIABLE"
 //#echo TESTVAR=/*$TESTVAR$*/
@@ -119,7 +123,7 @@ public static final void testproc()
 ```
 
 # Multi-sectioned documents
-Java sources usually have sections, there are the import section and the main section thus JCP has support for such case and there are three section where the preprocessor can write results - the prefix, the middle part and the postfix. Usually I use the prefix to form the import section for Java files. You can switch the text output for sections with //#prefix[+|-] and //#postfix[+|-] directives.
+In opposite a regular document, a Java document has as minimum two sections - prefix (where situated import and special information) and body. For access to such sections there are special preprocessing directives `//#prefix[-|+]`, `//#postfix[-|+]`. They allow to turn on or turn off output into prefix and postfix sections.
 ```Java
 //#prefix+
  import java.lang.*;
@@ -132,7 +136,7 @@ Java sources usually have sections, there are the import section and the main se
  }
 ```
 # How to remove all coments from sources
-Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface
+Sometime it is very useful to remove totally all comments from sources, such possiblitiy was included into JCP and can be activated through special flag or command line switcher. The Example of use for comment removing through CLI interface
 ```
 java -jar ./jcp-7.0.1.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
