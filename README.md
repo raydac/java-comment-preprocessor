@@ -1,5 +1,5 @@
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)   
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.0.0|jar)   
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.0.1|jar)   
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/c6acda63097a40c68d8ca8eaef6180d8)](https://www.codacy.com/app/rrg4400/java-comment-preprocessor)   
 [![Java 1.8+](https://img.shields.io/badge/java-1.8%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)   
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)   
@@ -51,7 +51,7 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>7.0.0</version>
+                <version>7.0.1</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -70,13 +70,13 @@ The Preprocessor is published in the Maven Central so that can be added in Maven
 # How to use from command line
 The Preprocessor jar can be started under Java as a console application. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
 ```
-java -jar jcp-7.0.0.jar  --i:./test --o:./result
+java -jar jcp-7.0.1.jar  --i:./test --o:./result
 ```
 The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions)
 
 More complex example:
 ```
-java -jar jcp-7.0.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-7.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -130,5 +130,5 @@ Java sources usually have sections, there are the import section and the main se
 # How to remove all coments from sources
 Sometime it is very useful to remove all comments from my sources at all, JCP has such feature which can be turned on by special flag or command line switcher (see wiki). The Example of use for comment removing through CLI interface
 ```
-java -jar ./jcp-7.0.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-7.0.1.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
