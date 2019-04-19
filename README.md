@@ -32,7 +32,8 @@
 
 # Introduction
 Since 2001 I was strongly involved in development for J2ME mobile devices, it was too expensive to support the same sources for different devices if to use standard Java OOP approach, so that I choosed C/C++ approach and developed preprocessor which made my life much easier. Inintially it was a proprietary project but since 2011 it became OSS project.   
-I guess at present it is the most powerful Java preprocessor with support of two-pass preprocessing, document part support, loops and even XML file processing ([I generated static files with it](jcp-tests/jcp-test-static-site)). Now it is implemented as a Fat-Jar and includes Maven, ANT and Gradle interfaces and can be used with these tools.
+
+I guess, at present it is the most powerful Java preprocessor with support of two-pass preprocessing, document part support, loops and even use XML files as data sources ([I generated static files with it](jcp-tests/jcp-test-static-site)). Now it is implemented as a fat-jar and includes Maven, ANT and Gradle interfaces and can be used with these tools. For work it needs JDK 1.8+.
 
 # Documap
 
