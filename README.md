@@ -34,6 +34,10 @@
 Initially the preprocessor was developed for automation of mobile game development process and it was in very active use for several years for J2ME development. Since 2011 the preprocessor is OSS project.   
 On start the preprocessor was implemented as a CLI tool but then Maven, ANT and Gradle plug-ins were injected in the uber-jar.
 
+# Documap
+
+![Documap](assets/documap.png)
+
 # How to use
 [The Full list of the preprocessor directives can be found in the wiki.](https://github.com/raydac/java-comment-preprocessor/wiki/PreprocessorDirectives)   
 
