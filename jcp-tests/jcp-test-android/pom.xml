@@ -9,7 +9,7 @@
     <version>0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jcp-test-gradle</artifactId>
+  <artifactId>jcp-test-android</artifactId>
   <packaging>pom</packaging>
 
   <dependencies>
@@ -17,12 +17,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>jcp-gradle-plugin</artifactId>
       <version>${jcp.test.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -39,7 +33,19 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
+              <directory>${project.basedir}/.gradle</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
               <directory>${project.basedir}</directory>
+              <includes>
+                <include>gradlew</include>
+                <include>gradlew.bat</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${project.basedir}${file.separator}app</directory>
               <includes>
                 <include>gradlew</include>
                 <include>gradlew.bat</include>
@@ -51,35 +57,23 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}/build</directory>
+              <directory>${project.basedir}${file.separator}build</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}/out</directory>
+              <directory>${project.basedir}${file.separator}app${file.separator}build</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${project.basedir}${file.separator}out</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${project.basedir}${file.separator}app${file.separator}out</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>set-system-properties</goal>
-            </goals>
-            <configuration>
-              <properties>
-                <property>
-                  <name>gradle.prop.jcp_plugin_path</name>
-                  <value>${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar</value>
-                </property>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.fortasoft</groupId>
@@ -104,7 +98,7 @@
           <tasks>
             <task>clean</task>
             <task>test</task>
-            <task>jar</task>
+            <task>build</task>
           </tasks>
         </configuration>
         <executions>

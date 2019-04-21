@@ -3,7 +3,7 @@ buildscript {
         flatDir dirs: "../../jcp/target"
     }
     dependencies {
-        classpath "com.igormaznitsa:jcp:7.0.1"
+        classpath "com.igormaznitsa:jcp:7.0.2-SNAPSHOT"
     }
 }
 
