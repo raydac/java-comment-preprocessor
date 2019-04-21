@@ -98,6 +98,7 @@ java -jar jcp-7.0.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - [Prepare sources for Javassist](jcp-tests/jcp-test-javassist)
 - [Make multi-versioned JAR  for JEP-238](jcp-tests/jcp-test-jep238)
 - [Generate static file from XML sources](jcp-tests/jcp-test-static-site)
+- [Simple Android Gradle-based project](jcp-tests/jcp-test-android)
 
 # Example of Java sources with directives
 In Java the only allowed way to inject directives and to not break work of tools and conpilers - is to use commented space, so that the preprocessor uses it.
