@@ -47,6 +47,8 @@ preprocessSettings {
     sources = ['src/main/java']
     android.sourceSets.main.java.srcDirs = [targetFolder]
 
+    keepComments = false
+
     vars = [
             'action.text':'Non-secret action!',
             'remove.secret':'true'
