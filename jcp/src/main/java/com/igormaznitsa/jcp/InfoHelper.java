@@ -48,7 +48,7 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getVersion() {
-    return "v7.0.1";
+    return "v7.0.2-SNAPSHOT";
   }
 
   @Nonnull

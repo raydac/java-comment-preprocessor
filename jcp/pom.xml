@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.igormaznitsa</groupId>
         <artifactId>jcp-pom</artifactId>
-        <version>7.0.1</version>
+        <version>7.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>jcp</artifactId>
@@ -505,6 +505,10 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/services/javax.xml.*</exclude>
+                                        <exclude>META-INF/services/org.apache.*</exclude>
+                                        <exclude>META-INF/services/org.w3c.*</exclude>
+                                        <exclude>META-INF/services/org.xml.*</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
