@@ -4,7 +4,7 @@ buildscript {
         flatDir dirs: "../../../jcp/target"
     }
     dependencies {
-        classpath "com.igormaznitsa:jcp:7.0.2"
+        classpath "com.igormaznitsa:jcp:7.0.3-SNAPSHOT"
     }
 }
 apply plugin: 'com.igormaznitsa.jcp'

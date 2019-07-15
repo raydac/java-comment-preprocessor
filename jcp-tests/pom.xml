@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <jcp.test.version>7.0.2</jcp.test.version>
+        <jcp.test.version>7.0.3-SNAPSHOT</jcp.test.version>
         <junit.version>5.4.2</junit.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
