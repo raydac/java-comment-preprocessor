@@ -11,6 +11,9 @@
 ![Logo](assets/logo.png)
 
 # Changelog
+- **7.0.2 (15 jul 2019)**
+  - fixed leaks of system scoped dependencies in generated pom.xml
+
 - **7.0.1 (19 apr 2019)**
   - minor refactoring
   
