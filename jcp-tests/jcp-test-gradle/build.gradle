@@ -64,5 +64,10 @@ preprocessSettings {
     sourceSets.main.java.srcDirs = [targetFolder]
 }
 
+preprocess {
+    verbose = true
+    targetEncoding = "UTF-8"
+}
+
 compileJava.dependsOn preprocess
 
