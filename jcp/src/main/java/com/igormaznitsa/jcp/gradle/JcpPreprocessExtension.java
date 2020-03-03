@@ -1,8 +1,6 @@
 package com.igormaznitsa.jcp.gradle;
 
-import lombok.Data;
-import org.gradle.api.Project;
-
+import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+import lombok.Data;
+import org.gradle.api.Project;
 import org.gradle.execution.commandline.TaskConfigurationException;
 
 @Data
@@ -151,6 +151,87 @@ public class JcpPreprocessExtension {
    */
   private boolean dontOverwriteSameContent = false;
 
+  @Nullable
+  private static File merge(@Nullable final File prefered, @Nullable final File second) {
+    return prefered == null ? second : prefered;
+  }
+
+  @Nullable
+  private static String merge(@Nullable final String prefered, @Nullable final String second) {
+    return prefered == null ? second : prefered;
+  }
+
+  @Nullable
+  @MustNotContainNull
+  private static Map<String, String> merge(
+      @Nullable @MustNotContainNull final Map<String, String> preferred,
+      @Nullable @MustNotContainNull final Map<String, String> second) {
+    if (preferred == null && second == null) {
+      return null;
+    }
+    final Map<String, String> result = new HashMap<>();
+    if (preferred != null) {
+      result.putAll(preferred);
+    }
+    if (second != null) {
+      second.forEach(result::putIfAbsent);
+    }
+    return result;
+  }
+
+  @Nullable
+  private static List<String> merge(
+      @Nullable @MustNotContainNull final List<String> preferred,
+      @Nullable @MustNotContainNull final List<String> second
+  ) {
+    if (preferred == null && second == null) {
+      return null;
+    }
+    final List<String> result = new ArrayList<>();
+
+    if (preferred != null) {
+      result.addAll(preferred);
+    }
+
+    if (second != null) {
+      second.stream().filter(x -> !result.contains(x)).forEach(result::add);
+    }
+
+    return result;
+  }
+
+  public JcpPreprocessExtension() {
+    this.keepLines = false;
+    this.keepComments = false;
+  }
+
+  public JcpPreprocessExtension(final JcpPreprocessExtension preferred, final JcpPreprocessExtension dflt) {
+    this.allowWhitespaces = preferred.isAllowWhitespaces() || dflt.isAllowWhitespaces();
+    this.careForLastEol = preferred.isCareForLastEol() || dflt.isCareForLastEol();
+    this.clearTarget = preferred.isClearTarget() || dflt.isClearTarget();
+    this.dontOverwriteSameContent = preferred.isDontOverwriteSameContent() || dflt.isDontOverwriteSameContent();
+    this.dryRun = preferred.isDryRun() || dflt.isDryRun();
+    this.ignoreMissingSources = preferred.isIgnoreMissingSources() || dflt.isIgnoreMissingSources();
+    this.keepAttributes = preferred.isKeepAttributes() || dflt.isKeepAttributes();
+    this.keepComments = preferred.isKeepComments() || dflt.isKeepComments();
+    this.keepLines = preferred.isKeepLines() || dflt.isKeepLines();
+    this.unknownVarAsFalse = preferred.isUnknownVarAsFalse() || dflt.isUnknownVarAsFalse();
+    this.preserveIndents = preferred.isPreserveIndents() || dflt.isPreserveIndents();
+    this.skip = preferred.isSkip() || dflt.isSkip();
+    this.verbose = preferred.isVerbose() || dflt.isVerbose();
+    this.configFiles = merge(preferred.getConfigFiles(), dflt.getConfigFiles());
+    this.excludeExtensions = merge(preferred.getExcludeExtensions(), dflt.getExcludeExtensions());
+    this.excludeFolders = merge(preferred.getExcludeFolders(), dflt.getExcludeFolders());
+    this.extensions = merge(preferred.getExtensions(), dflt.getExtensions());
+    this.sources = merge(preferred.getSources(), dflt.getSources());
+    this.baseDir = merge(preferred.getBaseDir(), dflt.getBaseDir());
+    this.eol = merge(preferred.getEol(), dflt.getEol());
+    this.sourceEncoding = merge(preferred.getSourceEncoding(), dflt.getSourceEncoding());
+    this.targetEncoding = merge(preferred.getTargetEncoding(), dflt.getTargetEncoding());
+    this.vars = merge(preferred.getVars(), dflt.getVars());
+    this.target = merge(preferred.getTarget(), dflt.getTarget());
+  }
+
   public JcpPreprocessExtension(final Project project) {
     if (this.baseDir == null) {
       this.baseDir = project.getProjectDir();
@@ -163,7 +244,7 @@ public class JcpPreprocessExtension {
     }
   }
 
-  public void validate(final Project project) {
+  public void validate() {
     if (this.baseDir == null) {
       throw new TaskConfigurationException(JcpPreprocessTask.ID, "Basedir must be defined", null);
     }
