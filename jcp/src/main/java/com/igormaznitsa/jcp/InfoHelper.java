@@ -53,7 +53,7 @@ public final class InfoHelper {
 
   @Nonnull
   public static String getCopyright() {
-    return "Copyright (C) 2002-2019 Igor A. Maznitsa (https://www.igormaznitsa.com)";
+    return "Copyright (C) 2002-2020 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
   @Nonnull

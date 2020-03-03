@@ -350,7 +350,7 @@
       <plugin>
         <groupId>com.igormaznitsa</groupId>
         <artifactId>uber-pom</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <configuration>
           <removeDependencies>
             <dependency>
