@@ -67,6 +67,7 @@ preprocessSettings {
 preprocess {
     verbose = true
     targetEncoding = "UTF-8"
+    extensions = ["java","kt"]
 }
 
 compileJava.dependsOn preprocess
