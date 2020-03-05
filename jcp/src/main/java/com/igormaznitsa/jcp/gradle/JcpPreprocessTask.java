@@ -5,7 +5,6 @@ import static org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import java.io.File;
@@ -411,10 +410,6 @@ public class JcpPreprocessTask extends DefaultTask {
     final JcpPreprocessor preprocessor = new JcpPreprocessor(preprocessorContext);
     logger.debug("Start preprocessing...");
 
-    try {
-      preprocessor.execute();
-    } catch (final PreprocessorException ex) {
-      throw new TaskExecutionException(this, ex);
-    }
+    preprocessor.execute();
   }
 }
