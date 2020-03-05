@@ -41,10 +41,10 @@ dependencies {
 }
 
 // preprocessor settings
-preprocessSettings {
+preprocess {
     def targetFolder = 'build/preprocessed/java'
     target = file(targetFolder)
-    sources = ['src/main/java']
+    sources = [file('src/main/java')]
     android.sourceSets.main.java.srcDirs = [targetFolder]
 
     keepComments = false

@@ -35,10 +35,6 @@ jar {
 
 
 preprocess {
-        def targetFolder = 'build/preprocessed/java'
-
-        target = file(targetFolder)
-        sources = ['src/main/java']
 
         allowWhitespaces = true
         eol = '\r\n'
@@ -62,7 +58,7 @@ preprocess {
         dontOverwriteSameContent=false
         vars = ['some.test.global': 'Some Test Global Value']
 
-        sourceSets.main.java.srcDirs = [targetFolder]
+        sourceSets.main.java.srcDirs = [target]
 }
 
 compileJava.dependsOn preprocess

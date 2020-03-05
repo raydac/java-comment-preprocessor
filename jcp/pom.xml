@@ -14,6 +14,17 @@
   <name>Java Comment Preprocessor</name>
   <description>Powerful multi-pass preprocessor to process directives situated in C-styled commentaries</description>
 
+  <repositories>
+    <repository>
+      <id>gradle-releases-repository</id>
+      <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <gradle.api.version>5.6</gradle.api.version>
+  </properties>
+
   <profiles>
     <profile>
       <id>metacheck</id>
@@ -292,71 +303,57 @@
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-core</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-core-5.1.jar</systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-core-api</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-core-api-5.1.jar</systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-model-core</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-model-core-5.1.jar</systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-logging</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-logging-5.1.jar</systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-base-services</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-5.1.jar
-      </systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-base-services-groovy</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-base-services-groovy-5.1.jar
-      </systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-plugins</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-plugins-5.1.jar</systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gradle</groupId>
       <artifactId>gradle-tooling-api</artifactId>
-      <version>5.1</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}gradle-tooling-api-5.1.jar
-      </systemPath>
-      <scope>system</scope>
+      <version>${gradle.api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>2.4.12</version>
-      <systemPath>${project.basedir}${file.separator}extlibs${file.separator}groovy-all-2.4.12.jar</systemPath>
-      <scope>system</scope>
+      <version>2.5.1</version>
+      <scope>provided</scope>
     </dependency>
-
-
   </dependencies>
 
   <build>
