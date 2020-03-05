@@ -36,8 +36,8 @@ jar {
 preprocessSettings {
     def targetFolder = 'build/preprocessed/java'
 
-    sources = ['src/main/java']
     target = file(targetFolder)
+    sources = ['src/main/java']
 
     allowWhitespaces = true
     eol = '\r\n'

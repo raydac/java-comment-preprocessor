@@ -9,6 +9,6 @@ public class JcpGradlePlugin implements Plugin<Project> {
   @Override
   public void apply(@Nonnull final Project project) {
     project.getTasks().create(JcpPreprocessTask.ID, JcpPreprocessTask.class);
-    project.getExtensions().create(JcpPreprocessExtension.ID, JcpPreprocessExtension.class, project);
+    project.getExtensions().create(JcpPreprocessExtension.ID, JcpPreprocessExtension.class);
   }
 }
