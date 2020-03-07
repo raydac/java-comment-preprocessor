@@ -40,19 +40,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-def preprocessTargetFolder = file('build/java-comment-preprocessor/app1')
-
 preprocess {
-    target = file(preprocessTargetFolder)
-    sources = [file('src/main/java')]
-
+    sources = android.sourceSets.main.java.srcDirs
     keepComments = false
-
     vars = [
             'action.text':'Non-secret action!',
             'remove.secret':'true'
     ]
-
 }
 
 task (changeSourceFolder) {

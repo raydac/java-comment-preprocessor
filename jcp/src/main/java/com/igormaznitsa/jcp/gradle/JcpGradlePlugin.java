@@ -8,6 +8,6 @@ public class JcpGradlePlugin implements Plugin<Project> {
 
   @Override
   public void apply(@Nonnull final Project project) {
-    project.getTasks().create(JcpPreprocessTask.ID, JcpPreprocessTask.class);
+    project.getTasks().create(JcpTask.ID, JcpTask.class);
   }
 }

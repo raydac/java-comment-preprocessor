@@ -35,7 +35,7 @@ jar {
 
 
 preprocess {
-
+        sources = sourceSets.main.java.srcDirs
         allowWhitespaces = true
         eol = '\r\n'
         keepAttributes=true
@@ -57,8 +57,11 @@ preprocess {
         preserveIndents=true
         dontOverwriteSameContent=false
         vars = ['some.test.global': 'Some Test Global Value']
-        autoReplaceSources=true
 }
+task (changeSourceFolder) {
+    sourceSets.main.java.srcDirs = [preprocess.target]
+}.dependsOn preprocess
+
 
 compileJava.dependsOn preprocess
 
