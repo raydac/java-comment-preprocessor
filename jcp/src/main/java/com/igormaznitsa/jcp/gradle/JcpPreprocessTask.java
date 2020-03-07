@@ -163,7 +163,7 @@ public class JcpPreprocessTask extends DefaultTask {
 
     this.targetEncoding = factory.property(String.class).convention(StandardCharsets.UTF_8.name());
     this.sourceEncoding = factory.property(String.class).convention(StandardCharsets.UTF_8.name());
-    this.eol = factory.property(String.class).convention(System.getProperty("line.separator", "\n"));
+    this.eol = factory.property(String.class).convention(System.lineSeparator());
 
     this.vars = factory.mapProperty(String.class, String.class).convention(new HashMap<>());
 
