@@ -187,7 +187,7 @@ public class JcpPreprocessTask extends DefaultTask {
     this.fileExtensions = factory.listProperty(String.class).convention(new ArrayList<>(Arrays.asList("java", "txt", "htm", "html")));
 
     this.baseDir = factory.property(File.class).convention(this.getProject().getProjectDir());
-    this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(), "preprocessed"));
+    this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(), "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
   }
 
   @InputFiles
