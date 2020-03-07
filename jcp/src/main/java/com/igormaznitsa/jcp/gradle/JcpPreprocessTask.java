@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcp.gradle;
 
+import static java.util.Collections.emptyMap;
 import static org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME;
 
 
@@ -14,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -165,7 +165,7 @@ public class JcpPreprocessTask extends DefaultTask {
     this.sourceEncoding = factory.property(String.class).convention(StandardCharsets.UTF_8.name());
     this.eol = factory.property(String.class).convention(System.lineSeparator());
 
-    this.vars = factory.mapProperty(String.class, String.class).convention(new HashMap<>());
+    this.vars = factory.mapProperty(String.class, String.class);
 
     final JavaPluginConvention javaPluginConvention = this.getProject().getConvention().findPlugin(JavaPluginConvention.class);
     if (javaPluginConvention == null) {
@@ -392,7 +392,7 @@ public class JcpPreprocessTask extends DefaultTask {
     preprocessorContext.setUnknownVariableAsFalse(this.unknownVarAsFalse.get());
     preprocessorContext.setVerbose(this.verbose.get());
 
-    this.vars.get().forEach((key, value) -> {
+    this.vars.getOrElse(emptyMap()).forEach((key, value) -> {
       logger.debug(String.format("Registering global variable: %s=%s", key, value));
       preprocessorContext.setGlobalVariable(key, Value.recognizeRawString(value));
     });
