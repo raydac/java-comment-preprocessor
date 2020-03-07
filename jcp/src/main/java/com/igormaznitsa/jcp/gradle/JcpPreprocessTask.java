@@ -138,10 +138,6 @@ public class JcpPreprocessTask extends DefaultTask {
    */
   private final Property<Boolean> preserveIndents;
   /**
-   * Skip preprocessing. Also can be defined by property 'jcp.preprocess.skip'
-   */
-  private final Property<Boolean> skip;
-  /**
    * Turn on check of content body compare with existing result file to prevent
    * overwriting, if content is the same then preprocessor will not be writing
    * new result content.
@@ -162,7 +158,6 @@ public class JcpPreprocessTask extends DefaultTask {
     this.keepComments = factory.property(Boolean.class).convention(true);
     this.keepLines = factory.property(Boolean.class).convention(true);
     this.preserveIndents = factory.property(Boolean.class).convention(false);
-    this.skip = factory.property(Boolean.class).convention(false);
     this.unknownVarAsFalse = factory.property(Boolean.class).convention(false);
     this.verbose = factory.property(Boolean.class).convention(false);
 
@@ -304,11 +299,6 @@ public class JcpPreprocessTask extends DefaultTask {
   @Input
   public Property<Boolean> getPreserveIndents() {
     return preserveIndents;
-  }
-
-  @Input
-  public Property<Boolean> getSkip() {
-    return skip;
   }
 
   @Input
