@@ -57,8 +57,7 @@ preprocess {
         preserveIndents=true
         dontOverwriteSameContent=false
         vars = ['some.test.global': 'Some Test Global Value']
-
-        sourceSets.main.java.srcDirs = [target]
+        autoReplaceSources=true
 }
 
 compileJava.dependsOn preprocess

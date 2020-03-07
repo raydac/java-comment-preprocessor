@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcp.gradle;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME;
 
@@ -16,8 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.logging.Logger;
@@ -26,9 +30,10 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
@@ -144,7 +149,13 @@ public class JcpPreprocessTask extends DefaultTask {
    */
   private final Property<Boolean> dontOverwriteSameContent;
 
-  public JcpPreprocessTask() {
+  /**
+   * Auto replace java source folders by the target folder.
+   */
+  private final Property<Boolean> autoReplaceSources;
+
+  @Inject
+  public JcpPreprocessTask(ProviderFactory providerFactory) {
     super();
     final ObjectFactory factory = this.getProject().getObjects();
 
@@ -167,27 +178,56 @@ public class JcpPreprocessTask extends DefaultTask {
 
     this.vars = factory.mapProperty(String.class, String.class);
 
-    final JavaPluginConvention javaPluginConvention = this.getProject().getConvention().findPlugin(JavaPluginConvention.class);
-    if (javaPluginConvention == null) {
-      this.sources = factory.listProperty(File.class);
-    } else {
-      final SourceSetContainer srcSetContainer = javaPluginConvention.getSourceSets();
-      srcSetContainer.getByName(MAIN_SOURCE_SET_NAME);
-      this.sources = factory.listProperty(File.class).convention(
-          srcSetContainer
-              .stream()
-              .filter(x -> MAIN_SOURCE_SET_NAME.equals(x.getName()))
-              .flatMap(x -> x.getJava().getSrcDirs().stream())
-              .collect(Collectors.toList())
-      );
-    }
+    this.sources = factory.listProperty(File.class).convention(providerFactory.provider(() -> findJavaSourceFolders().orElse(emptyList())));
+
     this.configFiles = factory.listProperty(String.class);
     this.excludeExtensions = factory.listProperty(String.class).convention(Collections.singletonList("xml"));
     this.excludeFolders = factory.listProperty(String.class);
     this.fileExtensions = factory.listProperty(String.class).convention(new ArrayList<>(Arrays.asList("java", "txt", "htm", "html")));
 
     this.baseDir = factory.property(File.class).convention(this.getProject().getProjectDir());
+    this.autoReplaceSources = factory.property(Boolean.class).convention(false);
     this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(), "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
+  }
+
+  private Optional<List<File>> findJavaSourceFolders() {
+    final JavaPluginConvention javaPluginConvention = this.getProject().getConvention().findPlugin(JavaPluginConvention.class);
+
+    if (javaPluginConvention == null) {
+      this.getLogger().debug("Can't find Java plugin");
+      return Optional.empty();
+    }
+
+    final SourceSetContainer srcSetContainer = javaPluginConvention.getSourceSets();
+    return Optional.of(srcSetContainer
+        .stream()
+        .filter(x -> MAIN_SOURCE_SET_NAME.equals(x.getName()))
+        .flatMap(x -> x.getJava().getSrcDirs().stream())
+        .collect(Collectors.toList()));
+  }
+
+  private boolean replaceJavaSourceFolders(final File targetFolder) {
+    final JavaPluginConvention javaPluginConvention = this.getProject().getConvention().findPlugin(JavaPluginConvention.class);
+    final AtomicBoolean replaced = new AtomicBoolean();
+    if (javaPluginConvention == null) {
+      this.getLogger().debug("Can't find Java plugin");
+    } else {
+      this.getLogger().debug("Detected Java plugin, trying to replace its main source set");
+      final SourceSetContainer srcSetContainer = javaPluginConvention.getSourceSets();
+      srcSetContainer
+          .stream()
+          .filter(x -> MAIN_SOURCE_SET_NAME.equals(x.getName()))
+          .forEach(x -> {
+            x.getJava().setSrcDirs(Collections.singletonList(targetFolder));
+            replaced.set(true);
+          });
+    }
+    return replaced.get();
+  }
+
+  @Input
+  public Property<Boolean> getAutoReplaceSources() {
+    return this.autoReplaceSources;
   }
 
   @InputFiles
@@ -206,7 +246,7 @@ public class JcpPreprocessTask extends DefaultTask {
   }
 
   @Input
-  @OutputFile
+  @OutputDirectory
   public Property<File> getTarget() {
     return this.target;
   }
@@ -352,8 +392,9 @@ public class JcpPreprocessTask extends DefaultTask {
       }
     });
 
-    logger.info("Target folder: " + this.target.get());
-    preprocessorContext.setTarget(this.target.get());
+    final File targetFolder = this.target.get();
+    logger.info("Target folder: " + targetFolder);
+    preprocessorContext.setTarget(targetFolder);
 
     final List<File> sourcesList = this.sources.get();
     if (sourcesList.isEmpty()) {
@@ -401,5 +442,12 @@ public class JcpPreprocessTask extends DefaultTask {
     logger.debug("Start preprocessing...");
 
     preprocessor.execute();
+
+    if (this.autoReplaceSources.get()) {
+      logger.info("Trying auto-replace source folders by the preprocessed one: " + targetFolder);
+      if (!this.replaceJavaSourceFolders(targetFolder)) {
+        throw new TaskExecutionException(this, new IllegalStateException("Can't replace sources automatically, may be some unsupported type of project, use manual replacement!"));
+      }
+    }
   }
 }
