@@ -4,7 +4,7 @@ buildscript {
         flatDir dirs: "../../../jcp/target"
     }
     dependencies {
-        classpath "com.igormaznitsa:jcp:7.0.3-SNAPSHOT"
+        classpath "com.igormaznitsa:jcp:" + project.getProperty("jcp_plugin_version")
     }
 }
 apply plugin: 'com.igormaznitsa.jcp'
@@ -44,12 +44,12 @@ preprocess {
     sources = android.sourceSets.main.java.srcDirs
     keepComments = false
     vars = [
-            'action.text':'Non-secret action!',
-            'remove.secret':'true'
+            'action.text'  : 'Non-secret action!',
+            'remove.secret': 'true'
     ]
 }
 
-task (changeSourceFolder) {
+task(changeSourceFolder) {
     android.sourceSets.main.java.srcDirs = [preprocess.target]
 }.dependsOn preprocess
 

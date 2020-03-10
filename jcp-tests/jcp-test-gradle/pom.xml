@@ -14,12 +14,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jcp-gradle-plugin</artifactId>
-      <version>${jcp.test.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
@@ -63,57 +57,26 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <goals>
-              <goal>set-system-properties</goal>
-            </goals>
-            <configuration>
-              <properties>
-                <property>
-                  <name>gradle.prop.jcp_plugin_path</name>
-                  <value>${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar</value>
-                </property>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.fortasoft</groupId>
-        <artifactId>gradle-maven-plugin</artifactId>
-        <version>1.0.8</version>
-        <dependencies>
-          <dependency>
-              <groupId>org.gradle</groupId>
-              <artifactId>gradle-tooling-api</artifactId>
-              <version>5.1</version>
-              <systemPath>
-                  ${project.basedir}${file.separator}..${file.separator}extlibs${file.separator}gradle-tooling-api-5.1.jar
-              </systemPath>
-              <scope>system</scope>
-          </dependency>
-        </dependencies>
-
-        <configuration>
-          <gradleVersion>5.0</gradleVersion>
-          <args>
-            <arg>--stacktrace</arg>
-            <arg>--info</arg>
-          </args>
-          <tasks>
-            <task>clean</task>
-            <task>test</task>
-            <task>jar</task>
-          </tasks>
-        </configuration>
-        <executions>
-          <execution>
+            <id>gradle</id>
             <phase>compile</phase>
+            <configuration>
+              <executable>${gradle.executable}</executable>
+              <arguments>
+                <argument>clean</argument>
+                <argument>test</argument>
+                <argument>jar</argument>
+                <argument>-i</argument>
+                <argument>-S</argument>
+                <argument>
+                  -Pjcp_plugin_path=${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar
+                </argument>
+              </arguments>
+            </configuration>
             <goals>
-              <goal>invoke</goal>
+              <goal>exec</goal>
             </goals>
           </execution>
         </executions>

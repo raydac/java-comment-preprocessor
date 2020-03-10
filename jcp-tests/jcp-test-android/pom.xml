@@ -12,15 +12,6 @@
   <artifactId>jcp-test-android</artifactId>
   <packaging>pom</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jcp-gradle-plugin</artifactId>
-      <version>${jcp.test.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -76,36 +67,25 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.fortasoft</groupId>
-        <artifactId>gradle-maven-plugin</artifactId>
-        <version>1.0.8</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.gradle</groupId>
-            <artifactId>gradle-tooling-api</artifactId>
-            <version>5.0</version>
-            <systemPath>${project.basedir}${file.separator}..${file.separator}extlibs${file.separator}gradle-tooling-api-5.0.jar</systemPath>
-            <scope>system</scope>
-          </dependency>
-        </dependencies>
-
-        <configuration>
-          <gradleVersion>5.0</gradleVersion>
-          <args>
-            <arg>--stacktrace</arg>
-            <arg>--info</arg>
-          </args>
-          <tasks>
-            <task>clean</task>
-            <task>test</task>
-            <task>build</task>
-          </tasks>
-        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>gradle</id>
             <phase>compile</phase>
+            <configuration>
+              <executable>${gradle.executable}</executable>
+              <arguments>
+                <argument>clean</argument>
+                <argument>test</argument>
+                <argument>build</argument>
+                <argument>-i</argument>
+                <argument>-S</argument>
+                <argument>-Pjcp_plugin_version=${jcp.test.version}</argument>
+              </arguments>
+            </configuration>
             <goals>
-              <goal>invoke</goal>
+              <goal>exec</goal>
             </goals>
           </execution>
         </executions>
