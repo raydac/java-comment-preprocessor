@@ -68,8 +68,8 @@
                 <argument>clean</argument>
                 <argument>test</argument>
                 <argument>jar</argument>
-                <argument>-i</argument>
-                <argument>-S</argument>
+                <argument>--scan</argument>
+                <argument>--full-stacktrace</argument>
                 <argument>
                   -Pjcp_plugin_path=${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar
                 </argument>
