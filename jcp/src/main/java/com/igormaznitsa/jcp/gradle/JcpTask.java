@@ -25,10 +25,8 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 import org.gradle.execution.commandline.TaskConfigurationException;
@@ -144,10 +142,7 @@ public class JcpTask extends DefaultTask {
   private final Property<Boolean> dontOverwriteSameContent;
 
   @Inject
-  public JcpTask(ProviderFactory providerFactory) {
-    super();
-    final ObjectFactory factory = this.getProject().getObjects();
-
+  public JcpTask(final ObjectFactory factory) {
     this.allowWhitespaces = factory.property(Boolean.class).convention(false);
     this.careForLastEol = factory.property(Boolean.class).convention(false);
     this.clearTarget = factory.property(Boolean.class).convention(false);
@@ -170,12 +165,20 @@ public class JcpTask extends DefaultTask {
     this.sources = factory.listProperty(File.class);
 
     this.configFiles = factory.listProperty(String.class);
-    this.excludeExtensions = factory.listProperty(String.class).convention(Collections.singletonList("xml"));
+    this.excludeExtensions =
+        factory.listProperty(String.class).convention(Collections.singletonList("xml"));
     this.excludeFolders = factory.listProperty(String.class);
-    this.fileExtensions = factory.listProperty(String.class).convention(new ArrayList<>(Arrays.asList("java", "txt", "htm", "html")));
+    this.fileExtensions = factory.listProperty(String.class)
+        .convention(new ArrayList<>(Arrays.asList("java", "txt", "htm", "html")));
 
     this.baseDir = factory.property(File.class).convention(this.getProject().getProjectDir());
-    this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(), "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
+    this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(),
+        "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
+  }
+
+  @Override
+  public String getDescription() {
+    return "Preprocess sources and resources with JCP";
   }
 
   @InputFiles
@@ -194,7 +197,6 @@ public class JcpTask extends DefaultTask {
   }
 
   @Input
-  @OutputDirectory
   public Property<File> getTarget() {
     return this.target;
   }
