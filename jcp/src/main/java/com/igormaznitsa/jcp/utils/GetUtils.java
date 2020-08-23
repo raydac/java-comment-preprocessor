@@ -19,29 +19,37 @@
  * under the License.
  */
 
-package com.igormaznitsa.meta.common.utils;
+package com.igormaznitsa.jcp.utils;
 
-import java.io.Closeable;
+import java.util.Objects;
 
-public final class IOUtils {
+public final class GetUtils {
 
-  private IOUtils() {
+  private GetUtils() {
   }
 
   /**
-   * Closing quietly any closeable object. Any exception will be caught (but global error listeners will be notified)
+   * Get value and ensure that the value is not null
    *
-   * @param closeable object to be closed quetly
-   * @return the same object provided in args
+   * @param <T>          type of value
+   * @param value        the value
+   * @param defaultValue the default value to be returned if the value is null
+   * @return not null value
+   * @throws AssertionError if both the value and the default value are null
+   * @since 1.0
    */
-  public static Closeable closeQuietly(final Closeable closeable) {
-    if (closeable != null) {
-      try {
-        closeable.close();
-      } catch (Exception ex) {
-        // DO NOTHING
-      }
-    }
-    return closeable;
+  public static <T> T ensureNonNull(final T value, final T defaultValue) {
+    return value == null ? Objects.requireNonNull(defaultValue) : value;
+  }
+
+  /**
+   * Ensure that a string will not be null.
+   *
+   * @param value value to be checked
+   * @return the value if it is not null or empty string if the value is null
+   * @since 1.1.1
+   */
+  public static String ensureNonNullStr(final String value) {
+    return value == null ? "" : value;
   }
 }

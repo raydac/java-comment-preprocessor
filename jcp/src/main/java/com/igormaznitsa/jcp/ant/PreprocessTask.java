@@ -27,7 +27,7 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.meta.common.utils.GetUtils;
+import com.igormaznitsa.jcp.utils.GetUtils;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;

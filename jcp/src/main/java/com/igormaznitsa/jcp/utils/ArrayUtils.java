@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.igormaznitsa.meta.common.utils;
+package com.igormaznitsa.jcp.utils;
 
 import java.lang.reflect.Array;
 

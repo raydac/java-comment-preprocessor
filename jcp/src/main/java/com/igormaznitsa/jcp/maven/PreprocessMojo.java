@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.maven;
 
-import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
+import static com.igormaznitsa.jcp.utils.GetUtils.ensureNonNull;
 
 
 import com.igormaznitsa.jcp.JcpPreprocessor;

@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.context;
 
-import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
+import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
 
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
