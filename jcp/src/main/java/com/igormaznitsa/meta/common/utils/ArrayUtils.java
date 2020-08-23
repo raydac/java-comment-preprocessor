@@ -21,68 +21,17 @@
 
 package com.igormaznitsa.meta.common.utils;
 
-import com.igormaznitsa.meta.annotation.MayContainNull;
-import com.igormaznitsa.meta.annotation.Weight;
-
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Array;
 
-/**
- * Set of auxiliary methods to process arrays.
- *
- * @since 1.0
- */
-@ThreadSafe
 public final class ArrayUtils {
 
-  /**
-   * Empty object array.
-   *
-   * @since 1.0.2
-   */
   public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-  /**
-   * Empty string array.
-   *
-   * @since 1.0.2
-   */
   public static final String[] EMPTY_STRING_ARRAY = new String[0];
-  /**
-   * Empty byte array.
-   *
-   * @since 1.0.2
-   */
   public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-  /**
-   * Empty char array.
-   *
-   * @since 1.0.2
-   */
   public static final char[] EMPTY_CHAR_ARRAY = new char[0];
-  /**
-   * Empty short array.
-   *
-   * @since 1.0.2
-   */
   public static final short[] EMPTY_SHORT_ARRAY = new short[0];
-  /**
-   * Empty boolean array.
-   *
-   * @since 1.0.2
-   */
   public static final boolean[] EMPTY_BOOL_ARRAY = new boolean[0];
-  /**
-   * Empty int array.
-   *
-   * @since 1.0.2
-   */
   public static final int[] EMPTY_INT_ARRAY = new int[0];
-  /**
-   * Empty long array.
-   *
-   * @since 1.0.2
-   */
   public static final long[] EMPTY_LONG_ARRAY = new long[0];
 
   private ArrayUtils() {
@@ -97,17 +46,15 @@ public final class ArrayUtils {
    * @since 1.0
    */
   @SafeVarargs
-  @Nonnull
-  @MayContainNull
-  @Weight(Weight.Unit.NORMAL)
-  public static <T> T[] joinArrays(@MayContainNull final T[]... arrays) {
+  public static <T> T[] joinArrays(final T[]... arrays) {
     int commonLength = 0;
     for (final T[] array : arrays) {
       if (array != null) {
         commonLength += array.length;
       }
     }
-    @SuppressWarnings("unchecked") final T[] result = (T[]) Array.newInstance(arrays.getClass().getComponentType().getComponentType(), commonLength);
+    @SuppressWarnings("unchecked") final T[] result = (T[]) Array
+        .newInstance(arrays.getClass().getComponentType().getComponentType(), commonLength);
     int position = 0;
     for (final T[] array : arrays) {
       if (array != null) {

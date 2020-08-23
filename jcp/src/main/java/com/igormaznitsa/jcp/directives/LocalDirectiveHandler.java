@@ -26,8 +26,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#local directive handler
  *
@@ -36,31 +34,32 @@ import javax.annotation.Nonnull;
 public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "local";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     processLocalDefinition(string, context);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "local variable definition, visibility bounded by current file";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.SET;
   }
 
-  private void processLocalDefinition(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+  private void processLocalDefinition(final String string, final PreprocessorContext context) {
     final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
 
     if (splitted.length != 2) {

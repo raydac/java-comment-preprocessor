@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.expression.operators;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the MOD operator handler
  *
@@ -39,39 +37,39 @@ public final class OperatorMUL extends AbstractOperator {
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "multiplication";
   }
 
   @Override
-  @Nonnull
+
   public String getKeyword() {
     return "*";
   }
 
-  @Nonnull
-  public Value executeIntInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeIntInt(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asLong() * arg2.asLong());
   }
 
-  @Nonnull
-  public Value executeIntFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeIntFloat(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asLong().floatValue() * arg2.asFloat());
   }
 
-  @Nonnull
-  public Value executeFloatInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeFloatInt(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asFloat() * arg2.asLong().floatValue());
   }
 
-  @Nonnull
-  public Value executeFloatFloat(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeFloatFloat(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asFloat() * arg2.asFloat());
   }
 
   @Override
-  @Nonnull
+
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.ARITHMETIC_MUL_DIV_MOD;
   }

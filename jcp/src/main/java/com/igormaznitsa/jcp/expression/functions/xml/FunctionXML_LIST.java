@@ -24,11 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the xml_list function handler
@@ -37,16 +34,18 @@ import javax.annotation.Nonnull;
  */
 public final class FunctionXML_LIST extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "xml_list";
   }
 
-  @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value elementId, @Nonnull final Value elementTag) {
+
+  public Value executeStrStr(final PreprocessorContext context, final Value elementId,
+                             final Value elementTag) {
     final String tagName = elementTag.asString();
     final Element element = getCachedElement(context, elementId.asString());
     final String listId = makeElementListId(element, tagName);
@@ -67,20 +66,20 @@ public final class FunctionXML_LIST extends AbstractXMLFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "get list of elements by tag name";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

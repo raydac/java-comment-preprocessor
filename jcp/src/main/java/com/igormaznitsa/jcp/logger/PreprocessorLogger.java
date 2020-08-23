@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.logger;
 
-import javax.annotation.Nullable;
-
 /**
  * The interface describes a logger to be used by a preprocessor during its work
  *
@@ -35,14 +33,14 @@ public interface PreprocessorLogger {
    *
    * @param message the text to be output into the error log
    */
-  void error(@Nullable String message);
+  void error(String message);
 
   /**
    * Log an information message
    *
    * @param message the text to be output into the information log
    */
-  void info(@Nullable String message);
+  void info(String message);
 
   /**
    * Log a debug message
@@ -50,12 +48,12 @@ public interface PreprocessorLogger {
    * @param message the text to be output into the information log
    * @since 6.0.1
    */
-  void debug(@Nullable String message);
+  void debug(String message);
 
   /**
    * Log a warning message
    *
    * @param message the text to be output into the warning log
    */
-  void warning(@Nullable String message);
+  void warning(String message);
 }

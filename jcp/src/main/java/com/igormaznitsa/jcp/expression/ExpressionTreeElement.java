@@ -26,14 +26,9 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class describes a wrapper around an expression item to be saved into an expression tree
@@ -92,12 +87,14 @@ public class ExpressionTreeElement {
    * @param callStack    current call stack
    * @param sourceString source string for the expression
    */
-  ExpressionTreeElement(@Nonnull final ExpressionItem item, @Nonnull @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sourceString) {
+  ExpressionTreeElement(final ExpressionItem item, final FilePositionInfo[] callStack,
+                        final String sourceString) {
     this.sourceString = sourceString;
     this.includeStack = callStack;
 
     if (item == null) {
-      throw new PreprocessorException("[Expression]The item is null", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]The item is null", this.sourceString,
+          this.includeStack, null);
     }
 
     int arity = 0;
@@ -139,7 +136,7 @@ public class ExpressionTreeElement {
    *
    * @return the item to be wrapped by the object
    */
-  @Nonnull
+
   public ExpressionItem getItem() {
     return this.savedItem;
   }
@@ -158,7 +155,7 @@ public class ExpressionTreeElement {
    *
    * @return the parent for the element or null if the element is the tree root
    */
-  @Nullable
+
   public ExpressionTreeElement getParent() {
     return parentTreeElement;
   }
@@ -178,8 +175,8 @@ public class ExpressionTreeElement {
    * @param tree a tree to be added as a child, must not be null
    * @return it returns this
    */
-  @Nonnull
-  public ExpressionTreeElement addSubTree(@Nonnull final ExpressionTree tree) {
+
+  public ExpressionTreeElement addSubTree(final ExpressionTree tree) {
     assertNotEmptySlot();
 
     final ExpressionTreeElement root = tree.getRoot();
@@ -197,15 +194,18 @@ public class ExpressionTreeElement {
    * @param newOne the new expression element to be used instead the old one (must not be null)
    * @return true if the element was found and replaced, else false
    */
-  public boolean replaceElement(@Nonnull final ExpressionTreeElement oldOne, @Nonnull final ExpressionTreeElement newOne) {
+  public boolean replaceElement(final ExpressionTreeElement oldOne,
+                                final ExpressionTreeElement newOne) {
     assertNotEmptySlot();
 
     if (oldOne == null) {
-      throw new PreprocessorException("[Expression]The old element is null", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]The old element is null", this.sourceString,
+          this.includeStack, null);
     }
 
     if (newOne == null) {
-      throw new PreprocessorException("[Expression]The new element is null", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]The new element is null", this.sourceString,
+          this.includeStack, null);
     }
 
     boolean result = false;
@@ -232,7 +232,7 @@ public class ExpressionTreeElement {
    * @throws ArrayIndexOutOfBoundsException it will be thrown if an impossible index is being used
    * @see #EMPTY_SLOT
    */
-  @Nonnull
+
   public ExpressionTreeElement getChildForIndex(final int index) {
     assertNotEmptySlot();
     return this.childElements[index];
@@ -244,10 +244,10 @@ public class ExpressionTreeElement {
    * @param element the element to be added, must not be null
    * @return the element which should be used as the last for the current tree
    */
-  @Nullable
-  public ExpressionTreeElement addTreeElement(@Nonnull final ExpressionTreeElement element) {
+
+  public ExpressionTreeElement addTreeElement(final ExpressionTreeElement element) {
     assertNotEmptySlot();
-    assertNotNull("The element is null", element);
+    Objects.requireNonNull(element, "The element is null");
 
     final int newElementPriority = element.getPriority();
 
@@ -269,7 +269,9 @@ public class ExpressionTreeElement {
         parentTreeElement.replaceElement(this, element);
       }
       if (element.nextChildSlot >= element.childElements.length) {
-        throw new PreprocessorException("[Expression]Can't process expression item, may be wrong number of arguments", this.sourceString, this.includeStack, null);
+        throw new PreprocessorException(
+            "[Expression]Can't process expression item, may be wrong number of arguments",
+            this.sourceString, this.includeStack, null);
       }
       element.childElements[element.nextChildSlot] = this;
       element.nextChildSlot++;
@@ -307,30 +309,36 @@ public class ExpressionTreeElement {
    *
    * @param arguments the list containing trees to be used as children
    */
-  public void fillArguments(@Nonnull @MustNotContainNull final List<ExpressionTree> arguments) {
+  public void fillArguments(final List<ExpressionTree> arguments) {
     assertNotEmptySlot();
 
     if (arguments == null) {
-      throw new PreprocessorException("[Expression]Argument list is null", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]Argument list is null", this.sourceString,
+          this.includeStack, null);
     }
 
     if (childElements.length != arguments.size()) {
-      throw new PreprocessorException("Wrong argument list size", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("Wrong argument list size", this.sourceString,
+          this.includeStack, null);
     }
 
     int i = 0;
     for (ExpressionTree arg : arguments) {
       if (arg == null) {
-        throw new PreprocessorException("[Expression]Argument [" + (i + 1) + "] is null", this.sourceString, this.includeStack, null);
+        throw new PreprocessorException("[Expression]Argument [" + (i + 1) + "] is null",
+            this.sourceString, this.includeStack, null);
       }
 
       if (!childElements[i].isEmptySlot()) {
-        throw new PreprocessorException("[Expression]Non-empty slot detected, it is possible that there is a program error, contact a developer please", this.sourceString, this.includeStack, null);
+        throw new PreprocessorException(
+            "[Expression]Non-empty slot detected, it is possible that there is a program error, contact a developer please",
+            this.sourceString, this.includeStack, null);
       }
 
       final ExpressionTreeElement root = arg.getRoot();
       if (root.isEmptySlot()) {
-        throw new PreprocessorException("[Expression]Empty argument [" + (i + 1) + "] detected", this.sourceString, this.includeStack, null);
+        throw new PreprocessorException("[Expression]Empty argument [" + (i + 1) + "] detected",
+            this.sourceString, this.includeStack, null);
       }
       childElements[i] = root;
       root.parentTreeElement = this;
@@ -344,15 +352,20 @@ public class ExpressionTreeElement {
    *
    * @param element an element to be added, must not be null
    */
-  private void addElementToNextFreeSlot(@Nonnull final ExpressionTreeElement element) {
+  private void addElementToNextFreeSlot(final ExpressionTreeElement element) {
     if (element == null) {
-      throw new PreprocessorException("[Expression]Element is null", this.sourceString, this.includeStack, null);
+      throw new PreprocessorException("[Expression]Element is null", this.sourceString,
+          this.includeStack, null);
     }
 
     if (childElements.length == 0) {
-      throw new PreprocessorException("[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
+      throw new PreprocessorException(
+          "[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']',
+          this.sourceString, this.includeStack, null);
     } else if (isFull()) {
-      throw new PreprocessorException("[Expression]There is not any possibility to add new argument [" + savedItem.toString() + ']', this.sourceString, this.includeStack, null);
+      throw new PreprocessorException(
+          "[Expression]There is not any possibility to add new argument [" + savedItem.toString() +
+              ']', this.sourceString, this.includeStack, null);
     } else {
       childElements[nextChildSlot++] = element;
     }

@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#ifdefined directive handler
  *
@@ -35,15 +33,16 @@ import javax.annotation.Nonnull;
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "ifdefined";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "check variable exists in current context, it starts " + DIRECTIVE_PREFIX + "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif control structure";
+    return "check variable exists in current context, it starts " + DIRECTIVE_PREFIX +
+        "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif control structure";
   }
 
   protected boolean postprocessFlag(final boolean variableExists) {
@@ -56,14 +55,15 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.VARNAME;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isDirectiveCanBeProcessed()) {
       if (string.isEmpty()) {

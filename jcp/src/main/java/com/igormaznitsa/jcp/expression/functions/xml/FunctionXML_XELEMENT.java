@@ -24,14 +24,11 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The class implements the xml_xpathelement function handler
@@ -40,16 +37,18 @@ import javax.xml.xpath.XPathExpressionException;
  */
 public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "xml_xelement";
   }
 
-  @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value documentId, @Nonnull final Value xPath) {
+
+  public Value executeStrStr(final PreprocessorContext context, final Value documentId,
+                             final Value xPath) {
     final String documentIdStr = documentId.asString();
     final String pathStr = xPath.asString();
 
@@ -81,20 +80,20 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "find single element with XPath, error if not found";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

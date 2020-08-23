@@ -24,15 +24,12 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
+import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.annotation.Nonnull;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * The class implements the xml_open function handler
@@ -47,13 +44,13 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "xml_open";
   }
 
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value filePath) {
+
+  public Value executeStr(final PreprocessorContext context, final Value filePath) {
     final String name = filePath.asString();
 
     final String documentId = makeDocumentId(name);
@@ -71,15 +68,16 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
       final Document document = openFileAndParse(context, file);
       docContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document);
       context.setSharedResource(documentId, docContainer);
-      final NodeContainer rootContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document.getDocumentElement());
+      final NodeContainer rootContainer =
+          new NodeContainer(UID_COUNTER.getAndIncrement(), document.getDocumentElement());
       context.setSharedResource(documentIdRoot, rootContainer);
     }
 
     return Value.valueOf(documentId);
   }
 
-  @Nonnull
-  private Document openFileAndParse(@Nonnull final PreprocessorContext context, @Nonnull final File file) {
+
+  private Document openFileAndParse(final PreprocessorContext context, final File file) {
     final DocumentBuilderFactoryImpl docBuilderFactory = new DocumentBuilderFactoryImpl();
     docBuilderFactory.setIgnoringComments(true);
     docBuilderFactory.setCoalescing(true);
@@ -102,20 +100,20 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "open and parse XML file";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

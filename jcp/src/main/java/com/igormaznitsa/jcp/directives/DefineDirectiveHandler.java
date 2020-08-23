@@ -29,11 +29,8 @@ import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.Variable;
-
-import javax.annotation.Nonnull;
 import java.io.IOException;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#define directive handler
@@ -43,24 +40,25 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "define";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "add global BOOL variable and either set it TRUE (by default) or initialize by expression result";
   }
 
-  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
+  protected void process(final PreprocessorContext context, final String varName, final Value value,
+                         final boolean exists) {
     if (exists) {
       context.logWarning("Variable \'" + varName + "\' already defined");
     }
@@ -68,8 +66,9 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String rawTail,
+                                                   final PreprocessorContext context) {
     try {
       final String trimmedTail = rawTail.trim();
       final int spaceIndex = trimmedTail.indexOf(' ');
@@ -78,7 +77,9 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
       if (spaceIndex > 0) {
         name = trimmedTail.substring(0, spaceIndex).trim();
         final String trimmed = trimmedTail.substring(spaceIndex).trim();
-        expression = trimmed.isEmpty() || trimmed.startsWith("//") || trimmed.startsWith("/*") ? null : trimmed;
+        expression =
+            trimmed.isEmpty() || trimmed.startsWith("//") || trimmed.startsWith("/*") ? null :
+                trimmed;
       } else {
         name = trimmedTail;
         expression = null;
@@ -90,7 +91,7 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         throw context.makeException("Var name is empty", null);
       }
 
-      final ExpressionItem item = assertNotNull(nameTree.getRoot().getItem());
+      final ExpressionItem item = Objects.requireNonNull(nameTree.getRoot().getItem());
       if (item.getExpressionItemType() != ExpressionItemType.VARIABLE) {
         throw context.makeException("Can't recognize variable name [" + name + ']', null);
       }
@@ -103,7 +104,8 @@ public class DefineDirectiveHandler extends AbstractDirectiveHandler {
         value = Value.valueOf(Boolean.TRUE);
       }
 
-      process(context, ((Variable) item).getName(), value, context.findVariableForName(name, true) != null);
+      process(context, ((Variable) item).getName(), value,
+          context.findVariableForName(name, true) != null);
     } catch (IOException ex) {
       throw context.makeException("Unexpected exception", ex);
     }

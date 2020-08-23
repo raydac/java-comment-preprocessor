@@ -21,6 +21,13 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -29,9 +36,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,9 +50,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public abstract class AbstractDirectiveHandlerAcceptanceTest {
 

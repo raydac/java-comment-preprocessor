@@ -26,8 +26,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#global directive handler
  *
@@ -36,26 +34,27 @@ import javax.annotation.Nonnull;
 public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "global";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.SET;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     processDefinition(string, context);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "define global variable";
   }
@@ -70,7 +69,7 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
     return false;
   }
 
-  private void processDefinition(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+  private void processDefinition(final String string, final PreprocessorContext context) {
     final String[] split = PreprocessorUtils.splitForEqualChar(string);
 
     if (split.length != 2) {

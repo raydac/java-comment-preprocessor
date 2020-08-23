@@ -28,8 +28,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#while directive handler
  *
@@ -38,13 +36,13 @@ import javax.annotation.Nonnull;
 public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "while";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "starts " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop";
   }
@@ -55,14 +53,15 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
 
     if (state.isDirectiveCanBeProcessed()) {

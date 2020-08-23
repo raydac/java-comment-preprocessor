@@ -24,12 +24,7 @@ package com.igormaznitsa.jcp.expression;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class describes an object contains an expression tree
@@ -46,7 +41,7 @@ public class ExpressionTree {
     this(null, null);
   }
 
-  public ExpressionTree(@Nullable @MustNotContainNull final FilePositionInfo[] callStack, @Nullable final String sources) {
+  public ExpressionTree(final FilePositionInfo[] callStack, final String sources) {
     this.includeStack = callStack == null ? PreprocessingState.EMPTY_STACK : callStack;
     this.sources = sources == null ? "" : sources;
   }
@@ -65,9 +60,10 @@ public class ExpressionTree {
    *
    * @param item an item to be added, must not be null
    */
-  public void addItem(@Nonnull final ExpressionItem item) {
+  public void addItem(final ExpressionItem item) {
     if (item == null) {
-      throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack, null);
+      throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack,
+          null);
     }
 
     if (last.isEmptySlot()) {
@@ -82,8 +78,8 @@ public class ExpressionTree {
    *
    * @param tree a tree to be added as an item, must not be null
    */
-  public void addTree(@Nonnull final ExpressionTree tree) {
-    assertNotNull("Tree is null", tree);
+  public void addTree(final ExpressionTree tree) {
+    Objects.requireNonNull(tree, "Tree is null");
     if (last.isEmptySlot()) {
       final ExpressionTreeElement thatTreeRoot = tree.getRoot();
       if (!thatTreeRoot.isEmptySlot()) {
@@ -100,7 +96,7 @@ public class ExpressionTree {
    *
    * @return the root of the tree or EMPTY_SLOT if the tree is empty
    */
-  @Nonnull
+
   public ExpressionTreeElement getRoot() {
     if (last.isEmptySlot()) {
       return this.last;

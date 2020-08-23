@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The interface describes a command line key handler. It is not just a handler
  * but it will be called for all met keys to recognize one to be processed.
@@ -38,7 +36,6 @@ public interface CommandLineHandler {
    *
    * @return the key name as a String, must not be null
    */
-  @Nonnull
   String getKeyName();
 
   /**
@@ -46,7 +43,6 @@ public interface CommandLineHandler {
    *
    * @return the description as a String
    */
-  @Nonnull
   String getDescription();
 
   /**
@@ -56,5 +52,5 @@ public interface CommandLineHandler {
    * @param context the preprocessor context, must not be null
    * @return true if the key has been recognized and processed else false
    */
-  boolean processCommandLineKey(@Nonnull String key, @Nonnull PreprocessorContext context);
+  boolean processCommandLineKey(String key, PreprocessorContext context);
 }

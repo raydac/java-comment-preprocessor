@@ -21,12 +21,12 @@
 
 package com.igormaznitsa.jcp.removers;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 
 import java.io.StringReader;
 import java.io.StringWriter;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class JavaCommentsRemoverTest {
 

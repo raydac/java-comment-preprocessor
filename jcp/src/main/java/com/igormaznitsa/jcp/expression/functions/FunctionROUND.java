@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the round function handler
@@ -35,21 +32,22 @@ import javax.annotation.Nonnull;
  */
 public final class FunctionROUND extends AbstractFunction {
 
-  private static final ValueType[][] SIGNATURES = new ValueType[][] {{ValueType.FLOAT}, {ValueType.INT}};
+  private static final ValueType[][] SIGNATURES =
+      new ValueType[][] {{ValueType.FLOAT}, {ValueType.INT}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "round";
   }
 
-  @Nonnull
-  public Value executeInt(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
+
+  public Value executeInt(final PreprocessorContext context, final Value value) {
     return value;
   }
 
-  @Nonnull
-  public Value executeFloat(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
+
+  public Value executeFloat(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Long.valueOf(Math.round(value.asFloat())));
   }
 
@@ -59,20 +57,20 @@ public final class FunctionROUND extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return SIGNATURES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "round float value to nearest integer";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.INT;
   }

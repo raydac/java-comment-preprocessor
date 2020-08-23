@@ -27,10 +27,6 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,18 +58,20 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
   final SimpleDateFormat timestampFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
 
-  @Nonnull
-  @MustNotContainNull
+
   public static List<NameReferencePair> getReference() {
     final List<NameReferencePair> result = new ArrayList<>();
 
     result.add(new NameReferencePair(VAR_VERSION, "Preprocessor version"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to preprocessing file, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FULLPATH2, "Synonym for '" + VAR_SRC_FULLPATH + "', read only"));
+    result
+        .add(new NameReferencePair(VAR_SRC_FULLPATH, "Full path to preprocessing file, read only"));
+    result.add(new NameReferencePair(VAR_SRC_FULLPATH2,
+        "Synonym for '" + VAR_SRC_FULLPATH + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_DIR, "Preprocessing file folder, read only"));
     result.add(new NameReferencePair(VAR_SRC_DIR2, "Synonym for '" + VAR_SRC_DIR + "', read only"));
     result.add(new NameReferencePair(VAR_SRC_FILE_NAME, "Preprocessing file name, read only"));
-    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2, "Synonym for '" + VAR_SRC_FILE_NAME + "', read only"));
+    result.add(new NameReferencePair(VAR_SRC_FILE_NAME2,
+        "Synonym for '" + VAR_SRC_FILE_NAME + "', read only"));
 
     result.add(new NameReferencePair(VAR_LINE, "Number of preprocessing line, read only"));
     result.add(new NameReferencePair(VAR_DEST_FULLPATH, "Full destination file path, read only"));
@@ -82,14 +80,15 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
     result.add(new NameReferencePair(VAR_TIME, "Time (HH:mm:ss)"));
     result.add(new NameReferencePair(VAR_DATE, "Date (MMM dd yyyy)"));
-    result.add(new NameReferencePair(VAR_TIMESTAMP, "Source file timestamp (EEE MMM dd HH:mm:ss yyyy)"));
+    result.add(
+        new NameReferencePair(VAR_TIMESTAMP, "Source file timestamp (EEE MMM dd HH:mm:ss yyyy)"));
 
     return result;
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public String[] getVariableNames() {
     return new String[] {
         VAR_DEST_DIR,
@@ -110,8 +109,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  @Nullable
-  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
+
+  public Value getVariable(final String varName, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
 
     switch (varName) {
@@ -129,7 +128,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         return Value.valueOf(state.getRootFileInfo().getSourceFile().getName());
       case VAR_SRC_FULLPATH:
       case VAR_SRC_FULLPATH2:
-        return Value.valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
+        return Value
+            .valueOf(PreprocessorUtils.getFilePath(state.getRootFileInfo().getSourceFile()));
       case VAR_VERSION:
         return Value.valueOf(InfoHelper.getVersion());
       case VAR_TIME:
@@ -142,7 +142,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         if (filedata == null) {
           result = Value.valueOf("<no file>");
         } else {
-          result = Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
+          result =
+              Value.valueOf(timestampFormat.format(new Date(filedata.getFile().lastModified())));
         }
         return result;
       case VAR_LINE:
@@ -161,7 +162,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
+  public void setVariable(final String varName, final Value value,
+                          final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     switch (varName) {
       case VAR_DEST_DIR:
@@ -203,17 +205,17 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     private final String name;
     private final String reference;
 
-    private NameReferencePair(@Nonnull final String name, @Nonnull final String reference) {
+    private NameReferencePair(final String name, final String reference) {
       this.name = name;
       this.reference = reference;
     }
 
-    @Nonnull
+
     public String getName() {
       return this.name;
     }
 
-    @Nonnull
+
     public String getReference() {
       return this.reference;
     }

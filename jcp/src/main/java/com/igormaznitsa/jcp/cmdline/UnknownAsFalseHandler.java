@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The handler processing the flag tells the preprocessor to be try to keep
  * non-executing lines of code as commented ones
@@ -36,13 +34,12 @@ public class UnknownAsFalseHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/U";
 
   @Override
-  @Nonnull
   public String getDescription() {
     return "interpret unknown variable as FALSE";
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(key)) {
@@ -54,7 +51,6 @@ public class UnknownAsFalseHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

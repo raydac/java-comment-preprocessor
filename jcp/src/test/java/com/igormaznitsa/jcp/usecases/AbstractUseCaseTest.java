@@ -21,19 +21,21 @@
 
 package com.igormaznitsa.jcp.usecases;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-
-import static org.junit.Assert.*;
 
 public abstract class AbstractUseCaseTest {
 

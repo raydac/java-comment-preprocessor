@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 
@@ -36,30 +34,33 @@ import java.io.IOException;
 public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "flush";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "force buffered texts to be written out then clear buffers";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (!context.isDryRun()) {
-      final File outFile = context.createDestinationFileForPath(state.getRootFileInfo().makeTargetFilePathAsString());
+      final File outFile = context
+          .createDestinationFileForPath(state.getRootFileInfo().makeTargetFilePathAsString());
       try {
         if (context.isVerbose()) {
           context.logForVerbose("Flushing buffers into file '" + outFile + '\'');
         }
         final boolean saved = state.saveBuffersToFile(outFile, context.isKeepComments());
         if (context.isVerbose()) {
-          context.logForVerbose("Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "\'");
+          context.logForVerbose(
+              "Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "\'");
         }
 
         state.resetPrinters();

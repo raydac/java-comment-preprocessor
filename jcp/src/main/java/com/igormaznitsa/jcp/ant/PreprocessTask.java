@@ -27,17 +27,7 @@ import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.GetUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -46,9 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 /**
  * The class implements an ANT task to allow calls for preprocessing from ANT build scripts. Also it allows to out messages from preprocessor directives into the ANT log and read
@@ -83,24 +78,26 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean dontOverwriteSameContent = false;
   private Map<String, Value> antVariables = new HashMap<>();
 
-  private void registerConfigFiles(@Nonnull final PreprocessorContext context) {
+  private void registerConfigFiles(final PreprocessorContext context) {
     if (this.getConfigFiles() != null) {
       for (final Sources.Path f : this.getConfigFiles().getPaths()) {
         log("Registering config file: " + f.getValue());
-        context.registerConfigFile(assertNotNull("File must not be null", new File(f.getValue().trim())));
+        context.registerConfigFile(
+            new File(Objects.requireNonNull(f, "File must not be null").getValue().trim()));
       }
     }
   }
 
-  private void fillGlobalVars(@Nonnull final PreprocessorContext context) {
+  private void fillGlobalVars(final PreprocessorContext context) {
     if (this.getVars() != null) {
       for (final Vars.Var g : this.getVars().getVars()) {
-        context.setGlobalVariable(assertNotNull("Name must not be null", g.getName()), Value.recognizeRawString(assertNotNull("Value must not be null", g.getValue())));
+        context.setGlobalVariable(Objects.requireNonNull(g.getName(), "Name must not be null"),
+            Value.recognizeRawString(
+                Objects.requireNonNull(g.getValue(), "Value must not be null")));
       }
     }
   }
 
-  @Nonnull
   PreprocessorContext makePreprocessorContext() {
     fillAntVariables();
 
@@ -187,8 +184,10 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     try {
       context = makePreprocessorContext();
     } catch (Exception unexpected) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
-      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
+      final PreprocessorException pp =
+          PreprocessorException.extractPreprocessorException(unexpected);
+      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(),
+          pp == null ? unexpected : pp);
     }
 
     preprocessor = new JcpPreprocessor(context);
@@ -196,32 +195,33 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     try {
       preprocessor.execute();
     } catch (Exception unexpected) {
-      final PreprocessorException pp = PreprocessorException.extractPreprocessorException(unexpected);
-      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(), pp == null ? unexpected : pp);
+      final PreprocessorException pp =
+          PreprocessorException.extractPreprocessorException(unexpected);
+      throw new BuildException(pp == null ? unexpected.getMessage() : pp.toString(),
+          pp == null ? unexpected : pp);
     }
   }
 
   @Override
-  public void error(@Nullable final String message) {
+  public void error(final String message) {
     log(message, Project.MSG_ERR);
   }
 
   @Override
-  public void info(@Nullable final String message) {
+  public void info(final String message) {
     log(message, Project.MSG_INFO);
   }
 
   @Override
-  public void debug(@Nullable final String message) {
+  public void debug(final String message) {
     log(message, Project.MSG_DEBUG);
   }
 
   @Override
-  public void warning(@Nullable final String message) {
+  public void warning(final String message) {
     log(message, Project.MSG_WARN);
   }
 
-  @Nonnull
   private Map<String, Value> fillAntVariables() {
     final Project theProject = getProject();
 
@@ -244,8 +244,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
   public String[] getVariableNames() {
     String[] result;
 
@@ -259,8 +257,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  @Nonnull
-  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
+  public Value getVariable(final String varName, final PreprocessorContext context) {
     if (antVariables == null) {
       throw context.makeException("Non-initialized ANT property map detected", null);
     }
@@ -273,41 +270,38 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
-    throw context.makeException("Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!", null);
+  public void setVariable(final String varName, final Value value,
+                          final PreprocessorContext context) {
+    throw context.makeException(
+        "Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!",
+        null);
   }
 
-  @Nonnull
   public Extensions createExtensions() {
     this.extensions = new Extensions();
     return this.extensions;
   }
 
-  @Nonnull
   public ExcludeExtensions createExcludeExtensions() {
     this.excludeExtensions = new ExcludeExtensions();
     return this.excludeExtensions;
   }
 
-  @Nonnull
   public ExcludeFolders createExcludeFolders() {
     this.excludeFolders = new ExcludeFolders();
     return this.excludeFolders;
   }
 
-  @Nonnull
   public Sources createSources() {
     this.sources = new Sources();
     return this.sources;
   }
 
-  @Nonnull
   public ConfigFiles createConfigFiles() {
     this.configFiles = new ConfigFiles();
     return this.configFiles;
   }
 
-  @Nonnull
   public Vars createVars() {
     this.vars = new Vars();
     return this.vars;
@@ -319,7 +313,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     protected List<Path> paths = new ArrayList<>();
 
-    @Nonnull
     public Path createPath() {
       final Path result = new Path();
       paths.add(result);
@@ -330,7 +323,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     public static class Path {
       private String value = "";
 
-      public void addText(@Nullable final String text) {
+      public void addText(final String text) {
         this.value += GetUtils.ensureNonNull(text, "");
       }
     }
@@ -349,7 +342,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
     private List<Folder> folders = new ArrayList<>();
 
-    @Nonnull
     public Folder createFolder() {
       final Folder result = new Folder();
       this.folders.add(result);
@@ -360,7 +352,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     public static class Folder {
       private String path = "";
 
-      public void addText(@Nullable final String text) {
+      public void addText(final String text) {
         this.path = GetUtils.ensureNonNull(text, "");
       }
     }
@@ -377,7 +369,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   public static class Extensions {
     protected final List<Extension> extensions = new ArrayList<>();
 
-    @Nonnull
     public Extension createExtension() {
       final Extension result = new Extension();
       this.extensions.add(result);
@@ -388,7 +379,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     public static class Extension {
       private String name = "";
 
-      public void addText(@Nullable final String text) {
+      public void addText(final String text) {
         this.name += GetUtils.ensureNonNull(text, "");
       }
     }
@@ -399,7 +390,6 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   public static class Vars {
     private List<Var> vars = new ArrayList<>();
 
-    @Nonnull
     public Var createVar() {
       final Var result = new Var();
       this.vars.add(result);
@@ -412,7 +402,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       private String name = "";
       private String value = "";
 
-      public void addText(@Nonnull final String text) {
+      public void addText(final String text) {
         this.value += text;
       }
     }

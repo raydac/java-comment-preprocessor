@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.expression;
 
-import javax.annotation.Nonnull;
-
 /**
  * The interface describes an object which can be used during expression
  * calculations
@@ -36,7 +34,7 @@ public interface ExpressionItem {
    *
    * @return the item type
    */
-  @Nonnull
+
   ExpressionItemType getExpressionItemType();
 
   /**
@@ -44,6 +42,6 @@ public interface ExpressionItem {
    *
    * @return the item priority, must not be null
    */
-  @Nonnull
+
   ExpressionItemPriority getExpressionItemPriority();
 }

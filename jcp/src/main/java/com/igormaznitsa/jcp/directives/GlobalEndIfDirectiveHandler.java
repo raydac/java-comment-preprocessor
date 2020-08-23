@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#_endif directive handler
  *
@@ -35,7 +33,7 @@ import javax.annotation.Nonnull;
 public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "_endif";
   }
@@ -46,7 +44,7 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "end " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX + "_endif control structure";
   }
@@ -62,11 +60,14 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "_if", null);
+      throw context
+          .makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "_if",
+              null);
     }
 
     if (!state.isDirectiveCanBeProcessed() && state.isAtActiveIf()) {

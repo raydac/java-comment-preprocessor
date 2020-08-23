@@ -21,13 +21,15 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.mockito.ArgumentCaptor;
-
-import java.io.File;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+
+
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.io.File;
+import org.mockito.ArgumentCaptor;
 
 public class DestinationDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
 

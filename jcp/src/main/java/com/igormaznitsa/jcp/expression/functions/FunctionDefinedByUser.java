@@ -24,11 +24,7 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the user defined function handler (a function which name
@@ -42,10 +38,11 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   private final int argsNumber;
   private final ValueType[][] argTypes;
 
-  public FunctionDefinedByUser(@Nonnull final String name, final int argsNumber, @Nonnull final PreprocessorContext context) {
+  public FunctionDefinedByUser(final String name, final int argsNumber,
+                               final PreprocessorContext context) {
     super();
-    assertNotNull("Name is null", name);
-    assertNotNull("Context is null", context);
+    Objects.requireNonNull(name, "Name is null");
+    Objects.requireNonNull(context, "Context is null");
 
     if (argsNumber < 0) {
       throw context.makeException("Unexpected argument number [" + argsNumber + ']', null);
@@ -63,7 +60,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
+
   public String getName() {
     return name;
   }
@@ -73,26 +70,28 @@ public final class FunctionDefinedByUser extends AbstractFunction {
     return argsNumber;
   }
 
-  @Nonnull
-  public Value execute(@Nonnull final PreprocessorContext context, @Nonnull @MustNotContainNull final Value[] values) {
-    return assertNotNull("Preprocessor extension must not be null", context.getPreprocessorExtension()).processUserFunction(name, values);
+
+  public Value execute(final PreprocessorContext context, final Value[] values) {
+    return Objects.requireNonNull(
+        context.getPreprocessorExtension(), "Preprocessor extension must not be null")
+        .processUserFunction(name, values);
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return argTypes;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "user defined function";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.ANY;
   }

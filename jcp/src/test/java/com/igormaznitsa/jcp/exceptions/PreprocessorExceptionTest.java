@@ -21,15 +21,15 @@
 
 package com.igormaznitsa.jcp.exceptions;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.Collections;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.io.File;
+import java.util.Collections;
+import org.junit.Test;
 
 public final class PreprocessorExceptionTest {
 

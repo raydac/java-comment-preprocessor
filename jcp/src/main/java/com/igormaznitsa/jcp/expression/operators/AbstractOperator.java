@@ -23,10 +23,6 @@ package com.igormaznitsa.jcp.expression.operators;
 
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The class is the base for all operator handlers
@@ -45,8 +41,7 @@ public abstract class AbstractOperator implements ExpressionItem {
    */
   private static AbstractOperator[] allOperators;
 
-  @Nonnull
-  @MustNotContainNull
+
   public static AbstractOperator[] getAllOperators() {
     if (allOperators == null) {
       allOperators = new AbstractOperator[] {
@@ -76,8 +71,8 @@ public abstract class AbstractOperator implements ExpressionItem {
    * @param operatorClass the class to be used for search, must not be null
    * @return an instance of the handler or null if there is not any such one
    */
-  @Nullable
-  public static <E extends AbstractOperator> E findForClass(@Nonnull final Class<E> operatorClass) {
+
+  public static <E extends AbstractOperator> E findForClass(final Class<E> operatorClass) {
     for (final AbstractOperator operator : getAllOperators()) {
       if (operator.getClass() == operatorClass) {
         return operatorClass.cast(operator);
@@ -92,7 +87,7 @@ public abstract class AbstractOperator implements ExpressionItem {
    * @return for operators it is always ExpressionItemType.OPERATOR
    */
   @Override
-  @Nonnull
+
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.OPERATOR;
   }
@@ -109,7 +104,7 @@ public abstract class AbstractOperator implements ExpressionItem {
    *
    * @return the operator keyword, must not be null
    */
-  @Nonnull
+
   public abstract String getKeyword();
 
   /**
@@ -117,11 +112,11 @@ public abstract class AbstractOperator implements ExpressionItem {
    *
    * @return the operator reference as a String, must not be null
    */
-  @Nonnull
+
   public abstract String getReference();
 
   @Override
-  @Nonnull
+
   public String toString() {
     return "OPERATOR: " + getKeyword();
   }

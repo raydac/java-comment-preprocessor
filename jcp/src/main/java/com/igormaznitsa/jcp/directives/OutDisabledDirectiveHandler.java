@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#- directive handler
  *
@@ -34,27 +32,29 @@ import javax.annotation.Nonnull;
 public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "-";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "turn off text output";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.NONE;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
-    context.getPreprocessingState().getPreprocessingFlags().add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
+    context.getPreprocessingState().getPreprocessingFlags()
+        .add(PreprocessingFlag.TEXT_OUTPUT_DISABLED);
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 

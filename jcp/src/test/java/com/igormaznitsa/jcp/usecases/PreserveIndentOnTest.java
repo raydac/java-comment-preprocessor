@@ -21,17 +21,16 @@
 
 package com.igormaznitsa.jcp.usecases;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
-
-import static org.junit.Assert.assertEquals;
 
 public class PreserveIndentOnTest extends AbstractUseCaseTest {
 
   @Override
-  protected void tuneContext(@Nonnull final PreprocessorContext context) {
+  protected void tuneContext(final PreprocessorContext context) {
     context.setAllowWhitespaces(true);
     context.setPreserveIndents(true);
   }

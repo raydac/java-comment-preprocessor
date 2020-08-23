@@ -21,15 +21,17 @@
 
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.spy;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunctionTest;
+import java.io.File;
 import org.junit.Before;
 import org.mockito.stubbing.Answer;
-
-import java.io.File;
-
-import static org.mockito.Mockito.*;
 
 public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
 

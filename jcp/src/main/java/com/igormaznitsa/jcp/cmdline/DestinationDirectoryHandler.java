@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Locale;
 
@@ -38,13 +36,13 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/O:";
 
   @Override
-  @Nonnull
   public String getDescription() {
-    return "define the destination folder (by default " + PreprocessorContext.DEFAULT_DEST_DIRECTORY + ')';
+    return "define the destination folder (by default " +
+        PreprocessorContext.DEFAULT_DEST_DIRECTORY + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
@@ -60,7 +58,6 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

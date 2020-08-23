@@ -26,8 +26,6 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the TRIMLINES function handler
  *
@@ -36,14 +34,14 @@ import javax.annotation.Nonnull;
 public final class FunctionTRIMLINES extends AbstractStrConverter {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "trimlines";
   }
 
   @Override
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
+
+  public Value executeStr(final PreprocessorContext context, final Value value) {
     final String text = value.asString();
     final StringBuilder result = new StringBuilder(text.length());
 
@@ -61,13 +59,13 @@ public final class FunctionTRIMLINES extends AbstractStrConverter {
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "trim each line found in string, remove empty lines";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

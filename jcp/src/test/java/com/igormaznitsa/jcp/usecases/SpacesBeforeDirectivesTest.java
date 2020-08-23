@@ -21,59 +21,57 @@
 
 package com.igormaznitsa.jcp.usecases;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.meta.annotation.MayContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static org.junit.Assert.assertEquals;
-
 public class SpacesBeforeDirectivesTest extends AbstractUseCaseTest {
 
-  private static class WarnLogPreprocessorContext extends PreprocessorContext {
-    private final List<String> warnings = new CopyOnWriteArrayList<>();
-
-    public WarnLogPreprocessorContext(@Nonnull final File baseDir) {
-      super(baseDir);
-    }
-
-    @Nonnull
-    @MayContainNull
-    public List<String> getWarnings() {
-      return this.warnings;
-    }
-
-    @Override
-    public void logWarning(@Nullable String text) {
-      this.warnings.add(text);
-      super.logWarning(text);
-    }
-  }
-
   @Override
-  protected PreprocessorContext createPreprocessorContext(@Nonnull final File baseFolder) {
+  protected PreprocessorContext createPreprocessorContext(final File baseFolder) {
     return new WarnLogPreprocessorContext(baseFolder);
   }
 
   @Override
-  protected void tuneContext(@Nonnull final PreprocessorContext context) {
+  protected void tuneContext(final PreprocessorContext context) {
     context.setAllowWhitespaces(true);
   }
 
   @Override
-  public void check(@Nonnull final PreprocessorContext context, @Nonnull final JcpPreprocessor.Statistics stat) throws Exception {
+  public void check(final PreprocessorContext context, final JcpPreprocessor.Statistics stat)
+      throws Exception {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
 
     final WarnLogPreprocessorContext warnContext = (WarnLogPreprocessorContext) context;
 
-    assertEquals(0, warnContext.getWarnings().stream().filter(x -> x != null && x.startsWith(FileInfoContainer.WARNING_SPACE_BEFORE_HASH)).count());
+    assertEquals(0, warnContext.getWarnings().stream()
+        .filter(x -> x != null && x.startsWith(FileInfoContainer.WARNING_SPACE_BEFORE_HASH))
+        .count());
+  }
+
+  private static class WarnLogPreprocessorContext extends PreprocessorContext {
+    private final List<String> warnings = new CopyOnWriteArrayList<>();
+
+    public WarnLogPreprocessorContext(final File baseDir) {
+      super(baseDir);
+    }
+
+    public List<String> getWarnings() {
+      return this.warnings;
+    }
+
+    @Override
+    public void logWarning(String text) {
+      this.warnings.add(text);
+      super.logWarning(text);
+    }
   }
 
 }

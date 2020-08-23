@@ -22,9 +22,6 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class is the abstract parent for all classes process preprocessor
@@ -60,8 +57,7 @@ public abstract class AbstractDirectiveHandler {
    */
   private static volatile AbstractDirectiveHandler[] allDirectives;
 
-  @Nonnull
-  @MustNotContainNull
+
   public static AbstractDirectiveHandler[] getAllDirectives() {
     if (allDirectives == null) {
       allDirectives = new AbstractDirectiveHandler[] {
@@ -112,7 +108,7 @@ public abstract class AbstractDirectiveHandler {
    *
    * @return the directive name, must not be null
    */
-  @Nonnull
+
   public abstract String getName();
 
   /**
@@ -120,7 +116,7 @@ public abstract class AbstractDirectiveHandler {
    *
    * @return the directive reference as a String, must not be null
    */
-  @Nonnull
+
   public abstract String getReference();
 
   /**
@@ -128,7 +124,7 @@ public abstract class AbstractDirectiveHandler {
    *
    * @return the full directive name (it including prefix)
    */
-  @Nonnull
+
   public String getFullName() {
     return DIRECTIVE_PREFIX + getName();
   }
@@ -138,7 +134,7 @@ public abstract class AbstractDirectiveHandler {
    *
    * @return the argument type needed by the directive, it can't be null
    */
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.NONE;
   }
@@ -150,8 +146,9 @@ public abstract class AbstractDirectiveHandler {
    * @param context    the preprocessor context
    * @return the needed preprocessor behavior, must not be null
    */
-  @Nonnull
-  public abstract AfterDirectiveProcessingBehaviour execute(@Nonnull String tailString, @Nonnull PreprocessorContext context);
+
+  public abstract AfterDirectiveProcessingBehaviour execute(String tailString,
+                                                            PreprocessorContext context);
 
   /**
    * Shows that the directive can be executed only when the preprocessing n

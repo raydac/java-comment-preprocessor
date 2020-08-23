@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.logger;
 
-import javax.annotation.Nullable;
-
 /**
  * An Easy logger which just output log messages into the system output streams
  *
@@ -35,7 +33,8 @@ public final class SystemOutLogger implements PreprocessorLogger {
    */
   public static final String PROPERTY_DEBUG_FLAG = "jcp.log.debug";
 
-  private static final boolean FLAG_DEBUG_LEVEL = Boolean.parseBoolean(System.getProperty(PROPERTY_DEBUG_FLAG));
+  private static final boolean FLAG_DEBUG_LEVEL =
+      Boolean.parseBoolean(System.getProperty(PROPERTY_DEBUG_FLAG));
 
 
   @Override
@@ -44,12 +43,12 @@ public final class SystemOutLogger implements PreprocessorLogger {
   }
 
   @Override
-  public boolean equals(@Nullable final Object value) {
+  public boolean equals(final Object value) {
     return value instanceof SystemOutLogger;
   }
 
   @Override
-  public void error(@Nullable final String text) {
+  public void error(final String text) {
     if (text != null) {
       final String out = "[JCP.ERR] " + text;
       System.err.println(out);
@@ -57,7 +56,7 @@ public final class SystemOutLogger implements PreprocessorLogger {
   }
 
   @Override
-  public void info(@Nullable final String text) {
+  public void info(final String text) {
     if (text != null) {
       final String out = "[JCP.INFO] " + text;
       System.out.println(out);
@@ -65,7 +64,7 @@ public final class SystemOutLogger implements PreprocessorLogger {
   }
 
   @Override
-  public void warning(@Nullable final String text) {
+  public void warning(final String text) {
     if (text != null) {
       final String out = "[JCP.WARN] " + text;
       System.out.println(out);
@@ -73,7 +72,7 @@ public final class SystemOutLogger implements PreprocessorLogger {
   }
 
   @Override
-  public void debug(@Nullable final String text) {
+  public void debug(final String text) {
     if (FLAG_DEBUG_LEVEL && text != null) {
       final String out = "[JCP.DEBUG] " + text;
       System.out.println(out);

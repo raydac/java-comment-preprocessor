@@ -24,18 +24,14 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.zip.Deflater;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 
 /**
  * The Function loads bin file and encodes it into string.
@@ -45,20 +41,22 @@ import java.util.zip.Deflater;
  */
 public class FunctionBINFILE extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
-  private static boolean hasSplitFlag(@Nonnull final String name, @Nonnull final Type type) {
+  private static boolean hasSplitFlag(final String name, final Type type) {
     final String opts = name.substring(type.name.length());
     return opts.contains("S") || opts.contains("s");
   }
 
-  private static boolean hasDeflateFlag(@Nonnull final String name, @Nonnull final Type type) {
+  private static boolean hasDeflateFlag(final String name, final Type type) {
     final String opts = name.substring(type.name.length());
     return opts.contains("D") || opts.contains("d");
   }
 
-  @Nonnull
-  private static String convertTo(@Nonnull final File file, @Nonnull final Type type, final boolean deflate, final int lineLength, @Nonnull final String endOfLine) throws IOException {
+
+  private static String convertTo(final File file, final Type type, final boolean deflate,
+                                  final int lineLength, final String endOfLine) throws IOException {
     final StringBuilder result = new StringBuilder(512);
     byte[] array = FileUtils.readFileToByteArray(file);
 
@@ -72,7 +70,9 @@ public class FunctionBINFILE extends AbstractFunction {
 
     switch (type) {
       case BASE64: {
-        final String baseEncoded = new Base64(lineLength, endOfLine.getBytes(StandardCharsets.UTF_8), false).encodeAsString(array);
+        final String baseEncoded =
+            new Base64(lineLength, endOfLine.getBytes(StandardCharsets.UTF_8), false)
+                .encodeAsString(array);
         result.append(baseEncoded.trim());
       }
       break;
@@ -94,7 +94,8 @@ public class FunctionBINFILE extends AbstractFunction {
           final int initialBufferLength = result.length();
           switch (type) {
             case BYTEARRAY: {
-              result.append("(byte)0x").append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+              result.append("(byte)0x")
+                  .append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
             }
             break;
             case UINT8: {
@@ -123,8 +124,8 @@ public class FunctionBINFILE extends AbstractFunction {
     return result.toString();
   }
 
-  @Nonnull
-  private static byte[] deflate(@Nonnull final byte[] data) throws IOException {
+
+  private static byte[] deflate(final byte[] data) throws IOException {
     final Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
     deflater.setInput(data);
 
@@ -145,13 +146,13 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "binfile";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     final StringBuilder buffer = new StringBuilder();
     for (final Type t : Type.values()) {
@@ -161,7 +162,8 @@ public class FunctionBINFILE extends AbstractFunction {
       buffer.append(t.name);
     }
     buffer.append("[s|d|sd|ds]");
-    return "encode binary file as string, allowed types [" + buffer.toString() + "], s - split lines, d - deflater compression";
+    return "encode binary file as string, allowed types [" + buffer.toString() +
+        "], s - split lines, d - deflater compression";
   }
 
   @Override
@@ -170,20 +172,21 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }
 
-  @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value strFilePath, @Nonnull final Value encodeType) {
+
+  public Value executeStrStr(final PreprocessorContext context, final Value strFilePath,
+                             final Value encodeType) {
     final String filePath = strFilePath.asString();
     final String encodeTypeAsString = encodeType.asString();
     final Type type = Type.find(encodeTypeAsString);
@@ -222,12 +225,12 @@ public class FunctionBINFILE extends AbstractFunction {
 
     private final String name;
 
-    Type(@Nonnull final String name) {
+    Type(final String name) {
       this.name = name;
     }
 
-    @Nullable
-    public static Type find(@Nullable final String name) {
+
+    public static Type find(final String name) {
       Type result = null;
       if (name != null) {
         final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
@@ -241,7 +244,7 @@ public class FunctionBINFILE extends AbstractFunction {
       return result;
     }
 
-    @Nonnull
+
     public String getName() {
       return this.name;
     }

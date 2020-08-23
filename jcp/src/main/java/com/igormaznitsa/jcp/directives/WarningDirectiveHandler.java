@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements //#warning directive handler
  *
@@ -34,19 +32,19 @@ import javax.annotation.Nonnull;
 public class WarningDirectiveHandler extends ErrorDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "warning";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "following text will be logged as warning, macroses allowed";
   }
 
   @Override
-  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String message) {
+  protected void process(final PreprocessorContext context, final String message) {
     context.logWarning(PreprocessorUtils.processMacroses(message, context));
     if (context.isVerbose()) {
       context.logForVerbose("Detected warning : " + message);

@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.expression.operators;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the NOT operator handler
  *
@@ -39,28 +37,28 @@ public class OperatorNOT extends AbstractOperator {
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "logical complement and unary bitwise complement";
   }
 
   @Override
-  @Nonnull
+
   public String getKeyword() {
     return "!";
   }
 
-  @Nonnull
-  public Value executeInt(@Nonnull final Value arg1) {
+
+  public Value executeInt(final Value arg1) {
     return Value.valueOf(~arg1.asLong());
   }
 
-  @Nonnull
-  public Value executeBool(@Nonnull final Value arg1) {
+
+  public Value executeBool(final Value arg1) {
     return Value.valueOf(!arg1.asBoolean());
   }
 
-  @Nonnull
+
   @Override
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;

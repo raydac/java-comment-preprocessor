@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the IS function handler
@@ -35,22 +32,25 @@ import javax.annotation.Nonnull;
  */
 public final class FunctionIS extends AbstractFunction {
 
-  private static final ValueType[][] SIGNATURES = new ValueType[][] {{ValueType.STRING, ValueType.ANY}};
+  private static final ValueType[][] SIGNATURES =
+      new ValueType[][] {{ValueType.STRING, ValueType.ANY}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "is";
   }
 
-  @Nonnull
-  public Value executeStrAny(@Nonnull final PreprocessorContext context, @Nonnull final Value varName, @Nonnull final Value value) {
+
+  public Value executeStrAny(final PreprocessorContext context, final Value varName,
+                             final Value value) {
     final Value currentValue = context.findVariableForName(varName.asString(), false);
 
     Value result = Value.BOOLEAN_FALSE;
 
     if (currentValue != null) {
-      result = value.toString().compareTo(currentValue.toString()) == 0 ? Value.BOOLEAN_TRUE : Value.BOOLEAN_FALSE;
+      result = value.toString().compareTo(currentValue.toString()) == 0 ? Value.BOOLEAN_TRUE :
+          Value.BOOLEAN_FALSE;
     }
 
     return result;
@@ -62,20 +62,20 @@ public final class FunctionIS extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return SIGNATURES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "check that string is string form of value";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.BOOLEAN;
   }

@@ -22,8 +22,6 @@
 package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -36,13 +34,12 @@ public class HelpHandler implements CommandLineHandler {
   private static final String[] ARG_NAMES = new String[] {"/H", "/?", "-H", "-?"};
 
   @Override
-  @Nonnull
   public String getDescription() {
     return "print information about preprocessor usage and its directives";
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
     if (!key.isEmpty()) {
 
@@ -59,7 +56,6 @@ public class HelpHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     final StringBuilder result = new StringBuilder();
     for (int li = 0; li < ARG_NAMES.length; li++) {

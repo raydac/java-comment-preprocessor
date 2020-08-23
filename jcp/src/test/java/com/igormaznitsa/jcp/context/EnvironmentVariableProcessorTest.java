@@ -21,13 +21,14 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorContextTest {
 

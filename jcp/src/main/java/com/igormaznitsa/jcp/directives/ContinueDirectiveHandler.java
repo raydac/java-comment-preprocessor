@@ -24,10 +24,7 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#continue directive handler
@@ -37,27 +34,30 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "continue";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "immediately jump to the next iteration of " + DIRECTIVE_PREFIX + "while";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
 
     if (state.isWhileStackEmpty()) {
-      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while", null);
+      throw context
+          .makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while",
+              null);
     }
 
-    final TextFileDataContainer whileContainer = assertNotNull(state.peekWhile());
+    final TextFileDataContainer whileContainer = Objects.requireNonNull(state.peekWhile());
     state.popAllIFUntilContainerWithFile(whileContainer);
     state.popWhile();
     state.goToString(whileContainer.getNextStringIndex());

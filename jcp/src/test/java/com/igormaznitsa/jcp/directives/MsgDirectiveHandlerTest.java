@@ -21,13 +21,17 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import org.mockito.ArgumentCaptor;
-
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.mockito.ArgumentCaptor;
 
 public class MsgDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 

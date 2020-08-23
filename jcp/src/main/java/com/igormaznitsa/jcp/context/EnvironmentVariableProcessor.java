@@ -22,10 +22,6 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,22 +46,23 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
     final Properties properties = System.getProperties();
 
     for (final String key : properties.stringPropertyNames()) {
-      env.put(PREFIX + key.toLowerCase(Locale.ENGLISH).replace(' ', '_'), Value.valueOf(properties.getProperty(key)));
+      env.put(PREFIX + key.toLowerCase(Locale.ENGLISH).replace(' ', '_'),
+          Value.valueOf(properties.getProperty(key)));
     }
 
     environmentVars = Collections.unmodifiableMap(env);
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public String[] getVariableNames() {
     return environmentVars.keySet().toArray(new String[0]);
   }
 
   @Override
-  @Nullable
-  public Value getVariable(@Nonnull final String varName, @Nonnull final PreprocessorContext context) {
+
+  public Value getVariable(final String varName, final PreprocessorContext context) {
     final Value result = environmentVars.get(varName);
     if (result == null) {
       throw context.makeException("Can't find in environment: " + varName, null);
@@ -74,7 +71,9 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-  public void setVariable(@Nonnull final String varName, @Nonnull final Value value, @Nonnull final PreprocessorContext context) {
-    throw context.makeException("Illegal change of environment record '" + varName + "'. Environment records accessible only for reading!", null);
+  public void setVariable(final String varName, final Value value,
+                          final PreprocessorContext context) {
+    throw context.makeException("Illegal change of environment record '" + varName +
+        "'. Environment records accessible only for reading!", null);
   }
 }

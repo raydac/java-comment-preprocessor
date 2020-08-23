@@ -21,15 +21,17 @@
 
 package com.igormaznitsa.jcp.utils;
 
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class PreprocessorUtilsTest {
 

@@ -35,10 +35,6 @@ import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_SIZE;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_TEXT;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_XELEMENT;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_XLIST;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -65,8 +61,7 @@ public abstract class AbstractFunction implements ExpressionItem {
   private static volatile AbstractFunction[] allFunctions;
   private static volatile Map<String, AbstractFunction> functionNameMap;
 
-  @Nonnull
-  @MustNotContainNull
+
   public static AbstractFunction[] getAllFunctions() {
     if (allFunctions == null) {
       allFunctions = new AbstractFunction[] {
@@ -102,10 +97,11 @@ public abstract class AbstractFunction implements ExpressionItem {
     return allFunctions;
   }
 
-  @Nonnull
+
   public static Map<String, AbstractFunction> getFunctionNameMap() {
     if (functionNameMap == null) {
-      functionNameMap = Stream.of(getAllFunctions()).collect(Collectors.toMap(AbstractFunction::getName, x -> x));
+      functionNameMap =
+          Stream.of(getAllFunctions()).collect(Collectors.toMap(AbstractFunction::getName, x -> x));
     }
     return functionNameMap;
   }
@@ -119,8 +115,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-  @Nullable
-  public static <E extends AbstractFunction> E findForClass(@Nonnull final Class<E> functionClass) {
+
+  public static <E extends AbstractFunction> E findForClass(final Class<E> functionClass) {
     E result = null;
     for (final AbstractFunction function : getAllFunctions()) {
       if (function.getClass() == functionClass) {
@@ -138,8 +134,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-  @Nullable
-  public static AbstractFunction findForName(@Nonnull final String functionName) {
+
+  public static AbstractFunction findForName(final String functionName) {
     return getFunctionNameMap().get(functionName);
   }
 
@@ -148,7 +144,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function name in lower case, must not be null
    */
-  @Nonnull
+
   public abstract String getName();
 
   /**
@@ -156,7 +152,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function information as a String, must not be null
    */
-  @Nonnull
+
   public abstract String getReference();
 
   /**
@@ -172,8 +168,8 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the array of argument type combinations allowed by the function
    * handler, must not be null
    */
-  @Nonnull
-  @MustNotContainNull
+
+
   public abstract ValueType[][] getAllowedArgumentTypes();
 
   /**
@@ -181,7 +177,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the result type of the function, must not be null
    */
-  @Nonnull
+
   public abstract ValueType getResultType();
 
   /**
@@ -190,7 +186,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the expression item priority for the function, must not be null
    */
   @Override
-  @Nonnull
+
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;
   }
@@ -202,13 +198,13 @@ public abstract class AbstractFunction implements ExpressionItem {
    * ExpressionItemType.FUNCTION
    */
   @Override
-  @Nonnull
+
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.FUNCTION;
   }
 
   @Override
-  @Nullable
+
   public String toString() {
     return "FUNCTION: " + getName();
   }

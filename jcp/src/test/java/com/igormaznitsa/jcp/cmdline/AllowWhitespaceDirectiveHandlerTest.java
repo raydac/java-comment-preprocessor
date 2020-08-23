@@ -21,11 +21,17 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class AllowWhitespaceDirectiveHandlerTest extends AbstractCommandLineHandlerTest {
 

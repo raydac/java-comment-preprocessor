@@ -21,11 +21,14 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
 
 public class GlobalVariableHandlerTest extends AbstractCommandLineHandlerTest {
 

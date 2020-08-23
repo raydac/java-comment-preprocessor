@@ -28,8 +28,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#exitif directive handler
  *
@@ -38,26 +36,27 @@ import javax.annotation.Nonnull;
 public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "exitif";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "conditionally end current file preprocessing, return to the calling file if presented";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     AfterDirectiveProcessingBehaviour result = AfterDirectiveProcessingBehaviour.PROCESSED;
 

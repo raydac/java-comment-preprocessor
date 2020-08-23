@@ -21,10 +21,6 @@
 
 package com.igormaznitsa.jcp.exceptions;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -41,15 +37,16 @@ public class PreprocessorException extends RuntimeException {
   private final String processingString;
   private transient final FilePositionInfo[] includeStack;
 
-  public PreprocessorException(@Nullable final String message, @Nullable final String processedText, @Nullable @MustNotContainNull final FilePositionInfo[] includeStack, @Nullable final Throwable cause) {
+  public PreprocessorException(final String message, final String processedText,
+                               final FilePositionInfo[] includeStack, final Throwable cause) {
     super(message, cause);
 
     this.processingString = processedText;
     this.includeStack = includeStack == null ? new FilePositionInfo[0] : includeStack.clone();
   }
 
-  @Nonnull
-  private static String makeStackView(@Nullable @MustNotContainNull final FilePositionInfo[] list, final char fill) {
+
+  private static String makeStackView(final FilePositionInfo[] list, final char fill) {
     if (list == null || list.length == 0) {
       return "";
     }
@@ -78,8 +75,8 @@ public class PreprocessorException extends RuntimeException {
     return builder.toString();
   }
 
-  @Nullable
-  public static PreprocessorException extractPreprocessorException(@Nullable final Throwable thr) {
+
+  public static PreprocessorException extractPreprocessorException(final Throwable thr) {
     if (thr == null) {
       return null;
     }
@@ -93,8 +90,8 @@ public class PreprocessorException extends RuntimeException {
     return null;
   }
 
-  @Nonnull
-  public static String referenceAsString(final char fillChar, @Nullable final Throwable thr) {
+
+  public static String referenceAsString(final char fillChar, final Throwable thr) {
     if (thr == null) {
       return "";
     }
@@ -114,7 +111,7 @@ public class PreprocessorException extends RuntimeException {
     return buffer.toString();
   }
 
-  @Nullable
+
   public File getRootFile() {
     if (includeStack.length == 0) {
       return null;
@@ -123,7 +120,7 @@ public class PreprocessorException extends RuntimeException {
     }
   }
 
-  @Nullable
+
   public File getProcessingFile() {
     if (includeStack.length == 0) {
       return null;
@@ -140,12 +137,12 @@ public class PreprocessorException extends RuntimeException {
     }
   }
 
-  @Nullable
+
   public String getProcessingString() {
     return processingString;
   }
 
-  @Nullable
+
   private String convertIncludeStackToString() {
     final StringBuilder result = new StringBuilder();
     for (int i = 0; i < this.includeStack.length; i++) {
@@ -157,16 +154,14 @@ public class PreprocessorException extends RuntimeException {
     return result.toString();
   }
 
-  @Nonnull
-  @MustNotContainNull
   public FilePositionInfo[] getIncludeChain() {
     return this.includeStack.clone();
   }
 
   @Override
-  @Nonnull
   public String toString() {
-    return getMessage() + ", include stack: " + convertIncludeStackToString() + ", source line: " + this.processingString;
+    return getMessage() + ", include stack: " + convertIncludeStackToString() + ", source line: " +
+        this.processingString;
   }
 
 }

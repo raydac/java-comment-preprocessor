@@ -21,13 +21,12 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeCsv;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-
-import javax.annotation.Nonnull;
-
-import static org.apache.commons.text.StringEscapeUtils.escapeCsv;
 
 /**
  * The class implements the str2csv function handler
@@ -37,26 +36,26 @@ import static org.apache.commons.text.StringEscapeUtils.escapeCsv;
 public final class FunctionSTR2CSV extends AbstractStrConverter {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "str2csv";
   }
 
   @Override
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
+
+  public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeCsv(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "escape string for CSV";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

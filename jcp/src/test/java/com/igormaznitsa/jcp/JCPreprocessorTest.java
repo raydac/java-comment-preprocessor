@@ -21,13 +21,15 @@
 
 package com.igormaznitsa.jcp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.meta.common.utils.Deferrers;
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,14 +38,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.igormaznitsa.meta.common.utils.Deferrers.defer;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public final class JCPreprocessorTest {
 
-  private void assertGVDFPreprocessorException(final String file, final int stringIndexStartedFromOne) throws Exception {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+  private void assertGVDFPreprocessorException(final String file,
+                                               final int stringIndexStartedFromOne)
+      throws Exception {
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.registerConfigFile(new File(this.getClass().getResource(file).toURI()));
     final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     try {
@@ -58,14 +61,18 @@ public final class JCPreprocessorTest {
 
   @Test
   public void testProcessGlobalVarDefiningFiles() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.registerConfigFile(new File(this.getClass().getResource("./global_ok.txt").toURI()));
     final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
     preprocessor.processConfigFiles();
 
-    assertEquals("Must have the variable", "hello world", context.findVariableForName("globalVar1", true).asString());
-    assertEquals("Must have the variable", Value.INT_THREE, context.findVariableForName("globalVar2", true));
-    assertEquals("Character input encoding must be changed", StandardCharsets.ISO_8859_1, context.getSourceEncoding());
+    assertEquals("Must have the variable", "hello world",
+        context.findVariableForName("globalVar1", true).asString());
+    assertEquals("Must have the variable", Value.INT_THREE,
+        context.findVariableForName("globalVar2", true));
+    assertEquals("Character input encoding must be changed", StandardCharsets.ISO_8859_1,
+        context.getSourceEncoding());
   }
 
   @Test
@@ -84,7 +91,8 @@ public final class JCPreprocessorTest {
       assertTrue("We have to remove the existing result file", resultFile.delete());
     }
 
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setSources(Collections.singletonList(testDirectory.getCanonicalPath()));
     context.setTarget(testDirectory);
     context.setClearTarget(false);
@@ -100,30 +108,27 @@ public final class JCPreprocessorTest {
 
     String differentLine = null;
     int lineIndex = 1;
+    try (BufferedReader resultReader = new BufferedReader(
+        new InputStreamReader(new FileInputStream(resultFile), StandardCharsets.UTF_8))) {
+      try (BufferedReader etalonReader = new BufferedReader(
+          new InputStreamReader(new FileInputStream(etalonFile),
+              StandardCharsets.UTF_8))) {
 
-    BufferedReader resultReader;
-    BufferedReader etalonReader;
-    try {
-      resultReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(resultFile), StandardCharsets.UTF_8)));
-      etalonReader = defer(new BufferedReader(new InputStreamReader(new FileInputStream(etalonFile), StandardCharsets.UTF_8)));
+        while (!Thread.currentThread().isInterrupted()) {
+          final String resultStr = resultReader.readLine();
+          final String etalonStr = etalonReader.readLine();
+          if (resultStr == null && etalonStr == null) {
+            break;
+          }
 
-      while (!Thread.currentThread().isInterrupted()) {
-        final String resultStr = resultReader.readLine();
-        final String etalonStr = etalonReader.readLine();
-        if (resultStr == null && etalonStr == null) {
-          break;
+          if (resultStr == null || !resultStr.equals(etalonStr)) {
+            differentLine = resultStr;
+            break;
+          }
+
+          lineIndex++;
         }
-
-        if (resultStr == null || !resultStr.equals(etalonStr)) {
-          differentLine = resultStr;
-          break;
-        }
-
-        lineIndex++;
       }
-
-    } finally {
-      Deferrers.processDeferredActions();
     }
 
     if (differentLine != null) {

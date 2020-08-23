@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
@@ -38,19 +36,18 @@ public class OutCharsetHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/TT:";
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }
 
   @Override
-  @Nonnull
   public String getDescription() {
-    return "set the output encoding for text files (by default " + PreprocessorContext.DEFAULT_CHARSET + ')';
+    return "set the output encoding for text files (by default " +
+        PreprocessorContext.DEFAULT_CHARSET + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
 
     boolean result = false;
 

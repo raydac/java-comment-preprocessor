@@ -21,27 +21,14 @@
 
 package com.igormaznitsa.jcp.maven;
 
+import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
+
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -54,8 +41,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.igormaznitsa.meta.common.utils.GetUtils.ensureNonNull;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Mojo to preprocess either standard maven project source roots or custom source roots and place prepsocessed result into defined target folder.
@@ -292,13 +289,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   @Parameter(alias = "dontOverwriteSameContent", defaultValue = "false")
   private boolean dontOverwriteSameContent = false;
 
-  @Nonnull
-  @MustNotContainNull
+
   private List<String> formSourceRootList() {
     List<String> result = Collections.emptyList();
     if (this.getSources() == null) {
       if (this.project != null) {
-        result = (this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots).stream()
+        result = (this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots)
+            .stream()
             .filter(Objects::nonNull)
             .map(File::new)
             .peek(x -> {
@@ -316,11 +313,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     return result;
   }
 
-  private void replaceSourceRootByPreprocessingDestinationFolder(@Nonnull final PreprocessorContext context) throws IOException {
+  private void replaceSourceRootByPreprocessingDestinationFolder(final PreprocessorContext context)
+      throws IOException {
     if (this.project != null) {
       final List<PreprocessorContext.SourceFolder> sourceFolders = context.getSources();
 
-      final List<String> sourceRoots = this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
+      final List<String> sourceRoots =
+          this.isUseTestSources() ? this.testCompileSourceRoots : this.compileSourceRoots;
       final List<String> sourceRootsAsCanonical = new ArrayList<>();
       for (final String src : sourceRoots) {
         sourceRootsAsCanonical.add(new File(src).getCanonicalPath());
@@ -346,13 +345,14 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     }
   }
 
-  @Nonnull
+
   PreprocessorContext makePreprocessorContext() throws IOException {
     final PreprocessorContext context = new PreprocessorContext(this.getBaseDir());
     context.setPreprocessorLogger(this);
 
     if (this.project != null) {
-      final MavenPropertiesImporter mavenPropertiesImporter = new MavenPropertiesImporter(context, project, isVerbose() || getLog().isDebugEnabled());
+      final MavenPropertiesImporter mavenPropertiesImporter =
+          new MavenPropertiesImporter(context, project, isVerbose() || getLog().isDebugEnabled());
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
@@ -370,7 +370,9 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       context.setEol(StringEscapeUtils.unescapeJava(this.getEol()));
     }
 
-    info("Source folders: " + context.getSources().stream().map(PreprocessorContext.SourceFolder::getAsString).collect(Collectors.joining(File.pathSeparator)));
+    info("Source folders: " +
+        context.getSources().stream().map(PreprocessorContext.SourceFolder::getAsString)
+            .collect(Collectors.joining(File.pathSeparator)));
     info("Target folder: " + context.getTarget());
 
     context.setUnknownVariableAsFalse(this.isUnknownVarAsFalse());
@@ -406,15 +408,19 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       try {
         context = makePreprocessorContext();
       } catch (Exception ex) {
-        final PreprocessorException newException = PreprocessorException.extractPreprocessorException(ex);
-        throw new MojoExecutionException(newException == null ? ex.getMessage() : newException.toString(), newException == null ? ex : newException);
+        final PreprocessorException newException =
+            PreprocessorException.extractPreprocessorException(ex);
+        throw new MojoExecutionException(
+            newException == null ? ex.getMessage() : newException.toString(),
+            newException == null ? ex : newException);
       }
 
       if (context.getSources().isEmpty()) {
         if (this.isIgnoreMissingSources()) {
           getLog().warn("Source folders are not provided, preprocessing is ignored.");
         } else {
-          throw new MojoFailureException("Source folders are not provided, check parameters and project type");
+          throw new MojoFailureException(
+              "Source folders are not provided, check parameters and project type");
         }
       } else {
         try {
@@ -425,29 +431,31 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
           }
         } catch (Exception ex) {
           final PreprocessorException pp = PreprocessorException.extractPreprocessorException(ex);
-          throw new MojoFailureException(pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp), pp == null ? ex : pp);
+          throw new MojoFailureException(
+              pp == null ? ex.getMessage() : PreprocessorException.referenceAsString('.', pp),
+              pp == null ? ex : pp);
         }
       }
     }
   }
 
   @Override
-  public void error(@Nullable final String message) {
+  public void error(final String message) {
     getLog().error(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void info(@Nullable final String message) {
+  public void info(final String message) {
     getLog().info(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void warning(@Nullable final String message) {
+  public void warning(final String message) {
     getLog().warn(ensureNonNull(message, "<null>"));
   }
 
   @Override
-  public void debug(@Nullable final String message) {
+  public void debug(final String message) {
     getLog().debug(ensureNonNull(message, "<null>"));
   }
 }

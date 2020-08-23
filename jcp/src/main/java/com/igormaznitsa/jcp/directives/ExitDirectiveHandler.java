@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#exit directive handler
  *
@@ -35,20 +33,21 @@ import javax.annotation.Nonnull;
 public class ExitDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "exit";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "immediately end current file preprocessing, return to the calling file if presented";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     state.getPreprocessingFlags().add(PreprocessingFlag.END_PROCESSING);
     if (context.isVerbose()) {

@@ -21,12 +21,13 @@
 
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class FunctionXML_GETTest extends AbstractFunctionXMLTest {
 

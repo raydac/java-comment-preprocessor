@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The handler to process the key signals that the preprocessor must clear the
  * destination directory before preprocessing
@@ -36,13 +34,12 @@ public class ClearTargetHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/C";
 
   @Override
-  @Nonnull
   public String getDescription() {
     return "clear target folder before preprocessing";
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
     if (ARG_NAME.equalsIgnoreCase(key)) {
       context.setClearTarget(true);
@@ -52,7 +49,6 @@ public class ClearTargetHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

@@ -16,27 +16,25 @@
 
 package com.igormaznitsa.jcp;
 
-import org.junit.Assert;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Path;
+import org.junit.Assert;
 
 public final class TestUtils {
   private TestUtils() {
   }
 
-  @Nullable
-  public static String normalizeNextLine(@Nullable final String text) {
+
+  public static String normalizeNextLine(final String text) {
     return text == null ? null : text.replace("\r\n", "\n");
   }
 
-  public static void assertFilePath(@Nonnull final String message, @Nonnull final File expected, @Nonnull final File check) {
+  public static void assertFilePath(final String message, final File expected, final File check) {
     final Path pathExpected = expected.toPath().normalize();
     final Path pathCheck = check.toPath().normalize();
     if (!pathExpected.equals(pathCheck)) {
-      Assert.fail("Expected path '" + pathExpected.toString() + "' but detected path '" + pathCheck.toString() + "'");
+      Assert.fail("Expected path '" + pathExpected.toString() + "' but detected path '" +
+          pathCheck.toString() + "'");
     }
   }
 }

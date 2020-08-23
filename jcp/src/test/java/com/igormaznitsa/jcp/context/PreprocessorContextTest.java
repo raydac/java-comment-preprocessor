@@ -21,11 +21,17 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
-import org.junit.Test;
-
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -39,8 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 @SuppressWarnings("rawtypes")
 public class PreprocessorContextTest {

@@ -26,8 +26,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#outdir directive handler
  *
@@ -36,26 +34,28 @@ import javax.annotation.Nonnull;
 public class OutdirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "outdir";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "change target file folder (same as change \'" + JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
+    return "change target file folder (same as change \'" +
+        JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final Value name = Expression.evalExpression(string, context);
     final String nameAsString = name.toString();
     if (context.isVerbose()) {

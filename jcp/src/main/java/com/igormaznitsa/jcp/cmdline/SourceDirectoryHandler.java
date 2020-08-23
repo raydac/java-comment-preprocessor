@@ -21,17 +21,16 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.extractTail;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.extractTail;
 
 /**
  * The handler processing the key to set the source directory
@@ -43,20 +42,21 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/I:";
 
   @Override
-  @Nonnull
   public String getDescription() {
-    return "define the source folder for preprocessing (by default " + PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
+    return "define the source folder for preprocessing (by default " +
+        PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!tail.isEmpty()) {
-        context.setSources(Arrays.asList(extractTail(ARG_NAME, key).split(Pattern.quote(File.pathSeparator)))
-            .stream().map(String::trim).collect(Collectors.toList()));
+        context.setSources(
+            Arrays.asList(extractTail(ARG_NAME, key).split(Pattern.quote(File.pathSeparator)))
+                .stream().map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }
@@ -64,7 +64,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
+
   public String getKeyName() {
     return ARG_NAME;
   }

@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#postfix[+|-] directive handler
  *
@@ -34,26 +32,27 @@ import javax.annotation.Nonnull;
 public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "postfix";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "turn on(+) or turn off(-) output into postfix section";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.ONOFF;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (!string.isEmpty()) {
       switch (string.charAt(0)) {

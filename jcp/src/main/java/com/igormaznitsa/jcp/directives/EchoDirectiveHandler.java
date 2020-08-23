@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements //#assert directive handler
  *
@@ -34,26 +32,27 @@ import javax.annotation.Nonnull;
 public class EchoDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "echo";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "following text will be logged as info, macroses allowed";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

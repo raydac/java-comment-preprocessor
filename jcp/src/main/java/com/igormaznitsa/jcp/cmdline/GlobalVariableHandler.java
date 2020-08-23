@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -40,13 +38,12 @@ public class GlobalVariableHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/P:";
 
   @Override
-  @Nonnull
   public String getDescription() {
     return "define global variable, for instance /P:DEBUG=true (in command line use $ instead \" char)";
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
@@ -57,7 +54,9 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
         final String[] split = PreprocessorUtils.splitForEqualChar(nameAndExpression);
         if (split.length != 2) {
-          throw context.makeException("Illegal expression for directive '" + ARG_NAME + "' [" + nameAndExpression + ']', null);
+          throw context.makeException(
+              "Illegal expression for directive '" + ARG_NAME + "' [" + nameAndExpression + ']',
+              null);
         }
 
         final String value = split[0];
@@ -76,7 +75,6 @@ public class GlobalVariableHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

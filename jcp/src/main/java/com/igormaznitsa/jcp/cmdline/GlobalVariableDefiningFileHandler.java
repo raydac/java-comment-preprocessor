@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 
 /**
@@ -39,13 +37,12 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
   private static final String ARG_NAME = "@";
 
   @Override
-  @Nonnull
   public String getDescription() {
     return "load global variable list from file defined by either path or expression (last one needs @@)";
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.charAt(0) == '@') {
@@ -61,7 +58,8 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
         stringRest = PreprocessorUtils.extractTrimmedTail("@", stringRest);
 
         if (context.isVerbose()) {
-          context.logForVerbose("Global parameter file defined through expression \'" + stringRest + '\'');
+          context.logForVerbose(
+              "Global parameter file defined through expression \'" + stringRest + '\'');
         }
 
         final Value resultValue = Expression.evalExpression(stringRest, context);
@@ -73,12 +71,16 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
       }
 
       if (context.isVerbose()) {
-        context.logForVerbose("Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  \'" + stringRest + '\'');
+        context.logForVerbose(
+            "Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  \'" +
+                stringRest + '\'');
       }
       if (file.isFile()) {
         context.registerConfigFile(file);
       } else {
-        throw context.makeException("Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'', null);
+        throw context.makeException(
+            "Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'',
+            null);
       }
 
       result = true;
@@ -87,7 +89,6 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

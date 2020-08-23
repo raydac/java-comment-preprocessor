@@ -23,10 +23,7 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#excludeif directive handler
@@ -36,13 +33,13 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "excludeif";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "if argument is TRUE then the file will be ignored by preprocessor";
   }
@@ -58,16 +55,18 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
-    state.pushExcludeIfData(state.getRootFileInfo(), string, assertNotNull("'IF' stack is empty!", state.peekFile()).getLastReadStringIndex());
+    state.pushExcludeIfData(state.getRootFileInfo(), string,
+        Objects.requireNonNull(state.peekFile(), "'IF' stack is empty!").getLastReadStringIndex());
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

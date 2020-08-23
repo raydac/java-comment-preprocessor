@@ -23,10 +23,7 @@ package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#noautoflush directive handler
@@ -36,25 +33,26 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class NoAutoFlushHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "noautoflush";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "turn off auto-flush when EOF";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (context.isVerbose()) {
       context.logForVerbose("Disabling auto-flush");
     }
-    assertNotNull("File stack is empty!", state.peekFile()).disableAutoFlush();
+    Objects.requireNonNull(state.peekFile(), "File stack is empty!").disableAutoFlush();
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

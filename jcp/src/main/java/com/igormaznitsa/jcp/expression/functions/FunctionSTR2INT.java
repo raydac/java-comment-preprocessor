@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the str2int function handler
  *
@@ -35,25 +33,25 @@ import javax.annotation.Nonnull;
 public final class FunctionSTR2INT extends AbstractStrConverter {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "str2int";
   }
 
   @Override
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value value) {
+
+  public Value executeStr(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Long.parseLong(value.asString().trim()));
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "string to integer";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.INT;
   }

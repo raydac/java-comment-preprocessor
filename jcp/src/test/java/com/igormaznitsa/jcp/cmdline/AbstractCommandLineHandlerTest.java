@@ -21,11 +21,15 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public abstract class AbstractCommandLineHandlerTest extends AbstractMockPreprocessorContextTest {
 

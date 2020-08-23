@@ -21,14 +21,17 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.mockito.ArgumentCaptor;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
+
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
 import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
+import org.mockito.ArgumentCaptor;
 
 @SuppressWarnings("unchecked")
 public class ExcludeFoldersHandlerTest extends AbstractCommandLineHandlerTest {

@@ -21,14 +21,16 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
-import org.mockito.Mockito;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+
+
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.nio.charset.StandardCharsets;
+import org.mockito.Mockito;
 
 public class InCharsetHandlerTest extends AbstractCommandLineHandlerTest {
 

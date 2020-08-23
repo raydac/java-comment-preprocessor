@@ -21,16 +21,16 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHandlerTest {
 

@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#definel directive handler
  *
@@ -34,19 +32,20 @@ import javax.annotation.Nonnull;
 public class DefinelDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "definel";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "add local BOOL variable and either set it TRUE (by default) or initialize by expression result";
   }
 
   @Override
-  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
+  protected void process(final PreprocessorContext context, final String varName, final Value value,
+                         final boolean exists) {
     context.setLocalVariable(varName, value);
   }
 }

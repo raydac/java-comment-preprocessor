@@ -25,9 +25,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -37,9 +34,10 @@ import java.util.List;
  */
 public final class FunctionSTR2GO extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
 
-  @Nonnull
+
   private static String toUnicode(final char c) {
     final StringBuilder result = new StringBuilder(4);
     final String hex = Integer.toHexString(c);
@@ -53,8 +51,8 @@ public final class FunctionSTR2GO extends AbstractFunction {
     return result.toString();
   }
 
-  @Nonnull
-  private static String escapeGo(@Nonnull final String value) {
+
+  private static String escapeGo(final String value) {
     final StringBuilder result = new StringBuilder();
 
     for (final char c : value.toCharArray()) {
@@ -107,16 +105,18 @@ public final class FunctionSTR2GO extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "str2go";
   }
 
-  @Nonnull
-  public Value executeStrBool(@Nonnull final PreprocessorContext context, @Nonnull final Value source, @Nonnull final Value splitAndQuoteLines) {
+
+  public Value executeStrBool(final PreprocessorContext context, final Value source,
+                              final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()) {
       final boolean endsWithNextLine = source.asString().endsWith("\n");
-      final List<String> split = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
+      final List<String> split =
+          PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
       final StringBuilder result = new StringBuilder(source.asString().length() * 2);
       final String nextLineChars = PreprocessorUtils.getNextLineCodes();
 
@@ -145,20 +145,20 @@ public final class FunctionSTR2GO extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "escape string for GoLang";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

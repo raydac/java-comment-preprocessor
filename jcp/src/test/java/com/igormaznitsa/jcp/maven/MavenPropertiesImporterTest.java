@@ -21,12 +21,13 @@
 
 package com.igormaznitsa.jcp.maven;
 
+import static org.junit.Assert.assertEquals;
+
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import static org.junit.Assert.assertEquals;
 
 public class MavenPropertiesImporterTest {
 

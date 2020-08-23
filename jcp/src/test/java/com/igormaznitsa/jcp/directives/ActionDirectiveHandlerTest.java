@@ -21,14 +21,21 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 

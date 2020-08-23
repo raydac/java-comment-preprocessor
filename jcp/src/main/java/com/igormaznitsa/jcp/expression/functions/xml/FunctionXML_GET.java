@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the xml_get function handler
@@ -35,17 +32,20 @@ import javax.annotation.Nonnull;
  */
 public final class FunctionXML_GET extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.INT}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.INT}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "xml_get";
   }
 
-  @Nonnull
-  public Value executeStrInt(@Nonnull final PreprocessorContext context, @Nonnull final Value elementListId, @Nonnull final Value elementIndex) {
-    return Value.valueOf(findElementForIndex(context, elementListId.asString(), elementIndex.asLong().intValue()));
+
+  public Value executeStrInt(final PreprocessorContext context, final Value elementListId,
+                             final Value elementIndex) {
+    return Value.valueOf(
+        findElementForIndex(context, elementListId.asString(), elementIndex.asLong().intValue()));
   }
 
   @Override
@@ -54,20 +54,20 @@ public final class FunctionXML_GET extends AbstractXMLFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "get positioned element from list by its index (0 is first)";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

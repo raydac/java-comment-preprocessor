@@ -21,12 +21,16 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
 import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class FileExtensionsHandlerTest extends AbstractCommandLineHandlerTest {
 

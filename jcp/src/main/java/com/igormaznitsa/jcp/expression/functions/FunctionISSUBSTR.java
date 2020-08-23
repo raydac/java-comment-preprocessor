@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the ISSUBSTR function handler
@@ -35,16 +32,18 @@ import javax.annotation.Nonnull;
  */
 public final class FunctionISSUBSTR extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "issubstr";
   }
 
-  @Nonnull
-  public Value executeStrStr(@Nonnull final PreprocessorContext context, @Nonnull final Value subStrValue, @Nonnull final Value strValue) {
+
+  public Value executeStrStr(final PreprocessorContext context, final Value subStrValue,
+                             final Value strValue) {
     final String str = strValue.asString().toLowerCase();
     final String subStr = subStrValue.asString().toLowerCase();
     return Value.valueOf(str.contains(subStr));
@@ -56,20 +55,20 @@ public final class FunctionISSUBSTR extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "check that string contains substring (case insensitive)";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.BOOLEAN;
   }

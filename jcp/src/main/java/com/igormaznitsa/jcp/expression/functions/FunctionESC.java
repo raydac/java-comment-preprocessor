@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -37,13 +34,13 @@ public final class FunctionESC extends AbstractFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "esc";
   }
 
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value source) {
+
+  public Value executeStr(final PreprocessorContext context, final Value source) {
     final String sourceString = source.asString();
     final StringBuilder result = new StringBuilder();
     for (int i = 0; i < sourceString.length(); i++) {
@@ -95,20 +92,20 @@ public final class FunctionESC extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "escape string chars";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

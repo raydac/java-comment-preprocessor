@@ -26,8 +26,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#outname directive handler
  *
@@ -36,26 +34,28 @@ import javax.annotation.Nonnull;
 public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "outname";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "change target file name (same as change \'" + JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME + "\')";
+    return "change target file name (same as change \'" +
+        JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME + "\')";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final Value fileName = Expression.evalExpression(string, context);
     final String fileNameAsStr = fileName.toString();
     if (context.isVerbose()) {

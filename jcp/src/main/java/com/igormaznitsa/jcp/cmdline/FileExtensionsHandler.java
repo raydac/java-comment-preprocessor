@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -39,20 +37,22 @@ public class FileExtensionsHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/F:";
 
   @Override
-  @Nonnull
   public String getDescription() {
-    return "comma separated list of allowed extensions (case insensitive) (by default " + PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS.stream().collect(Collectors.joining(",")) + ')';
+    return "comma separated list of allowed extensions (case insensitive) (by default " +
+        PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS.stream()
+            .collect(Collectors.joining(",")) + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!extensions.isEmpty()) {
-        context.setExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+        context.setExtensions(
+            Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }
@@ -61,7 +61,6 @@ public class FileExtensionsHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

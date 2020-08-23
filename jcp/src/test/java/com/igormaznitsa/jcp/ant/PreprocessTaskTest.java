@@ -21,22 +21,24 @@
 
 package com.igormaznitsa.jcp.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
-import org.apache.tools.ant.Project;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.apache.tools.ant.Project;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class PreprocessTaskTest {
 

@@ -23,8 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -39,19 +37,22 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   private static final String ARG_NAME = "/EF:";
 
   @Override
-  @Nonnull
   public String getDescription() {
-    return "comma separated file extensions (case insensetive) to be excluded from preprocess and copy (by default " + PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS.stream().collect(Collectors.joining(",")) + ')';
+    return
+        "comma separated file extensions (case insensetive) to be excluded from preprocess and copy (by default " +
+            PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS.stream()
+                .collect(Collectors.joining(",")) + ')';
   }
 
   @Override
-  public boolean processCommandLineKey(@Nonnull final String key, @Nonnull final PreprocessorContext context) {
+  public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!extensions.isEmpty()) {
-        context.setExcludeExtensions(Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+        context.setExcludeExtensions(
+            Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }
@@ -60,7 +61,6 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   }
 
   @Override
-  @Nonnull
   public String getKeyName() {
     return ARG_NAME;
   }

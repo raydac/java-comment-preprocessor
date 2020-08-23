@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements //#msg directive handler
  *
@@ -34,27 +32,30 @@ import javax.annotation.Nonnull;
 public class MsgDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "msg";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "following text will be logged as info, macroses allowed, if verbose is ON then stack info will be logged";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
-    final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
+
+  public AfterDirectiveProcessingBehaviour execute(final String rawTail,
+                                                   final PreprocessorContext context) {
+    final String normal =
+        (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) :
+            rawTail;
     final String message = PreprocessorUtils.processMacroses(normal, context);
     if (context.isVerbose()) {
       context.logForVerbose(message);

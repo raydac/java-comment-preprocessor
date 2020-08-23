@@ -22,11 +22,7 @@
 package com.igormaznitsa.jcp.expression;
 
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class describes an expression value i.e. an atomic constant expression item like string or number
@@ -49,49 +45,49 @@ public final class Value implements ExpressionItem {
   private final Object value;
   private final ValueType type;
 
-  private Value(@Nullable final String val) {
+  private Value(final String val) {
     value = val == null ? "null" : val;
     type = ValueType.STRING;
   }
 
-  private Value(@Nonnull final Long val) {
+  private Value(final Long val) {
     value = val;
     type = ValueType.INT;
   }
 
-  private Value(@Nonnull final Float val) {
+  private Value(final Float val) {
     value = val;
     type = ValueType.FLOAT;
   }
 
-  private Value(@Nonnull final Boolean val) {
+  private Value(final Boolean val) {
     value = val;
     type = ValueType.BOOLEAN;
   }
 
-  @Nonnull
-  public static Value valueOf(@Nonnull final Long val) {
+
+  public static Value valueOf(final Long val) {
     return new Value(val);
   }
 
-  @Nonnull
-  public static Value valueOf(@Nonnull final Boolean val) {
+
+  public static Value valueOf(final Boolean val) {
     return val ? BOOLEAN_TRUE : BOOLEAN_FALSE;
   }
 
-  @Nonnull
-  public static Value valueOf(@Nonnull final Float val) {
+
+  public static Value valueOf(final Float val) {
     return new Value(val);
   }
 
-  @Nonnull
-  public static Value valueOf(@Nonnull final String val) {
+
+  public static Value valueOf(final String val) {
     return new Value(val);
   }
 
-  @Nonnull
-  public static Value recognizeRawString(@Nonnull final String str) {
-    assertNotNull("Parameter is null", str);
+
+  public static Value recognizeRawString(final String str) {
+    Objects.requireNonNull(str, "Parameter is null");
 
     if ("true".equals(str)) {
       return Value.BOOLEAN_TRUE;
@@ -114,8 +110,8 @@ public final class Value implements ExpressionItem {
     return new Value(str);
   }
 
-  @Nonnull
-  public static Value recognizeOf(@Nonnull final String str) {
+
+  public static Value recognizeOf(final String str) {
     final ValueType type = recognizeType(str);
 
     final Value result;
@@ -145,8 +141,8 @@ public final class Value implements ExpressionItem {
     return result;
   }
 
-  @Nullable
-  public static Object getValue(@Nonnull final String value, @Nonnull final ValueType type) {
+
+  public static Object getValue(final String value, final ValueType type) {
     try {
       switch (type) {
         case STRING: {
@@ -156,7 +152,8 @@ public final class Value implements ExpressionItem {
           return value.equalsIgnoreCase("true") ? Boolean.TRUE : Boolean.FALSE;
         }
         case INT: {
-          if (value.length() > 2 && value.charAt(0) == '0' && (value.charAt(1) == 'x' || value.charAt(1) == 'X')) {
+          if (value.length() > 2 && value.charAt(0) == '0' &&
+              (value.charAt(1) == 'x' || value.charAt(1) == 'X')) {
             // HEX value
             return Long.valueOf(PreprocessorUtils.extractTail("0x", value), 16);
           } else {
@@ -175,12 +172,13 @@ public final class Value implements ExpressionItem {
     }
   }
 
-  @Nonnull
-  public static ValueType recognizeType(@Nonnull final String value) {
+
+  public static ValueType recognizeType(final String value) {
     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) // Boolean
     {
       return ValueType.BOOLEAN;
-    } else if (value.length() > 1 && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"') // String value
+    } else if (value.length() > 1 && value.charAt(0) == '\"' &&
+        value.charAt(value.length() - 1) == '\"') // String value
     {
       return ValueType.STRING;
     } else {
@@ -206,17 +204,17 @@ public final class Value implements ExpressionItem {
     }
   }
 
-  @Nonnull
+
   public ValueType getType() {
     return type;
   }
 
-  @Nonnull
+
   public Object getValue() {
     return value;
   }
 
-  @Nonnull
+
   public Long asLong() {
     if (type != ValueType.INT) {
       throw new IllegalStateException("Value is not integer");
@@ -224,7 +222,7 @@ public final class Value implements ExpressionItem {
     return (Long) value;
   }
 
-  @Nonnull
+
   public Float asFloat() {
     if (type != ValueType.FLOAT) {
       throw new IllegalStateException("Value is not float");
@@ -232,7 +230,7 @@ public final class Value implements ExpressionItem {
     return (Float) value;
   }
 
-  @Nonnull
+
   public String asString() {
     if (type != ValueType.STRING) {
       throw new IllegalStateException("Value is not string");
@@ -240,7 +238,7 @@ public final class Value implements ExpressionItem {
     return (String) value;
   }
 
-  @Nonnull
+
   public Boolean asBoolean() {
     if (type != ValueType.BOOLEAN) {
       throw new IllegalStateException("Value is not boolean");
@@ -248,7 +246,7 @@ public final class Value implements ExpressionItem {
     return (Boolean) value;
   }
 
-  @Nonnull
+
   public String toStringDetail() {
     switch (type) {
       case BOOLEAN: {
@@ -271,7 +269,7 @@ public final class Value implements ExpressionItem {
   }
 
   @Override
-  @Nonnull
+
   public String toString() {
     switch (type) {
       case BOOLEAN:
@@ -290,19 +288,19 @@ public final class Value implements ExpressionItem {
   }
 
   @Override
-  @Nonnull
+
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VALUE;
   }
 
   @Override
-  @Nonnull
+
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.VALUE;
   }
 
   @Override
-  public boolean equals(@Nullable final Object var) {
+  public boolean equals(final Object var) {
     if (this == var) {
       return true;
     }

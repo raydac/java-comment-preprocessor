@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.expression.operators;
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the XOR operator handler
  *
@@ -39,29 +37,29 @@ public class OperatorXOR extends AbstractOperator {
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "conditional-XOR and bitwise exclusive OR";
   }
 
   @Override
-  @Nonnull
+
   public String getKeyword() {
     return "^";
   }
 
-  @Nonnull
-  public Value executeIntInt(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeIntInt(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asLong() ^ arg2.asLong());
   }
 
-  @Nonnull
-  public Value executeBoolBool(@Nonnull final Value arg1, @Nonnull final Value arg2) {
+
+  public Value executeBoolBool(final Value arg1, final Value arg2) {
     return Value.valueOf(arg1.asBoolean() ^ arg2.asBoolean());
   }
 
   @Override
-  @Nonnull
+
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.LOGICAL;
   }

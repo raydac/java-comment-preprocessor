@@ -21,12 +21,10 @@
 
 package com.igormaznitsa.jcp.removers;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * A remover allows to cut off all Java like comments from a reader and write the result into a writer
@@ -38,9 +36,9 @@ public class JavaCommentsRemover {
   private final Reader srcReader;
   private final Writer dstWriter;
 
-  public JavaCommentsRemover(@Nonnull final Reader src, @Nonnull final Writer dst) {
-    assertNotNull("The reader is null", src);
-    assertNotNull("The writer is null", dst);
+  public JavaCommentsRemover(final Reader src, final Writer dst) {
+    Objects.requireNonNull(src, "The reader is null");
+    Objects.requireNonNull(dst, "The writer is null");
     this.srcReader = src;
     this.dstWriter = dst;
   }
@@ -79,7 +77,7 @@ public class JavaCommentsRemover {
     }
   }
 
-  @Nonnull
+
   public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
     final int STATE_INSIDE_STRING = 1;

@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
+
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
@@ -30,12 +32,6 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -55,11 +51,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * The class describes a preprocessor state also it contains inside buffers and save data on disk
@@ -84,7 +80,8 @@ public final class PreprocessingState {
   private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
   private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
   private final boolean overrideOnlyIfContentChanged;
-  private final EnumSet<PreprocessingFlag> preprocessingFlags = EnumSet.noneOf(PreprocessingFlag.class);
+  private final EnumSet<PreprocessingFlag> preprocessingFlags =
+      EnumSet.noneOf(PreprocessingFlag.class);
   private final PreprocessorContext context;
   private final boolean fake;
   private ResetablePrinter currentPrinter;
@@ -93,10 +90,11 @@ public final class PreprocessingState {
   private String lastReadString;
   private boolean globalPhase;
 
-  PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final Charset inEncoding, @Nonnull final Charset outEncoding) {
+  PreprocessingState(final PreprocessorContext context, final Charset inEncoding,
+                     final Charset outEncoding) {
     this.fake = true;
-    this.globalInCharacterEncoding = assertNotNull(inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull(outEncoding);
+    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
     this.rootReference = null;
     this.lastReadString = "";
     this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
@@ -105,51 +103,55 @@ public final class PreprocessingState {
     init();
   }
 
-  PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final FileInfoContainer rootFile, @Nonnull final Charset inEncoding, @Nonnull final Charset outEncoding, final boolean overrideOnlyIfContentChanged) throws IOException {
+  PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile,
+                     final Charset inEncoding, final Charset outEncoding,
+                     final boolean overrideOnlyIfContentChanged) throws IOException {
     this.fake = false;
 
     this.context = context;
 
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
-    this.globalInCharacterEncoding = assertNotNull(inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull(outEncoding);
+    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
 
-    this.rootFileInfo = assertNotNull("The root file is null", rootFile);
+    this.rootFileInfo = Objects.requireNonNull(rootFile, "The root file is null");
     init();
     rootReference = openFile(rootFile.getSourceFile());
   }
 
-  PreprocessingState(@Nonnull final PreprocessorContext context, @Nonnull final FileInfoContainer rootFile, @Nonnull final TextFileDataContainer rootContainer, @Nonnull final Charset inEncoding, @Nonnull final Charset outEncoding, final boolean overrideOnlyIfContentChanged) {
+  PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile,
+                     final TextFileDataContainer rootContainer, final Charset inEncoding,
+                     final Charset outEncoding, final boolean overrideOnlyIfContentChanged) {
     this.fake = false;
 
     this.context = context;
 
-    this.globalInCharacterEncoding = assertNotNull(inEncoding);
-    this.globalOutCharacterEncoding = assertNotNull(outEncoding);
+    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
 
-    this.rootFileInfo = assertNotNull("The root file is null", rootFile);
+    this.rootFileInfo = Objects.requireNonNull(rootFile, "The root file is null");
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
-  }
-
-  public void setGlobalPhase(final boolean flag) {
-    this.globalPhase = flag;
   }
 
   public boolean isGlobalPhase() {
     return this.globalPhase;
   }
 
-  @Nullable
+  public void setGlobalPhase(final boolean flag) {
+    this.globalPhase = flag;
+  }
+
   public String getLastReadString() {
     return this.lastReadString;
   }
 
-  public void pushExcludeIfData(@Nonnull final FileInfoContainer infoContainer, @Nonnull final String excludeIfCondition, final int stringIndex) {
-    assertNotNull("File info is null", infoContainer);
-    assertNotNull("Condition is null", excludeIfCondition);
+  public void pushExcludeIfData(final FileInfoContainer infoContainer,
+                                final String excludeIfCondition, final int stringIndex) {
+    Objects.requireNonNull(infoContainer, "File info is null");
+    Objects.requireNonNull(excludeIfCondition, "Condition is null");
 
     if (stringIndex < 0) {
       throw new IllegalArgumentException("Unexpected string index [" + stringIndex + ']');
@@ -158,31 +160,30 @@ public final class PreprocessingState {
     deferredExcludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
     final List<ExcludeIfInfo> result = new ArrayList<>(deferredExcludeStack);
     deferredExcludeStack.clear();
     return result;
   }
 
-  @Nonnull
+
   public ExcludeIfInfo popExcludeIfData() {
     return deferredExcludeStack.pop();
   }
 
-  @Nonnull
+
   public Set<PreprocessingFlag> getPreprocessingFlags() {
     return preprocessingFlags;
   }
 
-  @Nullable
+
   public ResetablePrinter getPrinter() throws IOException {
     return currentPrinter;
   }
 
-  public void setPrinter(@Nonnull final PrinterType type) {
-    assertNotNull("Type is null", type);
+  public void setPrinter(final PrinterType type) {
+    Objects.requireNonNull(type, "Type is null");
     switch (type) {
       case NORMAL:
         currentPrinter = normalPrinter;
@@ -198,36 +199,36 @@ public final class PreprocessingState {
     }
   }
 
-  @Nonnull
+
   public TextFileDataContainer getRootTextContainer() {
     return rootReference;
   }
 
-  @Nonnull
-  public TextFileDataContainer openFile(@Nonnull final File file) throws IOException {
-    assertNotNull("The file is null", file);
+
+  public TextFileDataContainer openFile(final File file) throws IOException {
+    Objects.requireNonNull(file, "The file is null");
 
     final AtomicBoolean endedByNextLineContainer = new AtomicBoolean();
 
-    final String[] texts = PreprocessorUtils.readWholeTextFileIntoArray(file, globalInCharacterEncoding, endedByNextLineContainer);
-    final TextFileDataContainer newContainer = new TextFileDataContainer(file, texts, endedByNextLineContainer.get(), 0);
+    final String[] texts = PreprocessorUtils
+        .readWholeTextFileIntoArray(file, globalInCharacterEncoding, endedByNextLineContainer);
+    final TextFileDataContainer newContainer =
+        new TextFileDataContainer(file, texts, endedByNextLineContainer.get(), 0);
     includeStack.push(newContainer);
     return newContainer;
   }
 
-  @Nullable
+
   public TextFileDataContainer peekFile() {
     return includeStack.peek();
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   List<TextFileDataContainer> getCurrentIncludeStack() {
     return this.includeStack;
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   public FilePositionInfo[] makeIncludeStack() {
     if (this.fake) {
       return EMPTY_STACK;
@@ -236,17 +237,18 @@ public final class PreprocessingState {
     final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
     for (int i = 0; i < includeStack.size(); i++) {
       final TextFileDataContainer fileContainer = includeStack.get(i);
-      stack[i] = new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
+      stack[i] =
+          new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
     }
     return stack;
   }
 
-  @Nullable
+
   public TextFileDataContainer getCurrentIncludeFileContainer() {
     return this.includeStack.isEmpty() ? null : this.includeStack.get(this.includeStack.size() - 1);
   }
 
-  @Nonnull
+
   public TextFileDataContainer popTextContainer() {
     if (includeStack.isEmpty()) {
       throw new IllegalStateException("Include stack is empty");
@@ -254,7 +256,7 @@ public final class PreprocessingState {
     return includeStack.pop();
   }
 
-  @Nonnull
+
   public FileInfoContainer getRootFileInfo() {
     return rootFileInfo;
   }
@@ -267,13 +269,15 @@ public final class PreprocessingState {
     return includeStack.size() == 1;
   }
 
-  @Nonnull
+
   private TextFileDataContainer cloneTopTextDataContainer(final boolean useLastReadStringIndex) {
     final TextFileDataContainer topElement = includeStack.peek();
-    return new TextFileDataContainer(topElement, useLastReadStringIndex ? topElement.getLastReadStringIndex() : topElement.getNextStringIndex());
+    return new TextFileDataContainer(topElement,
+        useLastReadStringIndex ? topElement.getLastReadStringIndex() :
+            topElement.getNextStringIndex());
   }
 
-  @Nonnull
+
   public PreprocessingState popWhile() {
     final TextFileDataContainer whileOnTop = whileStack.pop();
     if (whileOnTop == activeWhile) {
@@ -287,7 +291,7 @@ public final class PreprocessingState {
     return this;
   }
 
-  @Nonnull
+
   public PreprocessingState pushWhile(final boolean makeActive) {
     final TextFileDataContainer whileRef = cloneTopTextDataContainer(true);
     whileStack.push(whileRef);
@@ -297,7 +301,7 @@ public final class PreprocessingState {
     return this;
   }
 
-  @Nullable
+
   public TextFileDataContainer peekWhile() {
     return whileStack.peek();
   }
@@ -306,20 +310,20 @@ public final class PreprocessingState {
     return includeStack.peek().isPresentedNextLineOnReadString();
   }
 
-  @Nullable
+
   public String nextLine() {
     final String result = includeStack.peek().nextLine();
     this.lastReadString = result;
     return result;
   }
 
-  @Nonnull
+
   public PreprocessingState goToString(final int stringIndex) {
     includeStack.peek().setNextStringIndex(stringIndex);
     return this;
   }
 
-  @Nonnull
+
   public PreprocessingState pushIf(final boolean makeActive) {
     final TextFileDataContainer ifRef = cloneTopTextDataContainer(true);
     ifStack.push(ifRef);
@@ -329,7 +333,7 @@ public final class PreprocessingState {
     return this;
   }
 
-  public void popAllIFUntilContainerWithFile(@Nonnull final TextFileDataContainer container) {
+  public void popAllIFUntilContainerWithFile(final TextFileDataContainer container) {
     final File file = container.getFile();
     final int stringIndex = container.getNextStringIndex();
     while (!ifStack.isEmpty()) {
@@ -342,7 +346,7 @@ public final class PreprocessingState {
     }
   }
 
-  @Nonnull
+
   public PreprocessingState popIf() {
     final TextFileDataContainer ifRef = ifStack.pop();
     if (ifRef == activeIf) {
@@ -372,14 +376,16 @@ public final class PreprocessingState {
   }
 
   public boolean isDirectiveCanBeProcessedIgnoreBreak() {
-    return isAtActiveIf() && isAtActiveWhile() && !preprocessingFlags.contains(PreprocessingFlag.IF_CONDITION_FALSE);
+    return isAtActiveIf() && isAtActiveWhile() &&
+        !preprocessingFlags.contains(PreprocessingFlag.IF_CONDITION_FALSE);
   }
 
   public boolean isDirectiveCanBeProcessed() {
-    return isDirectiveCanBeProcessedIgnoreBreak() && !preprocessingFlags.contains(PreprocessingFlag.BREAK_COMMAND);
+    return isDirectiveCanBeProcessedIgnoreBreak() &&
+        !preprocessingFlags.contains(PreprocessingFlag.BREAK_COMMAND);
   }
 
-  @Nullable
+
   public TextFileDataContainer peekIf() {
     return ifStack.peek();
   }
@@ -407,13 +413,18 @@ public final class PreprocessingState {
     currentPrinter = normalPrinter;
   }
 
-  public void saveBuffersToStreams(@Nonnull final OutputStream prefix, @Nonnull final OutputStream normal, @Nonnull final OutputStream postfix) throws IOException {
-    prefixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
-    normalPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(normal, globalOutCharacterEncoding)));
-    postfixPrinter.writeBufferTo(new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
+  public void saveBuffersToStreams(final OutputStream prefix, final OutputStream normal,
+                                   final OutputStream postfix) throws IOException {
+    prefixPrinter.writeBufferTo(
+        new BufferedWriter(new OutputStreamWriter(prefix, globalOutCharacterEncoding)));
+    normalPrinter.writeBufferTo(
+        new BufferedWriter(new OutputStreamWriter(normal, globalOutCharacterEncoding)));
+    postfixPrinter.writeBufferTo(
+        new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
   }
 
-  public boolean saveBuffersToFile(@Nonnull final File outFile, final boolean keepComments) throws IOException {
+  public boolean saveBuffersToFile(final File outFile, final boolean keepComments)
+      throws IOException {
     final File path = outFile.getParentFile();
 
     if (path != null && !path.exists() && !path.mkdirs()) {
@@ -424,36 +435,47 @@ public final class PreprocessingState {
 
     boolean wasSaved = false;
     try {
-      final int totatBufferedChars = prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize();
-      final int BUFFER_SIZE = Math.max(64, Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE));
+      final int totatBufferedChars =
+          prefixPrinter.getSize() + normalPrinter.getSize() + postfixPrinter.getSize();
+      final int BUFFER_SIZE =
+          Math.max(64, Math.min(totatBufferedChars << 1, MAX_WRITE_BUFFER_SIZE));
 
       if (this.overrideOnlyIfContentChanged) {
         String content = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         if (!keepComments) {
-          content = new JavaCommentsRemover(new StringReader(content), new StringWriter(totatBufferedChars)).process().toString();
+          content = new JavaCommentsRemover(new StringReader(content),
+              new StringWriter(totatBufferedChars)).process().toString();
         }
 
         boolean needWrite = true; // better write than not
         final byte[] contentInBinaryForm = content.getBytes(globalOutCharacterEncoding);
         if (outFile.isFile() && outFile.length() == contentInBinaryForm.length) {
           // If file exists and has the same content, then skip overwriting it
-          try (InputStream currentFileInputStream = new BufferedInputStream(new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
-            needWrite = !IOUtils.contentEquals(currentFileInputStream, new ByteArrayInputStream(contentInBinaryForm));
+          try (InputStream currentFileInputStream = new BufferedInputStream(
+              new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
+            needWrite = !IOUtils.contentEquals(currentFileInputStream,
+                new ByteArrayInputStream(contentInBinaryForm));
           }
         }
         if (needWrite) {
           FileUtils.writeByteArrayToFile(outFile, contentInBinaryForm, false);
           wasSaved = true;
         } else {
-          this.context.logDebug("Ignore writing data for " + outFile + " because its content has not been changed");
+          this.context.logDebug(
+              "Ignore writing data for " + outFile + " because its content has not been changed");
         }
       } else if (!keepComments) {
-        final String joinedBufferContent = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
-        writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
+        final String joinedBufferContent =
+            writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
+        writer = new OutputStreamWriter(
+            new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE),
+            globalOutCharacterEncoding);
         new JavaCommentsRemover(new StringReader(joinedBufferContent), writer).process();
         wasSaved = true;
       } else {
-        writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE), globalOutCharacterEncoding);
+        writer = new OutputStreamWriter(
+            new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE),
+            globalOutCharacterEncoding);
         writePrinterBuffers(writer);
         wasSaved = true;
       }
@@ -469,8 +491,8 @@ public final class PreprocessingState {
     return wasSaved;
   }
 
-  @Nonnull
-  public Writer writePrinterBuffers(@Nonnull final Writer writer) throws IOException {
+
+  public Writer writePrinterBuffers(final Writer writer) throws IOException {
     if (!prefixPrinter.isEmpty()) {
       prefixPrinter.writeBufferTo(writer);
     }
@@ -486,8 +508,9 @@ public final class PreprocessingState {
     return writer;
   }
 
-  @Nonnull
-  public PreprocessorException makeException(@Nullable final String message, @Nullable final String causeString, @Nullable final Throwable cause) {
+
+  public PreprocessorException makeException(final String message, final String causeString,
+                                             final Throwable cause) {
     return new PreprocessorException(message, causeString, makeIncludeStack(), cause);
   }
 
@@ -504,7 +527,8 @@ public final class PreprocessingState {
     private final String condition;
     private final int stringIndex;
 
-    public ExcludeIfInfo(@Nonnull final FileInfoContainer fileInfoContainer, @Nonnull final String condition, final int stringIndex) {
+    public ExcludeIfInfo(final FileInfoContainer fileInfoContainer, final String condition,
+                         final int stringIndex) {
       this.fileInfoContainer = fileInfoContainer;
       this.condition = condition.trim();
       this.stringIndex = stringIndex;
@@ -514,12 +538,12 @@ public final class PreprocessingState {
       return this.stringIndex;
     }
 
-    @Nonnull
+
     public FileInfoContainer getFileInfoContainer() {
       return fileInfoContainer;
     }
 
-    @Nonnull
+
     public String getCondition() {
       return condition;
     }

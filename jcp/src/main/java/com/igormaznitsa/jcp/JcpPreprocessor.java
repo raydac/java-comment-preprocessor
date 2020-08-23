@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp;
 import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 
 
 import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
@@ -58,7 +57,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -68,8 +66,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -106,21 +104,22 @@ public final class JcpPreprocessor {
   };
   private final PreprocessorContext context;
 
-  public JcpPreprocessor(@Nonnull final PreprocessorContext context) {
-    assertNotNull("Configurator is null", context);
+  public JcpPreprocessor(final PreprocessorContext context) {
+    Objects.requireNonNull(context, "Configurator is null");
     this.context = context;
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   public static List<CommandLineHandler> getCommandLineHandlers() {
     return Arrays.asList(COMMAND_LINE_HANDLERS);
   }
 
-  public static void main(@Nonnull @MustNotContainNull final String... args) {
+  public static void main(final String... args) {
     printHeader();
 
-    final String[] normalizedStrings = PreprocessorUtils.replaceStringPrefix(new String[] {"--", "-"}, "/", PreprocessorUtils.replaceChar(args, '$', '\"'));
+    final String[] normalizedStrings = PreprocessorUtils
+        .replaceStringPrefix(new String[] {"--", "-"}, "/",
+            PreprocessorUtils.replaceChar(args, '$', '\"'));
 
     PreprocessorContext preprocessorContext = null;
 
@@ -146,13 +145,14 @@ public final class JcpPreprocessor {
     System.exit(0);
   }
 
-  @Nonnull
+
   private static File getBaseDir() {
     String baseDirInProperties = System.getProperty("jcp.base.dir");
     if (baseDirInProperties == null) {
       File result;
       try {
-        result = new File(JcpPreprocessor.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        result = new File(
+            JcpPreprocessor.class.getProtectionDomain().getCodeSource().getLocation().toURI());
       } catch (Exception ex) {
         result = new File("");
       }
@@ -162,8 +162,10 @@ public final class JcpPreprocessor {
     }
   }
 
-  @Nonnull
-  private static PreprocessorContext processCommandLine(@Nonnull final File baseDir, @Nonnull @MustNotContainNull final String[] originalStrings, @Nonnull @MustNotContainNull final String[] normalizedStrings) {
+
+  private static PreprocessorContext processCommandLine(final File baseDir,
+                                                        final String[] originalStrings,
+                                                        final String[] normalizedStrings) {
     final PreprocessorContext result = new PreprocessorContext(baseDir);
 
     for (int i = 0; i < normalizedStrings.length; i++) {
@@ -203,12 +205,12 @@ public final class JcpPreprocessor {
     makeTextForHelpInfo().forEach(System.out::println);
   }
 
-  @Nonnull
+
   public PreprocessorContext getContext() {
     return this.context;
   }
 
-  @Nonnull
+
   public Statistics execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
 
@@ -228,7 +230,8 @@ public final class JcpPreprocessor {
         collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
     this.context.getPreprocessedResources().addAll(filesToBePreprocessed);
 
-    final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
+    final List<PreprocessingState.ExcludeIfInfo> excludedIf =
+        processGlobalDirectives(filesToBePreprocessed);
 
     processFileExclusion(excludedIf);
     if (!this.context.isDryRun()) {
@@ -240,11 +243,13 @@ public final class JcpPreprocessor {
 
     final long elapsedTime = System.currentTimeMillis() - timeStart;
     this.context.logInfo("-----------------------------------------------------------------");
-    this.context.logInfo(String.format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms", stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
+    this.context.logInfo(String
+        .format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms",
+            stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
     return stat;
   }
 
-  private void processFileExclusion(@Nonnull @MustNotContainNull final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
+  private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
     final String DIRECTIVE_NAME = new ExcludeIfDirectiveHandler().getFullName();
 
     for (final PreprocessingState.ExcludeIfInfo item : foundExcludeIf) {
@@ -254,7 +259,8 @@ public final class JcpPreprocessor {
       Value val;
 
       if (context.isVerbose()) {
-        context.logForVerbose(String.format("Processing condition '%s' for file '%s'", condition, file.getAbsolutePath()));
+        context.logForVerbose(String
+            .format("Processing condition '%s' for file '%s'", condition, file.getAbsolutePath()));
       }
 
       try {
@@ -274,21 +280,25 @@ public final class JcpPreprocessor {
       }
 
       if (val.getType() != ValueType.BOOLEAN) {
-        throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one", condition, new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())}, null);
+        throw new PreprocessorException("Expression at " + DIRECTIVE_NAME + " is not a boolean one",
+            condition, new FilePositionInfo[] {new FilePositionInfo(file, item.getStringIndex())},
+            null);
       }
 
       if (val.asBoolean()) {
         item.getFileInfoContainer().setExcluded(true);
         if (context.isVerbose()) {
-          context.logForVerbose(String.format("File '%s' excluded for active '%s' condition", file.getAbsolutePath(), condition));
+          context.logForVerbose(String
+              .format("File '%s' excluded for active '%s' condition", file.getAbsolutePath(),
+                  condition));
         }
       }
     }
   }
 
-  @Nonnull
-  @MustNotContainNull
-  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
+
+  private List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(
+      final Collection<FileInfoContainer> files) throws IOException {
     final List<PreprocessingState.ExcludeIfInfo> result = new ArrayList<>();
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isCopyOnly())) {
@@ -296,15 +306,17 @@ public final class JcpPreprocessor {
         result.addAll(fileRef.processGlobalDirectives(null, context));
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (context.isVerbose()) {
-          context.logForVerbose(String.format("Global phase completed for file '%s', elapsed time %d ms ", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
+          context.logForVerbose(String
+              .format("Global phase completed for file '%s', elapsed time %d ms ",
+                  PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
       }
     }
     return result;
   }
 
-  @Nonnull
-  private Statistics preprocessFiles(@Nonnull @MustNotContainNull final Collection<FileInfoContainer> files) throws IOException {
+
+  private Statistics preprocessFiles(final Collection<FileInfoContainer> files) throws IOException {
     int preprocessedCounter = 0;
     int copiedCounter = 0;
     int excludedCounter = 0;
@@ -314,19 +326,26 @@ public final class JcpPreprocessor {
         excludedCounter++;
       } else if (fileRef.isCopyOnly()) {
         if (!context.isDryRun()) {
-          final File destinationFile = this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
+          final File destinationFile =
+              this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
           boolean doCopy = true;
 
-          if (this.context.isDontOverwriteSameContent() && PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
+          if (this.context.isDontOverwriteSameContent() &&
+              PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
             doCopy = false;
             if (this.context.isVerbose()) {
-              this.context.logForVerbose(String.format("Copy skipped because same content: %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
+              this.context.logForVerbose(String
+                  .format("Copy skipped because same content: %s -> {dst} %s",
+                      PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
+                      fileRef.makeTargetFilePathAsString()));
             }
           }
 
           if (doCopy) {
             if (this.context.isVerbose()) {
-              this.context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
+              this.context.logForVerbose(String.format("Copy file %s -> {dst} %s",
+                  PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
+                  fileRef.makeTargetFilePathAsString()));
             }
             PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile,
                 this.context.isKeepAttributes());
@@ -375,9 +394,10 @@ public final class JcpPreprocessor {
     this.context.logForVerbose("Target folder has been prepared: " + target);
   }
 
-  @Nonnull
-  @MustNotContainNull
-  private Collection<FileInfoContainer> collectFilesToPreprocess(@Nonnull @MustNotContainNull final List<PreprocessorContext.SourceFolder> sources, @Nonnull @MustNotContainNull final List<String> excluded) throws IOException {
+
+  private Collection<FileInfoContainer> collectFilesToPreprocess(
+      final List<PreprocessorContext.SourceFolder> sources, final List<String> excluded)
+      throws IOException {
     final Collection<FileInfoContainer> result = new ArrayList<>();
 
     final AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -391,13 +411,17 @@ public final class JcpPreprocessor {
         canonicalSourcePath += File.separator;
       }
 
-      for (final File file : findAllFiles(canonicalSourcePath, sourceFolder.getAsFile(), antPathMatcher, excluded)) {
+      for (final File file : findAllFiles(canonicalSourcePath, sourceFolder.getAsFile(),
+          antPathMatcher, excluded)) {
         if (this.context.isFileExcludedByExtension(file)) {
-          this.context.logForVerbose(String.format("File '%s' excluded by its extension", file.getPath()));
+          this.context
+              .logForVerbose(String.format("File '%s' excluded by its extension", file.getPath()));
         } else {
           final String canonicalFilePath = file.getCanonicalPath();
-          final String canonicalRelativePath = canonicalFilePath.substring(canonicalSourcePath.length());
-          final FileInfoContainer reference = new FileInfoContainer(file, canonicalRelativePath, !this.context.isFileAllowedForPreprocessing(file));
+          final String canonicalRelativePath =
+              canonicalFilePath.substring(canonicalSourcePath.length());
+          final FileInfoContainer reference = new FileInfoContainer(file, canonicalRelativePath,
+              !this.context.isFileAllowedForPreprocessing(file));
           result.add(reference);
           this.context.logDebug("File added to preprocess list: " + reference);
         }
@@ -407,12 +431,12 @@ public final class JcpPreprocessor {
     return result;
   }
 
-  @Nonnull
+
   private Set<File> findAllFiles(
-      @Nonnull final String sourceCanonicalPath,
-      @Nonnull final File dir,
-      @Nonnull final AntPathMatcher antPathMatcher,
-      @Nonnull @MustNotContainNull final List<String> excludedFolderPatterns
+      final String sourceCanonicalPath,
+      final File dir,
+      final AntPathMatcher antPathMatcher,
+      final List<String> excludedFolderPatterns
   ) throws IOException {
 
     final Set<File> result = new HashSet<>();
@@ -442,7 +466,8 @@ public final class JcpPreprocessor {
           }
 
           if (excludedFolderPattern == null) {
-            result.addAll(findAllFiles(sourceCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
+            result.addAll(
+                findAllFiles(sourceCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
           } else {
             this.context.logForVerbose(
                 String.format("Folder '%s' excluded by '%s'", folderPath, excludedFolderPattern));
@@ -472,14 +497,17 @@ public final class JcpPreprocessor {
         if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
           // do nothing
         } else if (trimmed.charAt(0) == '@') {
-          throwPreprocessorException("Config file doesn't allow have lines started with '@'", trimmed, file, readStringIndex, null);
+          throwPreprocessorException("Config file doesn't allow have lines started with '@'",
+              trimmed, file, readStringIndex, null);
         } else if (trimmed.charAt(0) == '/') {
           // a command line argument
           boolean processed = false;
           try {
             for (CommandLineHandler handler : getCommandLineHandlers()) {
               if (context.isVerbose()) {
-                context.logForVerbose(String.format("Processing сonfig file key '%s' at %s:%d", trimmed, file.getName(), readStringIndex + 1));
+                context.logForVerbose(String
+                    .format("Processing сonfig file key '%s' at %s:%d", trimmed, file.getName(),
+                        readStringIndex + 1));
               }
               if (handler.processCommandLineKey(trimmed, context)) {
                 processed = true;
@@ -487,22 +515,26 @@ public final class JcpPreprocessor {
               }
             }
           } catch (Exception unexpected) {
-            throwPreprocessorException("Exception during directive processing", trimmed, file, readStringIndex, unexpected);
+            throwPreprocessorException("Exception during directive processing", trimmed, file,
+                readStringIndex, unexpected);
           }
 
           if (!processed) {
-            throwPreprocessorException("Unsupported or disallowed directive", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Unsupported or disallowed directive", trimmed, file,
+                readStringIndex, null);
           }
         } else {
           // a global variable
           final String[] split = PreprocessorUtils.splitForEqualChar(trimmed);
           if (split.length != 2) {
-            throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex,
+                null);
           }
           final String name = split[0].trim().toLowerCase(Locale.ENGLISH);
           final String expression = split[1].trim();
           if (name.isEmpty()) {
-            throwPreprocessorException("Empty variable name detected", trimmed, file, readStringIndex, null);
+            throwPreprocessorException("Empty variable name detected", trimmed, file,
+                readStringIndex, null);
           }
 
           try {
@@ -510,10 +542,13 @@ public final class JcpPreprocessor {
             this.context.setGlobalVariable(name, result);
 
             if (this.context.isVerbose()) {
-              this.context.logForVerbose(String.format("Registering global variable '%s' = '%s' (%s:%d)", name, result.toString(), file.getName(), readStringIndex + 1));
+              this.context.logForVerbose(String
+                  .format("Registering global variable '%s' = '%s' (%s:%d)", name,
+                      result.toString(), file.getName(), readStringIndex + 1));
             }
           } catch (Exception unexpected) {
-            throwPreprocessorException("Can't process the global variable definition", trimmed, file, readStringIndex, unexpected);
+            throwPreprocessorException("Can't process the global variable definition", trimmed,
+                file, readStringIndex, unexpected);
           }
         }
       }

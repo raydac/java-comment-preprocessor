@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#abort directive handler
  *
@@ -35,27 +33,30 @@ import javax.annotation.Nonnull;
 public class AbortDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "abort";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "abort preprocessing and show following text as message (macroses allowed)";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String rawTail, @Nonnull final PreprocessorContext context) {
-    final String normal = (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) : rawTail;
+
+  public AfterDirectiveProcessingBehaviour execute(final String rawTail,
+                                                   final PreprocessorContext context) {
+    final String normal =
+        (!rawTail.isEmpty() && Character.isSpaceChar(rawTail.charAt(0))) ? rawTail.substring(1) :
+            rawTail;
     final String message = "ABORT: " + PreprocessorUtils.processMacroses(normal, context);
     if (context.isVerbose()) {
       context.logForVerbose(message);

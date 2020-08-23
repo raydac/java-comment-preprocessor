@@ -24,8 +24,6 @@ package com.igormaznitsa.jcp.directives;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#undef directive handler
  *
@@ -34,19 +32,20 @@ import javax.annotation.Nonnull;
 public class UndefDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "undef";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "remove definition of existing variable from context";
   }
 
   @Override
-  protected void process(@Nonnull final PreprocessorContext context, @Nonnull final String varName, @Nonnull final Value value, final boolean exists) {
+  protected void process(final PreprocessorContext context, final String varName, final Value value,
+                         final boolean exists) {
     if (context.isLocalVariable(varName)) {
       context.removeLocalVariable(varName);
     } else if (context.isGlobalVariable(varName)) {

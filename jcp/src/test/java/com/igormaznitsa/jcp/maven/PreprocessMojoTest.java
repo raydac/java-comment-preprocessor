@@ -21,21 +21,21 @@
 
 package com.igormaznitsa.jcp.maven;
 
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertArrayEquals;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertArrayEquals;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public final class PreprocessMojoTest extends AbstractMojoTestCase {
 

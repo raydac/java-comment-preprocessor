@@ -27,57 +27,6 @@
 
   <profiles>
     <profile>
-      <id>metacheck</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.igormaznitsa</groupId>
-            <artifactId>meta-checker</artifactId>
-            <configuration>
-              <restrictClassFormat>8</restrictClassFormat>
-              <checkMayContainNull>true</checkMayContainNull>
-              <checkNullable>true</checkNullable>
-              <ignoreClasses>
-                <class>*.HelpMojo</class>
-                <class>com.igormaznitsa.meta.*</class>
-                <class>com.igormaznitsa.jcp.maven.PreprocessMojo</class>
-                <class>com.igormaznitsa.jcp.context.PreprocessorContext</class>
-                <class>com.igormaznitsa.jcp.ant.PreprocessTask*</class>
-                <class>com.igormaznitsa.jcp.JcpPreprocessor*</class>
-                <class>com.igormaznitsa.jcp.containers.FileInfoContainer</class>
-                <class>com.igormaznitsa.jcp.gradle.*</class>
-              </ignoreClasses>
-            </configuration>
-            <executions>
-              <execution>
-                <id>meta-check-classes</id>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <configuration>
-                  <ignoreClasses>
-                    <ignore>com.igormaznitsa.jcp.utils.antpathmatcher.*</ignore>
-                  </ignoreClasses>
-                </configuration>
-              </execution>
-              <execution>
-                <id>meta-check-class-versions</id>
-                <goals>
-                  <goal>check-jar</goal>
-                </goals>
-                <configuration>
-                  <restrictClassFormat><![CDATA[<=8]]></restrictClassFormat>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
       <id>publish</id>
       <build>
         <plugins>

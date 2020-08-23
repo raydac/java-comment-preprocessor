@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.directives;
 
-import javax.annotation.Nonnull;
-
 /**
  * The enumeration contains possible argument types are being used by directives
  *
@@ -42,11 +40,11 @@ public enum DirectiveArgumentType {
 
   private final String str;
 
-  DirectiveArgumentType(@Nonnull final String str) {
+  DirectiveArgumentType(final String str) {
     this.str = str;
   }
 
-  @Nonnull
+
   public String getAsText() {
     return this.str;
   }

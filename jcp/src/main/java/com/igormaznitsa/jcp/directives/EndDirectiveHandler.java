@@ -25,10 +25,7 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#end directive
@@ -38,28 +35,34 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "end";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "end of " + DIRECTIVE_PREFIX + "while..." + getFullName() + " loop, start the next iteration";
+    return "end of " + DIRECTIVE_PREFIX + "while..." + getFullName() +
+        " loop, start the next iteration";
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isWhileStackEmpty()) {
-      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while", null);
+      throw context
+          .makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "while",
+              null);
     }
 
     if (state.isDirectiveCanBeProcessedIgnoreBreak()) {
-      final TextFileDataContainer thisWhile = assertNotNull("'WHILE' stack is empty!", state.peekWhile());
-      final boolean breakIsSet = state.getPreprocessingFlags().contains(PreprocessingFlag.BREAK_COMMAND);
+      final TextFileDataContainer thisWhile =
+          Objects.requireNonNull(state.peekWhile(), "'WHILE' stack is empty!");
+      final boolean breakIsSet =
+          state.getPreprocessingFlags().contains(PreprocessingFlag.BREAK_COMMAND);
       state.popWhile();
       if (!breakIsSet) {
         state.goToString(thisWhile.getNextStringIndex());

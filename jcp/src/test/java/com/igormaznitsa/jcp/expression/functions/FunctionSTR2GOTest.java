@@ -21,12 +21,13 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class FunctionSTR2GOTest extends AbstractFunctionTest {
 

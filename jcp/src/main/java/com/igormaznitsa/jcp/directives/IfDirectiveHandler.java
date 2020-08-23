@@ -28,8 +28,6 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#if directive handler
  *
@@ -38,19 +36,20 @@ import javax.annotation.Nonnull;
 public class IfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "if";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "start of " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif construction";
+    return "start of " + DIRECTIVE_PREFIX + "if.." + DIRECTIVE_PREFIX + "else.." +
+        DIRECTIVE_PREFIX + "endif construction";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
@@ -61,8 +60,9 @@ public class IfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isDirectiveCanBeProcessed()) {
       final Value expressionResult = Expression.evalExpression(string, context);

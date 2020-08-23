@@ -21,13 +21,8 @@
 
 package com.igormaznitsa.jcp.containers;
 
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class contains text data of a file and the string position index for the file
@@ -46,13 +41,14 @@ public final class TextFileDataContainer {
   private boolean autoFlush = true;
   private int nextStringIndex;
 
-  public TextFileDataContainer(@Nonnull final TextFileDataContainer item, final int stringIndex) {
+  public TextFileDataContainer(final TextFileDataContainer item, final int stringIndex) {
     this(item.file, item.text, item.fileEndedByNextLine, stringIndex);
   }
 
-  public TextFileDataContainer(@Nonnull final File currentFile, @Nonnull @MustNotContainNull final String[] text, final boolean fileEndedByNextLine, final int stringIndex) {
-    assertNotNull("File is null", currentFile);
-    assertNotNull("Text is null", text);
+  public TextFileDataContainer(final File currentFile, final String[] text,
+                               final boolean fileEndedByNextLine, final int stringIndex) {
+    Objects.requireNonNull(currentFile, "File is null");
+    Objects.requireNonNull(text, "Text is null");
     this.file = currentFile;
     this.text = text;
     setNextStringIndex(stringIndex);
@@ -67,13 +63,12 @@ public final class TextFileDataContainer {
     return this.autoFlush;
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   public String[] getText() {
     return this.text.clone();
   }
 
-  @Nonnull
+
   public File getFile() {
     return this.file;
   }
@@ -86,7 +81,7 @@ public final class TextFileDataContainer {
     return this.nextStringIndex < this.text.length || fileEndedByNextLine;
   }
 
-  @Nullable
+
   public String nextLine() {
     if (this.nextStringIndex >= this.text.length) {
       return null;
@@ -116,7 +111,7 @@ public final class TextFileDataContainer {
   }
 
   @Override
-  public boolean equals(@Nullable final Object that) {
+  public boolean equals(final Object that) {
     if (this == that) {
       return true;
     }

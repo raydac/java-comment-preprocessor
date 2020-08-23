@@ -21,9 +21,12 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.PreprocessorContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
+
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class HelpHandlerTest extends AbstractCommandLineHandlerTest {
 

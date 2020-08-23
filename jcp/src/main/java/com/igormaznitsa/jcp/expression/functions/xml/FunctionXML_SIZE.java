@@ -24,9 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 
 /**
  * The class implements the xml_elementsnumber function
@@ -38,13 +35,13 @@ public final class FunctionXML_SIZE extends AbstractXMLFunction {
   private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "xml_size";
   }
 
-  @Nonnull
-  public Value executeStr(@Nonnull final PreprocessorContext context, @Nonnull final Value elementListId) {
+
+  public Value executeStr(final PreprocessorContext context, final Value elementListId) {
     return Value.valueOf(Long.valueOf(getElementListSize(context, elementListId.asString())));
   }
 
@@ -54,20 +51,20 @@ public final class FunctionXML_SIZE extends AbstractXMLFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "element list size";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.INT;
   }

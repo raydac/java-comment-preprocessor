@@ -21,13 +21,16 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreprocessorContextTest {
 

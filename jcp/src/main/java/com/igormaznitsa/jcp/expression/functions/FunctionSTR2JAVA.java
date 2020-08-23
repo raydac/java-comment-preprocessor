@@ -21,16 +21,14 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.util.List;
-
-import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
 /**
  * The class implements escape function handler to escape strings to be used in java.
@@ -39,19 +37,22 @@ import static org.apache.commons.text.StringEscapeUtils.escapeJava;
  */
 public final class FunctionSTR2JAVA extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
+  private static final ValueType[][] ARG_TYPES =
+      new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "str2java";
   }
 
-  @Nonnull
-  public Value executeStrBool(@Nonnull final PreprocessorContext context, @Nonnull final Value source, @Nonnull final Value splitAndQuoteLines) {
+
+  public Value executeStrBool(final PreprocessorContext context, final Value source,
+                              final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()) {
       final boolean endsWithNextLine = source.asString().endsWith("\n");
-      final List<String> split = PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
+      final List<String> split =
+          PreprocessorUtils.splitForCharAndHoldEmptyLine(source.asString(), '\n');
       final StringBuilder result = new StringBuilder(source.asString().length() * 2);
       final String nextLineChars = PreprocessorUtils.getNextLineCodes();
 
@@ -80,20 +81,20 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
   }
 
   @Override
-  @Nonnull
-  @MustNotContainNull
+
+
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "escape string for Java";
   }
 
   @Override
-  @Nonnull
+
   public ValueType getResultType() {
     return ValueType.STRING;
   }

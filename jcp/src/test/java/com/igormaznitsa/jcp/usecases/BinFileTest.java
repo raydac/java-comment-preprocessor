@@ -21,23 +21,23 @@
 
 package com.igormaznitsa.jcp.usecases;
 
+import static org.junit.Assert.assertEquals;
+
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-
-import javax.annotation.Nonnull;
 import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
 
 public class BinFileTest extends AbstractUseCaseTest {
 
   @Override
-  protected void tuneContext(@Nonnull final PreprocessorContext context) {
+  protected void tuneContext(final PreprocessorContext context) {
     context.setExcludeExtensions(Collections.singletonList("bin"));
   }
 
   @Override
-  public void check(@Nonnull final PreprocessorContext context, @Nonnull final JcpPreprocessor.Statistics stat) throws Exception {
+  public void check(final PreprocessorContext context, final JcpPreprocessor.Statistics stat)
+      throws Exception {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
   }

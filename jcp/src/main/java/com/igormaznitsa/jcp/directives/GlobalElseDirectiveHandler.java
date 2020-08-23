@@ -25,8 +25,6 @@ import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * The class implements the //#_else directive handler
  *
@@ -35,15 +33,16 @@ import javax.annotation.Nonnull;
 public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "_else";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
-    return "invert condition result for " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX + "_endif";
+    return "invert condition result for " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX +
+        "_endif";
   }
 
   @Override
@@ -57,11 +56,14 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     if (state.isIfStackEmpty()) {
-      throw context.makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "_if", null);
+      throw context
+          .makeException("Detected " + getFullName() + " without " + DIRECTIVE_PREFIX + "_if",
+              null);
     }
 
     if (state.isAtActiveIf()) {

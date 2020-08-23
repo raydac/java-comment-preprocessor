@@ -21,21 +21,19 @@
 
 package com.igormaznitsa.jcp;
 
+import static com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor.getReference;
+import static java.util.stream.Collectors.toList;
+
+
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor.getReference;
-import static java.util.stream.Collectors.toList;
 
 public final class InfoHelper {
 
@@ -46,28 +44,26 @@ public final class InfoHelper {
   }
 
 
-  @Nonnull
   public static String getVersion() {
     return "v7.0.3a";
   }
 
-  @Nonnull
+
   public static String getCopyright() {
     return "Copyright (C) 2002-2020 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
-  @Nonnull
+
   public static String getSite() {
     return "Project page: https://github.com/raydac/java-comment-preprocessor";
   }
 
-  @Nonnull
+
   public static String getProductName() {
     return "Java Comment Preprocessor";
   }
 
-  @Nonnull
-  @MustNotContainNull
+
   public static List<String> makeTextForHelpInfo() {
     final List<String> result = new ArrayList<>();
 
@@ -78,7 +74,8 @@ public final class InfoHelper {
     result.add(SHORT_DELIMITER);
     result.add("allowed '/','-' and '--' prefixes, '--' doesn't support multiple commands at once");
     result.add(makeColumns("@cfgFile", "file contains global definition list", 14));
-    result.addAll(JcpPreprocessor.getCommandLineHandlers().stream().map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
+    result.addAll(JcpPreprocessor.getCommandLineHandlers().stream()
+        .map(InfoHelper::makeCommandLineKeyReference).collect(toList()));
     result.add(DELIMITER);
 
     result.add("Directives");
@@ -89,7 +86,8 @@ public final class InfoHelper {
     result.add(DELIMITER);
     result.add("Special directives");
     result.add(SHORT_DELIMITER);
-    result.add(makeSpecialDirectiveReference("//$", "uncomment and process all following macroses"));
+    result
+        .add(makeSpecialDirectiveReference("//$", "uncomment and process all following macroses"));
     result.add(makeSpecialDirectiveReference("//$$", "like //$ but macroses ignored"));
     result.add(makeSpecialDirectiveReference("/*-*/", "truncate line"));
 
@@ -114,26 +112,28 @@ public final class InfoHelper {
     result.add(DELIMITER);
     result.add("Special variables");
     result.add(SHORT_DELIMITER);
-    result.addAll(getReference().stream().map(InfoHelper::makeSpecialVariableReference).collect(toList()));
+    result.addAll(
+        getReference().stream().map(InfoHelper::makeSpecialVariableReference).collect(toList()));
     return result;
   }
 
-  @Nonnull
-  private static String makeSpecialVariableReference(@Nonnull final JCPSpecialVariableProcessor.NameReferencePair p) {
+
+  private static String makeSpecialVariableReference(
+      final JCPSpecialVariableProcessor.NameReferencePair p) {
     final String name = p.getName();
     final String ref = p.getReference();
     return makeColumns(name, ref, 24);
   }
 
-  @Nonnull
-  private static String makeCommandLineKeyReference(@Nonnull final CommandLineHandler handler) {
+
+  private static String makeCommandLineKeyReference(final CommandLineHandler handler) {
     final String key = handler.getKeyName();
     final String descr = handler.getDescription();
     return makeColumns(key, descr, 14);
   }
 
-  @Nonnull
-  private static String makeDirectiveReference(@Nonnull final AbstractDirectiveHandler directive) {
+
+  private static String makeDirectiveReference(final AbstractDirectiveHandler directive) {
     final StringBuilder activityPasses = new StringBuilder();
     int i = 0;
     if (directive.isGlobalPhaseAllowed()) {
@@ -150,24 +150,26 @@ public final class InfoHelper {
     activityPasses.append(i > 1 ? "passes" : " pass");
 
     final String directiveName = directive.getFullName();
-    final String descr = (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" + activityPasses.toString() + ')';
+    final String descr =
+        (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" +
+            activityPasses.toString() + ')';
     return makeColumns(directiveName, descr, 16);
   }
 
-  @Nonnull
-  private static String makeSpecialDirectiveReference(@Nonnull final String name, @Nonnull final String reference) {
+
+  private static String makeSpecialDirectiveReference(final String name, final String reference) {
     return makeColumns(name, reference, 14);
   }
 
-  @Nonnull
-  private static String makeOperatorReference(@Nonnull final AbstractOperator operator) {
+
+  private static String makeOperatorReference(final AbstractOperator operator) {
     final String operatorName = operator.getKeyword();
     final String descr = operator.getReference();
     return makeColumns(operatorName, descr, 14);
   }
 
-  @Nonnull
-  private static String makeFunctionReference(@Nonnull final AbstractFunction func) {
+
+  private static String makeFunctionReference(final AbstractFunction func) {
     final String funcName = func.getName();
     final String descr = func.getReference();
 
@@ -193,8 +195,9 @@ public final class InfoHelper {
     return makeColumns(funcName, descr, 24) + variants.toString();
   }
 
-  @Nonnull
-  private static String makeColumns(@Nonnull final String name, @Nonnull final String reference, final int firstColumnWidth) {
+
+  private static String makeColumns(final String name, final String reference,
+                                    final int firstColumnWidth) {
     final int spaces = firstColumnWidth - name.length();
     final StringBuilder result = new StringBuilder(name);
     for (int i = 0; i < spaces; i++) {

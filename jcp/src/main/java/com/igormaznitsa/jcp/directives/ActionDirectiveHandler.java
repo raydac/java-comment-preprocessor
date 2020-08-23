@@ -29,16 +29,12 @@ import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
 import com.igormaznitsa.jcp.expression.Value;
-import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
  * The class implements the //#action directive handler
@@ -48,26 +44,27 @@ import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
 public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-  @Nonnull
+
   public String getName() {
     return "action";
   }
 
   @Override
-  @Nonnull
+
   public String getReference() {
     return "call user extension with comma separated arguments";
   }
 
   @Override
-  @Nonnull
+
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.MULTIEXPRESSION;
   }
 
   @Override
-  @Nonnull
-  public AfterDirectiveProcessingBehaviour execute(@Nonnull final String string, @Nonnull final PreprocessorContext context) {
+
+  public AfterDirectiveProcessingBehaviour execute(final String string,
+                                                   final PreprocessorContext context) {
     if (context.getPreprocessorExtension() != null) {
 
       try {
@@ -80,7 +77,8 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
           results[index++] = val;
         }
 
-        if (!assertNotNull(context.getPreprocessorExtension()).processAction(context, results)) {
+        if (!Objects.requireNonNull(context.getPreprocessorExtension())
+            .processAction(context, results)) {
           throw context.makeException("Extension can't process action ", null);
         }
       } catch (IOException ex) {
@@ -90,9 +88,9 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 
-  @Nonnull
-  @MustNotContainNull
-  private List<ExpressionTree> parseString(@Nonnull final String str, @Nonnull final PreprocessorContext context) throws IOException {
+
+  private List<ExpressionTree> parseString(final String str, final PreprocessorContext context)
+      throws IOException {
     final ExpressionParser parser = ExpressionParser.getInstance();
 
     final PushbackReader reader = new PushbackReader(new StringReader(str));
