@@ -62,7 +62,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
       try {
         file = context.findFileInSources(name);
       } catch (IOException unexpected) {
-        throw context.makeException("Can't read \'" + name + '\'', null);
+        throw context.makeException("Can't read '" + name + '\'', null);
       }
 
       final Document document = openFileAndParse(context, file);

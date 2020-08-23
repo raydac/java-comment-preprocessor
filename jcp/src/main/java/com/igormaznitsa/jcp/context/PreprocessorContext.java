@@ -531,7 +531,7 @@ public class PreprocessorContext {
     }
 
     if (isVerbose()) {
-      logForVerbose("Removing local variable '" + normalized + "\'");
+      logForVerbose("Removing local variable '" + normalized + "'");
     }
     localVarTable.remove(normalized);
     return this;
@@ -559,7 +559,7 @@ public class PreprocessorContext {
     }
 
     if (isVerbose()) {
-      logForVerbose("Removing global variable '" + normalized + "\'");
+      logForVerbose("Removing global variable '" + normalized + "'");
     }
 
     globalVarTable.remove(normalized);
@@ -794,11 +794,11 @@ public class PreprocessorContext {
       }
 
       if (result == null) {
-        throw makeException("Can't find file for path \'" + path +
-                "\' in preprocessing source folders, allowed usage only files in preprocessing source folders!",
+        throw makeException("Can't find file for path '" + path +
+                "' in preprocessing source folders, allowed usage only files in preprocessing source folders!",
             null);
       } else if (!result.isFile()) {
-        throw makeException("File \'" + result + "\' is either not found or not a file", null);
+        throw makeException("File '" + result + "' is either not found or not a file", null);
       }
 
     } else if (parentDir != null) {
@@ -807,9 +807,8 @@ public class PreprocessorContext {
     } else {
       final List<File> setOfFoundFiles = new ArrayList<>();
       getSources().stream().map((root) -> new File(root.getAsFile(), path))
-          .filter((variant) -> (variant.exists() && variant.isFile())).forEachOrdered((variant) -> {
-        setOfFoundFiles.add(variant);
-      });
+          .filter((variant) -> (variant.exists() && variant.isFile())).forEachOrdered(
+          setOfFoundFiles::add);
 
       if (setOfFoundFiles.size() == 1) {
         result = setOfFoundFiles.get(0);
@@ -817,15 +816,15 @@ public class PreprocessorContext {
         result = null;
       } else {
         throw makeException(
-            "Found several variants for path \'" + path + "\' in different source roots", null);
+            "Found several variants for path '" + path + "' in different source roots", null);
       }
 
       if (result == null) {
-        throw makeException("Can't find file for path \'" + path +
-            "\' among source files registered for preprocessing.", null);
+        throw makeException("Can't find file for path '" + path +
+            "' among source files registered for preprocessing.", null);
       } else if (!result.isFile()) {
-        throw makeException("File \'" + PreprocessorUtils.getFilePath(result) +
-            "\' is either not found or not a file", null);
+        throw makeException("File '" + PreprocessorUtils.getFilePath(result) +
+            "' is either not found or not a file", null);
       }
     }
 

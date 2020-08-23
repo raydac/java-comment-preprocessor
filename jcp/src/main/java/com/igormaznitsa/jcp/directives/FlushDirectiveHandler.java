@@ -60,7 +60,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
         final boolean saved = state.saveBuffersToFile(outFile, context.isKeepComments());
         if (context.isVerbose()) {
           context.logForVerbose(
-              "Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "\'");
+              "Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "'");
         }
 
         state.resetPrinters();

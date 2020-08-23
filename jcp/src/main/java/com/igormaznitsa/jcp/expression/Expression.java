@@ -133,8 +133,8 @@ public class Expression {
         arguments[i] = (Value) itemValue;
       } else {
         throw this.context.makeException(
-            "[Expression]Wrong argument type detected for the \'" + function.getName() +
-                "\' function", null);
+            "[Expression]Wrong argument type detected for the '" + function.getName() +
+                "' function", null);
       }
     }
 
@@ -163,7 +163,7 @@ public class Expression {
 
     if (allowed == null) {
       throw this.context.makeException(
-          "[Expression]Unsupported argument detected for \'" + function.getName() + '\'', null);
+          "[Expression]Unsupported argument detected for '" + function.getName() + '\'', null);
     }
 
     if (function instanceof FunctionDefinedByUser) {
@@ -243,7 +243,7 @@ public class Expression {
         arguments[i] = (Value) item;
       } else {
         throw this.context.makeException(
-            "[Expression]Non-value detected for the \'" + operator.getKeyword() + "\' operator",
+            "[Expression]Non-value detected for the '" + operator.getKeyword() + "' operator",
             null);
       }
     }
@@ -278,14 +278,15 @@ public class Expression {
           executeMethod =
               operator.getClass().getMethod(signatureAnyRight.toString(), methodArguments);
         } catch (NoSuchMethodException ex3) {
+          // DO NOTHING
         }
       }
     }
 
     if (executeMethod == null) {
       throw this.context.makeException(
-          "[Expression]Unsupported arguments detected for operator \'" + operator.getKeyword() +
-              "\' " + Arrays.toString(arguments), null);
+          "[Expression]Unsupported arguments detected for operator '" + operator.getKeyword() +
+              "' " + Arrays.toString(arguments), null);
     }
 
     try {
@@ -299,10 +300,10 @@ public class Expression {
         throw (ArithmeticException) thr;
       }
       throw new RuntimeException(
-          "Invocation exception during \'" + operator.getKeyword() + "\' processing", thr);
+          "Invocation exception during '" + operator.getKeyword() + "' processing", thr);
     } catch (Exception unexpected) {
       throw this.context
-          .makeException("[Exception]Exception during \'" + operator.getKeyword() + "\' processing",
+          .makeException("[Exception]Exception during '" + operator.getKeyword() + "' processing",
               unexpected);
     }
   }

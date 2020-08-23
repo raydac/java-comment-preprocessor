@@ -40,8 +40,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   public String getDescription() {
     return
         "comma separated file extensions (case insensetive) to be excluded from preprocess and copy (by default " +
-            PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS.stream()
-                .collect(Collectors.joining(",")) + ')';
+            String.join(",", PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS) + ')';
   }
 
   @Override

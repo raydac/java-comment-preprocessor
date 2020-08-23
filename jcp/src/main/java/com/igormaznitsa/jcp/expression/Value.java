@@ -100,11 +100,13 @@ public final class Value implements ExpressionItem {
     try {
       return new Value(Long.parseLong(str));
     } catch (NumberFormatException ex) {
+      // DO NOTHING
     }
 
     try {
       return new Value(Float.parseFloat(str));
     } catch (NumberFormatException ex) {
+      // DO NOTHING
     }
 
     return new Value(str);

@@ -59,7 +59,7 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
         if (context.isVerbose()) {
           context.logForVerbose(
-              "Global parameter file defined through expression \'" + stringRest + '\'');
+              "Global parameter file defined through expression '" + stringRest + '\'');
         }
 
         final Value resultValue = Expression.evalExpression(stringRest, context);
@@ -72,14 +72,14 @@ public class GlobalVariableDefiningFileHandler implements CommandLineHandler {
 
       if (context.isVerbose()) {
         context.logForVerbose(
-            "Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  \'" +
+            "Reading global definition file [" + PreprocessorUtils.getFilePath(file) + "]  '" +
                 stringRest + '\'');
       }
       if (file.isFile()) {
         context.registerConfigFile(file);
       } else {
         throw context.makeException(
-            "Can't find the global definition file \'" + PreprocessorUtils.getFilePath(file) + '\'',
+            "Can't find the global definition file '" + PreprocessorUtils.getFilePath(file) + '\'',
             null);
       }
 

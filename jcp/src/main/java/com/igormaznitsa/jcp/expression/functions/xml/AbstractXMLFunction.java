@@ -113,7 +113,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     final NodeContainer container = (NodeContainer) context.getSharedResource(elementId);
     if (container == null) {
       throw context
-          .makeException("Can't find any active element with the \'" + elementId + "\' id", null);
+          .makeException("Can't find any active element with the '" + elementId + "' id", null);
     }
     try {
       return ((Element) container.getNode()).getAttribute(attributeName);
@@ -128,7 +128,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     final NodeContainer container = (NodeContainer) context.getSharedResource(documentId);
     if (container == null) {
       throw context
-          .makeException("Can't find any document for the \'" + documentId + "\' id", null);
+          .makeException("Can't find any document for the '" + documentId + "' id", null);
     }
 
     try {
@@ -157,7 +157,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     final Element element = findCachedElement(context, elementId);
     if (element == null) {
       throw context
-          .makeException("Can't find any active element for the \'" + elementId + "\' id", null);
+          .makeException("Can't find any active element for the '" + elementId + "' id", null);
     }
     return element;
   }
@@ -182,7 +182,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
     final NodeList result = findCachedElementList(context, elementListId);
     if (result == null) {
       throw context
-          .makeException("Can't find any active element list for the \'" + elementListId + "\' id",
+          .makeException("Can't find any active element list for the '" + elementListId + "' id",
               null);
     }
     return result;
@@ -202,7 +202,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
 
       if (container == null) {
         throw context
-            .makeException("Can't find any active node list for the id \'" + elementListId + '\'',
+            .makeException("Can't find any active node list for the id '" + elementListId + '\'',
                 null);
       }
 

@@ -42,8 +42,8 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
   @Override
 
   public String getReference() {
-    return "change target file name (same as change \'" +
-        JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME + "\')";
+    return "change target file name (same as change '" +
+        JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME + "')";
   }
 
   @Override
@@ -59,7 +59,7 @@ public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
     final Value fileName = Expression.evalExpression(string, context);
     final String fileNameAsStr = fileName.toString();
     if (context.isVerbose()) {
-      context.logForVerbose("Change target file name to '" + fileNameAsStr + "\'");
+      context.logForVerbose("Change target file name to '" + fileNameAsStr + "'");
     }
     context.getPreprocessingState().getRootFileInfo().setTargetFileName(fileNameAsStr);
     return AfterDirectiveProcessingBehaviour.PROCESSED;

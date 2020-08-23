@@ -82,7 +82,7 @@ public final class FunctionSTR2GO extends AbstractFunction {
           result.append("\\\\");
           break;
         case '\'':
-          result.append("\\\'");
+          result.append("\\'");
           break;
         case '\"':
           result.append("\\\"");

@@ -264,7 +264,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     final Value result = this.antVariables.get(varName);
 
     if (result == null) {
-      throw context.makeException("Request for unsupported Ant property \'" + varName + '\'', null);
+      throw context.makeException("Request for unsupported Ant property '" + varName + '\'', null);
     }
     return result;
   }
@@ -273,7 +273,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   public void setVariable(final String varName, final Value value,
                           final PreprocessorContext context) {
     throw context.makeException(
-        "Request to change ANT property \'" + varName + "\'. NB! ANT properties are read only!",
+        "Request to change ANT property '" + varName + "'. NB! ANT properties are read only!",
         null);
   }
 

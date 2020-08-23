@@ -190,7 +190,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       case VAR_TIME:
       case VAR_TIMESTAMP:
       case VAR_DATE: {
-        final String text = "The variable \'" + varName + "\' can't be set directly";
+        final String text = "The variable '" + varName + "' can't be set directly";
         throw context.makeException(text, null);
       }
       default: {

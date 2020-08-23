@@ -229,7 +229,7 @@ public final class ExpressionParser {
                 null);
       } else if (!subExpression.getRoot().isEmptySlot()) {
         throw context
-            .makeException("The function \'" + function.getName() + "\' doesn't need arguments",
+            .makeException("The function '" + function.getName() + "' doesn't need arguments",
                 null);
       } else {
         functionTree = new ExpressionTree(includeStack, sources);
@@ -260,7 +260,7 @@ public final class ExpressionParser {
 
       if (arguments.size() != functionTreeElement.getArity()) {
         throw context.makeException(
-            "Wrong argument number detected \'" + function.getName() + "\', must be " +
+            "Wrong argument number detected '" + function.getName() + "', must be " +
                 function.getArity() + " argument(s)", null);
       }
 
@@ -390,7 +390,7 @@ public final class ExpressionParser {
             state = ParserState.OPERATOR;
           } else {
             throw context
-                .makeException("Unsupported token character detected \'" + chr + '\'', null);
+                .makeException("Unsupported token character detected '" + chr + '\'', null);
           }
         }
         break;
@@ -504,7 +504,7 @@ public final class ExpressionParser {
               break;
             default: {
               throw context
-                  .makeException("Unsupported special char detected \'\\" + chr + '\'', null);
+                  .makeException("Unsupported special char detected '\\" + chr + '\'', null);
             }
           }
           state = state == ParserState.SPECIAL_CHAR ? ParserState.STRING : state;
@@ -577,7 +577,7 @@ public final class ExpressionParser {
           }
 
           if (result == null) {
-            throw context.makeException("Unknown operator detected \'" + operatorLC + '\'', null);
+            throw context.makeException("Unknown operator detected '" + operatorLC + '\'', null);
           }
         }
         break;

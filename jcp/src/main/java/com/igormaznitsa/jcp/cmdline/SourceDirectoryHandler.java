@@ -55,8 +55,8 @@ public class SourceDirectoryHandler implements CommandLineHandler {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!tail.isEmpty()) {
         context.setSources(
-            Arrays.asList(extractTail(ARG_NAME, key).split(Pattern.quote(File.pathSeparator)))
-                .stream().map(String::trim).collect(Collectors.toList()));
+            Arrays.stream(extractTail(ARG_NAME, key).split(Pattern.quote(File.pathSeparator)))
+                .map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

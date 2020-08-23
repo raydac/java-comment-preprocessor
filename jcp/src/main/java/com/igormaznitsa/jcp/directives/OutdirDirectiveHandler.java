@@ -42,8 +42,8 @@ public class OutdirDirectiveHandler extends AbstractDirectiveHandler {
   @Override
 
   public String getReference() {
-    return "change target file folder (same as change \'" +
-        JCPSpecialVariableProcessor.VAR_DEST_DIR + "\')";
+    return "change target file folder (same as change '" +
+        JCPSpecialVariableProcessor.VAR_DEST_DIR + "')";
   }
 
   @Override
@@ -59,7 +59,7 @@ public class OutdirDirectiveHandler extends AbstractDirectiveHandler {
     final Value name = Expression.evalExpression(string, context);
     final String nameAsString = name.toString();
     if (context.isVerbose()) {
-      context.logForVerbose("Change result file folder '" + nameAsString + "\'");
+      context.logForVerbose("Change result file folder '" + nameAsString + "'");
     }
     context.getPreprocessingState().getRootFileInfo().setTargetFolder(nameAsString);
     return AfterDirectiveProcessingBehaviour.PROCESSED;

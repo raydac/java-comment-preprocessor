@@ -51,7 +51,7 @@ public class UndefDirectiveHandler extends DefineDirectiveHandler {
     } else if (context.isGlobalVariable(varName)) {
       context.removeGlobalVariable(varName);
     } else {
-      throw context.makeException("Attempting to undefine unknown variable '" + value + "\'", null);
+      throw context.makeException("Attempting to undefine unknown variable '" + value + "'", null);
     }
   }
 

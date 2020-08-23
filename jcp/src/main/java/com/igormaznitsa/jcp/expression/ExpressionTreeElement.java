@@ -389,7 +389,7 @@ public class ExpressionTreeElement {
                 switch (val.getType()) {
                   case INT: {
                     childElements = EMPTY;
-                    savedItem = Value.valueOf(0 - val.asLong());
+                    savedItem = Value.valueOf(-val.asLong());
                     makeMaxPriority();
                   }
                   break;

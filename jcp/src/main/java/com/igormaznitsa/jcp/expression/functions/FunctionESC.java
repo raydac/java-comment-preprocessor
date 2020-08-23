@@ -65,7 +65,7 @@ public final class FunctionESC extends AbstractFunction {
           result.append("\\\\");
           break;
         case '\'':
-          result.append("\\\'");
+          result.append("\\'");
           break;
         case '\"':
           result.append("\\\"");
