@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.containers;
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -31,18 +34,17 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import lombok.Data;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import lombok.Data;
 
 /**
  * The class is one from the main classes in the preprocessor because it describes a preprocessing file and contains business logic for the process
@@ -84,7 +86,13 @@ public class FileInfoContainer {
    */
   private String targetFileName;
 
-  public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String targetFileName, final boolean copyOnly) {
+  /**
+   * List of file generated from the file.
+   */
+  private final Collection<File> generatedResources = new HashSet<>();
+
+  public FileInfoContainer(@Nonnull final File srcFile, @Nonnull final String targetFileName,
+                           final boolean copyOnly) {
     assertNotNull("Source file is null", srcFile);
     assertNotNull("Target file name is null", targetFileName);
 
@@ -471,15 +479,21 @@ public class FileInfoContainer {
     if (!context.isDryRun() && assertNotNull(lastTextFileDataContainer).isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(makeTargetFilePathAsString());
 
-      final boolean wasSaved = preprocessingState.saveBuffersToFile(outFile, context.isKeepComments());
+      final boolean wasSaved =
+          preprocessingState.saveBuffersToFile(outFile, context.isKeepComments());
 
       if (context.isVerbose()) {
-        context.logForVerbose(String.format("Content was %s into file '%s'", (wasSaved ? "saved" : "not saved"), outFile.toString()));
+        context.logForVerbose(String
+            .format("Content was %s into file '%s'", (wasSaved ? "saved" : "not saved"),
+                outFile.toString()));
       }
 
-      if (this.sourceFile != null && context.isKeepAttributes() && !PreprocessorUtils.copyFileAttributes(this.getSourceFile(), outFile)) {
+      if (this.sourceFile != null && context.isKeepAttributes() &&
+          !PreprocessorUtils.copyFileAttributes(this.getSourceFile(), outFile)) {
         throw new IOException("Can't copy attributes in result file: " + outFile);
       }
+
+      this.getGeneratedResources().add(outFile);
     }
     return preprocessingState;
   }

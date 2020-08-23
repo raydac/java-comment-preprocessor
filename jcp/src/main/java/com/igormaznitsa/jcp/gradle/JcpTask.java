@@ -163,7 +163,6 @@ public class JcpTask extends DefaultTask {
     this.vars = factory.mapProperty(String.class, String.class);
 
     this.sources = factory.listProperty(File.class);
-
     this.configFiles = factory.listProperty(String.class);
     this.excludeExtensions =
         factory.listProperty(String.class).convention(Collections.singletonList("xml"));
@@ -338,7 +337,8 @@ public class JcpTask extends DefaultTask {
         logger.debug("Adding config file: " + cfgFile);
         preprocessorContext.registerConfigFile(cfgFile);
       } else {
-        throw new TaskExecutionException(this, new IOException("Can't find config file: " + FilenameUtils.normalize(cfgFile.getAbsolutePath())));
+        throw new TaskExecutionException(this, new IOException(
+            "Can't find config file: " + FilenameUtils.normalize(cfgFile.getAbsolutePath())));
       }
     });
 
@@ -348,12 +348,14 @@ public class JcpTask extends DefaultTask {
 
     final List<File> sourcesList = this.sources.get();
     if (sourcesList.isEmpty()) {
-      throw new TaskConfigurationException(JcpTask.ID, "Source folder list must be defined as 'sources'", null);
+      throw new TaskConfigurationException(JcpTask.ID,
+          "Source folder list must be defined as 'sources'", null);
     }
 
     List<File> preparedSourcesList = new ArrayList<>();
     for (final File srcFolder : sourcesList) {
-      final File srcFolderFile = srcFolder.isAbsolute() ? srcFolder : new File(baseDirFile, srcFolder.getPath());
+      final File srcFolderFile =
+          srcFolder.isAbsolute() ? srcFolder : new File(baseDirFile, srcFolder.getPath());
       if (!this.ignoreMissingSources.get() || srcFolderFile.isDirectory()) {
         preparedSourcesList.add(srcFolderFile);
       }
@@ -364,7 +366,8 @@ public class JcpTask extends DefaultTask {
 
     logger.info("Source folders in use: " + preparedSourcesList);
 
-    preprocessorContext.setSources(preparedSourcesList.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
+    preprocessorContext.setSources(
+        preparedSourcesList.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
     preprocessorContext.setEol(this.eol.get());
     preprocessorContext.setExcludeFolders(this.excludeFolders.get());
     preprocessorContext.setDontOverwriteSameContent(this.dontOverwriteSameContent.get());

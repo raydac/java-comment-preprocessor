@@ -21,19 +21,19 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
+
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-
-import static com.igormaznitsa.meta.common.utils.IOUtils.closeQuietly;
+import javax.annotation.Nonnull;
 
 /**
  * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
@@ -103,6 +103,7 @@ public class FunctionEVALFILE extends AbstractFunction {
     try {
       final FileInfoContainer fileContainer = new FileInfoContainer(theFile, theFile.getName(), false);
       final PreprocessingState state = fileContainer.preprocessFile(null, prepareContext(context));
+      context.notifyAboutFileInfoContainer(fileContainer);
       final StringWriter strWriter = new StringWriter(1024);
       state.writePrinterBuffers(strWriter);
       closeQuietly(strWriter);

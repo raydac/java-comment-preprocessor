@@ -21,6 +21,12 @@
 
 package com.igormaznitsa.jcp;
 
+import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+
+
 import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
 import com.igormaznitsa.jcp.cmdline.CareForLastEolHandler;
 import com.igormaznitsa.jcp.cmdline.ClearTargetHandler;
@@ -53,12 +59,6 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
-import lombok.Data;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.util.AntPathMatcher;
-
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -69,11 +69,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import javax.annotation.Nonnull;
+import lombok.Data;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.AntPathMatcher;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
@@ -211,9 +211,12 @@ public final class JcpPreprocessor {
   @Nonnull
   public Statistics execute() throws IOException {
     final long timeStart = System.currentTimeMillis();
-    processConfigFiles();
 
-    this.context.logInfo(String.format("File extensions: %s excluded %s", this.context.getExtensions(), this.context.getExcludeExtensions()));
+    this.context.getActivatedConfigFiles().addAll(processConfigFiles());
+
+    this.context.logInfo(String
+        .format("File extensions: %s excluded %s", this.context.getExtensions(),
+            this.context.getExcludeExtensions()));
     final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
     this.context.logDebug("Source folders: " + srcFolders);
 
@@ -221,7 +224,9 @@ public final class JcpPreprocessor {
       this.context.logWarning("Source folder list is empty!");
     }
 
-    final Collection<FileInfoContainer> filesToBePreprocessed = collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
+    final Collection<FileInfoContainer> filesToBePreprocessed =
+        collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
+    this.context.getPreprocessedResources().addAll(filesToBePreprocessed);
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf = processGlobalDirectives(filesToBePreprocessed);
 
@@ -323,7 +328,9 @@ public final class JcpPreprocessor {
             if (this.context.isVerbose()) {
               this.context.logForVerbose(String.format("Copy file %s -> {dst} %s", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), fileRef.makeTargetFilePathAsString()));
             }
-            PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile, this.context.isKeepAttributes());
+            PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile,
+                this.context.isKeepAttributes());
+            fileRef.getGeneratedResources().add(destinationFile);
             copiedCounter++;
           }
         }
@@ -332,12 +339,19 @@ public final class JcpPreprocessor {
         fileRef.preprocessFile(null, this.context);
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (this.context.isVerbose()) {
-          this.context.logForVerbose(String.format("File preprocessing completed  '%s', elapsed time %d ms", PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
+          this.context.logForVerbose(String
+              .format("File preprocessing completed  '%s', elapsed time %d ms",
+                  PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
         }
         preprocessedCounter++;
       }
     }
-    return new Statistics(preprocessedCounter, copiedCounter, excludedCounter);
+
+    return new Statistics(
+        preprocessedCounter,
+        copiedCounter,
+        excludedCounter
+    );
   }
 
   private void createTargetFolder() throws IOException {
@@ -430,7 +444,8 @@ public final class JcpPreprocessor {
           if (excludedFolderPattern == null) {
             result.addAll(findAllFiles(sourceCanonicalPath, file, antPathMatcher, excludedFolderPatterns));
           } else {
-            this.context.logForVerbose(String.format("Folder '%s' excluded by '%s'", folderPath, excludedFolderPattern));
+            this.context.logForVerbose(
+                String.format("Folder '%s' excluded by '%s'", folderPath, excludedFolderPattern));
           }
         } else {
           result.add(file);
@@ -440,9 +455,13 @@ public final class JcpPreprocessor {
     return result;
   }
 
-  void processConfigFiles() throws IOException {
+  List<File> processConfigFiles() throws IOException {
+
+    final List<File> processedConfigFileList = new ArrayList<>();
 
     for (final File file : context.getConfigFiles()) {
+      processedConfigFileList.add(file);
+
       final String[] lines = readWholeTextFileIntoArray(file, StandardCharsets.UTF_8, null);
 
       int readStringIndex = -1;
@@ -499,6 +518,7 @@ public final class JcpPreprocessor {
         }
       }
     }
+    return processedConfigFileList;
   }
 
   @Data

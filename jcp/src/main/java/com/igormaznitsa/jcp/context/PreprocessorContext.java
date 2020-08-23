@@ -22,6 +22,13 @@
 package com.igormaznitsa.jcp.context;
 
 
+import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
+import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
+
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -33,33 +40,29 @@ import com.igormaznitsa.jcp.logger.SystemOutLogger;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.meta.annotation.MustNotContainNull;
 import com.igormaznitsa.meta.common.utils.GetUtils;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.io.FilenameUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
-import static com.igormaznitsa.meta.common.utils.Assertions.assertDoesntContainNull;
-import static com.igormaznitsa.meta.common.utils.Assertions.assertNotNull;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Preprocessor context class is a main class which contains all options for preprocessin and allow to work with variables in expressions.
@@ -103,6 +106,8 @@ public class PreprocessorContext {
   private PreprocessorExtension preprocessorExtension;
   private Charset sourceEncoding = DEFAULT_CHARSET;
   private Charset targetEncoding = DEFAULT_CHARSET;
+  private final Collection<File> activatedConfigFiles = new ArrayList<>();
+  private final Collection<FileInfoContainer> preprocessedResources = new ArrayList<>();
   @Setter(AccessLevel.NONE)
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
 
@@ -134,6 +139,9 @@ public class PreprocessorContext {
    */
   public PreprocessorContext(@Nonnull final PreprocessorContext context) {
     assertNotNull("Source context must not be null", context);
+
+    this.activatedConfigFiles.addAll(context.activatedConfigFiles);
+    this.preprocessedResources.addAll(context.preprocessedResources);
 
     this.baseDir = context.getBaseDir();
     this.verbose = context.isVerbose();
@@ -181,6 +189,42 @@ public class PreprocessorContext {
     this.preprocessorLogger = context.getPreprocessorLogger();
 
     this.currentInCloneSource = context.getPreprocessingState().peekFile();
+  }
+
+  @Nonnull
+  public Collection<File> findAllInputFiles() {
+    return Stream.concat(this.configFiles.stream(),
+        this.preprocessedResources.stream().map(x -> x.getSourceFile())
+    ).collect(Collectors.toSet());
+  }
+
+  @Nonnull
+  public Collection<File> findAllGeneratedFiles() {
+    return this.preprocessedResources.stream()
+        .flatMap(x -> x.getGeneratedResources().stream())
+        .collect(Collectors.toSet());
+  }
+
+  public void notifyAboutFileInfoContainer(@Nullable final FileInfoContainer fileInfoContainer) {
+    if (fileInfoContainer != null) {
+      final FileInfoContainer existing =
+          this.findFileInfoContainer(fileInfoContainer.getSourceFile()).orElse(null);
+      if (existing == null) {
+        this.preprocessedResources.add(fileInfoContainer);
+      } else {
+        existing.getGeneratedResources().addAll(fileInfoContainer.getGeneratedResources());
+      }
+    }
+  }
+
+  @Nonnull
+  public Optional<FileInfoContainer> findFileInfoContainer(@Nullable final File file) {
+    if (file == null) {
+      return Optional.empty();
+    } else {
+      return this.preprocessedResources.stream().filter(x -> file.equals(x.getSourceFile()))
+          .findFirst();
+    }
   }
 
   @Nonnull
