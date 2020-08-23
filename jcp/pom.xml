@@ -35,20 +35,6 @@
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
               <execution>
-                <id>make-distributive</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <appendAssemblyId>false</appendAssemblyId>
-                  <finalName>${project.artifactId}-${project.version}-${timestamp}-distr</finalName>
-                  <descriptors>
-                    <descriptor>src/assemble/distribution.xml</descriptor>
-                  </descriptors>
-                </configuration>
-              </execution>
-              <execution>
                 <id>make-bundle</id>
                 <phase>install</phase>
                 <goals>
