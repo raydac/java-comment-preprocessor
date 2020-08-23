@@ -13,8 +13,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
@@ -140,6 +142,21 @@ public class JcpTask extends DefaultTask {
    */
   private final Property<Boolean> dontOverwriteSameContent;
 
+  /**
+   * Collection of all files which have been generated during preprocessing.
+   */
+  private final ListProperty<File> outcomingFiles;
+
+  /**
+   * Collection of all files which have been used for preprocessing (including configuration files)
+   */
+  private final ListProperty<File> incomingFiles;
+
+  private final AtomicReference<Iterable<File>> outcomingFilesIterator =
+      new AtomicReference<>(Collections.emptyList());
+  private final AtomicReference<Iterable<File>> incomingFilesIterator =
+      new AtomicReference<>(Collections.emptyList());
+
   @Inject
   public JcpTask(final ObjectFactory factory) {
     this.allowWhitespaces = factory.property(Boolean.class).convention(false);
@@ -172,6 +189,20 @@ public class JcpTask extends DefaultTask {
     this.baseDir = factory.property(File.class).convention(this.getProject().getProjectDir());
     this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(),
         "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
+
+    this.incomingFiles = factory.listProperty(File.class)
+        .value(() -> this.incomingFilesIterator.get().iterator());
+
+    this.outcomingFiles = factory.listProperty(File.class)
+        .value(() -> this.outcomingFilesIterator.get().iterator());
+  }
+
+  public ListProperty<File> getOutcomingFiles() {
+    return this.outcomingFiles;
+  }
+
+  public ListProperty<File> getIncomingFiles() {
+    return this.incomingFiles;
   }
 
   @Override
@@ -394,5 +425,12 @@ public class JcpTask extends DefaultTask {
 
     logger.debug("Preprocessing starting");
     preprocessor.execute();
+
+    final Collection<File> foundAllGeneratedFiles =
+        preprocessor.getContext().findAllGeneratedFiles();
+    final Collection<File> foundAllInputFiles = preprocessor.getContext().findAllInputFiles();
+
+    this.outcomingFilesIterator.set(foundAllGeneratedFiles);
+    this.incomingFilesIterator.set(foundAllInputFiles);
   }
 }

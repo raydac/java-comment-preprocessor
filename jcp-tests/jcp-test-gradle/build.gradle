@@ -65,3 +65,7 @@ task(changeSourceFolder) {
 
 compileJava.dependsOn preprocess
 
+gradle.buildFinished {
+    println("Incoming preprocess files: " + preprocess.incomingFiles.size())
+    println("Resulted preprocess files: " + preprocess.outcomingFiles.size())
+}
