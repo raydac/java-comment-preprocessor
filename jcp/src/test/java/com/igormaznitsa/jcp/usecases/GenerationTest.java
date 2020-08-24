@@ -33,6 +33,8 @@ public class GenerationTest extends AbstractUseCaseTest {
   public void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception {
     assertEquals(0, stat.getCopied());
     assertEquals(1, stat.getPreprocessed());
+    assertEquals(1, context.findAllInputFiles().size());
+    assertEquals(3, context.findAllGeneratedFiles().size());
   }
 
 }

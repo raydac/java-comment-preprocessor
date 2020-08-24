@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.expression.functions;
 
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
@@ -87,22 +88,31 @@ public class FunctionEVALFILE extends AbstractFunction {
   public Value executeStr(final PreprocessorContext context, final Value strFilePath) {
     final String filePath = strFilePath.asString();
 
-    final File theFile;
+    final File fileToEvaluate;
     try {
-      theFile = context.findFileInSources(filePath);
+      fileToEvaluate = context.findFileInSources(filePath);
     } catch (IOException ex) {
       throw context.makeException("Can't get get source file '" + filePath + '\'', null);
     }
 
     if (context.isVerbose()) {
-      context.logForVerbose("Eval file '" + theFile + '\'');
+      context.logForVerbose("Eval file '" + fileToEvaluate + '\'');
     }
 
     try {
       final FileInfoContainer fileContainer =
-          new FileInfoContainer(theFile, theFile.getName(), false);
-      final PreprocessingState state = fileContainer.preprocessFile(null, prepareContext(context));
-      context.notifyAboutFileInfoContainer(fileContainer);
+          new FileInfoContainer(fileToEvaluate, fileToEvaluate.getName(), false);
+
+      final PreprocessorContext evalContext = prepareContext(context);
+      final PreprocessingState state = fileContainer.preprocessFile(null, evalContext);
+
+      findFirstActiveFileContainer(context)
+          .ifPresent(f -> {
+            f.getIncludedSources().add(fileToEvaluate);
+            f.getIncludedSources().addAll(evalContext.findAllInputFiles());
+            f.getGeneratedResources().addAll(evalContext.findAllGeneratedFiles());
+          });
+
       final StringWriter strWriter = new StringWriter(1024);
       state.writePrinterBuffers(strWriter);
       closeQuietly(strWriter);

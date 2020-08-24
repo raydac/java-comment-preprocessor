@@ -40,6 +40,8 @@ public class BinFileTest extends AbstractUseCaseTest {
       throws Exception {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
+    assertEquals(2, context.findAllInputFiles().size());
+    assertEquals(1, context.findAllGeneratedFiles().size());
   }
 
 }

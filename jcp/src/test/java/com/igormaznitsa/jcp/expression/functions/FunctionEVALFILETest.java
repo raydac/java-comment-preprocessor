@@ -49,7 +49,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     } catch (Exception ex) {
       assertTrue(getRootCause(ex).getMessage().contains("hello_world"));
     }
-    assertTrue(context.getPreprocessedResources().isEmpty());
     assertDestinationFolderEmpty();
   }
 
@@ -59,9 +58,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     context.setLocalVariable("hello_world", Value.valueOf("Hello World!"));
     final Value result = Expression.evalExpression("evalfile(\"./eval/TestEval.java\")", context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
-    assertEquals(1, context.getPreprocessedResources().size());
-    assertTrue(context.getPreprocessedResources().stream().findFirst().get().getGeneratedResources()
-        .isEmpty());
     assertDestinationFolderEmpty();
   }
 
@@ -73,9 +69,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final Value result = Expression.evalExpression(String.format("evalfile(\"%s\")",
         StringEscapeUtils.escapeJava(theTestFolder.get(0) + TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
-    assertEquals(1, context.getPreprocessedResources().size());
-    assertTrue(context.getPreprocessedResources().stream().findFirst().get().getGeneratedResources()
-        .isEmpty());
     assertDestinationFolderEmpty();
   }
 
@@ -89,9 +82,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final String resultstr = result.asString().trim();
     assertTrue(resultstr.startsWith("System.out.println(\"Hello World!\");"));
     assertTrue(resultstr.endsWith("TestEvalWithIncluded.java"));
-    assertEquals(1, context.getPreprocessedResources().size());
-    assertTrue(context.getPreprocessedResources().stream().findFirst().get().getGeneratedResources()
-        .isEmpty());
     assertDestinationFolderEmpty();
   }
 
@@ -102,9 +92,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final Value result = Expression.evalExpression(
         String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     assertEquals("System.out.println(\"Hello World!\");", result.asString().trim());
-    assertEquals(1, context.getPreprocessedResources().size());
-    assertTrue(context.getPreprocessedResources().stream().findFirst().get().getGeneratedResources()
-        .isEmpty());
     assertDestinationFolderEmpty();
   }
 
@@ -116,9 +103,6 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
     final Value result = Expression.evalExpression(
         String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
     assertTrue(result.asString().contains("public void main(String ... args){"));
-    assertEquals(1, context.getPreprocessedResources().size());
-    assertTrue(context.getPreprocessedResources().stream().findFirst().get().getGeneratedResources()
-        .isEmpty());
     assertDestinationFolderEmpty();
   }
 

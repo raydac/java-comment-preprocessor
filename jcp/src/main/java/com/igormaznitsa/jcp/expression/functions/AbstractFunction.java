@@ -115,7 +115,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-
   public static <E extends AbstractFunction> E findForClass(final Class<E> functionClass) {
     E result = null;
     for (final AbstractFunction function : getAllFunctions()) {
@@ -134,7 +133,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return an instance of the needed handler or null if there is not any such
    * one
    */
-
   public static AbstractFunction findForName(final String functionName) {
     return getFunctionNameMap().get(functionName);
   }
@@ -144,7 +142,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function name in lower case, must not be null
    */
-
   public abstract String getName();
 
   /**
@@ -152,7 +149,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the function information as a String, must not be null
    */
-
   public abstract String getReference();
 
   /**
@@ -168,8 +164,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the array of argument type combinations allowed by the function
    * handler, must not be null
    */
-
-
   public abstract ValueType[][] getAllowedArgumentTypes();
 
   /**
@@ -177,7 +171,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    *
    * @return the result type of the function, must not be null
    */
-
   public abstract ValueType getResultType();
 
   /**
@@ -186,7 +179,6 @@ public abstract class AbstractFunction implements ExpressionItem {
    * @return the expression item priority for the function, must not be null
    */
   @Override
-
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.FUNCTION;
   }
@@ -198,13 +190,11 @@ public abstract class AbstractFunction implements ExpressionItem {
    * ExpressionItemType.FUNCTION
    */
   @Override
-
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.FUNCTION;
   }
 
   @Override
-
   public String toString() {
     return "FUNCTION: " + getName();
   }

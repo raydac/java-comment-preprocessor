@@ -228,7 +228,7 @@ public final class JcpPreprocessor {
 
     final Collection<FileInfoContainer> filesToBePreprocessed =
         collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
-    this.context.getPreprocessedResources().addAll(filesToBePreprocessed);
+    this.context.addAllPreprocessedResources(filesToBePreprocessed);
 
     final List<PreprocessingState.ExcludeIfInfo> excludedIf =
         processGlobalDirectives(filesToBePreprocessed);

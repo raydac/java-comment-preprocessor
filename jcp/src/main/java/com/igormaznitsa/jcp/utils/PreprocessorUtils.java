@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.utils;
 
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +60,26 @@ public final class PreprocessorUtils {
   private PreprocessorUtils() {
   }
 
+  /**
+   * Find first presented FileInfoContainer among incoming files for include stack files.
+   *
+   * @param context preprocessor context, must not be null
+   * @return found FileInfoContainr or empty optional
+   * @see FileInfoContainer
+   */
+  public static Optional<FileInfoContainer> findFirstActiveFileContainer(
+      final PreprocessorContext context
+  ) {
+    final Optional<FileInfoContainer> result = context.getPreprocessingState()
+        .getCurrentIncludeStack()
+        .stream()
+        .map(TextFileDataContainer::getFile)
+        .map(x -> context.findFileInfoContainer(x).orElse(null))
+        .filter(Objects::nonNull)
+        .findFirst();
+    return result.isPresent() ? result :
+        Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
+  }
 
   public static String getFileExtension(final File file) {
     String result = null;

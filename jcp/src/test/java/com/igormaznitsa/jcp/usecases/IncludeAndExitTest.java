@@ -33,6 +33,8 @@ public class IncludeAndExitTest extends AbstractUseCaseTest {
   public void check(final PreprocessorContext context, final JcpPreprocessor.Statistics stat) throws Exception {
     assertEquals(0, stat.getCopied());
     assertEquals(1, stat.getPreprocessed());
+    assertEquals(3, context.findAllInputFiles().size());
+    assertEquals(1, context.findAllGeneratedFiles().size());
   }
 
 }

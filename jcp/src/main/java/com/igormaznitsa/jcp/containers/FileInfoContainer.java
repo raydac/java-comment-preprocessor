@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.containers;
 
+import static java.util.Objects.requireNonNull;
+
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -35,7 +38,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,9 +69,13 @@ public class FileInfoContainer {
    */
   private final boolean copyOnly;
   /**
-   * List of file generated from the file.
+   * Collection of files generated with the file.
    */
   private final Collection<File> generatedResources = new HashSet<>();
+  /**
+   * Collection of files which took part during preprocessing of the file
+   */
+  private final Collection<File> includedSources = new HashSet<>();
   /**
    * The flag shows that the file has been excluded from preprocessing and it will not be preprocessed and copied
    */
@@ -85,8 +91,8 @@ public class FileInfoContainer {
 
   public FileInfoContainer(final File srcFile, final String targetFileName,
                            final boolean copyOnly) {
-    Objects.requireNonNull(srcFile, "Source file is null");
-    Objects.requireNonNull(targetFileName, "Target file name is null");
+    requireNonNull(srcFile, "Source file is null");
+    requireNonNull(targetFileName, "Target file name is null");
 
     this.copyOnly = copyOnly;
     excludedFromPreprocessing = false;
@@ -123,12 +129,12 @@ public class FileInfoContainer {
   }
 
   public void setTargetFolder(final String targetFolder) {
-    this.targetFolder = Objects.requireNonNull(targetFolder, "Target folder must not be null");
+    this.targetFolder = requireNonNull(targetFolder, "Target folder must not be null");
   }
 
   public void setTargetName(final String targetName) {
     this.targetFileName =
-        Objects.requireNonNull(targetFileName, "Target file name must not be null");
+        requireNonNull(targetFileName, "Target file name must not be null");
   }
 
 
@@ -206,7 +212,7 @@ public class FileInfoContainer {
         }
       }
       if (!preprocessingState.isIfStackEmpty()) {
-        final TextFileDataContainer lastIf = Objects.requireNonNull(preprocessingState.peekIf());
+        final TextFileDataContainer lastIf = requireNonNull(preprocessingState.peekIf());
         throw new PreprocessorException(
             "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
             "", new FilePositionInfo[] {
@@ -336,8 +342,12 @@ public class FileInfoContainer {
       context.clearLocalVariables();
     }
 
-    final PreprocessingState preprocessingState =
-        state != null ? state : context.produceNewPreprocessingState(this, 1);
+    final PreprocessingState preprocessingState;
+    if (state == null) {
+      preprocessingState = context.produceNewPreprocessingState(this, 1);
+    } else {
+      preprocessingState = state;
+    }
 
     String leftTrimmedString = null;
 
@@ -402,7 +412,7 @@ public class FileInfoContainer {
                     AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                     extractedDirective;
                 final ResetablePrinter thePrinter =
-                    Objects.requireNonNull(preprocessingState.getPrinter());
+                    requireNonNull(preprocessingState.getPrinter());
                 if (doPrintLn) {
                   thePrinter.println(text, context.getEol());
                 } else {
@@ -416,7 +426,7 @@ public class FileInfoContainer {
                   AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                   extractedDirective;
               final ResetablePrinter thePrinter =
-                  Objects.requireNonNull(preprocessingState.getPrinter());
+                  requireNonNull(preprocessingState.getPrinter());
               if (doPrintLn) {
                 thePrinter.println(text, context.getEol());
               } else {
@@ -429,7 +439,7 @@ public class FileInfoContainer {
           }
         }
 
-        final ResetablePrinter thePrinter = Objects.requireNonNull(preprocessingState.getPrinter());
+        final ResetablePrinter thePrinter = requireNonNull(preprocessingState.getPrinter());
         if (preprocessingState.isDirectiveCanBeProcessed() &&
             !preprocessingState.getPreprocessingFlags()
                 .contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
@@ -494,7 +504,7 @@ public class FileInfoContainer {
 
     if (!preprocessingState.isIfStackEmpty()) {
       final TextFileDataContainer lastIf =
-          Objects.requireNonNull(preprocessingState.peekIf(), "'IF' stack is empty");
+          requireNonNull(preprocessingState.peekIf(), "'IF' stack is empty");
       throw new PreprocessorException(
           "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
           "", new FilePositionInfo[] {
@@ -502,14 +512,14 @@ public class FileInfoContainer {
     }
     if (!preprocessingState.isWhileStackEmpty()) {
       final TextFileDataContainer lastWhile =
-          Objects.requireNonNull(preprocessingState.peekWhile(), "'WHILE' stack is empty");
+          requireNonNull(preprocessingState.peekWhile(), "'WHILE' stack is empty");
       throw new PreprocessorException(
           "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
           "", new FilePositionInfo[] {
           new FilePositionInfo(lastWhile.getFile(), lastWhile.getNextStringIndex())}, null);
     }
 
-    if (!context.isDryRun() && Objects.requireNonNull(lastTextFileDataContainer).isAutoFlush()) {
+    if (!context.isDryRun() && requireNonNull(lastTextFileDataContainer).isAutoFlush()) {
       final File outFile = context.createDestinationFileForPath(makeTargetFilePathAsString());
 
       final boolean wasSaved =

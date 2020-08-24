@@ -26,6 +26,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
+import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
 public class IncludeDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
@@ -35,7 +36,9 @@ public class IncludeDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
   @Test
   @Override
   public void testExecution() throws Exception {
-    assertFilePreprocessing("directive_include.txt", false, null, null);
+    final PreprocessorContext context =
+        assertFilePreprocessing("directive_include.txt", false, null, null);
+    assertEquals(3, context.findAllInputFiles().size());
   }
 
   @Test

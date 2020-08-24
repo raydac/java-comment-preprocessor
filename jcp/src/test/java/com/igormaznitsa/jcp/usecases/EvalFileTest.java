@@ -29,7 +29,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class EvalFileTest extends AbstractUseCaseTest {
 
-
   @Override
   protected void tuneContext(PreprocessorContext context) {
     context.setCareForLastEol(true);
@@ -39,6 +38,8 @@ public class EvalFileTest extends AbstractUseCaseTest {
   public void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
+    assertEquals(3, context.findAllInputFiles().size());
+    assertEquals(2, context.findAllGeneratedFiles().size());
   }
 
 }

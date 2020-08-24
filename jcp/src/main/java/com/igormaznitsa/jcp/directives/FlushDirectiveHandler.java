@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
@@ -62,6 +65,9 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
           context.logForVerbose(
               "Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "'");
         }
+
+        findFirstActiveFileContainer(context)
+            .ifPresent(f -> f.getGeneratedResources().add(outFile));
 
         state.resetPrinters();
       } catch (IOException ex) {

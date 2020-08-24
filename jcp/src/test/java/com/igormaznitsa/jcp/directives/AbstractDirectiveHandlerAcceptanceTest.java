@@ -180,11 +180,20 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     }
   }
 
-  private PreprocessorContext insidePreprocessingAndMatching(final File srcfile, final List<String> preprocessingText, final List<String> result, final List<String> etalonList, final PreprocessorExtension extension, final PreprocessorLogger logger, final boolean keepLines, final VariablePair... globalVariables) throws Exception {
+  private PreprocessorContext internalPreprocessAndMatch(final File srcfile,
+                                                         final List<String> preprocessingText,
+                                                         final List<String> result,
+                                                         final List<String> etalonList,
+                                                         final PreprocessorExtension extension,
+                                                         final PreprocessorLogger logger,
+                                                         final boolean keepLines,
+                                                         final VariablePair... globalVariables)
+      throws Exception {
     assertNotNull("Preprocessing text is null", preprocessingText);
     assertNotNull("Result container is null", result);
 
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     if (logger != null) {
       context.setPreprocessorLogger(logger);
     }
@@ -197,6 +206,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
     final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
     final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[0]), false, 0));
+    context.addPreprocessedResource(reference);
 
     reference.preprocessFile(state, context);
 
@@ -271,7 +281,9 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   private PreprocessorContext preprocessString(final String text, final List<String> preprocessedText, final PreprocessorExtension ext, final VariablePair... globalVars) throws Exception {
     final List<String> preprocessingPart = parseStringForLines(text);
-    return insidePreprocessingAndMatching(THIS_CLASS_FILE, preprocessingPart, preprocessedText == null ? new ArrayList<>() : preprocessedText, null, ext, null, false, globalVars);
+    return internalPreprocessAndMatch(THIS_CLASS_FILE, preprocessingPart,
+        preprocessedText == null ? new ArrayList<>() : preprocessedText, null, ext, null, false,
+        globalVars);
   }
 
   public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger, final VariablePair... globalVars) throws Exception {
@@ -282,7 +294,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     }
 
     final InputStream stream = new FileInputStream(file);
-
 
     final List<String> preprocessingPart = new ArrayList<>(100);
     final List<String> etalonPart = new ArrayList<>(100);
@@ -312,6 +323,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       }
     }
 
-    return insidePreprocessingAndMatching(file, preprocessingPart, new ArrayList<>(), etalonPart, ext, logger, keepLines, globalVars);
+    return internalPreprocessAndMatch(file, preprocessingPart, new ArrayList<>(), etalonPart, ext,
+        logger, keepLines, globalVars);
   }
 }

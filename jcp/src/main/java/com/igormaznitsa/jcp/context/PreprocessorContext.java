@@ -52,7 +52,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -86,8 +85,12 @@ public class PreprocessorContext {
   private final TextFileDataContainer currentInCloneSource;
   private final List<SourceFolder> sources = new ArrayList<>();
   private final File baseDir;
-  private final Collection<File> activatedConfigFiles = new ArrayList<>();
-  private final Collection<FileInfoContainer> preprocessedResources = new ArrayList<>();
+  private final Collection<File> activatedConfigFiles;
+
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  private final Collection<FileInfoContainer> preprocessedResources;
+
   @Setter(AccessLevel.NONE)
   @Getter(AccessLevel.NONE)
   private final AtomicReference<PreprocessingState> preprocessingState = new AtomicReference<>();
@@ -121,6 +124,8 @@ public class PreprocessorContext {
    * @param baseDir the base folder for process, it must not be null
    */
   public PreprocessorContext(final File baseDir) {
+    this.preprocessedResources = new ArrayList<>();
+    this.activatedConfigFiles = new ArrayList<>();
     this.baseDir = Objects.requireNonNull(baseDir, "Base folder must not be null");
     this.preprocessingState
         .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
@@ -139,8 +144,8 @@ public class PreprocessorContext {
   public PreprocessorContext(final PreprocessorContext context) {
     Objects.requireNonNull(context, "Source context must not be null");
 
-    this.activatedConfigFiles.addAll(context.activatedConfigFiles);
-    this.preprocessedResources.addAll(context.preprocessedResources);
+    this.activatedConfigFiles = context.activatedConfigFiles;
+    this.preprocessedResources = context.preprocessedResources;
 
     this.baseDir = context.getBaseDir();
     this.verbose = context.isVerbose();
@@ -189,6 +194,22 @@ public class PreprocessorContext {
     this.preprocessorLogger = context.getPreprocessorLogger();
 
     this.currentInCloneSource = context.getPreprocessingState().peekFile();
+  }
+
+  public void addPreprocessedResource(final FileInfoContainer container) {
+    if (container != null) {
+      this.preprocessedResources.add(container);
+    }
+  }
+
+  public void addAllPreprocessedResources(final Collection<FileInfoContainer> containers) {
+    if (containers != null) {
+      this.preprocessedResources.addAll(containers);
+    }
+  }
+
+  public Set<FileInfoContainer> findPreprocessedResources() {
+    return new HashSet<>(this.preprocessedResources);
   }
 
   private static String makeStackView(
@@ -241,35 +262,31 @@ public class PreprocessorContext {
     }
   }
 
-  public Collection<File> findAllInputFiles() {
-    return Stream.concat(this.configFiles.stream(),
-        this.preprocessedResources.stream().map(FileInfoContainer::getSourceFile)
-    ).collect(Collectors.toSet());
+  public Set<File> findAllInputFiles() {
+    final Set<File> result = new HashSet<>();
+    result.addAll(this.configFiles);
+    this.preprocessedResources.forEach(x -> {
+      result.addAll(x.getIncludedSources());
+      if (x.getSourceFile() != null &&
+          !(x.getIncludedSources().isEmpty() && x.isExcludedFromPreprocessing())) {
+        result.add(x.getSourceFile());
+      }
+    });
+    return result;
   }
 
-  public Collection<File> findAllGeneratedFiles() {
+  public Set<File> findAllGeneratedFiles() {
     return this.preprocessedResources.stream()
         .flatMap(x -> x.getGeneratedResources().stream())
         .collect(Collectors.toSet());
-  }
-
-  public void notifyAboutFileInfoContainer(final FileInfoContainer fileInfoContainer) {
-    if (fileInfoContainer != null) {
-      final FileInfoContainer existing =
-          this.findFileInfoContainer(fileInfoContainer.getSourceFile()).orElse(null);
-      if (existing == null) {
-        this.preprocessedResources.add(fileInfoContainer);
-      } else {
-        existing.getGeneratedResources().addAll(fileInfoContainer.getGeneratedResources());
-      }
-    }
   }
 
   public Optional<FileInfoContainer> findFileInfoContainer(final File file) {
     if (file == null) {
       return Optional.empty();
     } else {
-      return this.preprocessedResources.stream().filter(x -> file.equals(x.getSourceFile()))
+      return this.preprocessedResources.stream()
+          .filter(x -> file.equals(x.getSourceFile()))
           .findFirst();
     }
   }

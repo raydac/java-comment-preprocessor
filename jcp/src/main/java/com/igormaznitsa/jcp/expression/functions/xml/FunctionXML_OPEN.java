@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.expression.functions.xml;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -66,6 +69,10 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
       }
 
       final Document document = openFileAndParse(context, file);
+
+      findFirstActiveFileContainer(context)
+          .ifPresent(t -> t.getIncludedSources().add(file));
+
       docContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document);
       context.setSharedResource(documentId, docContainer);
       final NodeContainer rootContainer =

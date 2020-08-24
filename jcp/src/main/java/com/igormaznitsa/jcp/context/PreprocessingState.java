@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.context;
 
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
@@ -218,16 +219,13 @@ public final class PreprocessingState {
     return newContainer;
   }
 
-
   public TextFileDataContainer peekFile() {
     return includeStack.peek();
   }
 
-
-  List<TextFileDataContainer> getCurrentIncludeStack() {
+  public List<TextFileDataContainer> getCurrentIncludeStack() {
     return this.includeStack;
   }
-
 
   public FilePositionInfo[] makeIncludeStack() {
     if (this.fake) {
@@ -484,8 +482,11 @@ public final class PreprocessingState {
       closeQuietly(writer);
     }
 
-    if (wasSaved && this.context.isKeepAttributes() && outFile.exists()) {
-      PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
+    if (wasSaved) {
+      findFirstActiveFileContainer(context).ifPresent(t -> t.getGeneratedResources().add(outFile));
+      if (this.context.isKeepAttributes() && outFile.exists()) {
+        PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
+      }
     }
 
     return wasSaved;
