@@ -10,13 +10,13 @@
 ![Logo](assets/logo.png)
 
 # Changelog
- - __7.0.3 (SNAPSHOT)__
-  - added way to get info about all input and produced files from preprocessor context
-  - reworked Gradle plug-in
-  - refactoring, removed some auxiliary plugins from build process and extra code
+__7.0.3 (SNAPSHOT)__
+ - added way to get info about all input and produced files from preprocessor context
+ - reworked Gradle plug-in
+ - refactoring, removed some auxiliary plugins from build process and extra code
 
- - __7.0.2 (15 jul 2019)__
-  - fixed leaks of system scoped dependencies in generated pom.xml
+__7.0.2 (15 jul 2019)__
+ - fixed leaks of system scoped dependencies in generated pom.xml
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
