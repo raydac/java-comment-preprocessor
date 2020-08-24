@@ -262,6 +262,14 @@ public class PreprocessorContext {
     }
   }
 
+  /**
+   * Find all files which have been used during preprocess, it includes configs, source files, copied files,
+   * generated files, included files and binary files used by functions. Excluded files are not added if
+   * they are not processed by included files.
+   *
+   * @return set of all input files, must not be null
+   * @since 7.0.3
+   */
   public Set<File> findAllInputFiles() {
     final Set<File> result = new HashSet<>();
     result.addAll(this.configFiles);
@@ -275,7 +283,13 @@ public class PreprocessorContext {
     return result;
   }
 
-  public Set<File> findAllGeneratedFiles() {
+  /**
+   * Find all files which have been produced during preprocess, it includes also copied an generated files.
+   *
+   * @return set of all produced files, must not be null
+   * @since 7.0.3
+   */
+  public Set<File> findAllProducedFiles() {
     return this.preprocessedResources.stream()
         .flatMap(x -> x.getGeneratedResources().stream())
         .collect(Collectors.toSet());

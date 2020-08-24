@@ -110,7 +110,7 @@ public class FunctionEVALFILE extends AbstractFunction {
           .ifPresent(f -> {
             f.getIncludedSources().add(fileToEvaluate);
             f.getIncludedSources().addAll(evalContext.findAllInputFiles());
-            f.getGeneratedResources().addAll(evalContext.findAllGeneratedFiles());
+            f.getGeneratedResources().addAll(evalContext.findAllProducedFiles());
           });
 
       final StringWriter strWriter = new StringWriter(1024);

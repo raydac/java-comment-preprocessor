@@ -34,7 +34,7 @@ public class StaticSiteTest extends AbstractUseCaseTest {
     assertEquals(10, stat.getPreprocessed());
     assertEquals(205, stat.getCopied());
     assertEquals(227, context.findAllInputFiles().size());
-    assertEquals(342, context.findAllGeneratedFiles().size());
+    assertEquals(342, context.findAllProducedFiles().size());
   }
 
 }

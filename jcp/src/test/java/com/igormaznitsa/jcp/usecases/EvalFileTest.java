@@ -39,7 +39,7 @@ public class EvalFileTest extends AbstractUseCaseTest {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
     assertEquals(3, context.findAllInputFiles().size());
-    assertEquals(2, context.findAllGeneratedFiles().size());
+    assertEquals(2, context.findAllProducedFiles().size());
   }
 
 }

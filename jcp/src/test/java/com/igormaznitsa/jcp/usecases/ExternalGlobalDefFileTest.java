@@ -40,7 +40,7 @@ public class ExternalGlobalDefFileTest extends AbstractUseCaseTest {
     assertEquals(0, stat.getCopied());
     assertEquals(1, stat.getPreprocessed());
     assertEquals(2, context.findAllInputFiles().size());
-    assertEquals(1, context.findAllGeneratedFiles().size());
+    assertEquals(1, context.findAllProducedFiles().size());
   }
 
 }

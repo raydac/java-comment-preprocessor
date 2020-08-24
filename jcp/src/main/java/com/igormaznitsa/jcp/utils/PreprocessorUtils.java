@@ -66,6 +66,7 @@ public final class PreprocessorUtils {
    * @param context preprocessor context, must not be null
    * @return found FileInfoContainr or empty optional
    * @see FileInfoContainer
+   * @since 7.0.3
    */
   public static Optional<FileInfoContainer> findFirstActiveFileContainer(
       final PreprocessorContext context

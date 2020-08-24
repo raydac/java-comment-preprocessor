@@ -427,7 +427,7 @@ public class JcpTask extends DefaultTask {
     preprocessor.execute();
 
     final Collection<File> foundAllGeneratedFiles =
-        preprocessor.getContext().findAllGeneratedFiles();
+        preprocessor.getContext().findAllProducedFiles();
     final Collection<File> foundAllInputFiles = preprocessor.getContext().findAllInputFiles();
 
     this.outcomingFilesIterator.set(foundAllGeneratedFiles);
