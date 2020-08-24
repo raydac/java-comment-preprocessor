@@ -10,30 +10,13 @@
 ![Logo](assets/logo.png)
 
 # Changelog
-- __7.0.3 (SNAPSHOT)__
- - added way to get info about all input and produced files from preprocessor context
- - reworked Gradle plug-in
- - refactoring, removed some auxiliary plugins from build process and extra code
+ - __7.0.3 (SNAPSHOT)__
+  - added way to get info about all input and produced files from preprocessor context
+  - reworked Gradle plug-in
+  - refactoring, removed some auxiliary plugins from build process and extra code
 
-- __7.0.2 (15 jul 2019)__
+ - __7.0.2 (15 jul 2019)__
   - fixed leaks of system scoped dependencies in generated pom.xml
-
-- __7.0.1 (19 apr 2019)__
-  - minor refactoring
-  
-- **7.0.0 (31 mar 2019)**
-  - **reworked and renamed some parameters for Maven and ANT plug-ins**
-  - **removed maven `clear` goal**
-  - **removed maven `preprocessTest` goal (use flag `useTestSources` instead)**
-  - added embedded Gradle plugin `com.igormaznitsa.jcp`
-  - added function `STR esc(STR)`
-  - fixed build under JDK 9+
-  - XML functions work through embedded [Apache Xalan](https://xalan.apache.org/) and [Apache Xerces](http://xerces.apache.org/)
-  - **minimal needed Java version changed to 1.8**
-  - refactoring
-
-- **6.1.4 (16 jun 2018)**
-  - [#19](https://github.com/raydac/java-comment-preprocessor/issues/19) removed dependencies to meta packages (their sources moved into project)
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
