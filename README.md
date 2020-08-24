@@ -1,6 +1,5 @@
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)   
 [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.0.2|jar)   
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/c6acda63097a40c68d8ca8eaef6180d8)](https://www.codacy.com/app/rrg4400/java-comment-preprocessor)   
 [![Java 1.8+](https://img.shields.io/badge/java-1.8%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)   
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)   
 [![Gradle 3.0+](https://img.shields.io/badge/gradle-3.0%2b-green.svg)](https://gradle.org/)   
@@ -11,10 +10,15 @@
 ![Logo](assets/logo.png)
 
 # Changelog
-- **7.0.2 (15 jul 2019)**
+- __7.0.3 (SNAPSHOT)__
+ - added way to get info about all input and produced files from preprocessor context
+ - reworked Gradle plug-in
+ - refactoring, removed some auxiliary plugins from build process and extra code
+
+- __7.0.2 (15 jul 2019)__
   - fixed leaks of system scoped dependencies in generated pom.xml
 
-- **7.0.1 (19 apr 2019)**
+- __7.0.1 (19 apr 2019)__
   - minor refactoring
   
 - **7.0.0 (31 mar 2019)**
