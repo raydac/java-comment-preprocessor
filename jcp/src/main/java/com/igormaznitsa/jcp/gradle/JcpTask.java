@@ -16,11 +16,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -28,6 +29,7 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.OutputFiles;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
 import org.gradle.execution.commandline.TaskConfigurationException;
@@ -145,17 +147,12 @@ public class JcpTask extends DefaultTask {
   /**
    * Collection of all files which have been generated during preprocessing.
    */
-  private final ListProperty<File> outcomingFiles;
+  private final ConfigurableFileCollection outcomingFiles;
 
   /**
    * Collection of all files which have been used for preprocessing (including configuration files)
    */
-  private final ListProperty<File> incomingFiles;
-
-  private final AtomicReference<Iterable<File>> outcomingFilesIterator =
-      new AtomicReference<>(Collections.emptyList());
-  private final AtomicReference<Iterable<File>> incomingFilesIterator =
-      new AtomicReference<>(Collections.emptyList());
+  private final ConfigurableFileCollection incomingFiles;
 
   @Inject
   public JcpTask(final ObjectFactory factory) {
@@ -190,18 +187,16 @@ public class JcpTask extends DefaultTask {
     this.target = factory.property(File.class).convention(new File(this.getProject().getBuildDir(),
         "java-comment-preprocessor" + File.separatorChar + this.getTaskIdentity().name));
 
-    this.incomingFiles = factory.listProperty(File.class)
-        .value(() -> this.incomingFilesIterator.get().iterator());
-
-    this.outcomingFiles = factory.listProperty(File.class)
-        .value(() -> this.outcomingFilesIterator.get().iterator());
+    this.incomingFiles = factory.fileCollection();
+    this.outcomingFiles = factory.fileCollection();
   }
 
-  public ListProperty<File> getOutcomingFiles() {
+  @OutputFiles
+  public FileCollection getOutcomingFiles() {
     return this.outcomingFiles;
   }
 
-  public ListProperty<File> getIncomingFiles() {
+  public FileCollection getIncomingFiles() {
     return this.incomingFiles;
   }
 
@@ -430,7 +425,7 @@ public class JcpTask extends DefaultTask {
         preprocessor.getContext().findAllProducedFiles();
     final Collection<File> foundAllInputFiles = preprocessor.getContext().findAllInputFiles();
 
-    this.outcomingFilesIterator.set(foundAllGeneratedFiles);
-    this.incomingFilesIterator.set(foundAllInputFiles);
+    this.outcomingFiles.setFrom(foundAllGeneratedFiles);
+    this.incomingFiles.setFrom(foundAllInputFiles);
   }
 }
