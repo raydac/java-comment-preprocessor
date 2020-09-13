@@ -12,7 +12,7 @@
 # Changelog
 __7.0.3 (13-sep-2020)__
  - added way to get info about all input and produced files from preprocessor context
- - reworked Gradle plug-in
+ - reworked Gradle plug-in, removed extension and now properties should be directly provided for task
  - refactoring, removed some auxiliary plugins from build process and extra code
 
 __7.0.2 (15 jul 2019)__
