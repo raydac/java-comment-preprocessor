@@ -1,15 +1,15 @@
-7.0.3 (SNAPSHOT)
+7.0.3 (13-sep-2020)
  - added way to get info about all input and produced files from preprocessor context
  - reworked Gradle plug-in
  - refactoring, removed some auxiliary plugins from build process and extra code
 
-7.0.2 (15 jul 2019)
+7.0.2 (15-jul-2019)
  - fixed leaks of system scoped dependencies in generated pom.xml
 
-7.0.1 (19 apr 2019)
+7.0.1 (19-apr-2019)
  - minor refactoring
 
-7.0.0 (31 mar 2019)
+7.0.0 (31-mar-2019)
  - reworked some parameters for Maven and ANT plug-ins
  - added embedded Gradle plugin `com.igormaznitsa.jcp`
  - removed maven `clear` goal
@@ -20,21 +20,21 @@
  - minimal needed Java version changed to 1.8
  - refactoring
 
-6.1.4 (16 jun 2018)
+6.1.4 (16-jun-2018)
  - removed dependencies to meta packages (their sources moved into project) #19
 
-6.1.3 (29 apr 2018)
+6.1.3 (29-apr-2018)
  - added automatic module name `igormaznitsa.jcp`
  - CORE: added `/U` key to turn on mode to interpret unknown variables as FALSE (in Maven and ANT `unknownVarAsFalse`), [#17](https://github.com/raydac/java-comment-preprocessor/issues/17)
 
-6.1.2 (02 apr 2017)
+6.1.2 (02-apr-2017)
  - CORE: added STR TRIMLINES(STR) function to trim lines represented as string and removing empty lines
  - CORE: added `/A` command line option (`copyFileAttributes` in Maven and ANT) to copy file attributes
  - CORE: added `/ED:` command line option to exclude sub-folders from preprocessing (`excludedFolders` in Maven and ANT) with ANT pattern support.
  - CORE: added `/PI` command line flag (`preserveIndent` in Maven and ANT), turn on mode to preserve indent when removing `//$` and `//$$`, thanks to @jamuir
  - CORE: comma in split lines in BINFILE function moved from the start of line to the end of the previous line (to increase compatibility with Go)
 
-6.1.1 (11 feb 2017)
+6.1.1 (11-feb-2017)
  - MAVEN: information about imported maven properties will be shown only in either verbose mode or debug mode
  - MAVEN: added auxiliary goal `preprocessTests` which provides flag `useTestSources` as true and activated by default in GENERATE_TEST_SOURCES phase #14
  - MAVEN: added 'ignoreMissingSources' boolean parameter, allows to skip preprocessing if source folders not found or not provided #12
@@ -43,7 +43,7 @@
  -  CORE: added `STR str2go(STR)` function to escape strings to be represented in Golang sources
  -  CORE: improved the BINFILE function, it allows `base64|byte[]|uint8[]|int8` and modifiers `s|d|ds|sd` where s - means splitting to lines and d - means deflate compression
 
-6.1.0 (03 jul 2016)
+6.1.0 (03-jul-2016)
 - implemented request #9, added support of whitespace between directive and comment, in command line it is `--es` option and in MAVEN and ANT it is boolean parameter `allowWhitespace`, by default it is turned off
 - added function STR binfile(STR,STR) to load a bin file as encoded base64 or java byte array string
 - changes in Preprocessor API, removed usage of null instead of PreprocessorContext or PreprocessingState as argument for many methods, improved tests
