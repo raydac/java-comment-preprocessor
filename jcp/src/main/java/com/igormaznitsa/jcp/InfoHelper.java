@@ -45,7 +45,7 @@ public final class InfoHelper {
 
 
   public static String getVersion() {
-    return "v7.0.3a";
+    return "v7.0.4";
   }
 
 
