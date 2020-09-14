@@ -1,6 +1,6 @@
 7.0.3 (13-sep-2020)
  - added way to get info about all input and produced files from preprocessor context
- - reworked Gradle plug-in, removed extension and now properties should be directly provided for task
+ - reworked Gradle plug-in, removed extension and now properties should be directly provided for task [#21](https://github.com/raydac/java-comment-preprocessor/issues/21)
  - refactoring, removed some auxiliary plugins from build process and extra code
 
 7.0.2 (15-jul-2019)
