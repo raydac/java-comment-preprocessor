@@ -77,8 +77,11 @@ import org.springframework.util.AntPathMatcher;
  * The main class implements the Java Comment Preprocessor, it has the main
  * method and can be started from a command string
  * Base directory for preprocessing can be provided through System property 'jcp.base.dir'
+ * if it is not provided then current work directory will be recognized as base one.
  */
 public final class JcpPreprocessor {
+
+  private static final String PROPERTY_JCP_BASE_DIR = "jcp.base.dir";
 
   static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[] {
       new HelpHandler(),
@@ -147,20 +150,11 @@ public final class JcpPreprocessor {
 
 
   private static File getBaseDir() {
-    String baseDirInProperties = System.getProperty("jcp.base.dir");
-    if (baseDirInProperties == null) {
-      File result;
-      try {
-        final File jarFile = new File(
-            JcpPreprocessor.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        result = jarFile.isDirectory() ? jarFile : jarFile.getParentFile();
-      } catch (Exception ex) {
-        result = new File("");
-      }
-      return result;
-    } else {
-      return new File(baseDirInProperties);
-    }
+    final String baseDirInProperties = System
+        .getProperty(PROPERTY_JCP_BASE_DIR,
+            System.getProperty("user.dir", new File("").getAbsolutePath())
+        );
+    return new File(baseDirInProperties);
   }
 
 
