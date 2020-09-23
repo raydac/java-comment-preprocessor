@@ -98,7 +98,7 @@ public class PreprocessorContext {
       .ensureNonNull(System.getProperty("jcp.line.separator", System.getProperty("line.separator")),
           "\n");
   private boolean verbose = false;
-  private boolean keepComments = false;
+  private boolean keepComments = true;
   private boolean clearTarget = false;
   private boolean dryRun = false;
   private boolean keepLines = false;
