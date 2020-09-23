@@ -151,8 +151,9 @@ public final class JcpPreprocessor {
     if (baseDirInProperties == null) {
       File result;
       try {
-        result = new File(
+        final File jarFile = new File(
             JcpPreprocessor.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        result = jarFile.isDirectory() ? jarFile : jarFile.getParentFile();
       } catch (Exception ex) {
         result = new File("");
       }
