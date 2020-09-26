@@ -1,3 +1,7 @@
+7.0.4 (26-ыуз-2020)
+ - fixed default flag state `keep comments` for start in CLI mode [#24](https://github.com/raydac/java-comment-preprocessor/issues/24)
+ - fixed working directory detection in CLI mode
+
 7.0.3 (13-sep-2020)
  - added way to get info about all input and produced files from preprocessor context
  - reworked Gradle plug-in, removed extension and now properties should be directly provided for task [#21](https://github.com/raydac/java-comment-preprocessor/issues/21)
