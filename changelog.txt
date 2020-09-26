@@ -1,4 +1,4 @@
-7.0.4 (26-ыуз-2020)
+7.0.4 (26-sep-2020)
  - fixed default flag state `keep comments` for start in CLI mode [#24](https://github.com/raydac/java-comment-preprocessor/issues/24)
  - fixed working directory detection in CLI mode
 

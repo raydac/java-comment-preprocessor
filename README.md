@@ -11,7 +11,7 @@
 
 # Changelog
 
-__7.0.4 (26-ыуз-2020)__
+__7.0.4 (26-sep-2020)__
 
 - fixed default flag state `keep comments` for start in CLI
   mode [#24](https://github.com/raydac/java-comment-preprocessor/issues/24)
