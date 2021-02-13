@@ -20,4 +20,8 @@ public class Main {
       throw new Error("Unexpected value: "+test);
     }
   }
+
+  public String getProperty() {
+    return "/*$mvn.project.property.my.custom.property$*/";
+  }
 }

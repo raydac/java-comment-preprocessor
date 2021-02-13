@@ -46,6 +46,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -82,6 +83,15 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   @Setter(AccessLevel.NONE)
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
   private MavenProject project;
+
+  /**
+   * Maven session to be preprocessed.
+   *
+   * @since 7.0.5
+   */
+  @Setter(AccessLevel.NONE)
+  @Parameter(defaultValue = "${session}", required = true, readonly = true)
+  private MavenSession session;
 
   /**
    * Source root folders for preprocessing, if it is empty then project provided folders will be used.
@@ -352,7 +362,11 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
     if (this.project != null) {
       final MavenPropertiesImporter mavenPropertiesImporter =
-          new MavenPropertiesImporter(context, project, isVerbose() || getLog().isDebugEnabled());
+              new MavenPropertiesImporter(context,
+                      this.project,
+                      this.session,
+                      isVerbose() || getLog().isDebugEnabled()
+              );
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 

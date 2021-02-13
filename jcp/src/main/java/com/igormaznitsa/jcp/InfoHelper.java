@@ -45,12 +45,12 @@ public final class InfoHelper {
 
 
   public static String getVersion() {
-    return "v7.0.4";
+    return "v7.0.5";
   }
 
 
   public static String getCopyright() {
-    return "Copyright (C) 2002-2020 Igor A. Maznitsa (https://www.igormaznitsa.com)";
+    return "Copyright (C) 2002-2021 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
 

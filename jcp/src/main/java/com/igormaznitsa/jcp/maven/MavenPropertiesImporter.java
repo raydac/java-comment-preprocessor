@@ -24,12 +24,16 @@ package com.igormaznitsa.jcp.maven;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.expression.Value;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
+
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 
@@ -41,42 +45,46 @@ import org.apache.maven.project.MavenProject;
 public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
   private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO =
-      Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
+          Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
 
   private static final String[] TO_IMPORT = {
-      "project.name",
-      "project.version",
-      "project.url",
-      "project.packaging",
-      "project.modelVersion",
-      "project.inceptionYear",
-      "project.id",
-      "project.groupId",
-      "project.description",
-      "project.artifact.id",
-      "project.artifact.artifactId",
-      "project.artifact.baseVersion",
-      "project.artifact.dependencyConflictId",
-      "project.artifact.downloadUrl",
-      "project.artifact.groupId",
-      "project.artifact.scope",
-      "project.artifact.type",
-      "project.artifact.version",
-      "project.build.directory",
-      "project.build.defaultGoal",
-      "project.build.outputDirectory",
-      "project.build.scriptSourceDirectory",
-      "project.build.sourceDirectory",
-      "project.build.testOutputDirectory",
-      "project.build.testSourceDirectory",
-      "project.organization.name",
-      "project.organization.url"};
+          "project.name",
+          "project.version",
+          "project.url",
+          "project.packaging",
+          "project.modelVersion",
+          "project.inceptionYear",
+          "project.id",
+          "project.groupId",
+          "project.description",
+          "project.artifact.id",
+          "project.artifact.artifactId",
+          "project.artifact.baseVersion",
+          "project.artifact.dependencyConflictId",
+          "project.artifact.downloadUrl",
+          "project.artifact.groupId",
+          "project.artifact.scope",
+          "project.artifact.type",
+          "project.artifact.version",
+          "project.build.directory",
+          "project.build.defaultGoal",
+          "project.build.outputDirectory",
+          "project.build.scriptSourceDirectory",
+          "project.build.sourceDirectory",
+          "project.build.testOutputDirectory",
+          "project.build.testSourceDirectory",
+          "project.organization.name",
+          "project.organization.url"};
 
   private final Map<String, Value> insideVarMap = new HashMap<>();
   private final MavenProject project;
+  private final MavenSession session;
 
-  public MavenPropertiesImporter(final PreprocessorContext context, final MavenProject project,
+  public MavenPropertiesImporter(final PreprocessorContext context,
+                                 final MavenProject project,
+                                 final MavenSession session,
                                  final boolean logAddedProperties) {
+    this.session = session;
     this.project = project;
     for (final String paramName : TO_IMPORT) {
       final String varName = "mvn." + paramName.toLowerCase(Locale.ENGLISH);
@@ -93,15 +101,24 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
       profileIds.append(profile.getId());
     }
     addVariableIntoInsideMap(context, "mvn.project.activeprofiles",
-        Value.valueOf(profileIds.toString()), logAddedProperties);
+            Value.valueOf(profileIds.toString()), logAddedProperties);
 
     // add properties
     for (final String propertyName : this.project.getProperties().stringPropertyNames()) {
       final String varName =
-          "mvn.project.property." + propertyName.toLowerCase(Locale.ENGLISH).replace(' ', '_');
-      final String value = this.project.getProperties().getProperty(propertyName);
-      addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
+              "mvn.project.property." + propertyName.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+      final String value = this.findPropertyValue(propertyName);
+      if (value!= null) {
+        addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
+      }
     }
+  }
+
+  private String findPropertyValue(final String key) {
+    final Properties properties = new Properties(this.project.getProperties());
+    properties.putAll(this.session.getSystemProperties());
+    properties.putAll(this.session.getUserProperties());
+    return properties.getProperty(key);
   }
 
 
@@ -117,7 +134,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     try {
       if (root == null) {
         throw new IllegalArgumentException(
-            "Unsupported root object detected [" + splitted[0] + ']');
+                "Unsupported root object detected [" + splitted[0] + ']');
       } else {
         for (int i = 1; i < splitted.length - 1; i++) {
           final Method getter = root.getClass().getMethod(normalizeGetter(splitted[i]));
@@ -128,7 +145,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
         }
 
         final Method finalStringGetter =
-            root.getClass().getMethod(normalizeGetter(splitted[splitted.length - 1]));
+                root.getClass().getMethod(normalizeGetter(splitted[splitted.length - 1]));
         final Object result = finalStringGetter.invoke(root);
         return result == null ? "" : result.toString();
       }
@@ -149,9 +166,9 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   private void printInfoAboutVarIntoLog(final PreprocessorContext context, final String varName,
                                         final String value) {
     final boolean possibleContainsPrivateInfo =
-        PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
+            PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO.matcher(varName).find();
     final String textValue =
-        possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
+            possibleContainsPrivateInfo ? "***** [hidden because may contain private info]" : value;
     context.logInfo("Added MAVEN property " + varName + '=' + textValue);
   }
 
@@ -186,7 +203,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   public void setVariable(final String varName, final Value value,
                           final PreprocessorContext context) {
     throw new UnsupportedOperationException(
-        "An attempt to change a maven property detected, those properties are accessible only for reading [" +
-            varName + ']');
+            "An attempt to change a maven property detected, those properties are accessible only for reading [" +
+                    varName + ']');
   }
 }
