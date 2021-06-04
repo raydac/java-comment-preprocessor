@@ -27,6 +27,23 @@
 
     <profiles>
         <profile>
+            <id>java-9</id>
+            <activation>
+                <jdk>[9</jdk>
+            </activation>
+            <properties>
+                <argLine>
+                    --add-opens java.base/java.lang=ALL-UNNAMED
+                    --add-opens java.base/java.io=ALL-UNNAMED
+                    --add-opens java.base/java.util=ALL-UNNAMED
+                    --add-opens java.base/java.util.stream=ALL-UNNAMED
+                    --add-opens java.base/java.net=ALL-UNNAMED
+                    --add-opens java.base/java.nio.charset=ALL-UNNAMED
+                    --add-opens java.base/sun.nio.cs=ALL-UNNAMED
+                </argLine>
+            </properties>
+        </profile>
+        <profile>
             <id>new-jdk</id>
             <activation>
                 <jdk>(1.8,]</jdk>
