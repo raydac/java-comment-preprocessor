@@ -8,3 +8,4 @@
 /.idea/libraries
 /jcp-tests/jcp-test-jep238/build.log
 /jcp-tests/jcp-test-gradle/.buildProfile/report/
+/jcp/.flattened-pom.xml

@@ -11,6 +11,11 @@
 
 # Changelog
 
+__7.0.5 (SNAPSHOT)__
+
+- added support of build under JDK 16
+- updated dependencies
+
 __7.0.4 (26-sep-2020)__
 
 - fixed default flag state `keep comments` for start in CLI

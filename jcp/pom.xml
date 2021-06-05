@@ -62,9 +62,8 @@
                 <configuration>
                   <!--<failOnError>false</failOnError>-->
                   <sourceFileExcludes>
-                    <exclude>HelpMojo.java</exclude>
+                    <exclude>**/HelpMojo.java</exclude>
                     <exclude>**/AntPathMatcher.java</exclude>
-                    <exclude>com/igormaznitsa/meta/**/*.*</exclude>
                   </sourceFileExcludes>
                 </configuration>
               </execution>
@@ -206,13 +205,13 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>2.0.0</version>
+      <version>2.0.9</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
-      <version>2.0.0</version>
+      <version>2.0.9</version>
       <scope>test</scope>
     </dependency>
 
