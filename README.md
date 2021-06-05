@@ -37,6 +37,8 @@ Initially the tool developed for J2ME game development in 2002. It was too expen
 
 I guess, at present it is the most powerful two-pass Java preprocessor which aware for document structure (prefix, body and postfix), loops and even can use XML files as data sources ([I used to generate static web-sites with it](jcp-tests/jcp-test-static-site)). At present the preprocessor represented as a solid uber-jar including Maven, ANT and Gradle interface code and can be used with these tools as their plugin. Minimal required JDK is 1.8
 
+__Some Linux repositories provide the preprocessor just out of the box as package `libcomment-preprocessor-java`.__
+
 # Mind map with all options
 
 ![Mind map of preprocessor options](assets/documap.png)
@@ -75,7 +77,7 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
 ```
 
 # How to use from command line
-The uber-jar can be started directly under Java as through CLI interface. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
+The uber-jar can be started directly under Java through CLI interface. Let's take a look at short example below how to start it in command line under Linux:
 ```
 java -jar jcp-7.0.4.jar  --i:./test --o:./result
 ```
