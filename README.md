@@ -33,27 +33,24 @@ __7.0.3 (13-sep-2020)__
 
 # Introduction
 
-Since 2001 I was strongly involved in development for J2ME mobile devices, it was too expensive to support the same
-sources for different devices if to use standard Java OOP approach, so that I choosed C/C++ approach and developed
-preprocessor which made my life much easier. Inintially it was a proprietary project but since 2011 it became OSS
-project.
+Initially the tool developed for J2ME game development in 2002. It was too expensive for me to support multiple sources for many J2ME devices especially if it was needed just change position of several calls for different devices. So the preprocessor was born and because Java is the main technology in use, it is sharpened for use with C/Java family languages (which have import sections and C-comment style). For long time the preprocessor was proprietary project but since 2011 it was opened as an OSS project.
 
-I guess, at present it is the most powerful Java preprocessor with support of two-pass preprocessing, document part support, loops and even use XML files as data sources ([I generated static files with it](jcp-tests/jcp-test-static-site)). Now it is implemented as a fat-jar and includes Maven, ANT and Gradle interfaces and can be used with these tools. For work it needs JDK 1.8+.
+I guess, at present it is the most powerful two-pass Java preprocessor which aware for document structure (prefix, body and postfix), loops and even can use XML files as data sources ([I used to generate static web-sites with it](jcp-tests/jcp-test-static-site)). At present the preprocessor represented as a solid uber-jar including Maven, ANT and Gradle interface code and can be used with these tools as their plugin. Minimal required JDK is 1.8
 
-# Documap
+# Mind map with all options
 
-![Documap](assets/documap.png)
+![Mind map of preprocessor options](assets/documap.png)
 
 # How to use
 
 The Preprocessor can work as:
-  - a CLI tool
-  - a Java library
-  - [a Maven goal](jcp-tests/jcp-test-maven)
-  - [an ANT task](jcp-tests/jcp-test-ant)
-  - [a Gradle task](jcp-tests/jcp-test-gradle)
+  - CLI tool
+  - Java JAR-library
+  - [Maven goal](jcp-tests/jcp-test-maven)
+  - [ANT task](jcp-tests/jcp-test-ant)
+  - [Gradle task](jcp-tests/jcp-test-gradle)
 
-The Preprocessor is published in the Maven Central (it is not published in Gradle central, so that use the Maven central)
+The preprocessor has been published in [the Maven Central](https://search.maven.org/artifact/com.igormaznitsa/jcp).
 ```
     <build>
         <plugins>
@@ -78,11 +75,11 @@ The Preprocessor is published in the Maven Central (it is not published in Gradl
 ```
 
 # How to use from command line
-The Preprocessor jar can be started under Java as a console application. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
+The uber-jar can be started directly under Java as through CLI interface. Let's take a look at short example below how to start in command line under Linux The Easy variant of usage:
 ```
 java -jar jcp-7.0.4.jar  --i:./test --o:./result
 ```
-The Example just preprocess files from ./test folder which extensions allowed to be preprocessed by default, and places result into ./result folder, but keep in your mind that the preprocessor copies not all files, XML files will not be preprocessed by default. Files which extension are not marked for preprocessing will be just copied (of course if the extensions is not in the list of excluded file extensions)
+The example above just preprocessing files from ./test folder (which extensions allowed to be preprocessed by default), and placing result files into ./result folder. Keep in your mind that the preprocessor processing not all files, for instance XML files will not be preprocessed by default. Files which extension not marked for preprocessing will be just copied (of course if the extensions is not in the excluded extension list)
 
 More complex example:
 ```
@@ -99,14 +96,14 @@ java -jar jcp-7.0.4.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./res
 - --z turn on checking of file content before replacement, if the same content then preprocessor will not replace the file  
 - --es allow whitespace between comment and directive (by default it is turned off)
 
-# Internal test examples
+# Some examples
 - [Prepare sources for Javassist](jcp-tests/jcp-test-javassist)
 - [Make multi-versioned JAR  for JEP-238](jcp-tests/jcp-test-jep238)
 - [Generate static file from XML sources](jcp-tests/jcp-test-static-site)
 - [Simple Android Gradle-based project](jcp-tests/jcp-test-android)
 
 # Example of Java sources with directives
-In Java the only allowed way to inject directives and to not break work of tools and conpilers - is to use commented space, so that the preprocessor uses it.
+In Java the only allowed way to inject directives and to not break work of tools and compilers - is to use commented space, so that the preprocessor uses it.
 ```Java
 //#local TESTVAR="TEST LOCAL VARIABLE"
 //#echo TESTVAR=/*$TESTVAR$*/
@@ -130,7 +127,7 @@ public static final void testproc()
 ```
 
 # Multi-sectioned documents
-In opposite a regular document, a Java document has as minimum two sections - prefix (where situated import and special information) and body. For access to such sections there are special preprocessing directives `//#prefix[-|+]`, `//#postfix[-|+]`. They allow to turn on or turn off output into prefix and postfix sections.
+In opposite a regular document, a Java document has as minimum two sections - prefix (where situated import and special information) and body. For access to such sections there are special preprocessing directives `//#prefix[-|+]`, `//#postfix[-|+]`. They allow turning on or off output into prefix and postfix sections.
 ```Java
 //#prefix+
  import java.lang.*;
@@ -142,8 +139,8 @@ In opposite a regular document, a Java document has as minimum two sections - pr
   public static void main(String ... args){}
  }
 ```
-# How to remove all coments from sources
-Sometime it is very useful to remove totally all comments from sources, such possiblitiy was included into JCP and can be activated through special flag or command line switcher. The Example of use for comment removing through CLI interface
+# How to remove all comments from sources
+Sometimes it is very useful to remove totally all comments from sources, such possibility included into JCP and can be activated with either a special flag or command line switcher. The example below shows how to remove all comments with CLI use:
 ```
 java -jar ./jcp-7.0.4.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
