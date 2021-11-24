@@ -13,7 +13,9 @@
         <junit.version>5.4.2</junit.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <gradle.executable>gradle</gradle.executable>
+        <gradle5.executable>gradle5</gradle5.executable>
+        <gradle6.executable>gradle6</gradle6.executable>
+        <gradle7.executable>gradle7</gradle7.executable>
     </properties>
 
     <modules>
@@ -21,7 +23,9 @@
         <module>jcp-test-maven</module>
         <module>jcp-test-static-site</module>
         <module>jcp-test-javassist</module>
-        <module>jcp-test-gradle</module>
+        <module>jcp-test-gradle-5</module>
+        <module>jcp-test-gradle-6</module>
+        <module>jcp-test-gradle-7</module>
         <module>jcp-test-android</module>
     </modules>
 

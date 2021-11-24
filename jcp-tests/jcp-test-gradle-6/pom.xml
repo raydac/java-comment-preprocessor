@@ -9,8 +9,17 @@
     <version>0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jcp-test-android</artifactId>
+  <artifactId>jcp-test-gradle-6</artifactId>
   <packaging>pom</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -24,19 +33,7 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}/.gradle</directory>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
               <directory>${project.basedir}</directory>
-              <includes>
-                <include>gradlew</include>
-                <include>gradlew.bat</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${project.basedir}${file.separator}app</directory>
               <includes>
                 <include>gradlew</include>
                 <include>gradlew.bat</include>
@@ -48,19 +45,11 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}${file.separator}build</directory>
+              <directory>${project.basedir}/build</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}${file.separator}app${file.separator}build</directory>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${project.basedir}${file.separator}out</directory>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${project.basedir}${file.separator}app${file.separator}out</directory>
+              <directory>${project.basedir}/out</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
@@ -78,10 +67,13 @@
               <arguments>
                 <argument>clean</argument>
                 <argument>test</argument>
-                <argument>build</argument>
-                <argument>-i</argument>
-                <argument>-S</argument>
-                <argument>-Pjcp_plugin_version=${jcp.test.version}</argument>
+                <argument>jar</argument>
+                <argument>--rerun-tasks</argument>
+                <argument>--scan</argument>
+                <argument>--full-stacktrace</argument>
+                <argument>
+                  -Pjcp_plugin_path=${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar
+                </argument>
               </arguments>
             </configuration>
             <goals>

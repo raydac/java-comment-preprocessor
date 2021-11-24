@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        flatDir dirs: "../../jcp/target"
+    }
+    dependencies {
+        classpath "com.igormaznitsa:jcp:7.0.5-SNAPSHOT"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.igormaznitsa.jcp'
+
+mainClassName = 'hello.world'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.igormaznitsa.jcp.it.gradle.MainTwo'
+        )
+    }
+}
+
+
+preprocess {
+    sources = sourceSets.main.java.srcDirs
+    allowWhitespaces = true
+    eol = '\r\n'
+    keepAttributes = true
+    sourceEncoding = 'UTF-8'
+    targetEncoding = 'UTF-8'
+    ignoreMissingSources = false
+    excludeExtensions = ['txt', 'xml']
+    fileExtensions = ['java']
+    unknownVarAsFalse = false
+    dryRun = false
+    verbose = true
+    clearTarget = true
+    careForLastEol = true
+    keepComments = true
+    excludeFolders = ['**/some1', '**/some2']
+    configFiles = ['./configFile.txt']
+    keepLines = true
+    allowWhitespaces = true
+    preserveIndents = true
+    dontOverwriteSameContent = false
+    vars = ['some.test.global': 'Some Test Global Value']
+}
+task(changeSourceFolder) {
+    sourceSets.main.java.srcDirs = [preprocess.target]
+}.dependsOn preprocess
+
+
+compileJava.dependsOn preprocess
+
+gradle.buildFinished {
+    println("Incoming preprocess files: " + preprocess.incomingFiles.size())
+    println("Resulted preprocess files: " + preprocess.outcomingFiles.size())
+}

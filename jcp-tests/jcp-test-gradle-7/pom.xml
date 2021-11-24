@@ -9,7 +9,7 @@
     <version>0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jcp-test-gradle</artifactId>
+  <artifactId>jcp-test-gradle-7</artifactId>
   <packaging>pom</packaging>
 
   <dependencies>
@@ -63,11 +63,12 @@
             <id>gradle</id>
             <phase>compile</phase>
             <configuration>
-              <executable>${gradle.executable}</executable>
+              <executable>${gradle7.executable}</executable>
               <arguments>
                 <argument>clean</argument>
                 <argument>test</argument>
                 <argument>jar</argument>
+                <argument>--rerun-tasks</argument>
                 <argument>--scan</argument>
                 <argument>--full-stacktrace</argument>
                 <argument>
