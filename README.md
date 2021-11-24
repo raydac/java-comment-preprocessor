@@ -13,6 +13,7 @@
 
 __7.0.5 (SNAPSHOT)__
 
+- fixed compatibility with Gradle 7.x
 - added support of build under JDK 16
 - updated dependencies
 
