@@ -1,7 +1,7 @@
 ![Logo](assets/github1280x640.png)
 
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.0.4|jar)
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.0.5|jar)
 [![Java 1.8+](https://img.shields.io/badge/java-1.8%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Gradle 3.0+](https://img.shields.io/badge/gradle-3.0%2b-green.svg)](https://gradle.org/)
@@ -61,7 +61,7 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>7.0.4</version>
+                <version>7.0.5</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -80,13 +80,13 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
 # How to use from command line
 The uber-jar can be started directly under Java through CLI interface. Let's take a look at short example below how to start it in command line under Linux:
 ```
-java -jar jcp-7.0.4.jar  --i:./test --o:./result
+java -jar jcp-7.0.5.jar  --i:./test --o:./result
 ```
 The example above just preprocessing files from ./test folder (which extensions allowed to be preprocessed by default), and placing result files into ./result folder. Keep in your mind that the preprocessor processing not all files, for instance XML files will not be preprocessed by default. Files which extension not marked for preprocessing will be just copied (of course if the extensions is not in the excluded extension list)
 
 More complex example:
 ```
-java -jar jcp-7.0.4.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-7.0.5.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -145,5 +145,5 @@ In opposite a regular document, a Java document has as minimum two sections - pr
 # How to remove all comments from sources
 Sometimes it is very useful to remove totally all comments from sources, such possibility included into JCP and can be activated with either a special flag or command line switcher. The example below shows how to remove all comments with CLI use:
 ```
-java -jar ./jcp-7.0.4.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-7.0.5.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ```
