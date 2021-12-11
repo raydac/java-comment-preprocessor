@@ -20,7 +20,7 @@
             <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>7.0.5-SNAPSHOT</version>
+                <version>7.0.5</version>
                 <goals>
                     <goal>preprocess</goal>
                 </goals>

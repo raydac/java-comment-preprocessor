@@ -11,7 +11,7 @@
 
 # Changelog
 
-__7.0.5 (SNAPSHOT)__
+__7.0.5 (11-dec-2021)__
 
 - fixed compatibility with Gradle 7.x
 - added support of build under JDK 16
