@@ -71,7 +71,7 @@ import java.util.Set;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.util.AntPathMatcher;
+import com.igormaznitsa.jcp.utils.AntPathMatcher;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main

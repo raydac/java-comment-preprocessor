@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 
 import org.junit.Test;
-import org.springframework.util.AntPathMatcher;
+import com.igormaznitsa.jcp.utils.AntPathMatcher;
 
 public class AntPathMatcherTest {
 
