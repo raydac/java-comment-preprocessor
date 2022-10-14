@@ -29,8 +29,8 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
 import java.io.IOException;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -85,7 +85,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
 
   private Document openFileAndParse(final PreprocessorContext context, final File file) {
-    final DocumentBuilderFactoryImpl docBuilderFactory = new DocumentBuilderFactoryImpl();
+    final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     docBuilderFactory.setIgnoringComments(true);
     docBuilderFactory.setCoalescing(true);
     docBuilderFactory.setValidating(false);

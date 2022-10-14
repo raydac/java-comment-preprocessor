@@ -156,27 +156,6 @@
       <version>1.15</version>
     </dependency>
     <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.12.2</version>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <version>2.7.2</version>
-        <exclusions>
-          <exclusion>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-          </exclusion>
-        </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>1.4.01</version>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
@@ -376,10 +355,6 @@
             <configuration>
               <relocations>
                 <relocation>
-                  <pattern>javax.xml</pattern>
-                  <shadedPattern>hidden.jcp.javax.xml</shadedPattern>
-                </relocation>
-                <relocation>
                   <pattern>org.apache.commons</pattern>
                   <shadedPattern>hidden.jcp.org.apache.commons</shadedPattern>
                 </relocation>
@@ -388,44 +363,8 @@
                   <shadedPattern>hidden.jcp.license</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>org.xml</pattern>
-                  <shadedPattern>hidden.jcp.org.xml</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.xpath</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.xpath</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.xml</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.xml</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.wml</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.wml</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.regexp</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.regexp</shadedPattern>
-                </relocation>
-                <relocation>
                   <pattern>org.apache.html</pattern>
                   <shadedPattern>hidden.jcp.org.apache.html</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.bcel</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.bcel</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.xerces</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.xerces</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.xalan</pattern>
-                  <shadedPattern>hidden.jcp.org.apache.xalan</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.w3c</pattern>
-                  <shadedPattern>hidden.jcp.org.w3c</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>java_cup</pattern>
@@ -447,10 +386,7 @@
                   <include>commons-codec:*</include>
                   <include>commons-text:*</include>
                   <include>org.apache.commons:*</include>
-                  <include>xerces:*</include>
-                  <include>xalan:*</include>
                   <include>com.igormaznitsa:*</include>
-                  <include>xml-apis:*</include>
                 </includes>
               </artifactSet>
               <filters>
@@ -460,10 +396,7 @@
                     <exclude>META-INF/*.SF</exclude>
                     <exclude>META-INF/*.DSA</exclude>
                     <exclude>META-INF/*.RSA</exclude>
-                    <exclude>META-INF/services/javax.xml.*</exclude>
                     <exclude>META-INF/services/org.apache.*</exclude>
-                    <exclude>META-INF/services/org.w3c.*</exclude>
-                    <exclude>META-INF/services/org.xml.*</exclude>
                   </excludes>
                 </filter>
               </filters>

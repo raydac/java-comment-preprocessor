@@ -32,6 +32,7 @@ import com.igormaznitsa.jcp.expression.functions.AbstractFunctionTest;
 import java.io.File;
 import org.junit.Before;
 import org.mockito.stubbing.Answer;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 public abstract class AbstractFunctionXMLTest extends AbstractFunctionTest {
 
