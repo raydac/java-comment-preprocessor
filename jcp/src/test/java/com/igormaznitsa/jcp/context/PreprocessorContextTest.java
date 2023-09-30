@@ -52,9 +52,9 @@ public class PreprocessorContextTest {
 
   private static final Random RND = new Random(776655);
 
-  private static Set<Field> extractDeclaredNonStaticNonFinalFields(final Class<?> klazz) throws Exception {
+  private static Set<Field> extractDeclaredNonStaticNonFinalFields(final Class<?> targetClass) {
     final Set<Field> result = new HashSet<>();
-    for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
+    for (final Field f : targetClass.getDeclaredFields()) {
       if ((f.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) != 0) {
         continue;
       }
@@ -150,7 +150,7 @@ public class PreprocessorContextTest {
     assertEquals(4, detected);
   }
 
-  private static void assertContextEquals(final Map<Field, Object> etalon, final Map<Field, Object> value) throws Exception {
+  private static void assertContextEquals(final Map<Field, Object> etalon, final Map<Field, Object> value) {
     assertEquals("Must have same number of elements", etalon.size(), value.size());
 
     for (final Field f : etalon.keySet()) {
@@ -168,6 +168,7 @@ public class PreprocessorContextTest {
     return result.toString();
   }
 
+  @SuppressWarnings("unchecked")
   private static void fillByRandomValues(final PreprocessorContext context) throws Exception {
 
     for (final Field f : extractDeclaredNonStaticNonFinalFields(PreprocessorContext.class)) {
@@ -207,7 +208,6 @@ public class PreprocessorContextTest {
         try {
           f.set(context, new HashSet<>(Arrays.asList(arr)));
         } catch (Exception ex) {
-          ex.printStackTrace();
           fail("Can't set value to '" + f.getName() + '\'');
         }
       } else if (type == Charset.class) {

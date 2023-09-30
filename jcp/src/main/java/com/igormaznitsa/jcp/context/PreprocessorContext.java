@@ -127,13 +127,13 @@ public class PreprocessorContext {
     this.preprocessedResources = new ArrayList<>();
     this.activatedConfigFiles = new ArrayList<>();
     this.baseDir = Objects.requireNonNull(baseDir, "Base folder must not be null");
-    this.preprocessingState
-        .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
-    setSources(DEFAULT_SOURCE_DIRECTORY).setTarget(new File(DEFAULT_DEST_DIRECTORY));
-    registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
-    registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
+    this.setSources(DEFAULT_SOURCE_DIRECTORY).setTarget(new File(DEFAULT_DEST_DIRECTORY));
+    this.registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
+    this.registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
     this.currentInCloneSource = null;
+    this.preprocessingState
+            .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
   }
 
   /**
