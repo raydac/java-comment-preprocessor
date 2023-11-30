@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.containers;
 
 import static java.util.Objects.requireNonNull;
 
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -128,24 +127,81 @@ public class FileInfoContainer {
     return result;
   }
 
-  public void setTargetFolder(final String targetFolder) {
-    this.targetFolder = requireNonNull(targetFolder, "Target folder must not be null");
+  /**
+   * Check that text line starts with two commented dollar chars
+   * @param line text line to be examined, must not be null
+   * @param allowedWhitespaces if true then whitespaces allowed after line comment
+   * @return true if the line starts with two commented dollar chars, false otherwise
+   * @since 7.0.6
+   */
+  public static boolean isDoubleDollarPrefixed(final String line, final boolean allowedWhitespaces) {
+    if (allowedWhitespaces) {
+      return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$$");
+    }
   }
 
-  public void setTargetName(final String targetName) {
+  /**
+   * Check that text line starts with single dollar chars
+   * @param line text line to be examined, must not be null
+   * @param allowedWhitespaces if true then whitespaces allowed after line comment
+   * @return true if the line starts with single dollar chars, false otherwise
+   * @since 7.0.6
+   */
+  public static boolean isSingleDollarPrefixed(final String line, final boolean allowedWhitespaces) {
+    if (allowedWhitespaces) {
+      return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$");
+    }
+  }
+
+  /**
+   * Allows to check that a text line can be considered as a JCP directive or special line.
+   * @param line text line to be examined
+   * @param allowedWhitespaces if true then whitespaces allowed after line comment
+   * @return true if the line can be considered as JCP one, false otherwise
+   * @since 7.0.6
+   */
+  public static boolean isJcpCommentLine(final String line, final boolean allowedWhitespaces) {
+    return isJcpDirectiveLine(line, allowedWhitespaces)
+        || isSingleDollarPrefixed(line, allowedWhitespaces);
+  }
+
+  /**
+   * Check that a text line contains comment directive.
+   *
+   * @param line string to be examined
+   * @param allowWhitespaces flag to allow spaces betwee hash and started comment chars
+   * @return true if the line contains a directive, false otherwise
+   * @since 7.0.6
+   */
+  public static boolean isJcpDirectiveLine(final String line, final boolean allowWhitespaces) {
+    if (allowWhitespaces) {
+      return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
+    }
+  }
+
+  public void setTargetFolder(final String folder) {
+    this.targetFolder = requireNonNull(folder, "Target folder must not be null");
+  }
+
+  public void setTargetFileName(final String name) {
     this.targetFileName =
-        requireNonNull(targetFileName, "Target file name must not be null");
+        requireNonNull(name, "Target file name must not be null");
   }
-
 
   public String makeTargetFilePathAsString() {
-    String targetFolder = this.getTargetFolder();
-    if (!targetFolder.isEmpty() &&
-        targetFolder.charAt(targetFolder.length() - 1) != File.separatorChar) {
-      targetFolder = targetFolder + File.separatorChar;
+    String folder = this.getTargetFolder();
+    if (!folder.isEmpty() &&
+        folder.charAt(folder.length() - 1) != File.separatorChar) {
+      folder = folder + File.separatorChar;
     }
 
-    return targetFolder + this.getTargetFileName();
+    return folder + this.getTargetFileName();
   }
 
   @Override
@@ -225,28 +281,10 @@ public class FileInfoContainer {
     }
   }
 
-  private boolean isDoubleDollarPrefixed(final String line, final PreprocessorContext context) {
-    if (context.isAllowWhitespaces()) {
-      return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
-    } else {
-      return line.startsWith("//$$");
-    }
-  }
-
-  private boolean isSingleDollarPrefixed(final String line, final PreprocessorContext context) {
-    if (context.isAllowWhitespaces()) {
-      return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
-    } else {
-      return line.startsWith("//$");
-    }
-  }
-
   private boolean isHashPrefixed(final String line, final PreprocessorContext context) {
-    if (context.isAllowWhitespaces()) {
-      return DIRECTIVE_HASH_PREFIXED.matcher(line).matches();
-    } else {
-      final boolean result = line.startsWith(AbstractDirectiveHandler.DIRECTIVE_PREFIX);
-
+    final boolean allowedWhitespaces = context.isAllowWhitespaces();
+    final boolean result = isJcpDirectiveLine(line, allowedWhitespaces);
+    if (!allowedWhitespaces) {
       if (context.getPreprocessingState().isGlobalPhase() && !result && line.startsWith("// ") &&
           DIRECTIVE_HASH_PREFIXED.matcher(line).matches()) {
         final TextFileDataContainer textContainer =
@@ -258,9 +296,8 @@ public class FileInfoContainer {
         }
         context.logWarning(WARNING_SPACE_BEFORE_HASH + lineInfo);
       }
-
-      return result;
     }
+    return result;
   }
 
 
@@ -271,7 +308,7 @@ public class FileInfoContainer {
       if (matcher.find()) {
         return matcher.group(1);
       } else {
-        throw new Error(
+        throw new IllegalStateException(
             "Unexpected situation, directive is not found, contact developer! (" + line + ')');
       }
     } else {
@@ -288,7 +325,7 @@ public class FileInfoContainer {
       if (matcher.find()) {
         tail = matcher.group(1);
       } else {
-        throw new Error(
+        throw new IllegalStateException(
             "Unexpected situation, '//$$' directive is not found, contact developer! (" + line +
                 ')');
       }
@@ -311,7 +348,7 @@ public class FileInfoContainer {
       if (matcher.find()) {
         tail = matcher.group(1);
       } else {
-        throw new Error(
+        throw new IllegalStateException(
             "Unexpected situation, '//$' directive is not found, contact developer! (" + line +
                 ')');
       }
@@ -435,7 +472,7 @@ public class FileInfoContainer {
               continue;
             }
             default:
-              throw new Error("Unsupported result");
+              throw new IllegalStateException("Unsupported result");
           }
         }
 
@@ -443,7 +480,7 @@ public class FileInfoContainer {
         if (preprocessingState.isDirectiveCanBeProcessed() &&
             !preprocessingState.getPreprocessingFlags()
                 .contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
-          final boolean startsWithTwoDollars = isDoubleDollarPrefixed(leftTrimmedString, context);
+          final boolean startsWithTwoDollars = isDoubleDollarPrefixed(leftTrimmedString, context.isAllowWhitespaces());
 
           if (!startsWithTwoDollars) {
             stringToBeProcessed = PreprocessorUtils.processMacroses(leftTrimmedString, context);
@@ -458,7 +495,7 @@ public class FileInfoContainer {
             } else {
               thePrinter.print(text);
             }
-          } else if (isSingleDollarPrefixed(stringToBeProcessed, context)) {
+          } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
             // Output the tail of the string to the output stream without comments
             thePrinter.print(stringPrefix);
 
@@ -528,7 +565,7 @@ public class FileInfoContainer {
       if (context.isVerbose()) {
         context.logForVerbose(String
             .format("Content was %s into file '%s'", (wasSaved ? "saved" : "not saved"),
-                outFile.toString()));
+                outFile));
       }
 
       if (this.sourceFile != null && context.isKeepAttributes() &&
