@@ -17,7 +17,6 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <min.maven.api>3.0</min.maven.api>
         <junit.version>5.10.0</junit.version>
-        <maven.compiler.release>8</maven.compiler.release>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -38,7 +37,7 @@
             <name>Igor Maznitsa</name>
             <email>rrg4400@gmail.com</email>
             <url>https://www.igormaznitsa.com</url>
-            <timezone>+3</timezone>
+            <timezone>+2</timezone>
             <roles>
                 <role>developer</role>
             </roles>
@@ -164,22 +163,28 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>no-duplicate-declared-dependencies</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
+                        <id>enforce</id>
                         <configuration>
                             <rules>
                                 <banDuplicatePomDependencyVersions/>
                                 <enforceBytecodeVersion>
-                                    <maxJdkVersion>1.8</maxJdkVersion>
+                                    <maxJdkVersion>${maven.compiler.target}</maxJdkVersion>
                                 </enforceBytecodeVersion>
-                                <!--                                <dependencyConvergence/>-->
+                                <banCircularDependencies/>
+                                <reactorModuleConvergence/>
+                                <requireJavaVersion>
+                                    <version>${maven.compiler.target}</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[${min.maven.api}},)</version>
+                                </requireMavenVersion>
                             </rules>
                         </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <dependencies>
