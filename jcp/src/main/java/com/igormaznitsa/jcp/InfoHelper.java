@@ -80,7 +80,7 @@ public final class InfoHelper {
 
     result.add("Directives");
     result.add(SHORT_DELIMITER);
-    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.getAllDirectives()) {
+    for (final AbstractDirectiveHandler handler : AbstractDirectiveHandler.findAllDirectives()) {
       result.add(makeDirectiveReference(handler));
     }
     result.add(DELIMITER);

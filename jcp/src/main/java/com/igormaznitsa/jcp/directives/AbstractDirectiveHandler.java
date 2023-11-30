@@ -22,6 +22,8 @@
 package com.igormaznitsa.jcp.directives;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The class is the abstract parent for all classes process preprocessor
@@ -52,55 +54,46 @@ public abstract class AbstractDirectiveHandler {
    */
   public static final String ONE_LINE_COMMENT = "//";
 
-  /**
-   * The array contains all directives of the preprocessor
-   */
-  private static volatile AbstractDirectiveHandler[] allDirectives;
-
-
-  public static AbstractDirectiveHandler[] getAllDirectives() {
-    if (allDirectives == null) {
-      allDirectives = new AbstractDirectiveHandler[] {
-          new LocalDirectiveHandler(),
-          new IfDefinedDirectiveHandler(),
-          new IfNDefDirectiveHandler(),
-          new IfDefDirectiveHandler(),
-          new IfDirectiveHandler(),
-          new ElseDirectiveHandler(),
-          new EndIfDirectiveHandler(),
-          new WhileDirectiveHandler(),
-          new BreakDirectiveHandler(),
-          new ContinueDirectiveHandler(),
-          new EndDirectiveHandler(),
-          new ExitIfDirectiveHandler(),
-          new ExitDirectiveHandler(),
-          new OutdirDirectiveHandler(),
-          new OutEnabledDirectiveHandler(),
-          new OutNameDirectiveHandler(),
-          new OutDisabledDirectiveHandler(),
-          new CommentNextLineDirectiveHandler(),
-          new DefinelDirectiveHandler(),
-          new DefineDirectiveHandler(),
-          new UndefDirectiveHandler(),
-          new FlushDirectiveHandler(),
-          new IncludeDirectiveHandler(),
-          new ActionDirectiveHandler(),
-          new PostfixDirectiveHandler(),
-          new PrefixDirectiveHandler(),
-          new GlobalDirectiveHandler(),
-          new GlobalElseDirectiveHandler(),
-          new GlobalEndIfDirectiveHandler(),
-          new GlobalIfDirectiveHandler(),
-          new ExcludeIfDirectiveHandler(),
-          new ErrorDirectiveHandler(),
-          new WarningDirectiveHandler(),
-          new EchoDirectiveHandler(),
-          new MsgDirectiveHandler(),
-          new NoAutoFlushHandler(),
-          new AbortDirectiveHandler()
-      };
-    }
-    return allDirectives;
+  public static List<AbstractDirectiveHandler> findAllDirectives() {
+    final List<AbstractDirectiveHandler> result = new ArrayList<>();
+    result.add(new LocalDirectiveHandler());
+    result.add(new IfDefinedDirectiveHandler());
+    result.add(new IfNDefDirectiveHandler());
+    result.add(new IfDefDirectiveHandler());
+    result.add(new IfDirectiveHandler());
+    result.add(new ElseDirectiveHandler());
+    result.add(new EndIfDirectiveHandler());
+    result.add(new WhileDirectiveHandler());
+    result.add(new BreakDirectiveHandler());
+    result.add(new ContinueDirectiveHandler());
+    result.add(new EndDirectiveHandler());
+    result.add(new ExitIfDirectiveHandler());
+    result.add(new ExitDirectiveHandler());
+    result.add(new OutdirDirectiveHandler());
+    result.add(new OutEnabledDirectiveHandler());
+    result.add(new OutNameDirectiveHandler());
+    result.add(new OutDisabledDirectiveHandler());
+    result.add(new CommentNextLineDirectiveHandler());
+    result.add(new DefinelDirectiveHandler());
+    result.add(new DefineDirectiveHandler());
+    result.add(new UndefDirectiveHandler());
+    result.add(new FlushDirectiveHandler());
+    result.add(new IncludeDirectiveHandler());
+    result.add(new ActionDirectiveHandler());
+    result.add(new PostfixDirectiveHandler());
+    result.add(new PrefixDirectiveHandler());
+    result.add(new GlobalDirectiveHandler());
+    result.add(new GlobalElseDirectiveHandler());
+    result.add(new GlobalEndIfDirectiveHandler());
+    result.add(new GlobalIfDirectiveHandler());
+    result.add(new ExcludeIfDirectiveHandler());
+    result.add(new ErrorDirectiveHandler());
+    result.add(new WarningDirectiveHandler());
+    result.add(new EchoDirectiveHandler());
+    result.add(new MsgDirectiveHandler());
+    result.add(new NoAutoFlushHandler());
+    result.add(new AbortDirectiveHandler());
+    return result;
   }
 
   /**

@@ -28,6 +28,7 @@ import static java.util.Collections.unmodifiableList;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
+import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -117,6 +118,7 @@ public class PreprocessorContext {
   @Setter(AccessLevel.NONE)
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private List<String> excludeFolders = new ArrayList<>();
+  private static final List<AbstractDirectiveHandler> directiveHandlers = AbstractDirectiveHandler.findAllDirectives();
 
   /**
    * Constructor
@@ -194,6 +196,15 @@ public class PreprocessorContext {
     this.preprocessorLogger = context.getPreprocessorLogger();
 
     this.currentInCloneSource = context.getPreprocessingState().peekFile();
+  }
+
+  /**
+   * Get all directive handlers allowed for processing.
+   * @return list of direction handlers for the context
+   * @since 7.0.6
+   */
+  public List<AbstractDirectiveHandler> getDirectiveHandlers() {
+    return directiveHandlers;
   }
 
   public void addPreprocessedResource(final FileInfoContainer container) {

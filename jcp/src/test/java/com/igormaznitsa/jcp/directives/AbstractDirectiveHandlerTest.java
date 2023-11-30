@@ -33,7 +33,7 @@ public class AbstractDirectiveHandlerTest {
   @Test
   public void testPotentialConflictsBetweenDirectives() {
     final List<String> processed = new ArrayList<>();
-    for (final AbstractDirectiveHandler h : AbstractDirectiveHandler.getAllDirectives()) {
+    for (final AbstractDirectiveHandler h : AbstractDirectiveHandler.findAllDirectives()) {
       final String name = h.getName();
       for (final String p : processed) {
         assertFalse(h.getFullName() + " conflicts with " + (AbstractDirectiveHandler.DIRECTIVE_PREFIX + p), name.startsWith(p));
