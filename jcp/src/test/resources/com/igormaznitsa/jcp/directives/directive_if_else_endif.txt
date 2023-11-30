@@ -1,12 +1,14 @@
 hello
 //#if false
 //#local test = 111
+// some comment1
 nonprocessed /*$test$*/
 //#endif
 //#local x=true
 //#local y=false
 //#local z=false
 //#if x
+// some comment2
     //#if y
 unexpected1
     //#else
@@ -28,5 +30,6 @@ unexpected3
 world
 ---START_ETALON---
 hello
+// some comment2
 expected
 world
