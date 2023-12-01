@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.removers;
 
 import static org.junit.Assert.assertEquals;
 
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer).process();
+    new JavaCommentsRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -51,7 +50,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer).process();
+    new JavaCommentsRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -63,7 +62,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer).process();
+    new JavaCommentsRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -76,7 +75,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer).process();
+    new JavaCommentsRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }

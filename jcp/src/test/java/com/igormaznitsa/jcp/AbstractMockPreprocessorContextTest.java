@@ -21,33 +21,38 @@
 
 package com.igormaznitsa.jcp;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.doThrow;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.io.File;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
 public abstract class AbstractMockPreprocessorContextTest {
 
   protected PreprocessorContext prepareMockContext() throws Exception {
-    final PreprocessorContext pcContext = mock(PreprocessorContext.class);
-    final PreprocessingState pcState = mock(PreprocessingState.class);
+    final PreprocessorContext preparedContext = mock(PreprocessorContext.class);
+    final PreprocessingState preparedState = mock(PreprocessingState.class);
 
-    doReturn(new PreprocessorException("mock_msg", "", new FilePositionInfo[0], null))
-        .when(pcContext)
-        .makeException(any(), any());
+    final AtomicReference<KeepComments> keepComments = new AtomicReference<>(KeepComments.REMOVE_ALL);
+
+    doThrow(new PreprocessorException("mock_msg", "", new FilePositionInfo[0], null))
+        .when(preparedContext)
+        .makeException(any(String.class), any());
 
     final FileInfoContainer container = new FileInfoContainer(
         new File("src/fake.java"),
@@ -55,13 +60,21 @@ public abstract class AbstractMockPreprocessorContextTest {
         false
     );
 
-    when(pcState.getRootFileInfo()).thenReturn(container);
+    when(preparedContext.getKeepComments()).thenAnswer(
+        invocationOnMock -> keepComments.get());
+
+    doAnswer(invocationOnMock -> {
+      keepComments.set((KeepComments) invocationOnMock.getArguments()[0]);
+      return null;
+    }).when(preparedContext).setKeepComments(any(KeepComments.class));
+
+    when(preparedState.getRootFileInfo()).thenReturn(container);
 
     final ResetablePrinter printer = new ResetablePrinter(10);
-    when(pcState.getPrinter()).thenReturn(printer);
-    when(pcContext.getPreprocessingState()).thenReturn(pcState);
+    when(preparedState.getPrinter()).thenReturn(printer);
+    when(preparedContext.getPreprocessingState()).thenReturn(preparedState);
 
-    return pcContext;
+    return preparedContext;
   }
 
 

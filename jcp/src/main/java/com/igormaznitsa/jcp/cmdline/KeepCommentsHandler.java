@@ -21,44 +21,52 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
- * To set the input text character encoding
+ * The handler allows to choose keep comments mode.
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * @since 7.1.0
  */
-public class InCharsetHandler implements CommandLineHandler {
+public class KeepCommentsHandler implements CommandLineHandler {
 
-  private static final String ARG_NAME = "/T:";
-
-  @Override
-  public String getKeyName() {
-    return ARG_NAME;
-  }
+  private static final String ARG_NAME = "/M:";
 
   @Override
   public String getDescription() {
-    return "set the input encoding for text files (by default " +
-        PreprocessorContext.DEFAULT_CHARSET + ')';
+    return "select keep comments mode, for instance /M:remove_all, (allowed: " +
+        KeepComments.makeStringForExpectedValues() + ')';
   }
 
   @Override
   public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
-
     boolean result = false;
 
-    if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
-      final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
+    if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+      final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-      if (!value.isEmpty() && Charset.isSupported(value)) {
-          context.setSourceEncoding(Charset.forName(value));
-          result = true;
+      final KeepComments mode;
+      try {
+        mode = KeepComments.findForText(tail);
+      } catch (IllegalArgumentException ex) {
+        throw context.makeException(
+            "Illegal keep commends mode '" + tail + "' in " + ARG_NAME + ", expected one of " +
+                KeepComments.makeStringForExpectedValues(), null);
       }
+
+      context.setKeepComments(mode);
+
+      result = true;
     }
     return result;
+  }
+
+  @Override
+  public String getKeyName() {
+    return ARG_NAME;
   }
 }

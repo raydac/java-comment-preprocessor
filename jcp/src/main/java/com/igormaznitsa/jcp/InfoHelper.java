@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp;
 import static com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor.getReference;
 import static java.util.stream.Collectors.toList;
 
-
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
 import com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -45,12 +44,12 @@ public final class InfoHelper {
 
 
   public static String getVersion() {
-    return "v7.0.6";
+    return "v7.1.0";
   }
 
 
   public static String getCopyright() {
-    return "Copyright (C) 2002-2021 Igor A. Maznitsa (https://www.igormaznitsa.com)";
+    return "Copyright (C) 2002-2023 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
 

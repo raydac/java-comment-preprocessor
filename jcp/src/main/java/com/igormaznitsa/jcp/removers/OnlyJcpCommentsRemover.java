@@ -26,14 +26,15 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * A remover allows to cut off all Java like comments from a reader and write the result into a writer
+ * A remover allows to cut off all Java like comments contains JCP directives from a reader and write the result into a writer
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class JavaCommentsRemover extends AbstractCommentRemover {
+public class OnlyJcpCommentsRemover extends AbstractCommentRemover {
 
-  public JavaCommentsRemover(final Reader src, final Writer dst, final boolean whiteSpacesAllowed) {
-    super(src, dst, whiteSpacesAllowed);
+  public OnlyJcpCommentsRemover(final Reader src, final Writer dst,
+                                final boolean whiteSpaceAllowed) {
+    super(src, dst, whiteSpaceAllowed);
   }
 
   private void skipUntilNextString() throws IOException {
@@ -90,7 +91,7 @@ public class JavaCommentsRemover extends AbstractCommentRemover {
         case STATE_NORMAL: {
           switch (chr) {
             case '\"': {
-              dstWriter.write(chr);
+              this.dstWriter.write(chr);
               state = STATE_INSIDE_STRING;
             }
             break;
@@ -99,7 +100,7 @@ public class JavaCommentsRemover extends AbstractCommentRemover {
             }
             break;
             default: {
-              dstWriter.write(chr);
+              this.dstWriter.write(chr);
             }
             break;
           }

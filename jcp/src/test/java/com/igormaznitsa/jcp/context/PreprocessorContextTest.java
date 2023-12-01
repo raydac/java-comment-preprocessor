@@ -28,7 +28,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -254,21 +253,26 @@ public class PreprocessorContextTest {
         final PreprocessorExtension exx = new PreprocessorExtension() {
           @Override
           public boolean processAction(PreprocessorContext context, Value[] parameters) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException(
+                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
           }
 
           @Override
           public Value processUserFunction(String functionName, Value[] arguments) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException(
+                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
           }
 
           @Override
           public int getUserFunctionArity(String functionName) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException(
+                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
           }
         };
 
         f.set(context, exx);
+      } else if (type.isAssignableFrom(KeepComments.class)) {
+        f.set(context, KeepComments.values()[((int)System.nanoTime() & 0x1FFFFFFF) % KeepComments.values().length]);
       } else if (type.isAssignableFrom(List.class) || type.isAssignableFrom(Set.class)) {
         // ignored
       } else {

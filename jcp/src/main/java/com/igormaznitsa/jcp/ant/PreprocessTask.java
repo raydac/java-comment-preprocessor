@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.ant;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -68,7 +69,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean verbose = false;
   private boolean clearTarget = false;
   private boolean careForLastEol = false;
-  private boolean keepComments = false;
+  private String keepComments = KeepComments.REMOVE_ALL.name();
   private Vars vars = null;
   private ExcludeFolders excludeFolders = null;
   private ConfigFiles configFiles = null;
@@ -145,7 +146,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
     context.setClearTarget(this.isClearTarget());
     context.setDryRun(this.isDryRun());
-    context.setKeepComments(this.isKeepComments());
+    context.setKeepComments(KeepComments.findForText(this.getKeepComments()));
     context.setVerbose(this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setCareForLastEol(this.isCareForLastEol());

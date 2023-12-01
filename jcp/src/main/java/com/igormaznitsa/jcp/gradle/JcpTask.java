@@ -2,8 +2,8 @@ package com.igormaznitsa.jcp.gradle;
 
 import static java.util.Collections.emptyMap;
 
-
 import com.igormaznitsa.jcp.JcpPreprocessor;
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -27,7 +27,12 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.OutputFiles;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskExecutionException;
 import org.gradle.execution.commandline.TaskConfigurationException;
 
 public class JcpTask extends DefaultTask {
@@ -77,7 +82,7 @@ public class JcpTask extends DefaultTask {
    */
   private final ListProperty<String> fileExtensions;
   /**
-   * Interpretate unknown variable as containing boolean false flag.
+   * Interpret unknown variable as containing boolean false flag.
    */
   private final Property<Boolean> unknownVarAsFalse;
   /**
@@ -104,7 +109,7 @@ public class JcpTask extends DefaultTask {
   /**
    * Keep comments in result files.
    */
-  private final Property<Boolean> keepComments;
+  private final Property<Object> keepComments;
   /**
    * List of variables to be registered in preprocessor as global ones.
    */
@@ -159,7 +164,7 @@ public class JcpTask extends DefaultTask {
     this.dryRun = factory.property(Boolean.class).convention(false);
     this.ignoreMissingSources = factory.property(Boolean.class).convention(false);
     this.keepAttributes = factory.property(Boolean.class).convention(false);
-    this.keepComments = factory.property(Boolean.class).convention(true);
+    this.keepComments = factory.property(Object.class).convention(false);
     this.keepLines = factory.property(Boolean.class).convention(true);
     this.preserveIndents = factory.property(Boolean.class).convention(false);
     this.unknownVarAsFalse = factory.property(Boolean.class).convention(false);
@@ -279,7 +284,7 @@ public class JcpTask extends DefaultTask {
   }
 
   @Input
-  public Property<Boolean> getKeepComments() {
+  public Property<Object> getKeepComments() {
     return keepComments;
   }
 
@@ -396,7 +401,8 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setDontOverwriteSameContent(this.dontOverwriteSameContent.get());
     preprocessorContext.setClearTarget(this.clearTarget.get());
     preprocessorContext.setCareForLastEol(this.careForLastEol.get());
-    preprocessorContext.setKeepComments(this.keepComments.get());
+    preprocessorContext.setKeepComments(
+        KeepComments.findForText(String.valueOf(this.keepComments.get())));
     preprocessorContext.setDryRun(this.dryRun.get());
     preprocessorContext.setKeepAttributes(this.keepAttributes.get());
     preprocessorContext.setKeepLines(this.keepLines.get());

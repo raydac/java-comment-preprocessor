@@ -25,7 +25,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
-
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -99,7 +98,7 @@ public class PreprocessorContext {
       .ensureNonNull(System.getProperty("jcp.line.separator", System.getProperty("line.separator")),
           "\n");
   private boolean verbose = false;
-  private boolean keepComments = true;
+  private KeepComments keepComments = KeepComments.KEEP_ALL;
   private boolean clearTarget = false;
   private boolean dryRun = false;
   private boolean keepLines = false;
@@ -151,7 +150,7 @@ public class PreprocessorContext {
 
     this.baseDir = context.getBaseDir();
     this.verbose = context.isVerbose();
-    this.keepComments = context.isKeepComments();
+    this.keepComments = context.getKeepComments();
     this.clearTarget = context.isClearTarget();
     this.dryRun = context.isDryRun();
     this.keepLines = context.isKeepLines();

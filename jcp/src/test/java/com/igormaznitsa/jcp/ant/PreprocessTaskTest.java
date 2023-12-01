@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.File;
@@ -133,10 +133,10 @@ public class PreprocessTaskTest {
 
   @Test
   public void testKeepComments() throws Exception {
-    antTask.setKeepComments(true);
-    assertTrue(antTask.makePreprocessorContext().isKeepComments());
-    antTask.setKeepComments(false);
-    assertFalse(antTask.makePreprocessorContext().isKeepComments());
+    antTask.setKeepComments("true");
+    assertEquals(KeepComments.KEEP_ALL, antTask.makePreprocessorContext().getKeepComments());
+    antTask.setKeepComments("false");
+    assertEquals(KeepComments.REMOVE_ALL, antTask.makePreprocessorContext().getKeepComments());
   }
 
   @Test

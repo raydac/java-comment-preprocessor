@@ -3,7 +3,7 @@ buildscript {
         flatDir dirs: "../../jcp/target"
     }
     dependencies {
-        classpath "com.igormaznitsa:jcp:7.0.6-SNAPSHOT"
+        classpath "com.igormaznitsa:jcp:$jcp_test_version"
     }
 }
 
@@ -49,7 +49,7 @@ preprocess {
     verbose = true
     clearTarget = true
     careForLastEol = true
-    keepComments = true
+    keepComments = 'remove_jcp'
     excludeFolders = ['**/some1', '**/some2']
     configFiles = ['./configFile.txt']
     keepLines = true

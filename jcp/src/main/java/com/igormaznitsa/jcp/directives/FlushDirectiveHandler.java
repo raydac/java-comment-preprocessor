@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.directives;
 
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
@@ -60,7 +59,7 @@ public class FlushDirectiveHandler extends AbstractDirectiveHandler {
         if (context.isVerbose()) {
           context.logForVerbose("Flushing buffers into file '" + outFile + '\'');
         }
-        final boolean saved = state.saveBuffersToFile(outFile, context.isKeepComments());
+        final boolean saved = state.saveBuffersToFile(outFile, context.getKeepComments());
         if (context.isVerbose()) {
           context.logForVerbose(
               "Content was " + (saved ? "saved" : "not saved") + " into file '" + outFile + "'");

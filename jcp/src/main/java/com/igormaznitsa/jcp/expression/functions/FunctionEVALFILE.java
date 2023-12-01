@@ -24,8 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
-
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
@@ -79,7 +79,7 @@ public class FunctionEVALFILE extends AbstractFunction {
     result.setDryRun(true);
     result.setKeepLines(false);
     result.setClearTarget(false);
-    result.setKeepComments(false);
+    result.setKeepComments(KeepComments.REMOVE_ALL);
     result.setCareForLastEol(true);
     return result;
   }

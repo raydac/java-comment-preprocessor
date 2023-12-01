@@ -371,7 +371,6 @@ public class FileInfoContainer {
    * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
    */
-
   public PreprocessingState preprocessFile(final PreprocessingState state,
                                            final PreprocessorContext context) throws IOException {
     // do not clear local variables for cloned context to keep them in the new context
@@ -560,7 +559,7 @@ public class FileInfoContainer {
       final File outFile = context.createDestinationFileForPath(makeTargetFilePathAsString());
 
       final boolean wasSaved =
-          preprocessingState.saveBuffersToFile(outFile, context.isKeepComments());
+          preprocessingState.saveBuffersToFile(outFile, context.getKeepComments());
 
       if (context.isVerbose()) {
         context.logForVerbose(String

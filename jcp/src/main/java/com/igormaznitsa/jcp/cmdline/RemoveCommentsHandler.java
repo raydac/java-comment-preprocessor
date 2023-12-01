@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
+import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -35,7 +36,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "remove comments from result files";
+    return "remove all comments from result files";
   }
 
   @Override
@@ -44,7 +45,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(argument)) {
-      configurator.setKeepComments(false);
+      configurator.setKeepComments(KeepComments.REMOVE_ALL);
       result = true;
     }
 

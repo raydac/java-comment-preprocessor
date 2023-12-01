@@ -70,6 +70,7 @@
                 <argument>--rerun-tasks</argument>
                 <argument>--scan</argument>
                 <argument>--full-stacktrace</argument>
+                <argument>-Pjcp_test_version=${jcp.test.version}</argument>
                 <argument>
                   -Pjcp_plugin_path=${project.basedir}${file.separator}..${file.separator}..${file.separator}jcp-gradle-plugin${file.separator}build${file.separator}libs${file.separator}jcp-gradle-plugin-${jcp.test.version}.jar
                 </argument>

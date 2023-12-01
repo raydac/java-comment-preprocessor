@@ -23,15 +23,16 @@ package com.igormaznitsa.jcp.cmdline;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
 
 import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
-public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
+public class KeepCommentsHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final RemoveCommentsHandler HANDLER = new RemoveCommentsHandler();
+  private static final KeepCommentsHandler HANDLER = new KeepCommentsHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -43,21 +44,23 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
     final PreprocessorContext mock = prepareMockContext();
 
     assertFalse(HANDLER.processCommandLineKey("", mock));
-    assertFalse(HANDLER.processCommandLineKey("/r:", mock));
-    assertFalse(HANDLER.processCommandLineKey("/R:", mock));
-    assertFalse(HANDLER.processCommandLineKey("/RR", mock));
+    assertFalse(HANDLER.processCommandLineKey("/m", mock));
+    assertFalse(HANDLER.processCommandLineKey("/mm:", mock));
+    assertThrows(PreprocessorException.class, () -> HANDLER.processCommandLineKey("/m:", mock));
 
-    assertTrue(HANDLER.processCommandLineKey("/r", mock));
-    verify(mock).setKeepComments(KeepComments.REMOVE_ALL);
+    assertEquals(KeepComments.REMOVE_ALL,mock.getKeepComments());
+    assertTrue(HANDLER.processCommandLineKey("/m:keep_all", mock));
+    assertEquals(KeepComments.KEEP_ALL,mock.getKeepComments());
   }
 
   @Override
   public void testName() {
-    assertEquals("/R", HANDLER.getKeyName());
+    assertEquals("/M:", HANDLER.getKeyName());
   }
 
   @Override
   public void testDescription() {
     assertDescription(HANDLER);
   }
+
 }

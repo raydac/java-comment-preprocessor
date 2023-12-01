@@ -25,7 +25,6 @@ import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
 
-
 import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
 import com.igormaznitsa.jcp.cmdline.CareForLastEolHandler;
 import com.igormaznitsa.jcp.cmdline.ClearTargetHandler;
@@ -40,6 +39,7 @@ import com.igormaznitsa.jcp.cmdline.GlobalVariableHandler;
 import com.igormaznitsa.jcp.cmdline.HelpHandler;
 import com.igormaznitsa.jcp.cmdline.InCharsetHandler;
 import com.igormaznitsa.jcp.cmdline.KeepAttributesHandler;
+import com.igormaznitsa.jcp.cmdline.KeepCommentsHandler;
 import com.igormaznitsa.jcp.cmdline.KeepLineHandler;
 import com.igormaznitsa.jcp.cmdline.OutCharsetHandler;
 import com.igormaznitsa.jcp.cmdline.PreserveIndentDirectiveHandler;
@@ -56,6 +56,7 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.utils.AntPathMatcher;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +72,6 @@ import java.util.Set;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import com.igormaznitsa.jcp.utils.AntPathMatcher;
 
 /**
  * The main class implements the Java Comment Preprocessor, it has the main
@@ -94,6 +94,7 @@ public final class JcpPreprocessor {
       new ExcludedFileExtensionsHandler(),
       new AllowWhitespaceDirectiveHandler(),
       new RemoveCommentsHandler(),
+      new KeepCommentsHandler(),
       new KeepLineHandler(),
       new DontOverwriteSameContentHandler(),
       new VerboseHandler(),

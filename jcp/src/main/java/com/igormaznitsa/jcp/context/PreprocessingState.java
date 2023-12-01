@@ -21,16 +21,15 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static com.igormaznitsa.jcp.removers.AbstractCommentRemover.makeCommentRemover;
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
-
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.removers.JavaCommentsRemover;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import java.io.BufferedInputStream;
@@ -38,7 +37,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +46,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -421,7 +420,7 @@ public final class PreprocessingState {
         new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
   }
 
-  public boolean saveBuffersToFile(final File outFile, final boolean keepComments)
+  public boolean saveBuffersToFile(final File outFile, final KeepComments keepComments)
       throws IOException {
     final File path = outFile.getParentFile();
 
@@ -440,9 +439,12 @@ public final class PreprocessingState {
 
       if (this.overrideOnlyIfContentChanged) {
         String content = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
-        if (!keepComments) {
-          content = new JavaCommentsRemover(new StringReader(content),
-              new StringWriter(totatBufferedChars)).process().toString();
+        if (keepComments != KeepComments.KEEP_ALL) {
+          content = makeCommentRemover(
+              keepComments,
+              new StringReader(content),
+              new StringWriter(totatBufferedChars),
+              context.isAllowWhitespaces()).process().toString();
         }
 
         boolean needWrite = true; // better write than not
@@ -450,7 +452,7 @@ public final class PreprocessingState {
         if (outFile.isFile() && outFile.length() == contentInBinaryForm.length) {
           // If file exists and has the same content, then skip overwriting it
           try (InputStream currentFileInputStream = new BufferedInputStream(
-              new FileInputStream(outFile), Math.max(16384, (int) outFile.length()))) {
+              Files.newInputStream(outFile.toPath()), Math.max(16384, (int) outFile.length()))) {
             needWrite = !IOUtils.contentEquals(currentFileInputStream,
                 new ByteArrayInputStream(contentInBinaryForm));
           }
@@ -462,13 +464,14 @@ public final class PreprocessingState {
           this.context.logDebug(
               "Ignore writing data for " + outFile + " because its content has not been changed");
         }
-      } else if (!keepComments) {
+      } else if (keepComments != KeepComments.KEEP_ALL) {
         final String joinedBufferContent =
             writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         writer = new OutputStreamWriter(
             new BufferedOutputStream(new FileOutputStream(outFile, false), BUFFER_SIZE),
             globalOutCharacterEncoding);
-        new JavaCommentsRemover(new StringReader(joinedBufferContent), writer).process();
+        writer = makeCommentRemover(keepComments,
+            new StringReader(joinedBufferContent), writer, context.isAllowWhitespaces()).process();
         wasSaved = true;
       } else {
         writer = new OutputStreamWriter(
@@ -477,7 +480,6 @@ public final class PreprocessingState {
         writePrinterBuffers(writer);
         wasSaved = true;
       }
-
     } finally {
       closeQuietly(writer);
     }
