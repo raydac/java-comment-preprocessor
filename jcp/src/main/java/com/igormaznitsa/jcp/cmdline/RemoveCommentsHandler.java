@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
@@ -45,7 +45,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
     boolean result = false;
 
     if (ARG_NAME.equalsIgnoreCase(argument)) {
-      configurator.setKeepComments(KeepComments.REMOVE_ALL);
+      configurator.setKeepComments(CommentRemoverType.REMOVE_C_STYLE);
       result = true;
     }
 

@@ -21,7 +21,9 @@
 
 package com.igormaznitsa.jcp.cmdline;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import static com.igormaznitsa.jcp.context.CommentRemoverType.makeListOfAllRemoverIds;
+
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.util.Locale;
@@ -38,8 +40,8 @@ public class KeepCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "select keep comments mode, for instance /M:remove_all, (allowed: " +
-        KeepComments.makeStringForExpectedValues() + ')';
+    return "select keep comments mode, for instance /M:remove_c_style, (allowed: true,false," +
+        makeListOfAllRemoverIds() + ')';
   }
 
   @Override
@@ -49,13 +51,13 @@ public class KeepCommentsHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-      final KeepComments mode;
+      final CommentRemoverType mode;
       try {
-        mode = KeepComments.findForText(tail);
+        mode = PreprocessorUtils.findCommentRemoverForId(tail);
       } catch (IllegalArgumentException ex) {
         throw context.makeException(
-            "Illegal keep comments mode '" + tail + "' in " + ARG_NAME + ", expected one of " +
-                KeepComments.makeStringForExpectedValues(), null);
+            "Illegal keep comments mode '" + tail + "' in " + ARG_NAME + ", expected one of: true,false," +
+                makeListOfAllRemoverIds(), null);
       }
 
       context.setKeepComments(mode);

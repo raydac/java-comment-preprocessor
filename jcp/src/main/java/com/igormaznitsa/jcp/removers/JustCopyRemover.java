@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public class NoneCommentsRemover extends AbstractCommentRemover {
+public class JustCopyRemover extends AbstractCommentRemover {
 
-  public NoneCommentsRemover(final Reader src, final Writer dst,
-                             final boolean whiteSpaceAllowed) {
+  public JustCopyRemover(final Reader src, final Writer dst,
+                         final boolean whiteSpaceAllowed) {
     super(src, dst, whiteSpaceAllowed);
   }
 

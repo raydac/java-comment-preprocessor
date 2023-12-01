@@ -28,7 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -48,7 +48,8 @@ public abstract class AbstractMockPreprocessorContextTest {
     final PreprocessorContext preparedContext = mock(PreprocessorContext.class);
     final PreprocessingState preparedState = mock(PreprocessingState.class);
 
-    final AtomicReference<KeepComments> keepComments = new AtomicReference<>(KeepComments.REMOVE_ALL);
+    final AtomicReference<CommentRemoverType> keepComments = new AtomicReference<>(
+        CommentRemoverType.REMOVE_C_STYLE);
 
     doThrow(new PreprocessorException("mock_msg", "", new FilePositionInfo[0], null))
         .when(preparedContext)
@@ -64,9 +65,9 @@ public abstract class AbstractMockPreprocessorContextTest {
         invocationOnMock -> keepComments.get());
 
     doAnswer(invocationOnMock -> {
-      keepComments.set((KeepComments) invocationOnMock.getArguments()[0]);
+      keepComments.set((CommentRemoverType) invocationOnMock.getArguments()[0]);
       return null;
-    }).when(preparedContext).setKeepComments(any(KeepComments.class));
+    }).when(preparedContext).setKeepComments(any(CommentRemoverType.class));
 
     when(preparedState.getRootFileInfo()).thenReturn(container);
 

@@ -420,7 +420,7 @@ public final class PreprocessingState {
         new BufferedWriter(new OutputStreamWriter(postfix, globalOutCharacterEncoding)));
   }
 
-  public boolean saveBuffersToFile(final File outFile, final KeepComments keepComments)
+  public boolean saveBuffersToFile(final File outFile, final CommentRemoverType keepComments)
       throws IOException {
     final File path = outFile.getParentFile();
 
@@ -439,7 +439,7 @@ public final class PreprocessingState {
 
       if (this.overrideOnlyIfContentChanged) {
         String content = writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
-        if (keepComments != KeepComments.KEEP_ALL) {
+        if (keepComments != CommentRemoverType.KEEP_ALL) {
           content = makeCommentRemover(
               keepComments,
               new StringReader(content),
@@ -464,7 +464,7 @@ public final class PreprocessingState {
           this.context.logDebug(
               "Ignore writing data for " + outFile + " because its content has not been changed");
         }
-      } else if (keepComments != KeepComments.KEEP_ALL) {
+      } else if (keepComments != CommentRemoverType.KEEP_ALL) {
         final String joinedBufferContent =
             writePrinterBuffers(new StringWriter(totatBufferedChars)).toString();
         writer = new OutputStreamWriter(

@@ -22,13 +22,14 @@
 package com.igormaznitsa.jcp.ant;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import com.igormaznitsa.jcp.utils.GetUtils;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean verbose = false;
   private boolean clearTarget = false;
   private boolean careForLastEol = false;
-  private String keepComments = KeepComments.REMOVE_ALL.name();
+  private String keepComments = CommentRemoverType.REMOVE_C_STYLE.name();
   private Vars vars = null;
   private ExcludeFolders excludeFolders = null;
   private ConfigFiles configFiles = null;
@@ -146,7 +147,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
     context.setClearTarget(this.isClearTarget());
     context.setDryRun(this.isDryRun());
-    context.setKeepComments(KeepComments.findForText(this.getKeepComments()));
+    context.setKeepComments(PreprocessorUtils.findCommentRemoverForId(this.getKeepComments()));
     context.setVerbose(this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setCareForLastEol(this.isCareForLastEol());

@@ -49,7 +49,7 @@ preprocess {
     verbose = true
     clearTarget = true
     careForLastEol = true
-    keepComments = 'remove_jcp'
+    keepComments = 'remove_jcp_only'
     excludeFolders = ['**/some1', '**/some2']
     configFiles = ['./configFile.txt']
     keepLines = true

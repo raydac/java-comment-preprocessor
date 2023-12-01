@@ -30,10 +30,10 @@ import java.io.Writer;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class OnlyJcpCommentsRemover extends AbstractCommentRemover {
+public class JcpCommentsRemover extends AbstractCommentRemover {
 
-  public OnlyJcpCommentsRemover(final Reader src, final Writer dst,
-                                final boolean whiteSpaceAllowed) {
+  public JcpCommentsRemover(final Reader src, final Writer dst,
+                            final boolean whiteSpaceAllowed) {
     super(src, dst, whiteSpaceAllowed);
   }
 

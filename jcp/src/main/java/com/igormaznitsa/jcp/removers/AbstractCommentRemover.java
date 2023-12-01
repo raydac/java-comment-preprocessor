@@ -1,6 +1,6 @@
 package com.igormaznitsa.jcp.removers;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -24,14 +24,14 @@ public abstract class AbstractCommentRemover {
   public abstract Writer process() throws IOException;
 
   public static AbstractCommentRemover makeCommentRemover(
-      final KeepComments keepComments,
+      final CommentRemoverType keepComments,
       final Reader src,
       final Writer dst,
       final boolean whiteSpaceAllowed) {
     switch (keepComments) {
-      case KEEP_ALL: return new NoneCommentsRemover(src, dst, whiteSpaceAllowed);
-      case REMOVE_ALL: return new JavaCommentsRemover(src, dst, whiteSpaceAllowed);
-      case REMOVE_JCP: return new OnlyJcpCommentsRemover(src, dst, whiteSpaceAllowed);
+      case KEEP_ALL: return new JustCopyRemover(src, dst, whiteSpaceAllowed);
+      case REMOVE_C_STYLE: return new CStyleCommentRemover(src, dst, whiteSpaceAllowed);
+      case REMOVE_JCP_ONLY: return new JcpCommentsRemover(src, dst, whiteSpaceAllowed);
       default: throw new IllegalStateException("Unsupported keep comments value: " + keepComments);
     }
   }

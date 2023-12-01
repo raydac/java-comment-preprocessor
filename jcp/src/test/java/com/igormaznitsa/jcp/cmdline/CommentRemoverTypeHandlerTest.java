@@ -26,11 +26,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 
-public class KeepCommentsHandlerTest extends AbstractCommandLineHandlerTest {
+public class CommentRemoverTypeHandlerTest extends AbstractCommandLineHandlerTest {
 
   private static final KeepCommentsHandler HANDLER = new KeepCommentsHandler();
 
@@ -48,9 +48,9 @@ public class KeepCommentsHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/mm:", mock));
     assertThrows(PreprocessorException.class, () -> HANDLER.processCommandLineKey("/m:", mock));
 
-    assertEquals(KeepComments.REMOVE_ALL,mock.getKeepComments());
+    assertEquals(CommentRemoverType.REMOVE_C_STYLE,mock.getKeepComments());
     assertTrue(HANDLER.processCommandLineKey("/m:keep_all", mock));
-    assertEquals(KeepComments.KEEP_ALL,mock.getKeepComments());
+    assertEquals(CommentRemoverType.KEEP_ALL,mock.getKeepComments());
   }
 
   @Override

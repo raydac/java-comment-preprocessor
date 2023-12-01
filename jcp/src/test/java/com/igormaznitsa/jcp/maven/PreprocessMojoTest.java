@@ -24,7 +24,7 @@ package com.igormaznitsa.jcp.maven;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import java.io.File;
@@ -93,7 +93,7 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getExtensions().toArray());
     assertEquals(StandardCharsets.UTF_16, context.getSourceEncoding());
     assertEquals(StandardCharsets.US_ASCII, context.getTargetEncoding());
-    assertEquals(KeepComments.KEEP_ALL, context.getKeepComments());
+    assertEquals(CommentRemoverType.KEEP_ALL, context.getKeepComments());
     assertTrue(context.isVerbose());
     assertTrue(context.isDryRun());
     assertTrue(context.isClearTarget());

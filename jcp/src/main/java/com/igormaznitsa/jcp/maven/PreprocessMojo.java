@@ -24,11 +24,12 @@ package com.igormaznitsa.jcp.maven;
 import static com.igormaznitsa.jcp.utils.GetUtils.ensureNonNull;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
+import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -231,7 +232,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * @since 7.0.0
    */
   @Parameter(alias = "keepComments", defaultValue = "true")
-  private String keepComments = KeepComments.KEEP_ALL.name();
+  private String keepComments = CommentRemoverType.KEEP_ALL.name();
 
   /**
    * List of variables to be registered in preprocessor as global ones.
@@ -393,7 +394,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
     context.setClearTarget(this.isClearTarget());
     context.setCareForLastEol(this.isCareForLastEol());
-    context.setKeepComments(KeepComments.findForText(this.getKeepComments()));
+    context.setKeepComments(PreprocessorUtils.findCommentRemoverForId(this.getKeepComments()));
     context.setVerbose(getLog().isDebugEnabled() || this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setDryRun(this.isDryRun());

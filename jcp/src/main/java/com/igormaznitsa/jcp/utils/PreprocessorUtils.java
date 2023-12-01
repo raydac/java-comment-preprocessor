@@ -21,8 +21,13 @@
 
 package com.igormaznitsa.jcp.utils;
 
+import static com.igormaznitsa.jcp.context.CommentRemoverType.KEEP_ALL;
+import static com.igormaznitsa.jcp.context.CommentRemoverType.REMOVE_C_STYLE;
+import static com.igormaznitsa.jcp.context.CommentRemoverType.makeListOfAllRemoverIds;
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -80,6 +85,38 @@ public final class PreprocessorUtils {
         .findFirst();
     return result.isPresent() ? result :
         Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
+  }
+
+  /**
+   * Find comment remover type for provided identifier. Decoding also true and false values.
+   *
+   * @param text comment remover id as string, must not be null.
+   * @return found appropriate comment remover type, must not be null
+   * @since 7.1.0
+   */
+  public static CommentRemoverType findCommentRemoverForId(final String text) {
+    CommentRemoverType result = null;
+    if (text != null && !text.isEmpty()) {
+      final String normalized = text.trim().toUpperCase(Locale.ENGLISH);
+      if (normalized.equals("TRUE")) {
+        result = KEEP_ALL;
+      } else if (normalized.equals("FALSE")) {
+        result = REMOVE_C_STYLE;
+      } else {
+        for (final CommentRemoverType value : CommentRemoverType.values()) {
+          if (normalized.equals(value.name())) {
+            result = value;
+            break;
+          }
+        }
+      }
+    }
+    if (result == null) {
+      throw new IllegalArgumentException(
+          "Can't recognize keep comment value '" + text + "' (allowed values: true,false," +
+              makeListOfAllRemoverIds() + ')');
+    }
+    return result;
   }
 
   public static String getFileExtension(final File file) {

@@ -37,7 +37,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer, true).process();
+    new CStyleCommentRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -50,7 +50,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer, true).process();
+    new CStyleCommentRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -62,7 +62,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer, true).process();
+    new CStyleCommentRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }
@@ -75,7 +75,7 @@ public class JavaCommentsRemoverTest {
     final StringReader reader = new StringReader(SRC);
     final StringWriter writer = new StringWriter(256);
 
-    new JavaCommentsRemover(reader, writer, true).process();
+    new CStyleCommentRemover(reader, writer, true).process();
 
     assertEquals("Must be the same", DST, writer.toString());
   }

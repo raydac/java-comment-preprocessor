@@ -26,7 +26,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
@@ -48,7 +48,7 @@ public class RemoveCommentsHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/RR", mock));
 
     assertTrue(HANDLER.processCommandLineKey("/r", mock));
-    verify(mock).setKeepComments(KeepComments.REMOVE_ALL);
+    verify(mock).setKeepComments(CommentRemoverType.REMOVE_C_STYLE);
   }
 
   @Override

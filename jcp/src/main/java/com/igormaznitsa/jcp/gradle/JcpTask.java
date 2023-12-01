@@ -1,9 +1,9 @@
 package com.igormaznitsa.jcp.gradle;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findCommentRemoverForId;
 import static java.util.Collections.emptyMap;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
-import com.igormaznitsa.jcp.context.KeepComments;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -402,7 +402,7 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setClearTarget(this.clearTarget.get());
     preprocessorContext.setCareForLastEol(this.careForLastEol.get());
     preprocessorContext.setKeepComments(
-        KeepComments.findForText(String.valueOf(this.keepComments.get())));
+        findCommentRemoverForId(String.valueOf(this.keepComments.get())));
     preprocessorContext.setDryRun(this.dryRun.get());
     preprocessorContext.setKeepAttributes(this.keepAttributes.get());
     preprocessorContext.setKeepLines(this.keepLines.get());

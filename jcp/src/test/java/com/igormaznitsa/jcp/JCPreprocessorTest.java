@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
-import com.igormaznitsa.jcp.context.KeepComments;
+import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -96,7 +96,7 @@ public final class JCPreprocessorTest {
     context.setSources(Collections.singletonList(testDirectory.getCanonicalPath()));
     context.setTarget(testDirectory);
     context.setClearTarget(false);
-    context.setKeepComments(KeepComments.REMOVE_ALL);
+    context.setKeepComments(CommentRemoverType.REMOVE_C_STYLE);
     context.setExtensions(Collections.singletonList("ppp"));
     context.setExcludeExtensions(Collections.singletonList("etl"));
 

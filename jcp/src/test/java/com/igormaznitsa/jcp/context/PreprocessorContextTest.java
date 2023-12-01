@@ -271,8 +271,8 @@ public class PreprocessorContextTest {
         };
 
         f.set(context, exx);
-      } else if (type.isAssignableFrom(KeepComments.class)) {
-        f.set(context, KeepComments.values()[((int)System.nanoTime() & 0x1FFFFFFF) % KeepComments.values().length]);
+      } else if (type.isAssignableFrom(CommentRemoverType.class)) {
+        f.set(context, CommentRemoverType.values()[((int)System.nanoTime() & 0x1FFFFFFF) % CommentRemoverType.values().length]);
       } else if (type.isAssignableFrom(List.class) || type.isAssignableFrom(Set.class)) {
         // ignored
       } else {

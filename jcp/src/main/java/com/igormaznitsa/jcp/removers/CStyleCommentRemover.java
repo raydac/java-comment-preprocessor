@@ -30,9 +30,9 @@ import java.io.Writer;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public class JavaCommentsRemover extends AbstractCommentRemover {
+public class CStyleCommentRemover extends AbstractCommentRemover {
 
-  public JavaCommentsRemover(final Reader src, final Writer dst, final boolean whiteSpacesAllowed) {
+  public CStyleCommentRemover(final Reader src, final Writer dst, final boolean whiteSpacesAllowed) {
     super(src, dst, whiteSpacesAllowed);
   }
 
