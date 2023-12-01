@@ -54,7 +54,7 @@ public class KeepCommentsHandler implements CommandLineHandler {
         mode = KeepComments.findForText(tail);
       } catch (IllegalArgumentException ex) {
         throw context.makeException(
-            "Illegal keep commends mode '" + tail + "' in " + ARG_NAME + ", expected one of " +
+            "Illegal keep comments mode '" + tail + "' in " + ARG_NAME + ", expected one of " +
                 KeepComments.makeStringForExpectedValues(), null);
       }
 
