@@ -79,6 +79,21 @@ public class JcpCommentLineRemoverTest extends AbstractCommentRemoverTest {
   }
 
   @Test
+  public void testCommentedJcpDirective() throws Exception {
+    this.assertCommentRemove(
+        "/** some multiline //$  //# test\nwith jcp directives*/\n//$ some\n//$$$ some two\n// hello world\n////#if DEBUG\nSystem.out.println(\"DEBUG\");\n//#else\nSystem.out.println(\"RELEASE\");\n//#endif\n// end",
+        "/** some multiline //$  //# test\nwith jcp directives*/\n\n\n// hello world\n////#if DEBUG\nSystem.out.println(\"DEBUG\");\n\nSystem.out.println(\"RELEASE\");\n\n// end"
+    );
+
+    if (this.whiteSpaced) {
+      this.assertCommentRemove(
+          "/** some multiline //$  //# test\nwith jcp directives*/\n//  $ some\n//    $$$ some two\n// hello world\n////  #if DEBUG\nSystem.out.println(\"DEBUG\");\n//   # else\nSystem.out.println(\"RELEASE\");\n//   #endif\n// end",
+          "/** some multiline //$  //# test\nwith jcp directives*/\n\n\n// hello world\n////  #if DEBUG\nSystem.out.println(\"DEBUG\");\n\nSystem.out.println(\"RELEASE\");\n\n// end"
+      );
+    }
+  }
+
+  @Test
   public void testLineCommentInTheEnd() throws Exception {
     this.assertCommentRemove(
         "\thello world();//test\n//   Hello",

@@ -42,10 +42,8 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
   @Override
   public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
-    final int STATE_INSIDE_STRING = 1;
-    final int STATE_NEXT_SPECIAL_CHAR = 2;
-    final int STATE_FORWARD_SLASH = 3;
-    final int STATE_POSSIBLE_JCP = 4;
+    final int STATE_FORWARD_SLASH = 1;
+    final int STATE_POSSIBLE_JCP = 2;
 
     final StringBuilder jcpBuffer = new StringBuilder();
 
@@ -59,20 +57,13 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
 
       switch (state) {
         case STATE_NORMAL: {
-          switch (chr) {
-            case '\"': {
-              this.dstWriter.write(chr);
-              state = STATE_INSIDE_STRING;
-            }
-            break;
-            case '/': {
-              state = STATE_FORWARD_SLASH;
-            }
-            break;
-            default: {
-              this.dstWriter.write(chr);
-            }
-            break;
+          if (chr == '/') {
+            state = STATE_FORWARD_SLASH;
+          } else if (Character.isWhitespace(chr)) {
+            this.dstWriter.write(chr);
+          } else {
+            this.dstWriter.write(chr);
+            this.copyTillNextString();
           }
         }
         break;
@@ -119,27 +110,6 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
             }
             break;
           }
-        }
-        break;
-        case STATE_INSIDE_STRING: {
-          switch (chr) {
-            case '\\': {
-              state = STATE_NEXT_SPECIAL_CHAR;
-            }
-            break;
-            case '\"': {
-              state = STATE_NORMAL;
-            }
-            break;
-            default:
-              break;
-          }
-          this.dstWriter.write(chr);
-        }
-        break;
-        case STATE_NEXT_SPECIAL_CHAR: {
-          this.dstWriter.write(chr);
-          state = STATE_INSIDE_STRING;
         }
         break;
         default:
