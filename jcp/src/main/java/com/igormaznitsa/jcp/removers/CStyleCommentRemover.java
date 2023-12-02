@@ -36,41 +36,6 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
     super(src, dst, whiteSpacesAllowed);
   }
 
-  private void skipUntilNextString() throws IOException {
-    while (!Thread.currentThread().isInterrupted()) {
-      final int chr = srcReader.read();
-      if (chr < 0) {
-        return;
-      }
-
-      if (chr == '\n') {
-        this.dstWriter.write(chr);
-        return;
-      }
-    }
-  }
-
-  private void skipUntilClosingComments() throws IOException {
-    boolean starFound = false;
-
-    while (!Thread.currentThread().isInterrupted()) {
-      final int chr = srcReader.read();
-      if (chr < 0) {
-        return;
-      }
-      if (starFound) {
-        if (chr == '/') {
-          return;
-        } else {
-          starFound = chr == '*';
-        }
-      } else if (chr == '*') {
-        starFound = true;
-      }
-    }
-  }
-
-
   @Override
   public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
@@ -108,12 +73,12 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
         case STATE_FORWARD_SLASH: {
           switch (chr) {
             case '*': {
-              skipUntilClosingComments();
+              skipTillClosingJavaComments();
               state = STATE_NORMAL;
             }
             break;
             case '/': {
-              skipUntilNextString();
+              skipTillNextString();
               state = STATE_NORMAL;
             }
             break;

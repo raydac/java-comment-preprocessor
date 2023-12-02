@@ -31,8 +31,78 @@ public abstract class AbstractCommentRemover {
     switch (keepComments) {
       case KEEP_ALL: return new JustCopyRemover(src, dst, whiteSpaceAllowed);
       case REMOVE_C_STYLE: return new CStyleCommentRemover(src, dst, whiteSpaceAllowed);
-      case REMOVE_JCP_ONLY: return new JcpCommentsRemover(src, dst, whiteSpaceAllowed);
+      case REMOVE_JCP_ONLY:
+        return new JcpCommentLineRemover(src, dst, whiteSpaceAllowed);
       default: throw new IllegalStateException("Unsupported keep comments value: " + keepComments);
+    }
+  }
+
+  protected void skipTillNextString() throws IOException {
+    while (!Thread.currentThread().isInterrupted()) {
+      final int chr = srcReader.read();
+      if (chr < 0) {
+        return;
+      }
+
+      if (chr == '\n') {
+        this.dstWriter.write(chr);
+        return;
+      }
+    }
+  }
+
+  protected void skipTillClosingJavaComments() throws IOException {
+    boolean starFound = false;
+
+    while (!Thread.currentThread().isInterrupted()) {
+      final int chr = srcReader.read();
+      if (chr < 0) {
+        return;
+      }
+      if (starFound) {
+        if (chr == '/') {
+          return;
+        } else {
+          starFound = chr == '*';
+        }
+      } else if (chr == '*') {
+        starFound = true;
+      }
+    }
+  }
+
+  protected void copyTillClosingJavaComments() throws IOException {
+    boolean starFound = false;
+
+    while (!Thread.currentThread().isInterrupted()) {
+      final int chr = this.srcReader.read();
+      if (chr < 0) {
+        return;
+      }
+      this.dstWriter.write(chr);
+      if (starFound) {
+        if (chr == '/') {
+          return;
+        } else {
+          starFound = chr == '*';
+        }
+      } else if (chr == '*') {
+        starFound = true;
+      }
+    }
+  }
+
+  protected void copyTillNextString() throws IOException {
+    while (!Thread.currentThread().isInterrupted()) {
+      final int chr = srcReader.read();
+      if (chr < 0) {
+        return;
+      } else {
+        this.dstWriter.write(chr);
+        if (chr == '\n') {
+          break;
+        }
+      }
     }
   }
 

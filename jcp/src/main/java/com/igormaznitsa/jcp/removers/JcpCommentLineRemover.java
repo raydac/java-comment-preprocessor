@@ -26,51 +26,18 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * A remover allows to cut off all Java like comments contains JCP directives from a reader and write the result into a writer
+ * A remover allows to cut off all Java like comments contains JCP directives (single line comments started by '#' or '$')
+ * from a reader and write the result into a writer.
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * @since 7.1.0
  */
-public class JcpCommentsRemover extends AbstractCommentRemover {
+public class JcpCommentLineRemover extends AbstractCommentRemover {
 
-  public JcpCommentsRemover(final Reader src, final Writer dst,
-                            final boolean whiteSpaceAllowed) {
+  public JcpCommentLineRemover(final Reader src, final Writer dst,
+                               final boolean whiteSpaceAllowed) {
     super(src, dst, whiteSpaceAllowed);
   }
-
-  private void skipUntilNextString() throws IOException {
-    while (!Thread.currentThread().isInterrupted()) {
-      final int chr = srcReader.read();
-      if (chr < 0) {
-        return;
-      }
-
-      if (chr == '\n') {
-        this.dstWriter.write(chr);
-        return;
-      }
-    }
-  }
-
-  private void skipUntilClosingComments() throws IOException {
-    boolean starFound = false;
-
-    while (!Thread.currentThread().isInterrupted()) {
-      final int chr = srcReader.read();
-      if (chr < 0) {
-        return;
-      }
-      if (starFound) {
-        if (chr == '/') {
-          return;
-        } else {
-          starFound = chr == '*';
-        }
-      } else if (chr == '*') {
-        starFound = true;
-      }
-    }
-  }
-
 
   @Override
   public Writer process() throws IOException {
@@ -78,6 +45,9 @@ public class JcpCommentsRemover extends AbstractCommentRemover {
     final int STATE_INSIDE_STRING = 1;
     final int STATE_NEXT_SPECIAL_CHAR = 2;
     final int STATE_FORWARD_SLASH = 3;
+    final int STATE_POSSIBLE_JCP = 4;
+
+    final StringBuilder jcpBuffer = new StringBuilder();
 
     int state = STATE_NORMAL;
 
@@ -106,16 +76,40 @@ public class JcpCommentsRemover extends AbstractCommentRemover {
           }
         }
         break;
+        case STATE_POSSIBLE_JCP: {
+          switch (chr) {
+            case '$':
+            case '#': {
+              jcpBuffer.setLength(0);
+              skipTillNextString();
+              state = STATE_NORMAL;
+            }
+            break;
+            default: {
+              if (Character.isSpaceChar(chr) && this.whiteSpaceAllowed) {
+                jcpBuffer.append((char) chr);
+              } else {
+                this.dstWriter.write(jcpBuffer.toString());
+                this.dstWriter.write(chr);
+                jcpBuffer.setLength(0);
+                this.copyTillNextString();
+                state = STATE_NORMAL;
+              }
+            }
+          }
+        }
+        break;
         case STATE_FORWARD_SLASH: {
           switch (chr) {
             case '*': {
-              skipUntilClosingComments();
+              this.dstWriter.write("/*");
+              copyTillClosingJavaComments();
               state = STATE_NORMAL;
             }
             break;
             case '/': {
-              skipUntilNextString();
-              state = STATE_NORMAL;
+              jcpBuffer.append("//");
+              state = STATE_POSSIBLE_JCP;
             }
             break;
             default: {
@@ -140,11 +134,11 @@ public class JcpCommentsRemover extends AbstractCommentRemover {
             default:
               break;
           }
-          dstWriter.write(chr);
+          this.dstWriter.write(chr);
         }
         break;
         case STATE_NEXT_SPECIAL_CHAR: {
-          dstWriter.write(chr);
+          this.dstWriter.write(chr);
           state = STATE_INSIDE_STRING;
         }
         break;
@@ -152,6 +146,9 @@ public class JcpCommentsRemover extends AbstractCommentRemover {
           throw new IllegalStateException("Unexpected state: " + state);
       }
     }
-    return dstWriter;
+    if (jcpBuffer.length() > 0) {
+      this.dstWriter.write(jcpBuffer.toString());
+    }
+    return this.dstWriter;
   }
 }
