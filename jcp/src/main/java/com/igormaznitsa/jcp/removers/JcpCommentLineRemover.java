@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.removers;
 
+import static com.igormaznitsa.jcp.directives.AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES;
+import static com.igormaznitsa.jcp.directives.AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -71,18 +74,35 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
           switch (chr) {
             case '$':
             case '#': {
-              jcpBuffer.setLength(0);
-              skipTillNextString();
-              state = STATE_NORMAL;
-            }
-            break;
-            default: {
-              if (Character.isSpaceChar(chr) && this.whiteSpaceAllowed) {
-                jcpBuffer.append((char) chr);
+              if (jcpBuffer.toString().equals("//") ||
+                  (jcpBuffer.substring(2).trim().isEmpty() && this.whiteSpaceAllowed)) {
+                jcpBuffer.setLength(0);
+                skipTillNextString();
+                state = STATE_NORMAL;
               } else {
                 this.dstWriter.write(jcpBuffer.toString());
                 this.dstWriter.write(chr);
+                this.copyTillNextString();
+              }
+            }
+            break;
+            default: {
+              jcpBuffer.append((char) chr);
+              final String currentBuffer = jcpBuffer.toString();
+              if (currentBuffer.startsWith(PREFIX_FOR_KEEPING_LINES) ||
+                  currentBuffer.startsWith(PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES)) {
                 jcpBuffer.setLength(0);
+                this.skipTillNextString();
+                state = STATE_NORMAL;
+              } else if (chr == '\n') {
+                this.dstWriter.write(currentBuffer);
+                jcpBuffer.setLength(0);
+                state = STATE_NORMAL;
+              } else if ((!PREFIX_FOR_KEEPING_LINES.startsWith(currentBuffer) &&
+                  !PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES.startsWith(currentBuffer)) &&
+                  (!this.whiteSpaceAllowed || !Character.isSpaceChar(chr))) {
+                jcpBuffer.setLength(0);
+                this.dstWriter.write(currentBuffer);
                 this.copyTillNextString();
                 state = STATE_NORMAL;
               }

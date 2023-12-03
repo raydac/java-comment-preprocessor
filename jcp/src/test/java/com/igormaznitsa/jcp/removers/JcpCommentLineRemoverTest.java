@@ -94,6 +94,21 @@ public class JcpCommentLineRemoverTest extends AbstractCommentRemoverTest {
   }
 
   @Test
+  public void testCommentedJcpDirectiveAndJcpMarkedLines() throws Exception {
+    this.assertCommentRemove(
+        "/\n//\n// JCP> test\n//JCP test\n//JCP! some jcp\n/** some multiline //$  //# test\nwith jcp directives*/\n//$ some\n//JCP> some line \n//$$$ some two\n// hello world\n////#if DEBUG\nSystem.out.println(\"DEBUG\");\n//#else\nSystem.out.println(\"RELEASE\");\n//#endif\n// end\n//JCP",
+        "/\n//\n// JCP> test\n//JCP test\n\n/** some multiline //$  //# test\nwith jcp directives*/\n\n\n\n// hello world\n////#if DEBUG\nSystem.out.println(\"DEBUG\");\n\nSystem.out.println(\"RELEASE\");\n\n// end\n//JCP"
+    );
+
+    if (this.whiteSpaced) {
+      this.assertCommentRemove(
+          "/\n//\n// JCP> test\n//JCP test\n//JCP! some jcp\n/** some multiline //$  //# test\nwith jcp directives*/\n//  $ some\n//JCP> some line \n//    $$$ some two\n// hello world\n////  #if DEBUG\nSystem.out.println(\"DEBUG\");\n//   # else\nSystem.out.println(\"RELEASE\");\n//   #endif\n// end\n//JCP",
+          "/\n//\n// JCP> test\n//JCP test\n\n/** some multiline //$  //# test\nwith jcp directives*/\n\n\n\n// hello world\n////  #if DEBUG\nSystem.out.println(\"DEBUG\");\n\nSystem.out.println(\"RELEASE\");\n\n// end\n//JCP"
+      );
+    }
+  }
+
+  @Test
   public void testLineCommentInTheEnd() throws Exception {
     this.assertCommentRemove(
         "\thello world();//test\n//   Hello",
