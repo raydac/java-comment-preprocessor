@@ -32,12 +32,10 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 
-@PowerMockIgnore({"com.sun.*","com.oracle.*","javax.*","org.w3c.*", "org.xml.*", "java.*"})
 public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContextTest {
 
   protected static Map<String, Value> var(final Map<String, Value> map, final String name, final Value val) {

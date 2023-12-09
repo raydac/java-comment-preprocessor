@@ -27,6 +27,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.xpath.jaxp.XPathFactoryImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -101,7 +102,7 @@ public abstract class AbstractXMLFunction extends AbstractFunction {
 
   protected static XPathExpression prepareXPathExpression(final String path)
       throws XPathExpressionException {
-    final XPathFactory factory = XPathFactory.newInstance();
+    final XPathFactory factory = new XPathFactoryImpl();
     final XPath xpath = factory.newXPath();
     return xpath.compile(path);
   }
