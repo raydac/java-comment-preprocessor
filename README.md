@@ -11,24 +11,18 @@
 
 # Changelog
 
+__7.1.0 (10-dec-2023)__
+
+- refactoring of internal API
+- updated dependencies
+- improved keep comments processing, added `/M:<type>` CLI
+  option [#46](https://github.com/raydac/java-comment-preprocessor/issues/46)
+
 __7.0.5 (11-dec-2021)__
 
 - fixed compatibility with Gradle 7.x
 - added support of build under JDK 16
 - updated dependencies
-
-__7.0.4 (26-sep-2020)__
-
-- fixed default flag state `keep comments` for start in CLI
-  mode [#24](https://github.com/raydac/java-comment-preprocessor/issues/24)
-- fixed working directory detection in CLI mode
-
-__7.0.3 (13-sep-2020)__
-
-- added way to get info about all input and produced files from preprocessor context
-- reworked Gradle plug-in, removed extension and now properties should be directly provided for
-  task [#21](https://github.com/raydac/java-comment-preprocessor/issues/21)
-- refactoring, removed some auxiliary plugins from build process and extra code
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 

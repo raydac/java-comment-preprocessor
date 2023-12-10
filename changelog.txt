@@ -1,3 +1,9 @@
+__7.1.0 (10-dec-2023)__
+
+- refactoring of internal API
+- updated dependencies
+- improved keep comments processing, added `/M:<type>` CLI option [#46](https://github.com/raydac/java-comment-preprocessor/issues/46)
+
 __7.0.5 (11-dec-2021)__
 
  - fixed compatibility with Gradle 7.x
