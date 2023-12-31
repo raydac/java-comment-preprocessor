@@ -363,11 +363,11 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
     if (this.project != null) {
       final MavenPropertiesImporter mavenPropertiesImporter =
-              new MavenPropertiesImporter(context,
-                      this.project,
-                      this.session,
-                      isVerbose() || getLog().isDebugEnabled()
-              );
+          new MavenPropertiesImporter(context,
+              this.project,
+              this.session,
+              isVerbose() || getLog().isDebugEnabled()
+          );
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
@@ -405,12 +405,25 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
 
     this.configFiles.forEach(x -> context.registerConfigFile(new File(x)));
 
-    // process global vars
-    this.getVars().forEach((key, value) -> {
-      getLog().debug(String.format("Register global var: '%s' <- '%s'", key, value));
-      context.setGlobalVariable(key, Value.recognizeRawString(value));
-    });
-
+    // register global vars
+    this.getVars().entrySet().stream()
+        .filter(e -> {
+          final String key = e.getKey();
+          final String value = e.getValue();
+          if (value == null) {
+            getLog().warn(String.format(
+                "Global var '%s' ignored for null value (may be its content is empty in POM)",
+                key));
+            return false;
+          } else {
+            return true;
+          }
+        })
+        .forEach(e -> {
+          getLog().debug(
+              String.format("Register global var: '%s' <- '%s'", e.getKey(), e.getValue()));
+          context.setGlobalVariable(e.getKey(), Value.recognizeRawString(e.getValue()));
+        });
     return context;
   }
 

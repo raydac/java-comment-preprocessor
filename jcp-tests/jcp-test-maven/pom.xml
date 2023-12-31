@@ -74,6 +74,7 @@
             <configuration>
               <useTestSources>true</useTestSources>
               <vars>
+                <empty.null.variable></empty.null.variable>
                 <some.test.global.test>Some Test</some.test.global.test>
               </vars>
             </configuration>

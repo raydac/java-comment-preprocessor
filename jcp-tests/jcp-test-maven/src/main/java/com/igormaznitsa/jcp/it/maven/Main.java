@@ -12,6 +12,10 @@ public class Main {
       throw new Error("Must be MainTwo but detected"+this.getClass().getName());
     }
 
+    //#if empty.null.variable
+    throw new Error("Must not be presented because variable must be recognized as false");
+    //#endif
+
     final String test = /*$"\""+some.test.global+"\";"$*/ /*-*/ "";
 
     if ("Some Test Global Value".equals(test)){
