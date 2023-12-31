@@ -49,7 +49,7 @@ public final class InfoHelper {
 
 
   public static String getCopyright() {
-    return "Copyright (C) 2002-2023 Igor A. Maznitsa (https://www.igormaznitsa.com)";
+    return "Copyright (C) 2002-2024 Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
 
