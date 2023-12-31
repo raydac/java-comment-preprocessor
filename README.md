@@ -28,11 +28,14 @@ __7.0.5 (11-dec-2021)__
 
 # Introduction
 
-Initially the tool developed for J2ME game development in 2002. It was too expensive for me to support multiple sources for many J2ME devices especially if it was needed just change position of several calls for different devices. So the preprocessor was born and because Java is the main technology in use, it is sharpened for use with C/Java family languages (which have import sections and C-comment style). For long time the preprocessor was proprietary project but since 2011 it was opened as an OSS project.
+Originally developed in 2002, the preprocessor tool emerged from the need to manage diverse sources for J2ME devices efficiently. It aimed to streamline altering specific calls' positions across different devices, optimizing the development process. With Java as the primary technology, the tool was fine-tuned for C/Java family languages, capitalizing on their import sections and C-comment style.
 
-I guess, at present it is the most powerful two-pass Java preprocessor which aware for document structure (prefix, body and postfix), loops and even can use XML files as data sources ([I used to generate static web-sites with it](jcp-tests/jcp-test-static-site)). At present the preprocessor represented as a solid uber-jar including Maven, ANT and Gradle interface code and can be used with these tools as their plugin. Minimal required JDK is 1.8
+Initially a closed project, it transitioned to an open-source initiative in 2011. Today, it stands out as a potent two-pass Java preprocessor, adept at understanding document structure (prefix, body, and postfix), incorporating loops, and utilizing XML files as data sources. Its capabilities extend to generating static websites.
 
-__Some Linux repositories provide the preprocessor just out of the box as package `libcomment-preprocessor-java`.__
+The preprocessor now exists as a comprehensive uber-jar bundled with interface code for Maven, ANT, and Gradle, seamlessly integrating with these tools. It requires a minimum JDK of version 1.8.
+
+Moreover, various Linux repositories offer the preprocessor as a package, commonly named `libcomment-preprocessor-java`, simplifying its accessibility for users.
+
 
 # Mind map with all options
 
