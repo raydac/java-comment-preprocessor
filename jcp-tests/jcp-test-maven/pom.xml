@@ -73,6 +73,7 @@
             </goals>
             <configuration>
               <useTestSources>true</useTestSources>
+              <unknownVarAsFalse>true</unknownVarAsFalse>
               <vars>
                 <empty.null.variable></empty.null.variable>
                 <some.test.global.test>Some Test</some.test.global.test>

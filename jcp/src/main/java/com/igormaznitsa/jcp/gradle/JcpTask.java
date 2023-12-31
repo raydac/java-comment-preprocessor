@@ -113,7 +113,7 @@ public class JcpTask extends DefaultTask {
   /**
    * List of variables to be registered in preprocessor as global ones.
    */
-  private final MapProperty<String, String> vars;
+  private final MapProperty<String, Object> vars;
   /**
    * List of patterns of folder paths to be excluded from preprocessing, It uses
    * ANT path pattern format.
@@ -174,7 +174,7 @@ public class JcpTask extends DefaultTask {
     this.sourceEncoding = factory.property(String.class).convention(StandardCharsets.UTF_8.name());
     this.eol = factory.property(String.class).convention(System.lineSeparator());
 
-    this.vars = factory.mapProperty(String.class, String.class);
+    this.vars = factory.mapProperty(String.class, Object.class);
 
     this.sources = factory.listProperty(File.class);
     this.configFiles = factory.listProperty(String.class);
@@ -289,7 +289,7 @@ public class JcpTask extends DefaultTask {
   }
 
   @Input
-  public MapProperty<String, String> getVars() {
+  public MapProperty<String, Object> getVars() {
     return vars;
   }
 
@@ -415,10 +415,29 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setUnknownVariableAsFalse(this.unknownVarAsFalse.get());
     preprocessorContext.setVerbose(this.verbose.get());
 
-    this.vars.getOrElse(emptyMap()).forEach((key, value) -> {
-      logger.debug(String.format("Registering global variable: %s=%s", key, value));
-      preprocessorContext.setGlobalVariable(key, Value.recognizeRawString(value));
-    });
+    this.vars.getOrElse(emptyMap()).entrySet().stream()
+        .filter(e -> {
+          if (e.getValue() == null) {
+            if (this.unknownVarAsFalse.get()) {
+              logger.warn(String.format(
+                  "Global var '%s' ignored for null value (may be its content is empty in POM)",
+                  e.getKey()));
+              return false;
+            } else {
+              throw new IllegalStateException(String.format(
+                  "Global var '%s' has null value, to ignore it set flag unknownVarAsFalse",
+                  e.getKey()));
+            }
+          } else {
+            return true;
+          }
+        })
+        .forEach(e -> {
+          logger.debug(
+              String.format("Registering global variable: %s=%s", e.getKey(), e.getValue()));
+          preprocessorContext.setGlobalVariable(e.getKey(),
+              Value.recognizeRawString(String.valueOf(e.getValue())));
+        });
 
     final JcpPreprocessor preprocessor = new JcpPreprocessor(preprocessorContext);
 

@@ -49,6 +49,7 @@ import lombok.Setter;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -357,7 +358,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   }
 
 
-  PreprocessorContext makePreprocessorContext() throws IOException {
+  PreprocessorContext makePreprocessorContext() throws AbstractMojoExecutionException {
     final PreprocessorContext context = new PreprocessorContext(this.getBaseDir());
     context.setPreprocessorLogger(this);
 
@@ -406,24 +407,35 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     this.configFiles.forEach(x -> context.registerConfigFile(new File(x)));
 
     // register global vars
-    this.getVars().entrySet().stream()
-        .filter(e -> {
-          final String key = e.getKey();
-          final String value = e.getValue();
-          if (value == null) {
-            getLog().warn(String.format(
-                "Global var '%s' ignored for null value (may be its content is empty in POM)",
-                key));
-            return false;
-          } else {
-            return true;
-          }
-        })
-        .forEach(e -> {
-          getLog().debug(
-              String.format("Register global var: '%s' <- '%s'", e.getKey(), e.getValue()));
-          context.setGlobalVariable(e.getKey(), Value.recognizeRawString(e.getValue()));
-        });
+    try {
+      this.getVars().entrySet().stream()
+          .filter(e -> {
+            final String key = e.getKey();
+            final String value = e.getValue();
+            if (value == null) {
+              if (this.isUnknownVarAsFalse()) {
+                getLog().warn(String.format(
+                    "Global var '%s' ignored for null value (may be its content is empty in POM)",
+                    key));
+                return false;
+              } else {
+                throw new IllegalStateException(String.format(
+                    "Global var '%s' has null value (may be its content is empty in POM), to ignore it set unknownVarAsFalse as true",
+                    key));
+              }
+            } else {
+              return true;
+            }
+          })
+          .forEach(e -> {
+            getLog().debug(
+                String.format("Register global var: '%s' <- '%s'", e.getKey(), e.getValue()));
+            context.setGlobalVariable(e.getKey(), Value.recognizeRawString(e.getValue()));
+          });
+    } catch (final IllegalStateException ex) {
+      getLog().error(ex.getMessage());
+      throw new MojoFailureException(ex.getMessage());
+    }
     return context;
   }
 
