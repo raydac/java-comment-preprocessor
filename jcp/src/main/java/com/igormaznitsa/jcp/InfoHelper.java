@@ -30,21 +30,37 @@ import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
 
 public final class InfoHelper {
 
   public static final String DELIMITER = "-------------------------------------------------";
   public static final String SHORT_DELIMITER = "----------------------";
 
+  private static final String version;
+
+  static {
+    final String path = "/jcpversion.properties";
+    try (final InputStream stream = InfoHelper.class.getResourceAsStream(path)) {
+      final Properties props = new Properties();
+      props.load(stream);
+      version = Objects.requireNonNull(props.getProperty("version"));
+    } catch (IOException ex) {
+      throw new Error("Can't read resource: " + path, ex);
+    }
+  }
+
   private InfoHelper() {
   }
 
-
   public static String getVersion() {
-    return "v7.1.2";
+    return "v" + version;
   }
 
 
