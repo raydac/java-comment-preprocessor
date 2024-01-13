@@ -43,14 +43,16 @@ public final class InfoHelper {
   public static final String DELIMITER = "-------------------------------------------------";
   public static final String SHORT_DELIMITER = "----------------------";
 
-  private static final String version;
+  public static final String VERSION;
+  public static final String URL;
 
   static {
-    final String path = "/jcpversion.properties";
+    final String path = "/jcpversion.props";
     try (final InputStream stream = InfoHelper.class.getResourceAsStream(path)) {
       final Properties props = new Properties();
       props.load(stream);
-      version = Objects.requireNonNull(props.getProperty("version"));
+      VERSION = Objects.requireNonNull(props.getProperty("version"));
+      URL = Objects.requireNonNull(props.getProperty("url"));
     } catch (IOException ex) {
       throw new Error("Can't read resource: " + path, ex);
     }
@@ -60,7 +62,7 @@ public final class InfoHelper {
   }
 
   public static String getVersion() {
-    return "v" + version;
+    return "v" + VERSION;
   }
 
 
@@ -70,7 +72,7 @@ public final class InfoHelper {
 
 
   public static String getSite() {
-    return "Project page: https://github.com/raydac/java-comment-preprocessor";
+    return "Project page: " + URL;
   }
 
 
