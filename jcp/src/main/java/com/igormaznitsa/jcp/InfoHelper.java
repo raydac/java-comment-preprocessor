@@ -45,6 +45,7 @@ public final class InfoHelper {
 
   public static final String VERSION;
   public static final String URL;
+  public static final int YEAR;
 
   static {
     final String path = "/jcpversion.props";
@@ -53,6 +54,7 @@ public final class InfoHelper {
       props.load(stream);
       VERSION = Objects.requireNonNull(props.getProperty("version"));
       URL = Objects.requireNonNull(props.getProperty("url"));
+      YEAR = Integer.parseInt(Objects.requireNonNull(props.getProperty("year")).trim());
     } catch (IOException ex) {
       throw new Error("Can't read resource: " + path, ex);
     }
@@ -67,7 +69,7 @@ public final class InfoHelper {
 
 
   public static String getCopyright() {
-    return "Copyright (C) 2002-2024 Igor A. Maznitsa (https://www.igormaznitsa.com)";
+    return "Copyright (C) 2002-" + YEAR + " Igor A. Maznitsa (https://www.igormaznitsa.com)";
   }
 
 

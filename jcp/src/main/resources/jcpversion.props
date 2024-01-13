@@ -1,2 +1,3 @@
 version=${project.version}
 url=${project.url}
+year=${current.year}
