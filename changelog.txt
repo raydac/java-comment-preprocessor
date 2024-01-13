@@ -1,3 +1,7 @@
+__7.1.1 (13-jan-2024)__
+- fixed NPE for empty or null global variable value in Maven and Gradle [#47](https://github.com/raydac/java-comment-preprocessor/issues/47)
+- updated dependencies
+
 __7.1.0 (10-dec-2023)__
 
 - refactoring of internal API
