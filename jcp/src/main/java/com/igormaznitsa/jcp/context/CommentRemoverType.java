@@ -27,7 +27,7 @@ public enum CommentRemoverType {
    */
   public static String makeListOfAllRemoverIds() {
     return Arrays.stream(CommentRemoverType.values())
-        .map(Enum::toString).collect(Collectors.joining(","));
+        .map(Enum::name).collect(Collectors.joining(","));
   }
 
 }
