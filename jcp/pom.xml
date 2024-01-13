@@ -287,9 +287,16 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>/jcpversion.props</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
         <filtering>true</filtering>
         <includes>
-          <include>**/*.props</include>
+          <include>**/jcpversion.props</include>
         </includes>
       </resource>
     </resources>
