@@ -56,7 +56,7 @@ public final class InfoHelper {
       URL = Objects.requireNonNull(props.getProperty("url"));
       YEAR = Integer.parseInt(Objects.requireNonNull(props.getProperty("year")).trim());
     } catch (IOException ex) {
-      throw new Error("Can't read resource: " + path, ex);
+      throw new IllegalStateException("Can't read resource: " + path, ex);
     }
   }
 
@@ -146,9 +146,7 @@ public final class InfoHelper {
 
 
   private static String makeCommandLineKeyReference(final CommandLineHandler handler) {
-    final String key = handler.getKeyName();
-    final String descr = handler.getDescription();
-    return makeColumns(key, descr, 14);
+    return makeColumns(handler.getKeyName(), handler.getDescription(), 14);
   }
 
 
@@ -171,7 +169,7 @@ public final class InfoHelper {
     final String directiveName = directive.getFullName();
     final String descr =
         (directive.isDeprecated() ? "{DEPRECATED} " : "") + directive.getReference() + " (" +
-            activityPasses.toString() + ')';
+            activityPasses + ')';
     return makeColumns(directiveName, descr, 16);
   }
 
@@ -182,15 +180,13 @@ public final class InfoHelper {
 
 
   private static String makeOperatorReference(final AbstractOperator operator) {
-    final String operatorName = operator.getKeyword();
-    final String descr = operator.getReference();
-    return makeColumns(operatorName, descr, 14);
+    return makeColumns(operator.getKeyword(), operator.getReference(), 14);
   }
 
 
   private static String makeFunctionReference(final AbstractFunction func) {
     final String funcName = func.getName();
-    final String descr = func.getReference();
+    final String description = func.getReference();
 
     final StringBuilder variants = new StringBuilder("  [");
     final String result = func.getResultType().getSignature().toUpperCase(Locale.ENGLISH);
@@ -211,7 +207,7 @@ public final class InfoHelper {
       variantIndex++;
     }
     variants.append(']');
-    return makeColumns(funcName, descr, 24) + variants.toString();
+    return makeColumns(funcName, description, 24) + variants;
   }
 
 
