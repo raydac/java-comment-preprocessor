@@ -11,18 +11,17 @@
 
 # Changelog
 
+__7.1.2 (SNAPSHOT)__
+
+- provided way to set a class from the class path to play a role as action preprocessor extension, for CLI it
+  is `/EA:<class.name>` for plugins it is `actionPreprocessorExtension` string
+  parameter.[#48](https://github.com/raydac/java-comment-preprocessor/issues/48)
+
 __7.1.1 (13-jan-2024)__
 
 - fixed NPE for empty or null global variable value in Maven and
   Gradle [#47](https://github.com/raydac/java-comment-preprocessor/issues/47)
 - updated dependencies
-
-__7.1.0 (10-dec-2023)__
-
-- refactoring of internal API
-- updated dependencies
-- improved keep comments processing, added `/M:<type>` CLI
-  option [#46](https://github.com/raydac/java-comment-preprocessor/issues/46)
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
