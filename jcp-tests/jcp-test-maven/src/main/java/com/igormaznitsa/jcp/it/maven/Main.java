@@ -3,6 +3,7 @@ package com.igormaznitsa.jcp.it.maven;
 
 //$public class MainTwo {
 //#//
+//#action 1,2,3
 public class Main {
 
   //$$public MainTwo(){
@@ -25,6 +26,7 @@ public class Main {
     }
   }
 
+  //#action $hello1("getProperty")
   public String getProperty() {
     return "/*$mvn.project.property.my.custom.property$*/";
   }

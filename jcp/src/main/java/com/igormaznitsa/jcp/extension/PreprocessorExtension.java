@@ -50,9 +50,29 @@ public interface PreprocessorExtension {
    *                     must not be null
    * @param arguments    the function arguments as an array, must not be null
    * @return a calculated value, it must not be null
+   * @see #processUserFunction(PreprocessorContext, String, Value[])
+   * @deprecated since 7.1.2
    */
+  @Deprecated
+  default Value processUserFunction(String functionName, Value[] arguments) {
+    throw new UnsupportedOperationException("Use version with PreprocessorContext for call");
+  }
 
-  Value processUserFunction(String functionName, Value[] arguments);
+  /**
+   * Call to process a user function (such functions start with $)
+   *
+   * @param context      the current preprocessor context, must not be null
+   * @param functionName the name of the function (without $ and in low case),
+   *                     must not be null
+   * @param arguments    the function arguments as an array, must not be null
+   * @return a calculated value, it must not be null
+   * @see #processUserFunction(String, Value[])
+   * @since 7.1.2
+   */
+  default Value processUserFunction(PreprocessorContext context, String functionName,
+                                    Value[] arguments) {
+    return this.processUserFunction(functionName, arguments);
+  }
 
   /**
    * When a preprocessor meets a user defined function (the function starts with

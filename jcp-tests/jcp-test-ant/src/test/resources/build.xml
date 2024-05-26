@@ -20,6 +20,7 @@
                 targetEncoding="UTF-8"
                 preserveIndents="true"
                 dontOverwriteSameContent="false"
+                actionPreprocessorExtension="com.igormaznitsa.jcp.extension.LogPreprocessorExtension"
         >
             <excludeFolders>
                 <folder>**/excluded1</folder>

@@ -1,5 +1,6 @@
 package com.igormaznitsa.jcp.gradle;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findCommentRemoverForId;
 import static java.util.Collections.emptyMap;
 
@@ -66,6 +67,12 @@ public class JcpTask extends DefaultTask {
    * Encoding for text write operations.
    */
   private final Property<String> targetEncoding;
+  /**
+   * Property contains preprocessor action extension class name or blank string if not provided.
+   *
+   * @since 7.1.2
+   */
+  private final Property<String> actionPreprocessorExtension;
   /**
    * Flag to ignore missing source folders, if false then mojo fail for any
    * missing source folder, if true then missing folder will be ignored.
@@ -157,6 +164,7 @@ public class JcpTask extends DefaultTask {
 
   @Inject
   public JcpTask(final ObjectFactory factory) {
+    this.actionPreprocessorExtension = factory.property(String.class).convention("");
     this.allowWhitespaces = factory.property(Boolean.class).convention(false);
     this.careForLastEol = factory.property(Boolean.class).convention(false);
     this.clearTarget = factory.property(Boolean.class).convention(false);
@@ -276,6 +284,11 @@ public class JcpTask extends DefaultTask {
   @Input
   public Property<File> getBaseDir() {
     return baseDir;
+  }
+
+  @Input
+  public Property<String> getActionPreprocessorExtension() {
+    return actionPreprocessorExtension;
   }
 
   @Input
@@ -414,6 +427,14 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setTargetEncoding(Charset.forName(this.targetEncoding.get()));
     preprocessorContext.setUnknownVariableAsFalse(this.unknownVarAsFalse.get());
     preprocessorContext.setVerbose(this.verbose.get());
+
+    if (!this.actionPreprocessorExtension.get().trim().isEmpty()) {
+      final String className = this.actionPreprocessorExtension.get().trim();
+      logger.info(
+          String.format("Detected action preprocessor extension class name: %s", className));
+      preprocessorContext.setPreprocessorExtension(
+          findAndInstantiatePreprocessorExtensionForClassName(className));
+    }
 
     this.vars.getOrElse(emptyMap()).entrySet().stream()
         .filter(e -> {

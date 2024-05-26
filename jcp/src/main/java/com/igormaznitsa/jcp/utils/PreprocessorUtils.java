@@ -33,6 +33,7 @@ import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,6 +87,30 @@ public final class PreprocessorUtils {
     return result.isPresent() ? result :
         Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
   }
+
+  /**
+   * Find and instantiate a preprocessor extension for its class name. <b>Class must have default constructor.</b>
+   * The preprocessor extension will be called for action directives.
+   *
+   * @param className preprocessor extension class name, can be null.
+   * @return found and instantiated preprocessor extension or null if class name is null
+   * @throws RuntimeException with cause exception if any error during method call.
+   * @since 7.1.2
+   */
+  public static PreprocessorExtension findAndInstantiatePreprocessorExtensionForClassName(
+      final String className) {
+    if (className == null) {
+      return null;
+    }
+    try {
+      final Class<?> foundClass = Class.forName(className);
+      return (PreprocessorExtension) foundClass.getConstructor().newInstance();
+    } catch (Exception ex) {
+      throw new RuntimeException("Can't instantiate preprocessor extension class: " + className,
+          ex);
+    }
+  }
+
 
   /**
    * Find comment remover type for provided identifier. Decoding also true and false values.

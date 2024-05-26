@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.usecases;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
@@ -58,7 +57,8 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
   }
 
   @Override
-  public Value processUserFunction(final String functionName, final Value[] arguments) {
+  public Value processUserFunction(final PreprocessorContext preprocessorContext,
+                                   final String functionName, final Value[] arguments) {
     if ("testfunc".equals(functionName) && arguments.length == 3) {
       calledfunc++;
       assertEquals(1L, arguments[0].asLong().longValue());

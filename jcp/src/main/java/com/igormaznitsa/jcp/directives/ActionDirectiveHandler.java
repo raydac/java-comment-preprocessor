@@ -34,7 +34,6 @@ import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The class implements the //#action directive handler
@@ -44,25 +43,21 @@ import java.util.Objects;
 public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "action";
   }
 
   @Override
-
   public String getReference() {
     return "call user extension with comma separated arguments";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.MULTIEXPRESSION;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     if (context.getPreprocessorExtension() != null) {
@@ -77,9 +72,14 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
           results[index++] = val;
         }
 
-        if (!Objects.requireNonNull(context.getPreprocessorExtension())
-            .processAction(context, results)) {
-          throw context.makeException("Extension can't process action ", null);
+        if (context.getPreprocessorExtension() == null) {
+          throw context.makeException(
+              "Detected action directive but there is no any provided action preprocessor extension to process it",
+              null);
+        }
+
+        if (!context.getPreprocessorExtension().processAction(context, results)) {
+          throw context.makeException("Unable to process an action", null);
         }
       } catch (IOException ex) {
         throw context.makeException("Unexpected string detected [" + string + ']', ex);

@@ -43,6 +43,7 @@ dependencies {
 preprocess {
     sources = android.sourceSets.main.java.srcDirs
     keepComments = false
+    actionPreprocessorExtension = "com.igormaznitsa.jcp.extension.LogPreprocessorExtension"
     vars = [
             'action.text'  : 'Non-secret action!',
             'remove.secret': 'true'

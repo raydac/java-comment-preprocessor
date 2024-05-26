@@ -78,6 +78,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean allowWhitespaces = false;
   private boolean preserveIndents = false;
   private boolean dontOverwriteSameContent = false;
+  private String actionPreprocessorExtension = null;
   private Map<String, Value> antVariables = new HashMap<>();
 
   private void registerConfigFiles(final PreprocessorContext context) {
@@ -167,6 +168,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
               .map(ExcludeFolders.Folder::getPath)
               .collect(Collectors.toList())
       );
+    }
+
+    if (this.getActionPreprocessorExtension() != null) {
+      info("Instantiating action preprocessor extension: " + this.getActionPreprocessorExtension());
+      context.setPreprocessorExtension(
+          PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
+              this.getActionPreprocessorExtension().trim()));
     }
 
     this.registerConfigFiles(context);

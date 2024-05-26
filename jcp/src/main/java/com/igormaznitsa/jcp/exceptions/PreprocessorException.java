@@ -35,7 +35,7 @@ public class PreprocessorException extends RuntimeException {
   private static final long serialVersionUID = 2857499664112391862L;
 
   private final String processingString;
-  private transient final FilePositionInfo[] includeStack;
+  private final transient FilePositionInfo[] includeStack;
 
   public PreprocessorException(final String message, final String processedText,
                                final FilePositionInfo[] includeStack, final Throwable cause) {
@@ -139,7 +139,7 @@ public class PreprocessorException extends RuntimeException {
 
 
   public String getProcessingString() {
-    return processingString;
+    return this.processingString;
   }
 
 

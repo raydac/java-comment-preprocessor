@@ -25,6 +25,7 @@ import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
 
+import com.igormaznitsa.jcp.cmdline.ActionPreprocessorExtensionHandler;
 import com.igormaznitsa.jcp.cmdline.AllowWhitespaceDirectiveHandler;
 import com.igormaznitsa.jcp.cmdline.CareForLastEolHandler;
 import com.igormaznitsa.jcp.cmdline.ClearTargetHandler;
@@ -104,6 +105,7 @@ public final class JcpPreprocessor {
       new PreserveIndentDirectiveHandler(),
       new ExcludeFoldersHandler(),
       new KeepAttributesHandler(),
+      new ActionPreprocessorExtensionHandler(),
       new UnknownAsFalseHandler()
   };
   private final PreprocessorContext context;
