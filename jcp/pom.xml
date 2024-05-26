@@ -22,7 +22,7 @@
   </repositories>
 
   <properties>
-    <gradle.api.version>6.0</gradle.api.version>
+    <gradle.api.version>6.1.1</gradle.api.version>
   </properties>
 
   <profiles>
