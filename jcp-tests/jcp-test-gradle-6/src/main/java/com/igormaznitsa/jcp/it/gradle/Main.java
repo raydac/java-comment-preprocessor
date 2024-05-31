@@ -11,7 +11,7 @@ public class Main {
     if (!this.getClass().getName().endsWith("MainTwo")) {
       throw new Error("Must be MainTwo but detected"+this.getClass().getName());
     }
-
+    //#action "test","action",$user3(1,2,3)
     final String test = /*$"\""+some.test.global+someGlobalVar+"\";"$*/ /*-*/ "";
 
     if ("Some Test Global ValueHUZZAA!".equals(test)){

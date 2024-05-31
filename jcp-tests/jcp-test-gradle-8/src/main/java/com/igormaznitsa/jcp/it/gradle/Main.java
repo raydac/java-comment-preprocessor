@@ -4,7 +4,7 @@ package com.igormaznitsa.jcp.it.gradle;
 //$public class MainTwo {
 //#//
 public class Main {
-
+//#action "hello","world",$user2(1,2)
   //$$public MainTwo(){
   //#//
   public Main(){
