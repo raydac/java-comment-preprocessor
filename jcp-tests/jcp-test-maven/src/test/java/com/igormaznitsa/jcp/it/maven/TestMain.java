@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestMain {
+class TestMain {
 
   @Test
-  public void testMain(){
+  void testMain(){
       //$MainTwo obj = new MainTwo();
       //#-
       Main obj = new Main();
