@@ -22,6 +22,7 @@
     <modules>
         <module>jcp-test-ant</module>
         <module>jcp-test-maven</module>
+        <module>jcp-test-maven-action</module>
         <module>jcp-test-static-site</module>
         <module>jcp-test-javassist</module>
         <module>jcp-test-gradle-5</module>

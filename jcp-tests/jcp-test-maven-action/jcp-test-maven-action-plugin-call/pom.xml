@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.igormaznitsa</groupId>
+    <artifactId>jcp-test-maven-action</artifactId>
+    <version>0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>jcp-test-maven-action-plugin-call</artifactId>
+  <packaging>jar</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.igormaznitsa</groupId>
+        <artifactId>jcp</artifactId>
+        <version>${jcp.test.version}</version>
+        <configuration>
+          <eol>\r\n</eol>
+        </configuration>
+        <executions>
+          <execution>
+            <id>preprocess-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>preprocess</goal>
+            </goals>
+            <configuration>
+              <allowWhitespaces>true</allowWhitespaces>
+              <eol>\r\n</eol>
+              <extensions>
+                <extension>java</extension>
+              </extensions>
+              <keepAttributes>true</keepAttributes>
+              <keepComments>true</keepComments>
+              <keepLines>true</keepLines>
+              <actionPreprocessorExtension>com.igormaznitsa.jcp.it.CustomPreprocessorExtension
+              </actionPreprocessorExtension>
+              <sourceEncoding>UTF-8</sourceEncoding>
+              <targetEncoding>UTF-8</targetEncoding>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.igormaznitsa</groupId>
+            <artifactId>jcp-test-maven-action-action</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
