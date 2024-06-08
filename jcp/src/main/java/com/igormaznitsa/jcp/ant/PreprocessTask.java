@@ -93,7 +93,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
 
   private void fillGlobalVars(final PreprocessorContext context) {
     if (this.getVars() != null) {
-      for (final Vars.Var g : this.getVars().getVars()) {
+      for (final Vars.Var g : this.getVars().getListVars()) {
         context.setGlobalVariable(Objects.requireNonNull(g.getName(), "Name must not be null"),
             Value.recognizeRawString(
                 Objects.requireNonNull(g.getValue(), "Value must not be null")));
@@ -121,7 +121,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     if (this.getExcludeExtensions() != null) {
-      context.setExcludeExtensions(this.getExcludeExtensions().extensions
+      context.setExcludeExtensions(this.getExcludeExtensions().listExtensions
           .stream()
           .map(x -> x.name.trim())
           .filter(x -> !x.isEmpty())
@@ -129,7 +129,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       );
     }
     if (this.getExtensions() != null) {
-      context.setExtensions(this.getExtensions().extensions
+      context.setExtensions(this.getExtensions().listExtensions
           .stream()
           .map(x -> x.name.trim())
           .filter(x -> !x.isEmpty())
@@ -377,11 +377,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Data
   @EqualsAndHashCode(callSuper = false)
   public static class Extensions {
-    protected final List<Extension> extensions = new ArrayList<>();
+    protected final List<Extension> listExtensions = new ArrayList<>();
 
     public Extension createExtension() {
       final Extension result = new Extension();
-      this.extensions.add(result);
+      this.listExtensions.add(result);
       return result;
     }
 
@@ -398,11 +398,11 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Data
   @EqualsAndHashCode(callSuper = false)
   public static class Vars {
-    private List<Var> vars = new ArrayList<>();
+    private List<Var> listVars = new ArrayList<>();
 
     public Var createVar() {
       final Var result = new Var();
-      this.vars.add(result);
+      this.listVars.add(result);
       return result;
     }
 
