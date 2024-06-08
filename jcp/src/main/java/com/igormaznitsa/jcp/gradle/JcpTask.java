@@ -69,8 +69,10 @@ public class JcpTask extends DefaultTask {
   private final Property<String> targetEncoding;
   /**
    * Property contains preprocessor action extension class name or blank string if not provided.
+   * The class must have the default constructor.
    *
    * @since 7.1.2
+   * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
    */
   private final Property<String> actionPreprocessorExtension;
   /**

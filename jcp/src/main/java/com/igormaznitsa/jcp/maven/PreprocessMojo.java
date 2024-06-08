@@ -116,6 +116,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * Empty string will be recognized as missing class name.
    *
    * @since 7.1.2
+   * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
    */
   @Parameter(alias = "actionPreprocessorExtension", property = "jcp.action.preprocessor.extension", defaultValue = "")
   private String actionPreprocessorExtension = "";
