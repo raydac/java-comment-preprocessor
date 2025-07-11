@@ -1,8 +1,16 @@
+__7.2.0 (SNAPSHOT)__
+
+- minimum JDK version 11
+- removed support of Gradle 5
+- updated dependencies
+
 __7.1.2 (08-jun-2024)__
+
 - added way to define a preprocessor extension class through CLI (as `/EA:<class.name>`) and in plugins (as `actionPreprocessorExtension`). The class should be provided in the clas path.[#48](https://github.com/raydac/java-comment-preprocessor/issues/48)
 - updated some dependencies
 
 __7.1.1 (13-jan-2024)__
+
 - fixed NPE for empty or null global variable value in Maven and Gradle [#47](https://github.com/raydac/java-comment-preprocessor/issues/47)
 - updated dependencies
 

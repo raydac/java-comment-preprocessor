@@ -9,10 +9,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jcp.test.version>7.1.2</jcp.test.version>
+        <jcp.test.version>7.2.0-SNAPSHOT</jcp.test.version>
         <junit.version>5.4.2</junit.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
         <gradle5.executable>gradle5</gradle5.executable>
         <gradle6.executable>gradle6</gradle6.executable>
         <gradle7.executable>gradle7</gradle7.executable>
@@ -25,7 +24,6 @@
         <module>jcp-test-maven-action</module>
         <module>jcp-test-static-site</module>
         <module>jcp-test-javassist</module>
-        <module>jcp-test-gradle-5</module>
         <module>jcp-test-gradle-6</module>
         <module>jcp-test-gradle-7</module>
         <module>jcp-test-gradle-8</module>
@@ -71,7 +69,7 @@
             <dependency>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>3.5.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
