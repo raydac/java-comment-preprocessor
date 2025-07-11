@@ -8,9 +8,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jcp.test.version>7.2.0-SNAPSHOT</jcp.test.version>
-        <junit.version>5.4.2</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.13.3</junit.version>
         <maven.compiler.release>11</maven.compiler.release>
         <gradle5.executable>gradle5</gradle5.executable>
         <gradle6.executable>gradle6</gradle6.executable>
