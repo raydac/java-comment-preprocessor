@@ -16,6 +16,7 @@
         <gradle6.executable>gradle6</gradle6.executable>
         <gradle7.executable>gradle7</gradle7.executable>
         <gradle8.executable>gradle8</gradle8.executable>
+        <gradle9.executable>gradle9</gradle9.executable>
     </properties>
 
     <modules>
@@ -27,6 +28,7 @@
         <module>jcp-test-gradle-6</module>
         <module>jcp-test-gradle-7</module>
         <module>jcp-test-gradle-8</module>
+        <module>jcp-test-gradle-9</module>
         <module>jcp-test-android</module>
     </modules>
 

@@ -1,0 +1,2 @@
+# config file for build
+someGlobalVar="HUZZAA!"
