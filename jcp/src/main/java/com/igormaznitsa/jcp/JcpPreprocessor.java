@@ -54,6 +54,7 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -86,8 +87,6 @@ import org.apache.commons.io.FilenameUtils;
  */
 public final class JcpPreprocessor {
 
-  private static final String PROPERTY_JCP_BASE_DIR = "jcp.base.dir";
-
   static final CommandLineHandler[] COMMAND_LINE_HANDLERS = new CommandLineHandler[] {
       new HelpHandler(),
       new InCharsetHandler(),
@@ -113,6 +112,7 @@ public final class JcpPreprocessor {
       new AllowMergeBlockLineHandler(),
       new UnknownAsFalseHandler()
   };
+  private static final String PROPERTY_JCP_BASE_DIR = "jcp.base.dir";
   private final PreprocessorContext context;
 
   public JcpPreprocessor(final PreprocessorContext context) {
@@ -224,41 +224,66 @@ public final class JcpPreprocessor {
 
 
   public Statistics execute() throws IOException {
+    this.context.getCommentTextProcessors().forEach(x -> x.onContextStarted(this.context));
+    this.context.getMapVariableNameToSpecialVarProcessor()
+        .values().forEach(x -> x.onContextStarted(this.context));
+
     final long timeStart = System.currentTimeMillis();
+    Throwable throwable = null;
+    Statistics stat = null;
+    try {
+      this.context.getActivatedConfigFiles().addAll(processConfigFiles());
 
-    this.context.getActivatedConfigFiles().addAll(processConfigFiles());
+      this.context.logInfo(String
+          .format("File extensions: %s excluded %s", this.context.getExtensions(),
+              this.context.getExcludeExtensions()));
+      final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
+      this.context.logDebug("Source folders: " + srcFolders);
 
-    this.context.logInfo(String
-        .format("File extensions: %s excluded %s", this.context.getExtensions(),
-            this.context.getExcludeExtensions()));
-    final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
-    this.context.logDebug("Source folders: " + srcFolders);
+      if (srcFolders.isEmpty()) {
+        this.context.logWarning("Source folder list is empty!");
+      }
 
-    if (srcFolders.isEmpty()) {
-      this.context.logWarning("Source folder list is empty!");
+      final Collection<FileInfoContainer> filesToBePreprocessed =
+          collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
+      this.context.addAllPreprocessedResources(filesToBePreprocessed);
+
+      final List<PreprocessingState.ExcludeIfInfo> excludedIf =
+          processGlobalDirectives(filesToBePreprocessed);
+
+      processFileExclusion(excludedIf);
+      if (!this.context.isDryRun()) {
+        createTargetFolder();
+      } else {
+        this.context.logInfo("Dry run mode is ON");
+      }
+      stat = preprocessFiles(filesToBePreprocessed);
+    } catch (Throwable ex) {
+      throwable = ex;
+      if (ex instanceof IOException) {
+        throw (IOException) ex;
+      }
+    } finally {
+      try {
+        for (final CommentTextProcessor p : this.context.getCommentTextProcessors()) {
+          p.onContextStopped(this.context, throwable);
+        }
+      } finally {
+        for (final SpecialVariableProcessor p : this.context.getMapVariableNameToSpecialVarProcessor()
+            .values()) {
+          p.onContextStopped(this.context, throwable);
+        }
+      }
     }
-
-    final Collection<FileInfoContainer> filesToBePreprocessed =
-        collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
-    this.context.addAllPreprocessedResources(filesToBePreprocessed);
-
-    final List<PreprocessingState.ExcludeIfInfo> excludedIf =
-        processGlobalDirectives(filesToBePreprocessed);
-
-    processFileExclusion(excludedIf);
-    if (!this.context.isDryRun()) {
-      createTargetFolder();
-    } else {
-      this.context.logInfo("Dry run mode is ON");
+    if (stat != null) {
+      final long elapsedTime = System.currentTimeMillis() - timeStart;
+      this.context.logInfo("-----------------------------------------------------------------");
+      this.context.logInfo(String
+          .format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms",
+              stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
     }
-    final Statistics stat = preprocessFiles(filesToBePreprocessed);
-
-    final long elapsedTime = System.currentTimeMillis() - timeStart;
-    this.context.logInfo("-----------------------------------------------------------------");
-    this.context.logInfo(String
-        .format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms",
-            stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
     return stat;
+
   }
 
   private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {

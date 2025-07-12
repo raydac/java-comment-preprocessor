@@ -29,7 +29,7 @@ import com.igormaznitsa.jcp.expression.Value;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public interface SpecialVariableProcessor {
+public interface SpecialVariableProcessor extends PreprocessorContextListener {
 
   /**
    * Get all variable names allowed by the processor as an array, all names must
@@ -37,8 +37,6 @@ public interface SpecialVariableProcessor {
    *
    * @return allowed variable names as a String array
    */
-
-
   String[] getVariableNames();
 
   /**
@@ -49,7 +47,6 @@ public interface SpecialVariableProcessor {
    * @return the value, it must not return null because it will notified
    * preprocessor that it supports the variable
    */
-
   Value getVariable(String varName, PreprocessorContext context);
 
   /**

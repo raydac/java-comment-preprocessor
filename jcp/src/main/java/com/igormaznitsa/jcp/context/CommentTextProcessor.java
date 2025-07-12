@@ -10,8 +10,7 @@ import java.io.IOException;
  *
  * @since 7.2.0
  */
-@FunctionalInterface
-public interface CommentTextProcessor {
+public interface CommentTextProcessor extends PreprocessorContextListener {
   /**
    * Process text value.
    *
@@ -22,7 +21,7 @@ public interface CommentTextProcessor {
    * @return must return value as the same text or as the changed one.
    * @throws IOException if any IO error during operation
    */
-  String processCommentText(
+  String onUncommentText(
       String text,
       FileInfoContainer fileInfoContainer,
       PreprocessorContext context,

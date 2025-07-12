@@ -415,7 +415,7 @@ public class FileInfoContainer {
       if (!processors.isEmpty()) {
         processors.forEach(x -> {
           try {
-            final String result = x.processCommentText(origText, this, context, state);
+            final String result = x.onUncommentText(origText, this, context, state);
             textBuffer.append(result);
           } catch (Exception ex) {
             throw new PreprocessorException(
