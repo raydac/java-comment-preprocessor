@@ -21,13 +21,58 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
+
 // This test checks work of //$$""", //$"""
 // Those directives are very specific and they don't have any distinguished handler
 public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptanceTest {
 
   @Override
   public void testExecution() throws Exception {
-    assertFilePreprocessing("directive_special_block.txt", false, true, null, null);
+    final StringBuilder calledForText = new StringBuilder();
+    final CommentTextProcessor testProcessor = (text, fileInfoContainer, context, state) -> {
+      assertNotNull(text);
+      assertNotNull(fileInfoContainer);
+      assertNotNull(context);
+      assertNotNull(state);
+
+      calledForText.append("...\n").append(text);
+
+      return text;
+    };
+    assertFilePreprocessing("directive_special_block.txt", false, true, null, null,
+        c -> c.addCommentTextProcessor(testProcessor));
+
+    assertEquals("...\n" +
+            "hello 223 world\n" +
+            "next\n" +
+            "...\n" +
+            "hello /*$111+112$*/ world\n" +
+            "next/*$111+112$*/\n" +
+            "...\n" +
+            "hello /*$111+112$*/ world\n" +
+            "middle\n" +
+            "next/*$111+112$*/\n" +
+            "...\n" +
+            "hello /*$111+112$*/ world\n" +
+            "...\n" +
+            "split\n" +
+            "...\n" +
+            "next/*$111+112$*/\n" +
+            "...\n" +
+            "hello 223 world\n" +
+            "...\n" +
+            "split\n" +
+            "...\n" +
+            "next223\n" +
+            "...\n" +
+            "line1\n" +
+            "...\n" +
+            "line2\n"
+        , calledForText.toString());
   }
 
   @Override

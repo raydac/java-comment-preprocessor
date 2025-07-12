@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.context;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
@@ -45,7 +46,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -117,6 +117,7 @@ public class PreprocessorContext {
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private List<String> excludeFolders = new ArrayList<>();
   private static final List<AbstractDirectiveHandler> directiveHandlers = AbstractDirectiveHandler.findAllDirectives();
+  private final List<CommentTextProcessor> commentTextProcessors;
 
   /**
    * Constructor
@@ -126,12 +127,13 @@ public class PreprocessorContext {
   public PreprocessorContext(final File baseDir) {
     this.preprocessedResources = new ArrayList<>();
     this.activatedConfigFiles = new ArrayList<>();
-    this.baseDir = Objects.requireNonNull(baseDir, "Base folder must not be null");
+    this.baseDir = requireNonNull(baseDir, "Base folder must not be null");
     this.setSources(DEFAULT_SOURCE_DIRECTORY).setTarget(new File(DEFAULT_DEST_DIRECTORY));
     this.registerSpecialVariableProcessor(new JCPSpecialVariableProcessor());
     this.registerSpecialVariableProcessor(new EnvironmentVariableProcessor());
     this.cloned = false;
     this.currentInCloneSource = null;
+    this.commentTextProcessors = new ArrayList<>();
     this.preprocessingState
             .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
   }
@@ -142,7 +144,7 @@ public class PreprocessorContext {
    * @param context the context to be cloned, must not be null.
    */
   public PreprocessorContext(final PreprocessorContext context) {
-    Objects.requireNonNull(context, "Source context must not be null");
+    requireNonNull(context, "Source context must not be null");
 
     this.activatedConfigFiles = context.activatedConfigFiles;
     this.preprocessedResources = context.preprocessedResources;
@@ -189,12 +191,33 @@ public class PreprocessorContext {
     this.configFiles.clear();
     this.configFiles.addAll(context.getConfigFiles());
 
-    this.preprocessingState.set(Objects.requireNonNull(context.getPreprocessingState()));
+    this.preprocessingState.set(requireNonNull(context.getPreprocessingState()));
     this.cloned = true;
 
     this.preprocessorLogger = context.getPreprocessorLogger();
 
+    this.commentTextProcessors = new ArrayList<>(context.commentTextProcessors);
     this.currentInCloneSource = context.getPreprocessingState().peekFile();
+  }
+
+  /**
+   * Add comment text processor.
+   *
+   * @param commentTextProcessor comment text processor, must not be null
+   * @since 7.2.0
+   */
+  public void addCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
+    this.commentTextProcessors.add(requireNonNull(commentTextProcessor));
+  }
+
+  /**
+   * Remove comment text processor.
+   *
+   * @param commentTextProcessor remove registered comment text processor.
+   * @since 7.2.0
+   */
+  public void removeCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
+    this.commentTextProcessors.remove(commentTextProcessor);
   }
 
   /**
@@ -311,7 +334,7 @@ public class PreprocessorContext {
   }
 
   public void setEol(final String eol) {
-    this.eol = Objects.requireNonNull(eol);
+    this.eol = requireNonNull(eol);
   }
 
   public void setTarget(final File file) {
@@ -343,10 +366,10 @@ public class PreprocessorContext {
    * @see SpecialVariableProcessor
    */
   public void registerSpecialVariableProcessor(final SpecialVariableProcessor processor) {
-    Objects.requireNonNull(processor, "Processor is null");
+    requireNonNull(processor, "Processor is null");
 
     for (final String varName : processor.getVariableNames()) {
-      Objects.requireNonNull(varName, "A Special Var name is null");
+      requireNonNull(varName, "A Special Var name is null");
       if (mapVariableNameToSpecialVarProcessor.containsKey(varName)) {
         throw new IllegalStateException("There is already defined processor for " + varName);
       }
@@ -406,8 +429,8 @@ public class PreprocessorContext {
    * @param obj  the object to be saved in, must not be null
    */
   public void setSharedResource(final String name, final Object obj) {
-    Objects.requireNonNull(name, "Name is null");
-    Objects.requireNonNull(obj, "Object is null");
+    requireNonNull(name, "Name is null");
+    requireNonNull(obj, "Object is null");
 
     sharedResources.put(name, obj);
   }
@@ -420,7 +443,7 @@ public class PreprocessorContext {
    */
 
   public Object getSharedResource(final String name) {
-    Objects.requireNonNull(name, "Name is null");
+    requireNonNull(name, "Name is null");
     return sharedResources.get(name);
   }
 
@@ -431,7 +454,7 @@ public class PreprocessorContext {
    * @return removing object or null if it is not found
    */
   public Object removeSharedResource(final String name) {
-    Objects.requireNonNull(name, "Name is null");
+    requireNonNull(name, "Name is null");
     return sharedResources.remove(name);
   }
 
@@ -465,7 +488,7 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setExtensions(final List<String> extensions) {
-    this.extensions = new HashSet<>(Objects.requireNonNull(extensions));
+    this.extensions = new HashSet<>(requireNonNull(extensions));
     return this;
   }
 
@@ -511,7 +534,7 @@ public class PreprocessorContext {
    */
   public PreprocessorContext setExcludeExtensions(
       final List<String> extensions) {
-    this.excludeExtensions = new HashSet<>(Objects.requireNonNull(extensions));
+    this.excludeExtensions = new HashSet<>(requireNonNull(extensions));
     return this;
   }
 
@@ -524,10 +547,10 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext setLocalVariable(final String name, final Value value) {
-    Objects.requireNonNull(name, "Variable name is null");
-    Objects.requireNonNull(value, "Value is null");
+    requireNonNull(name, "Variable name is null");
+    requireNonNull(value, "Value is null");
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Not defined variable name", null);
@@ -552,8 +575,8 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext removeLocalVariable(final String name) {
-    Objects.requireNonNull(name, "Variable name is null");
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    requireNonNull(name, "Variable name is null");
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
@@ -581,9 +604,9 @@ public class PreprocessorContext {
    * @see Value
    */
   public PreprocessorContext removeGlobalVariable(final String name) {
-    Objects.requireNonNull(name, "Variable name is null");
+    requireNonNull(name, "Variable name is null");
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       throw makeException("Empty variable name", null);
@@ -613,7 +636,7 @@ public class PreprocessorContext {
       return null;
     }
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return null;
@@ -633,7 +656,7 @@ public class PreprocessorContext {
       return false;
     }
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return false;
@@ -660,16 +683,16 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext setGlobalVariable(final String name, final Value value) {
-    Objects.requireNonNull(name, "Variable name is null");
+    requireNonNull(name, "Variable name is null");
 
     final String normalizedName =
-        Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+        requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalizedName.isEmpty()) {
       throw makeException("Name is empty", null);
     }
 
-    Objects.requireNonNull(value, "Value is null");
+    requireNonNull(value, "Value is null");
 
     if (mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
       mapVariableNameToSpecialVarProcessor.get(normalizedName)
@@ -699,7 +722,7 @@ public class PreprocessorContext {
       return false;
     }
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
     if (normalized.isEmpty()) {
       return false;
     }
@@ -720,7 +743,7 @@ public class PreprocessorContext {
       return null;
     }
 
-    final String normalized = Objects.requireNonNull(PreprocessorUtils.normalizeVariableName(name));
+    final String normalized = requireNonNull(PreprocessorUtils.normalizeVariableName(name));
 
     if (normalized.isEmpty()) {
       return null;
@@ -785,7 +808,7 @@ public class PreprocessorContext {
    * @return a generated File object for the path
    */
   public File createDestinationFileForPath(final String path) {
-    Objects.requireNonNull(path, "Path is null");
+    requireNonNull(path, "Path is null");
 
     if (path.isEmpty()) {
       throw makeException("File name is empty", null);
@@ -873,7 +896,7 @@ public class PreprocessorContext {
    * @param file a file, it must not be null
    */
   public void registerConfigFile(final File file) {
-    Objects.requireNonNull(file, "File is null");
+    requireNonNull(file, "File is null");
     this.configFiles.add(file.isAbsolute() ? file : new File(this.getBaseDir(), file.getPath()));
   }
 
@@ -887,7 +910,7 @@ public class PreprocessorContext {
    */
   public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer,
                                                          final int phaseIndex) throws IOException {
-    Objects.requireNonNull(fileContainer, "File container is null");
+    requireNonNull(fileContainer, "File container is null");
 
     if (verbose) {
       if (phaseIndex == 0) {
@@ -963,7 +986,7 @@ public class PreprocessorContext {
     private final File pathFile;
 
     public SourceFolder(final File baseDir, final String path) {
-      this.path = Objects.requireNonNull(path);
+      this.path = requireNonNull(path);
       final File pathAsFile = new File(path);
       this.pathFile = pathAsFile.isAbsolute() ? pathAsFile : new File(baseDir, path);
     }

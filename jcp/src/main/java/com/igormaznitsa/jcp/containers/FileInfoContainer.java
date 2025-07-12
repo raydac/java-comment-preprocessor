@@ -23,6 +23,7 @@ package com.igormaznitsa.jcp.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
@@ -133,12 +134,14 @@ public class FileInfoContainer {
 
   /**
    * Check that text line starts with two commented dollar chars
-   * @param line text line to be examined, must not be null
+   *
+   * @param line               text line to be examined, must not be null
    * @param allowedWhitespaces if true then whitespaces allowed after line comment
    * @return true if the line starts with two commented dollar chars, false otherwise
    * @since 7.0.6
    */
-  public static boolean isDoubleDollarPrefixed(final String line, final boolean allowedWhitespaces) {
+  public static boolean isDoubleDollarPrefixed(final String line,
+                                               final boolean allowedWhitespaces) {
     if (allowedWhitespaces) {
       return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
     } else {
@@ -165,12 +168,14 @@ public class FileInfoContainer {
 
   /**
    * Check that text line starts with single dollar chars
-   * @param line text line to be examined, must not be null
+   *
+   * @param line               text line to be examined, must not be null
    * @param allowedWhitespaces if true then whitespaces allowed after line comment
    * @return true if the line starts with single dollar chars, false otherwise
    * @since 7.0.6
    */
-  public static boolean isSingleDollarPrefixed(final String line, final boolean allowedWhitespaces) {
+  public static boolean isSingleDollarPrefixed(final String line,
+                                               final boolean allowedWhitespaces) {
     if (allowedWhitespaces) {
       return DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line).matches();
     } else {
@@ -180,7 +185,8 @@ public class FileInfoContainer {
 
   /**
    * Allows to check that a text line can be considered as a JCP directive or special line.
-   * @param line text line to be examined
+   *
+   * @param line               text line to be examined
    * @param allowedWhitespaces if true then whitespaces allowed after line comment
    * @return true if the line can be considered as JCP one, false otherwise
    * @since 7.0.6
@@ -193,7 +199,7 @@ public class FileInfoContainer {
   /**
    * Check that a text line contains comment directive.
    *
-   * @param line string to be examined
+   * @param line             string to be examined
    * @param allowWhitespaces flag to allow spaces betwee hash and started comment chars
    * @return true if the line contains a directive, false otherwise
    * @since 7.0.6
@@ -395,13 +401,33 @@ public class FileInfoContainer {
     return tail;
   }
 
-  private void flushTextBufferForRemovedComments(final StringBuilder text,
+  private void flushTextBufferForRemovedComments(final StringBuilder textBuffer,
                                                  final ResetablePrinter resetablePrinter,
+                                                 final PreprocessingState state,
                                                  final PreprocessorContext context)
       throws IOException {
-    if (text.length() > 0) {
-      resetablePrinter.print(text.toString());
-      text.setLength(0);
+    if (textBuffer.length() > 0) {
+      final List<CommentTextProcessor> processors = context.getCommentTextProcessors();
+      final String origText = textBuffer.toString();
+      textBuffer.setLength(0);
+      String text = origText;
+
+      if (!processors.isEmpty()) {
+        processors.forEach(x -> {
+          try {
+            final String result = x.processCommentText(origText, this, context, state);
+            textBuffer.append(result);
+          } catch (Exception ex) {
+            throw new PreprocessorException(
+                "Error during external comment text processor call",
+                origText, state.makeIncludeStack(), ex);
+          }
+        });
+
+        text = textBuffer.toString();
+        textBuffer.setLength(0);
+      }
+      resetablePrinter.print(text);
     }
   }
 
@@ -457,7 +483,7 @@ public class FileInfoContainer {
         }
 
         if (rawString == null) {
-          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
           lastTextFileDataContainer = preprocessingState.popTextContainer();
           if (preprocessingState.isIncludeStackEmpty()) {
             break;
@@ -485,7 +511,7 @@ public class FileInfoContainer {
         final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
         if (isHashPrefixed(stringToBeProcessed, context)) {
-          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
           final String extractedDirective =
               extractHashPrefixedDirective(stringToBeProcessed, context);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
@@ -522,7 +548,8 @@ public class FileInfoContainer {
         if (preprocessingState.isDirectiveCanBeProcessed() &&
             !preprocessingState.getPreprocessingFlags()
                 .contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
-          final boolean startsWithTwoDollars = isDoubleDollarPrefixed(leftTrimmedString, context.isAllowWhitespaces());
+          final boolean startsWithTwoDollars =
+              isDoubleDollarPrefixed(leftTrimmedString, context.isAllowWhitespaces());
 
           if (!startsWithTwoDollars) {
             stringToBeProcessed = PreprocessorUtils.processMacroses(leftTrimmedString, context);
@@ -540,12 +567,12 @@ public class FileInfoContainer {
                 textBlockBuffer.append(context.getEol());
               }
             } else {
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
               textBlockBuffer.append(stringPrefix).append(text);
               if (doPrintLn) {
                 textBlockBuffer.append(context.getEol());
               }
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
             }
           } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
             // Output the tail of the string to the output stream without comments
@@ -560,16 +587,16 @@ public class FileInfoContainer {
                 textBlockBuffer.append(context.getEol());
               }
             } else {
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
               textBlockBuffer.append(stringPrefix).append(text);
               if (doPrintLn) {
                 textBlockBuffer.append(context.getEol());
               }
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
             }
           } else {
             // Just string
-            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
 
             final String strToOut = findTailRemover(stringToBeProcessed, context);
 
@@ -588,7 +615,7 @@ public class FileInfoContainer {
             }
           }
         } else if (context.isKeepLines()) {
-          flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+          flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
           if (doPrintLn) {
             thePrinter.println(text, context.getEol());

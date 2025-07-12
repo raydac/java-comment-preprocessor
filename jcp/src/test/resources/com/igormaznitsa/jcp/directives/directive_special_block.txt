@@ -1,5 +1,42 @@
 //$"""hello /*$111+112$*/ world
+//$"""next
+
 //$$"""hello /*$111+112$*/ world
+//$$"""next/*$111+112$*/
+
+//$$"""hello /*$111+112$*/ world
+//$"""middle
+//$$"""next/*$111+112$*/
+
+//$$"""hello /*$111+112$*/ world
+//$split
+//$$"""next/*$111+112$*/
+
+//$"""hello /*$111+112$*/ world
+//$$split
+//$"""next/*$111+112$*/
+
+//$"""line1
+//#local a=""
+//$"""line2
 ---START_ETALON---
 hello 223 world
+next
+
 hello /*$111+112$*/ world
+next/*$111+112$*/
+
+hello /*$111+112$*/ world
+middle
+next/*$111+112$*/
+
+hello /*$111+112$*/ world
+split
+next/*$111+112$*/
+
+hello 223 world
+split
+next223
+
+line1
+line2
