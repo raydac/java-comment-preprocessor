@@ -51,6 +51,7 @@ preprocess {
     unknownVarAsFalse = false
     dryRun = false
     verbose = true
+    allowBlocks = true
     clearTarget = true
     careForLastEol = true
     keepComments = 'remove_jcp_only'

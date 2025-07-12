@@ -54,6 +54,7 @@
               <ignoreMissingSources>false</ignoreMissingSources>
               <unknownVarAsFalse>true</unknownVarAsFalse>
               <dryRun>false</dryRun>
+                <allowBlocks>true</allowBlocks>
               <verbose>true</verbose>
               <clearTarget>true</clearTarget>
               <replaceSources>true</replaceSources>

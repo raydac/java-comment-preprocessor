@@ -14,6 +14,7 @@
                 keepLines="true"
                 careForLastEol="true"
                 allowWhiteSpaces="true"
+                allowBlocks="true"
                 unknownVarAsFalse="false"
                 eol="\r\n"
                 sourceEncoding="UTF-8"
