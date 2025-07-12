@@ -215,9 +215,7 @@ public final class InfoHelper {
                                     final int firstColumnWidth) {
     final int spaces = firstColumnWidth - name.length();
     final StringBuilder result = new StringBuilder(name);
-    for (int i = 0; i < spaces; i++) {
-      result.append(' ');
-    }
+    result.append(" ".repeat(Math.max(0, spaces)));
     result.append(reference);
     return result.toString();
   }

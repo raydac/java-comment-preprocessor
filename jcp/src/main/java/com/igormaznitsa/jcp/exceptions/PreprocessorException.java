@@ -53,9 +53,7 @@ public class PreprocessorException extends RuntimeException {
     final StringBuilder builder = new StringBuilder();
     int tab = 5;
 
-    for (int s = 0; s < tab; s++) {
-      builder.append(fill);
-    }
+    builder.append(String.valueOf(fill).repeat(tab));
     builder.append("{File chain}");
     tab += 5;
 
@@ -63,9 +61,7 @@ public class PreprocessorException extends RuntimeException {
     for (int i = list.length - 1; i >= 0; i--) {
       final FilePositionInfo cur = list[i];
       builder.append('\n');
-      for (int s = 0; s < tab; s++) {
-        builder.append(fill);
-      }
+      builder.append(String.valueOf(fill).repeat(Math.max(0, tab)));
       builder.append("└>");
       builder.append(fileIndex++).append(". ");
       builder.append(cur.getFile().getName()).append(':').append(cur.getLineNumber());

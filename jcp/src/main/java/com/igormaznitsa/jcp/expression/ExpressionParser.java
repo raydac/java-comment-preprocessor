@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static java.util.Objects.requireNonNullElseGet;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -610,11 +612,7 @@ public final class ExpressionParser {
             result = Value.BOOLEAN_FALSE;
           } else {
             final AbstractFunction function = AbstractFunction.findForName(str);
-            if (function == null) {
-              result = new Variable(str);
-            } else {
-              result = function;
-            }
+            result = requireNonNullElseGet(function, () -> new Variable(str));
           }
         }
         break;

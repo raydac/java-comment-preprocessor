@@ -42,9 +42,7 @@ public final class FunctionSTR2GO extends AbstractFunction {
     final StringBuilder result = new StringBuilder(4);
     final String hex = Integer.toHexString(c);
 
-    for (int i = 0; i < 4 - hex.length(); i++) {
-      result.append('0');
-    }
+    result.append("0".repeat(4 - hex.length()));
 
     result.append(hex);
 

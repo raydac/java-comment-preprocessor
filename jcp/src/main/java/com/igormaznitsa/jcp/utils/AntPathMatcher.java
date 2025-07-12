@@ -48,7 +48,7 @@ public class AntPathMatcher {
       if (trimTokens) {
         token = token.trim();
       }
-      if (!ignoreEmptyTokens || token.length() > 0) {
+      if (!ignoreEmptyTokens || !token.isEmpty()) {
         tokens.add(token);
       }
     }
@@ -204,7 +204,7 @@ public class AntPathMatcher {
         pos += skipped;
         skipped = skipSegment(path, pos, pattDir);
         if (skipped < pattDir.length()) {
-          return (skipped > 0 || (pattDir.length() > 0 && isWildcardChar(pattDir.charAt(0))));
+          return (skipped > 0 || (!pattDir.isEmpty() && isWildcardChar(pattDir.charAt(0))));
         }
         pos += skipped;
       }

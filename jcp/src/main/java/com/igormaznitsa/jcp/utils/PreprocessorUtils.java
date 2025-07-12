@@ -237,9 +237,8 @@ public final class PreprocessorUtils {
     final StringBuilder result = new StringBuilder(text.length());
 
     result.append(text.subSequence(0, Math.min(text.length(), startPosition)));
-    for (int i = startPosition; i < Math.min(text.length(), startPosition + length); i++) {
-      result.append(chr);
-    }
+    result.append(String.valueOf(chr)
+        .repeat(Math.max(0, Math.min(text.length(), startPosition + length) - startPosition)));
     result.append(text.subSequence(Math.min(startPosition + length, text.length()), text.length()));
 
     return result.toString();
@@ -248,9 +247,7 @@ public final class PreprocessorUtils {
 
   public static String generateStringForChar(final char chr, final int length) {
     final StringBuilder buffer = new StringBuilder(Math.max(length, 1));
-    for (int i = 0; i < length; i++) {
-      buffer.append(chr);
-    }
+    buffer.append(String.valueOf(chr).repeat(Math.max(0, length)));
     return buffer.toString();
   }
 

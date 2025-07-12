@@ -254,19 +254,20 @@ public class PreprocessorContextTest {
           @Override
           public boolean processAction(PreprocessorContext context, Value[] parameters) {
             throw new UnsupportedOperationException(
-                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                "Not supported yet.");
           }
 
           @Override
-          public Value processUserFunction(String functionName, Value[] arguments) {
+          public Value processUserFunction(PreprocessorContext context, String functionName,
+                                           Value[] arguments) {
             throw new UnsupportedOperationException(
-                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                "Not supported yet.");
           }
 
           @Override
           public int getUserFunctionArity(String functionName) {
             throw new UnsupportedOperationException(
-                "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                "Not supported yet.");
           }
         };
 

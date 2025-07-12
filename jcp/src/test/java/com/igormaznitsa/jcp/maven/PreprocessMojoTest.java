@@ -21,7 +21,6 @@
 
 package com.igormaznitsa.jcp.maven;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertArrayEquals;
 
 import com.igormaznitsa.jcp.context.CommentRemoverType;
@@ -85,7 +84,7 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     final String[] sources = context.getSources()
         .stream()
         .map(PreprocessorContext.SourceFolder::getAsString)
-        .collect(toList()).toArray(new String[0]);
+        .toArray(String[]::new);
 
     assertArrayEqualsWithoutOrders(new String[] {"/", "/some", "/another/some"}, sources);
     assertEquals("destination_dir", context.getTarget().getName());

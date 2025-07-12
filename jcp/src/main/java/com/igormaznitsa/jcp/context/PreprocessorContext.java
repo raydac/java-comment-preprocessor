@@ -21,9 +21,7 @@
 
 package com.igormaznitsa.jcp.context;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
@@ -68,7 +66,7 @@ public class PreprocessorContext {
       Collections.singletonList("." + File.separatorChar);
   public static final String DEFAULT_DEST_DIRECTORY = ".." + File.separatorChar + "preprocessed";
   public static final List<String> DEFAULT_PROCESSING_EXTENSIONS =
-      unmodifiableList(asList("java", "txt", "htm", "html"));
+      List.of("java", "txt", "htm", "html");
   public static final List<String> DEFAULT_EXCLUDED_EXTENSIONS = singletonList("xml");
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -233,9 +231,7 @@ public class PreprocessorContext {
     final StringBuilder builder = new StringBuilder();
     int tab = 5;
 
-    for (int s = 0; s < tab; s++) {
-      builder.append(' ');
-    }
+    builder.append(" ".repeat(tab));
 
     builder.append('{');
     if (cloned) {
@@ -251,9 +247,7 @@ public class PreprocessorContext {
     for (int i = list.size() - 1; i >= 0; i--) {
       final TextFileDataContainer cur = list.get(i);
       builder.append('\n');
-      for (int s = 0; s < tab; s++) {
-        builder.append(' ');
-      }
+      builder.append(" ".repeat(Math.max(0, tab)));
       builder.append("└>");
       builder.append(fileIndex++).append(". ");
       builder.append(cur.getFile().getName()).append(':').append(cur.getLastReadStringIndex() + 1);
@@ -281,8 +275,7 @@ public class PreprocessorContext {
    * @since 7.0.3
    */
   public Set<File> findAllInputFiles() {
-    final Set<File> result = new HashSet<>();
-    result.addAll(this.configFiles);
+    final Set<File> result = new HashSet<>(this.configFiles);
     this.preprocessedResources.forEach(x -> {
       result.addAll(x.getIncludedSources());
       if (x.getSourceFile() != null &&
