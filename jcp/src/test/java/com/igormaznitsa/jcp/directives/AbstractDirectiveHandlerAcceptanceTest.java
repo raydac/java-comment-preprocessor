@@ -27,7 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -187,6 +186,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
                                                          final PreprocessorExtension extension,
                                                          final PreprocessorLogger logger,
                                                          final boolean keepLines,
+                                                         final boolean allowBlocks,
                                                          final VariablePair... globalVariables)
       throws Exception {
     assertNotNull("Preprocessing text is null", preprocessingText);
@@ -200,6 +200,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     context.setDryRun(true);
     context.setSources(Collections.singletonList(srcfile.getParent()));
     context.setKeepLines(keepLines);
+    context.setAllowsBlocks(allowBlocks);
     context.setPreprocessorExtension(extension);
 
     setGlobalVars(context, globalVariables);
@@ -283,10 +284,20 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     final List<String> preprocessingPart = parseStringForLines(text);
     return internalPreprocessAndMatch(THIS_CLASS_FILE, preprocessingPart,
         preprocessedText == null ? new ArrayList<>() : preprocessedText, null, ext, null, false,
+        false,
         globalVars);
   }
 
   public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines, final PreprocessorExtension ext, final PreprocessorLogger logger, final VariablePair... globalVars) throws Exception {
+    return this.assertFilePreprocessing(testFileName, keepLines, false, ext, logger, globalVars);
+  }
+
+  public PreprocessorContext assertFilePreprocessing(final String testFileName, boolean keepLines,
+                                                     boolean allowsBlocks,
+                                                     final PreprocessorExtension ext,
+                                                     final PreprocessorLogger logger,
+                                                     final VariablePair... globalVars)
+      throws Exception {
     final File file = new File(getClass().getResource(testFileName).toURI());
 
     if (!file.exists() || !file.isFile()) {
@@ -324,6 +335,6 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     }
 
     return internalPreprocessAndMatch(file, preprocessingPart, new ArrayList<>(), etalonPart, ext,
-        logger, keepLines, globalVars);
+        logger, keepLines, allowsBlocks, globalVars);
   }
 }

@@ -532,7 +532,8 @@ public class FileInfoContainer {
             // Output the tail of the string to the output stream without comments and macroses
             final String text =
                 extractDoubleDollarPrefixedDirective(leftTrimmedString, false, context);
-            if (isDoubleDollarBlockPrefixed(leftTrimmedString, context.isAllowWhitespaces())) {
+            if (context.isAllowsBlocks() &&
+                isDoubleDollarBlockPrefixed(leftTrimmedString, context.isAllowWhitespaces())) {
               textBlockBuffer.append(
                   extractDoubleDollarPrefixedDirective(leftTrimmedString, true, context));
               if (doPrintLn) {
@@ -551,7 +552,8 @@ public class FileInfoContainer {
             final String text =
                 extractSingleDollarPrefixedDirective(stringToBeProcessed, false, context);
 
-            if (isDollarBlockPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
+            if (context.isAllowsBlocks() &&
+                isDollarBlockPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
               textBlockBuffer.append(
                   extractSingleDollarPrefixedDirective(stringToBeProcessed, true, context));
               if (doPrintLn) {

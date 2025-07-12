@@ -27,7 +27,7 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
 
   @Override
   public void testExecution() throws Exception {
-    assertFilePreprocessing("directive_special_block.txt", false, null, null);
+    assertFilePreprocessing("directive_special_block.txt", false, true, null, null);
   }
 
   @Override

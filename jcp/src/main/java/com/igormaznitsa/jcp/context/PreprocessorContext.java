@@ -106,6 +106,7 @@ public class PreprocessorContext {
   private boolean preserveIndents = false;
   private boolean keepAttributes = false;
   private boolean unknownVariableAsFalse = false;
+  private boolean allowsBlocks = false;
   private File target;
   private Set<String> extensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
   private Set<String> excludeExtensions = new HashSet<>(DEFAULT_EXCLUDED_EXTENSIONS);
@@ -166,6 +167,7 @@ public class PreprocessorContext {
     this.excludeExtensions.addAll(context.excludeExtensions);
 
     this.unknownVariableAsFalse = context.unknownVariableAsFalse;
+    this.allowsBlocks = context.allowsBlocks;
 
     this.preprocessorExtension = context.getPreprocessorExtension();
     this.sourceEncoding = context.getSourceEncoding();
