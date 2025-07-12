@@ -55,8 +55,12 @@ public class FileInfoContainer {
   private static final Pattern DIRECTIVE_HASH_PREFIXED = Pattern.compile("^\\s*//\\s*#(.*)$");
   private static final Pattern DIRECTIVE_TWO_DOLLARS_PREFIXED =
       Pattern.compile("^\\s*//\\s*\\$\\$(.*)$");
+  private static final Pattern DIRECTIVE_TWO_DOLLARS_BLOCK_PREFIXED =
+      Pattern.compile("^\\s*//\\s*\\$\\$\"\"\"(.*)$");
   private static final Pattern DIRECTIVE_SINGLE_DOLLAR_PREFIXED =
       Pattern.compile("^\\s*//\\s*\\$(.*)$");
+  private static final Pattern DIRECTIVE_SINGLE_DOLLAR_BLOCK_PREFIXED =
+      Pattern.compile("^\\s*//\\s*\\$\"(.*)$");
   private static final Pattern DIRECTIVE_TAIL_REMOVER = Pattern.compile("\\/\\*\\s*-\\s*\\*\\/");
   /**
    * The source file for the container
@@ -139,6 +143,23 @@ public class FileInfoContainer {
       return DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line).matches();
     } else {
       return line.startsWith("//$$");
+    }
+  }
+
+  public static boolean isDollarBlockPrefixed(final String line, final boolean allowedWhitespaces) {
+    if (allowedWhitespaces) {
+      return DIRECTIVE_SINGLE_DOLLAR_BLOCK_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$\"\"\"");
+    }
+  }
+
+  public static boolean isDoubleDollarBlockPrefixed(final String line,
+                                                    final boolean allowedWhitespaces) {
+    if (allowedWhitespaces) {
+      return DIRECTIVE_SINGLE_DOLLAR_BLOCK_PREFIXED.matcher(line).matches();
+    } else {
+      return line.startsWith("//$$\"\"\"");
     }
   }
 
@@ -318,10 +339,12 @@ public class FileInfoContainer {
 
 
   private String extractDoubleDollarPrefixedDirective(final String line,
+                                                      final boolean block,
                                                       final PreprocessorContext context) {
     String tail;
     if (context.isAllowWhitespaces()) {
-      final Matcher matcher = DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
+      final Matcher matcher = block ? DIRECTIVE_TWO_DOLLARS_BLOCK_PREFIXED.matcher(line) :
+          DIRECTIVE_TWO_DOLLARS_PREFIXED.matcher(line);
       if (matcher.find()) {
         tail = matcher.group(1);
       } else {
@@ -330,7 +353,11 @@ public class FileInfoContainer {
                 ')');
       }
     } else {
-      tail = PreprocessorUtils.extractTail("//$$", line);
+      if (block) {
+        tail = PreprocessorUtils.extractTail("//$$\"\"\"", line);
+      } else {
+        tail = PreprocessorUtils.extractTail("//$$", line);
+      }
     }
 
     if (context.isPreserveIndents()) {
@@ -341,10 +368,12 @@ public class FileInfoContainer {
 
 
   private String extractSingleDollarPrefixedDirective(final String line,
+                                                      final boolean block,
                                                       final PreprocessorContext context) {
     String tail;
     if (context.isAllowWhitespaces()) {
-      final Matcher matcher = DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
+      final Matcher matcher = block ? DIRECTIVE_SINGLE_DOLLAR_BLOCK_PREFIXED.matcher(line) :
+          DIRECTIVE_SINGLE_DOLLAR_PREFIXED.matcher(line);
       if (matcher.find()) {
         tail = matcher.group(1);
       } else {
@@ -353,13 +382,27 @@ public class FileInfoContainer {
                 ')');
       }
     } else {
-      tail = PreprocessorUtils.extractTail("//$", line);
+      if (block) {
+        tail = PreprocessorUtils.extractTail("//$\"\"\"", line);
+      } else {
+        tail = PreprocessorUtils.extractTail("//$", line);
+      }
     }
 
     if (context.isPreserveIndents()) {
       tail = PreprocessorUtils.replacePartByChar(line, ' ', 0, line.length() - tail.length());
     }
     return tail;
+  }
+
+  private void flushTextBufferForRemovedComments(final StringBuilder text,
+                                                 final ResetablePrinter resetablePrinter,
+                                                 final PreprocessorContext context)
+      throws IOException {
+    if (text.length() > 0) {
+      resetablePrinter.print(text.toString());
+      text.setLength(0);
+    }
   }
 
   /**
@@ -388,9 +431,13 @@ public class FileInfoContainer {
     String leftTrimmedString = null;
 
     TextFileDataContainer lastTextFileDataContainer = null;
+    final StringBuilder textBlockBuffer = new StringBuilder();
 
     try {
       while (!Thread.currentThread().isInterrupted()) {
+        final ResetablePrinter thePrinter =
+            requireNonNull(preprocessingState.getPrinter(), "Printer must be defined");
+
         String rawString = preprocessingState.nextLine();
         final boolean presentedNextLine = preprocessingState.hasReadLineNextLineInEnd();
 
@@ -410,6 +457,7 @@ public class FileInfoContainer {
         }
 
         if (rawString == null) {
+          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
           lastTextFileDataContainer = preprocessingState.popTextContainer();
           if (preprocessingState.isIncludeStackEmpty()) {
             break;
@@ -434,10 +482,10 @@ public class FileInfoContainer {
         }
 
         String stringToBeProcessed = leftTrimmedString;
-
         final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
         if (isHashPrefixed(stringToBeProcessed, context)) {
+          this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
           final String extractedDirective =
               extractHashPrefixedDirective(stringToBeProcessed, context);
           switch (processDirective(preprocessingState, extractedDirective, context, false)) {
@@ -447,8 +495,6 @@ public class FileInfoContainer {
                 final String text = stringPrefix +
                     AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                     extractedDirective;
-                final ResetablePrinter thePrinter =
-                    requireNonNull(preprocessingState.getPrinter());
                 if (doPrintLn) {
                   thePrinter.println(text, context.getEol());
                 } else {
@@ -461,8 +507,6 @@ public class FileInfoContainer {
               final String text = stringPrefix +
                   AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                   extractedDirective;
-              final ResetablePrinter thePrinter =
-                  requireNonNull(preprocessingState.getPrinter());
               if (doPrintLn) {
                 thePrinter.println(text, context.getEol());
               } else {
@@ -475,7 +519,6 @@ public class FileInfoContainer {
           }
         }
 
-        final ResetablePrinter thePrinter = requireNonNull(preprocessingState.getPrinter());
         if (preprocessingState.isDirectiveCanBeProcessed() &&
             !preprocessingState.getPreprocessingFlags()
                 .contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
@@ -487,26 +530,45 @@ public class FileInfoContainer {
 
           if (startsWithTwoDollars) {
             // Output the tail of the string to the output stream without comments and macroses
-            thePrinter.print(stringPrefix);
-            final String text = extractDoubleDollarPrefixedDirective(leftTrimmedString, context);
-            if (doPrintLn) {
-              thePrinter.println(text, context.getEol());
+            final String text =
+                extractDoubleDollarPrefixedDirective(leftTrimmedString, false, context);
+            if (isDoubleDollarBlockPrefixed(leftTrimmedString, context.isAllowWhitespaces())) {
+              textBlockBuffer.append(
+                  extractDoubleDollarPrefixedDirective(leftTrimmedString, true, context));
+              if (doPrintLn) {
+                textBlockBuffer.append(context.getEol());
+              }
             } else {
-              thePrinter.print(text);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              textBlockBuffer.append(stringPrefix).append(text);
+              if (doPrintLn) {
+                textBlockBuffer.append(context.getEol());
+              }
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
             }
           } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
             // Output the tail of the string to the output stream without comments
-            thePrinter.print(stringPrefix);
+            final String text =
+                extractSingleDollarPrefixedDirective(stringToBeProcessed, false, context);
 
-            final String text = extractSingleDollarPrefixedDirective(stringToBeProcessed, context);
-
-            if (doPrintLn) {
-              thePrinter.println(text, context.getEol());
+            if (isDollarBlockPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
+              textBlockBuffer.append(
+                  extractSingleDollarPrefixedDirective(stringToBeProcessed, true, context));
+              if (doPrintLn) {
+                textBlockBuffer.append(context.getEol());
+              }
             } else {
-              thePrinter.print(text);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+              textBlockBuffer.append(stringPrefix).append(text);
+              if (doPrintLn) {
+                textBlockBuffer.append(context.getEol());
+              }
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
             }
           } else {
             // Just string
+            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
+
             final String strToOut = findTailRemover(stringToBeProcessed, context);
 
             if (preprocessingState.getPreprocessingFlags()
@@ -524,6 +586,7 @@ public class FileInfoContainer {
             }
           }
         } else if (context.isKeepLines()) {
+          flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, context);
           final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
           if (doPrintLn) {
             thePrinter.println(text, context.getEol());

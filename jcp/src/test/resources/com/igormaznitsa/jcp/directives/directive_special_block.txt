@@ -1,0 +1,5 @@
+//$"""hello /*$111+112$*/ world
+//$$"""hello /*$111+112$*/ world
+---START_ETALON---
+hello 223 world
+hello /*$111+112$*/ world
