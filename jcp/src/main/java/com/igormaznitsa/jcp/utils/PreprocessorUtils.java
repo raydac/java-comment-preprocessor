@@ -47,9 +47,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -244,6 +246,10 @@ public final class PreprocessorUtils {
     return result.toString();
   }
 
+  public static <T> List<T> findAndInstantiateAllServices(final Class<T> serviceClass) {
+    final ServiceLoader<T> serviceLoader = ServiceLoader.load(serviceClass);
+    return serviceLoader.stream().map(ServiceLoader.Provider::get).collect(Collectors.toList());
+  }
 
   public static String generateStringForChar(final char chr, final int length) {
     final StringBuilder buffer = new StringBuilder(Math.max(length, 1));

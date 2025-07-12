@@ -22,9 +22,11 @@
 package com.igormaznitsa.jcp.maven;
 
 import static com.igormaznitsa.jcp.utils.GetUtils.ensureNonNull;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -115,8 +117,8 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    * Name of a class to be used as action preprocessor extension. The class must have default constructor.
    * Empty string will be recognized as missing class name.
    *
-   * @since 7.1.2
    * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
+   * @since 7.1.2
    */
   @Parameter(alias = "actionPreprocessorExtension", property = "jcp.action.preprocessor.extension", defaultValue = "")
   private String actionPreprocessorExtension = "";
@@ -198,6 +200,14 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
    */
   @Parameter(alias = "dryRun", defaultValue = "false")
   private boolean dryRun = false;
+
+  /**
+   * Allows merge preprocessed text lines as single text block for external processing.
+   *
+   * @since 7.2.0.
+   */
+  @Parameter(alias = "allowBlocks", defaultValue = "false")
+  private boolean allowBlocks = false;
 
   /**
    * Verbose mode.
@@ -418,6 +428,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
     context.setVerbose(getLog().isDebugEnabled() || this.isVerbose());
     context.setKeepLines(this.isKeepLines());
     context.setDryRun(this.isDryRun());
+    context.setAllowsBlocks(this.isAllowBlocks());
     context.setAllowWhitespaces(this.isAllowWhitespaces());
     context.setPreserveIndents(this.isPreserveIndents());
     context.setExcludeFolders(this.getExcludeFolders());
@@ -466,6 +477,22 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       final PreprocessorContext context;
       try {
         context = makePreprocessorContext();
+        final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
+            CommentTextProcessor.class);
+        if (!commentTextProcessors.isEmpty()) {
+          getLog().info("Detected " + commentTextProcessors.size() +
+              " external comment text processing services");
+          if (this.isVerbose()) {
+            getLog().info("Detected comment text processors: " +
+                commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
+                    .collect(Collectors.joining(",")));
+          } else {
+            getLog().debug("Detected comment text processors: " +
+                commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
+                    .collect(Collectors.joining(",")));
+          }
+          commentTextProcessors.forEach(context::addCommentTextProcessor);
+        }
       } catch (Exception ex) {
         final PreprocessorException newException =
             PreprocessorException.extractPreprocessorException(ex);

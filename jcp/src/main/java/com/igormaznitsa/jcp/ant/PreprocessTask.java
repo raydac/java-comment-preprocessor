@@ -21,8 +21,11 @@
 
 package com.igormaznitsa.jcp.ant;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
+
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -67,6 +70,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private Extensions extensions = null;
   private boolean unknownVarAsFalse = false;
   private boolean dryRun = false;
+  private boolean allowBlocks = false;
   private boolean verbose = false;
   private boolean clearTarget = false;
   private boolean careForLastEol = false;
@@ -148,6 +152,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     context.setDontOverwriteSameContent(this.isDontOverwriteSameContent());
     context.setClearTarget(this.isClearTarget());
     context.setDryRun(this.isDryRun());
+    context.setAllowsBlocks(this.isAllowBlocks());
     context.setKeepComments(PreprocessorUtils.findCommentRemoverForId(this.getKeepComments()));
     context.setVerbose(this.isVerbose());
     context.setKeepLines(this.isKeepLines());
@@ -175,6 +180,17 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       context.setPreprocessorExtension(
           PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
               this.getActionPreprocessorExtension().trim()));
+    }
+
+    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
+        CommentTextProcessor.class);
+    if (!commentTextProcessors.isEmpty()) {
+      info(String.format("Detected %d external comment text processing services",
+          commentTextProcessors.size()));
+      info(String.format("Detected comment text processors: %s",
+          commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
+              .collect(Collectors.joining(","))));
+      commentTextProcessors.forEach(context::addCommentTextProcessor);
     }
 
     this.registerConfigFiles(context);

@@ -1,10 +1,12 @@
 package com.igormaznitsa.jcp.gradle;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findCommentRemoverForId;
 import static java.util.Collections.emptyMap;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -99,6 +101,12 @@ public class JcpTask extends DefaultTask {
    */
   private final Property<Boolean> dryRun;
   /**
+   * Allow merge preprocessed lines marked as block text for external processing.
+   *
+   * @since 7.2.0
+   */
+  private final Property<Boolean> allowBlocks;
+  /**
    * Verbose mode.
    */
   private final Property<Boolean> verbose;
@@ -172,6 +180,7 @@ public class JcpTask extends DefaultTask {
     this.clearTarget = factory.property(Boolean.class).convention(false);
     this.dontOverwriteSameContent = factory.property(Boolean.class).convention(false);
     this.dryRun = factory.property(Boolean.class).convention(false);
+    this.allowBlocks = factory.property(Boolean.class).convention(false);
     this.ignoreMissingSources = factory.property(Boolean.class).convention(false);
     this.keepAttributes = factory.property(Boolean.class).convention(false);
     this.keepComments = factory.property(Object.class).convention(false);
@@ -274,6 +283,11 @@ public class JcpTask extends DefaultTask {
   }
 
   @Input
+  public Property<Boolean> getAllowBlocks() {
+    return allowBlocks;
+  }
+
+  @Input
   public Property<Boolean> getVerbose() {
     return verbose;
   }
@@ -348,7 +362,7 @@ public class JcpTask extends DefaultTask {
     } else {
       baseDirFile = this.getProject().getProjectDir();
     }
-    logger.info("Base folder: " + baseDirFile);
+    logger.info("Base folder: {}", baseDirFile);
     final PreprocessorContext preprocessorContext = new PreprocessorContext(baseDirFile);
 
     preprocessorContext.setPreprocessorLogger(new PreprocessorLogger() {
@@ -419,6 +433,7 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setKeepComments(
         findCommentRemoverForId(String.valueOf(this.keepComments.get())));
     preprocessorContext.setDryRun(this.dryRun.get());
+    preprocessorContext.setAllowsBlocks(this.allowBlocks.get());
     preprocessorContext.setKeepAttributes(this.keepAttributes.get());
     preprocessorContext.setKeepLines(this.keepLines.get());
     preprocessorContext.setAllowWhitespaces(this.allowWhitespaces.get());
@@ -436,6 +451,17 @@ public class JcpTask extends DefaultTask {
           String.format("Detected action preprocessor extension class name: %s", className));
       preprocessorContext.setPreprocessorExtension(
           findAndInstantiatePreprocessorExtensionForClassName(className));
+    }
+
+    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
+        CommentTextProcessor.class);
+    if (!commentTextProcessors.isEmpty()) {
+      logger.info("Detected {} external comment text processing services",
+          commentTextProcessors.size());
+      logger.info("Detected comment text processors: {}",
+          commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
+              .collect(Collectors.joining(",")));
+      commentTextProcessors.forEach(preprocessorContext::addCommentTextProcessor);
     }
 
     this.vars.getOrElse(emptyMap()).entrySet().stream()
