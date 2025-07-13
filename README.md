@@ -1,17 +1,17 @@
 ![Logo](assets/github1280x640.png)
 
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.1.2|jar)
-[![Java 1.8+](https://img.shields.io/badge/java-1.8%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.0|jar)
+[![Java 11+](https://img.shields.io/badge/java-11%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
-[![Gradle 3.0+](https://img.shields.io/badge/gradle-3.0%2b-green.svg)](https://gradle.org/)
+[![Gradle 6.0+](https://img.shields.io/badge/gradle-6.0%2b-green.svg)](https://gradle.org/)
 [![Ant 1.8.2+](https://img.shields.io/badge/ant-1.8.2%2b-green.svg)](http://ant.apache.org/)
 [![PayPal donation](https://img.shields.io/badge/donation-PayPal-cyan.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)
 [![YooMoney donation](https://img.shields.io/badge/donation-Yoo.money-blue.svg)](https://yoomoney.ru/to/41001158080699)
 
 # Changelog
 
-__7.2.0 (SNAPSHOT)__
+__7.2.0 (13-jul-2025)__
 
 - minimum JDK version 11
 - added support for external processors calls during uncommenting actions `//$` and `//$$`, processors can be provided

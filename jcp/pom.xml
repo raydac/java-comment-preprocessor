@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.igormaznitsa</groupId>
     <artifactId>jcp-pom</artifactId>
-    <version>7.2.0-SNAPSHOT</version>
+    <version>7.2.0</version>
   </parent>
 
   <artifactId>jcp</artifactId>
@@ -158,6 +158,34 @@
             </executions>
           </plugin>
 
+          <plugin>
+            <groupId>net.nicoulaj.maven.plugins</groupId>
+            <artifactId>checksum-maven-plugin</artifactId>
+            <version>1.11</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>files</goal>
+                </goals>
+                <configuration>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>*.jar</include>
+                        <include>*.pom</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
+                  <algorithms>
+                    <algorithm>SHA-1</algorithm>
+                    <algorithm>MD5</algorithm>
+                  </algorithms>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
