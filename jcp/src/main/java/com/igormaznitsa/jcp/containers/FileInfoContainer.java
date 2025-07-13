@@ -432,13 +432,14 @@ public class FileInfoContainer {
   }
 
   /**
-   * Preprocess file, NB! it doesn't clear local variables automatically for cloned contexts
+   * Preprocess the file described by the object, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
    *
    * @param state   the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
    * @return the state for the preprocessed file
    * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
+   * @see #preprocessFileWithNotification(PreprocessingState, PreprocessorContext, boolean)
    */
   public PreprocessingState preprocessFile(final PreprocessingState state,
                                            final PreprocessorContext context) throws IOException {
@@ -446,11 +447,12 @@ public class FileInfoContainer {
   }
 
   /**
-   * Preprocess file, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
+   * Preprocess the file described by the object, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
    *
    * @param state            the start preprocessing state, can be null
    * @param context          the preprocessor context, must not be null
-   * @param notifyProcessors send notification to all processors registered in context about start and stop, it should be true for direct call of preprocess of standalone file. Works only for non-cloned contexts.
+   * @param notifyProcessors send notification to all processors registered in context about start and stop,
+   *                         it should be true for direct call of preprocess of standalone file. <b>Works only for non-cloned contexts.</b>
    * @return the state for the preprocessed file
    * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
