@@ -40,14 +40,23 @@
                   <rules>
                     <banDuplicatePomDependencyVersions/>
                     <enforceBytecodeVersion>
-                      <maxJdkVersion>${maven.compiler.target}</maxJdkVersion>
+                      <maxJdkVersion>${maven.compiler.release}</maxJdkVersion>
+                      <ignoredScopes>
+                        <scope>test</scope>
+                        <scope>provided</scope>
+                      </ignoredScopes>
                     </enforceBytecodeVersion>
-                    <banCircularDependencies/>
+                    <banCircularDependencies>
+                      <ignoredScopes>
+                        <scope>test</scope>
+                        <scope>provided</scope>
+                      </ignoredScopes>
+                    </banCircularDependencies>
                     <reactorModuleConvergence>
                       <ignoreModuleDependencies>true</ignoreModuleDependencies>
                     </reactorModuleConvergence>
                     <requireJavaVersion>
-                      <version>${maven.compiler.target}</version>
+                      <version>${maven.compiler.release}</version>
                     </requireJavaVersion>
                     <requireMavenVersion>
                       <version>[${min.maven.api}},)</version>
@@ -111,6 +120,7 @@
                 </goals>
                 <configuration>
                   <!--<failOnError>false</failOnError>-->
+                  <source>${maven.compiler.release}</source>
                   <sourceFileExcludes>
                     <exclude>**/HelpMojo.java</exclude>
                     <exclude>**/AntPathMatcher.java</exclude>
