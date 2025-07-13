@@ -103,8 +103,9 @@ public class FunctionEVALFILE extends AbstractFunction {
       final FileInfoContainer fileContainer =
           new FileInfoContainer(fileToEvaluate, fileToEvaluate.getName(), false);
 
-      final PreprocessorContext evalContext = prepareContext(context);
-      final PreprocessingState state = fileContainer.preprocessFile(null, evalContext);
+      final PreprocessorContext evalContext = this.prepareContext(context);
+      final PreprocessingState state =
+          fileContainer.preprocessFileWithNotification(null, evalContext, false);
 
       findFirstActiveFileContainer(context)
           .ifPresent(f -> {

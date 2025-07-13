@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.exceptions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
@@ -42,7 +41,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFile(null, context);
+      container.preprocessFileWithNotification(null, context, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       assertEquals("Expected correct line number", 17, expected.getLineNumber());
@@ -58,7 +57,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFile(null, context);
+      container.preprocessFileWithNotification(null, context, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       assertEquals("Expected correct line number", 17, expected.getLineNumber());
@@ -75,7 +74,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFile(null, context);
+      container.preprocessFileWithNotification(null, context, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       final FilePositionInfo[] fileStack = expected.getIncludeChain();

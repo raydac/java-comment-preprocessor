@@ -245,6 +245,29 @@ public class PreprocessorContext {
     return new HashSet<>(this.preprocessedResources);
   }
 
+  /**
+   * Send notification about context start to all registered listeners.
+   *
+   * @since 7.2.0
+   */
+  public void fireNotificationStart() {
+    this.getCommentTextProcessors().forEach(x -> x.onContextStarted(this));
+    this.getMapVariableNameToSpecialVarProcessor()
+        .values().forEach(x -> x.onContextStarted(this));
+  }
+
+  /**
+   * Send notification about context stop to all registered listeners.
+   *
+   * @param error error to be detected during preprocess, can be null if no errors
+   * @since 7.2.0
+   */
+  public void fireNotificationStop(final Throwable error) {
+    this.getCommentTextProcessors().forEach(x -> x.onContextStopped(this, error));
+    this.getMapVariableNameToSpecialVarProcessor()
+        .values().forEach(x -> x.onContextStopped(this, error));
+  }
+
   private static String makeStackView(
       final TextFileDataContainer cloneSource,
       final boolean cloned,

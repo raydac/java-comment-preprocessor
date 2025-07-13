@@ -23,8 +23,14 @@ package com.igormaznitsa.jcp.directives;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
+import com.igormaznitsa.jcp.context.PreprocessingState;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // This test checks work of //$$""", //$"""
 // Those directives are very specific and they don't have any distinguished handler
@@ -33,19 +39,43 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
   @Override
   public void testExecution() throws Exception {
     final StringBuilder calledForText = new StringBuilder();
-    final CommentTextProcessor testProcessor = (text, fileInfoContainer, context, state) -> {
-      assertNotNull(text);
-      assertNotNull(fileInfoContainer);
-      assertNotNull(context);
-      assertNotNull(state);
 
-      calledForText.append("...\n").append(text);
+    final AtomicBoolean started = new AtomicBoolean();
+    final AtomicBoolean stopped = new AtomicBoolean();
 
-      return text;
+    final CommentTextProcessor testProcessor = new CommentTextProcessor() {
+      @Override
+      public void onContextStarted(PreprocessorContext context) {
+        if (!started.compareAndSet(false, true)) {
+          fail();
+        }
+      }
+
+      @Override
+      public void onContextStopped(PreprocessorContext context, Throwable error) {
+        if (!stopped.compareAndSet(false, true)) {
+          fail();
+        }
+      }
+
+      @Override
+      public String onUncommentText(String text, FileInfoContainer fileInfoContainer,
+                                    PreprocessorContext context, PreprocessingState state) {
+        assertNotNull(text);
+        assertNotNull(fileInfoContainer);
+        assertNotNull(context);
+        assertNotNull(state);
+
+        calledForText.append("...\n").append(text);
+
+        return text;
+      }
     };
+
     assertFilePreprocessing("directive_special_block.txt", false, true, null, null,
         c -> c.addCommentTextProcessor(testProcessor));
-
+    assertTrue(started.get());
+    assertTrue(stopped.get());
     assertEquals("...\n" +
             "hello 223 world\n" +
             "next\n" +

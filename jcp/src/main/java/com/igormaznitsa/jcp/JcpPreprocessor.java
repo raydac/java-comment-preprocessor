@@ -54,7 +54,6 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -222,68 +221,41 @@ public final class JcpPreprocessor {
     return this.context;
   }
 
-
   public Statistics execute() throws IOException {
-    this.context.getCommentTextProcessors().forEach(x -> x.onContextStarted(this.context));
-    this.context.getMapVariableNameToSpecialVarProcessor()
-        .values().forEach(x -> x.onContextStarted(this.context));
-
     final long timeStart = System.currentTimeMillis();
-    Throwable throwable = null;
-    Statistics stat = null;
-    try {
-      this.context.getActivatedConfigFiles().addAll(processConfigFiles());
+    this.context.getActivatedConfigFiles().addAll(processConfigFiles());
 
-      this.context.logInfo(String
-          .format("File extensions: %s excluded %s", this.context.getExtensions(),
-              this.context.getExcludeExtensions()));
-      final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
-      this.context.logDebug("Source folders: " + srcFolders);
+    this.context.logInfo(String
+        .format("File extensions: %s excluded %s", this.context.getExtensions(),
+            this.context.getExcludeExtensions()));
+    final List<PreprocessorContext.SourceFolder> srcFolders = this.context.getSources();
+    this.context.logDebug("Source folders: " + srcFolders);
 
-      if (srcFolders.isEmpty()) {
-        this.context.logWarning("Source folder list is empty!");
-      }
-
-      final Collection<FileInfoContainer> filesToBePreprocessed =
-          collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
-      this.context.addAllPreprocessedResources(filesToBePreprocessed);
-
-      final List<PreprocessingState.ExcludeIfInfo> excludedIf =
-          processGlobalDirectives(filesToBePreprocessed);
-
-      processFileExclusion(excludedIf);
-      if (!this.context.isDryRun()) {
-        createTargetFolder();
-      } else {
-        this.context.logInfo("Dry run mode is ON");
-      }
-      stat = preprocessFiles(filesToBePreprocessed);
-    } catch (Throwable ex) {
-      throwable = ex;
-      if (ex instanceof IOException) {
-        throw (IOException) ex;
-      }
-    } finally {
-      try {
-        for (final CommentTextProcessor p : this.context.getCommentTextProcessors()) {
-          p.onContextStopped(this.context, throwable);
-        }
-      } finally {
-        for (final SpecialVariableProcessor p : this.context.getMapVariableNameToSpecialVarProcessor()
-            .values()) {
-          p.onContextStopped(this.context, throwable);
-        }
-      }
+    if (srcFolders.isEmpty()) {
+      this.context.logWarning("Source folder list is empty!");
     }
-    if (stat != null) {
-      final long elapsedTime = System.currentTimeMillis() - timeStart;
-      this.context.logInfo("-----------------------------------------------------------------");
-      this.context.logInfo(String
-          .format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms",
-              stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
+
+    final Collection<FileInfoContainer> filesToBePreprocessed =
+        collectFilesToPreprocess(srcFolders, this.context.getExcludeFolders());
+    this.context.addAllPreprocessedResources(filesToBePreprocessed);
+
+    final List<PreprocessingState.ExcludeIfInfo> excludedIf =
+        processGlobalDirectives(filesToBePreprocessed);
+
+    processFileExclusion(excludedIf);
+    if (!this.context.isDryRun()) {
+      createTargetFolder();
+    } else {
+      this.context.logInfo("Dry run mode is ON");
     }
+    final Statistics stat = this.preprocessFiles(filesToBePreprocessed, true);
+
+    final long elapsedTime = System.currentTimeMillis() - timeStart;
+    this.context.logInfo("-----------------------------------------------------------------");
+    this.context.logInfo(String
+        .format("Preprocessed %d files, copied %d files, ignored %d files, elapsed time %d ms",
+            stat.getPreprocessed(), stat.getCopied(), stat.getExcluded(), elapsedTime));
     return stat;
-
   }
 
   private void processFileExclusion(final List<PreprocessingState.ExcludeIfInfo> foundExcludeIf) {
@@ -353,54 +325,75 @@ public final class JcpPreprocessor {
   }
 
 
-  private Statistics preprocessFiles(final Collection<FileInfoContainer> files) throws IOException {
+  private Statistics preprocessFiles(final Collection<FileInfoContainer> files,
+                                     final boolean notifyProcessors) throws IOException {
+    if (notifyProcessors) {
+      context.fireNotificationStart();
+    }
+
     int preprocessedCounter = 0;
     int copiedCounter = 0;
     int excludedCounter = 0;
 
-    for (final FileInfoContainer fileRef : files) {
-      if (fileRef.isExcludedFromPreprocessing()) {
-        excludedCounter++;
-      } else if (fileRef.isCopyOnly()) {
-        if (!context.isDryRun()) {
-          final File destinationFile =
-              this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
-          boolean doCopy = true;
+    Throwable error = null;
+    try {
+      for (final FileInfoContainer fileRef : files) {
+        if (fileRef.isExcludedFromPreprocessing()) {
+          excludedCounter++;
+        } else if (fileRef.isCopyOnly()) {
+          if (!context.isDryRun()) {
+            final File destinationFile =
+                this.context.createDestinationFileForPath(fileRef.makeTargetFilePathAsString());
+            boolean doCopy = true;
 
-          if (this.context.isDontOverwriteSameContent() &&
-              PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
-            doCopy = false;
-            if (this.context.isVerbose()) {
-              this.context.logForVerbose(String
-                  .format("Copy skipped because same content: %s -> {dst} %s",
-                      PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
-                      fileRef.makeTargetFilePathAsString()));
+            if (this.context.isDontOverwriteSameContent() &&
+                PreprocessorUtils.isFileContentEquals(fileRef.getSourceFile(), destinationFile)) {
+              doCopy = false;
+              if (this.context.isVerbose()) {
+                this.context.logForVerbose(String
+                    .format("Copy skipped because same content: %s -> {dst} %s",
+                        PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
+                        fileRef.makeTargetFilePathAsString()));
+              }
+            }
+
+            if (doCopy) {
+              if (this.context.isVerbose()) {
+                this.context.logForVerbose(String.format("Copy file %s -> {dst} %s",
+                    PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
+                    fileRef.makeTargetFilePathAsString()));
+              }
+              PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile,
+                  this.context.isKeepAttributes());
+              fileRef.getGeneratedResources().add(destinationFile);
+              copiedCounter++;
             }
           }
-
-          if (doCopy) {
-            if (this.context.isVerbose()) {
-              this.context.logForVerbose(String.format("Copy file %s -> {dst} %s",
-                  PreprocessorUtils.getFilePath(fileRef.getSourceFile()),
-                  fileRef.makeTargetFilePathAsString()));
-            }
-            PreprocessorUtils.copyFile(fileRef.getSourceFile(), destinationFile,
-                this.context.isKeepAttributes());
-            fileRef.getGeneratedResources().add(destinationFile);
-            copiedCounter++;
+        } else {
+          final long startTime = System.currentTimeMillis();
+          fileRef.preprocessFileWithNotification(null, this.context, false);
+          final long elapsedTime = System.currentTimeMillis() - startTime;
+          if (this.context.isVerbose()) {
+            this.context.logForVerbose(String
+                .format("File preprocessing completed  '%s', elapsed time %d ms",
+                    PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
           }
+          preprocessedCounter++;
         }
-      } else {
-        final long startTime = System.currentTimeMillis();
-        fileRef.preprocessFile(null, this.context);
-        final long elapsedTime = System.currentTimeMillis() - startTime;
-        if (this.context.isVerbose()) {
-          this.context.logForVerbose(String
-              .format("File preprocessing completed  '%s', elapsed time %d ms",
-                  PreprocessorUtils.getFilePath(fileRef.getSourceFile()), elapsedTime));
-        }
-        preprocessedCounter++;
       }
+    } catch (Throwable err) {
+      error = err;
+      if (error instanceof IOException) {
+        throw (IOException) error;
+      }
+      if (error instanceof RuntimeException) {
+        throw (RuntimeException) error;
+      }
+      if (error instanceof Error) {
+        throw (Error) error;
+      }
+    } finally {
+      context.fireNotificationStop(error);
     }
 
     return new Statistics(

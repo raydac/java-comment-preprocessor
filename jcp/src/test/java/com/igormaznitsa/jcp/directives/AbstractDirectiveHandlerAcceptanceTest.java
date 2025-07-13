@@ -215,7 +215,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       contextTuner.accept(context);
     }
 
-    reference.preprocessFile(state, context);
+    reference.preprocessFileWithNotification(state, context, true);
 
     final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
     final ByteArrayOutputStream normal = new ByteArrayOutputStream();
@@ -223,13 +223,19 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
     state.saveBuffersToStreams(prefix, normal, postfix);
 
-    final BufferedReader prefixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()), StandardCharsets.UTF_8));
-    final BufferedReader normalreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()), StandardCharsets.UTF_8));
-    final BufferedReader postfixreader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()), StandardCharsets.UTF_8));
+    final BufferedReader prefixReader = new BufferedReader(
+        new InputStreamReader(new ByteArrayInputStream(prefix.toByteArray()),
+            StandardCharsets.UTF_8));
+    final BufferedReader normalReader = new BufferedReader(
+        new InputStreamReader(new ByteArrayInputStream(normal.toByteArray()),
+            StandardCharsets.UTF_8));
+    final BufferedReader postfixReader = new BufferedReader(
+        new InputStreamReader(new ByteArrayInputStream(postfix.toByteArray()),
+            StandardCharsets.UTF_8));
 
-    readWholeDataFromReader(prefixreader, result);
-    readWholeDataFromReader(normalreader, result);
-    readWholeDataFromReader(postfixreader, result);
+    readWholeDataFromReader(prefixReader, result);
+    readWholeDataFromReader(normalReader, result);
+    readWholeDataFromReader(postfixReader, result);
 
     try {
       if (etalonList != null) {
