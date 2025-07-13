@@ -21,13 +21,69 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
+import com.igormaznitsa.jcp.context.PreprocessingState;
+import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 // This test checks work of //$$, //$ and /*-*/
 // Those directives are very specific and they don't have any distinguished handler
 public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTest {
 
   @Override
   public void testExecution() throws Exception {
-    assertFilePreprocessing("directive_special.txt", false, null, null);
+    final StringBuilder calledForText = new StringBuilder();
+
+    final AtomicBoolean started = new AtomicBoolean();
+    final AtomicBoolean stopped = new AtomicBoolean();
+
+    final CommentTextProcessor testProcessor = new CommentTextProcessor() {
+      @Override
+      public void onContextStarted(PreprocessorContext context) {
+        if (!started.compareAndSet(false, true)) {
+          fail();
+        }
+      }
+
+      @Override
+      public void onContextStopped(PreprocessorContext context, Throwable error) {
+        if (!stopped.compareAndSet(false, true)) {
+          fail();
+        }
+      }
+
+      @Override
+      public String onUncommentText(String text, FileInfoContainer fileInfoContainer,
+                                    PreprocessorContext context, PreprocessingState state) {
+        assertNotNull(text);
+        assertNotNull(fileInfoContainer);
+        assertNotNull(context);
+        assertNotNull(state);
+
+        calledForText.append("...\n").append(text);
+
+        return text;
+      }
+    };
+
+    assertFilePreprocessing("directive_special.txt", false, false, null, null,
+        c -> c.addCommentTextProcessor(testProcessor));
+    assertTrue(started.get());
+    assertTrue(stopped.get());
+    assertEquals("...\n" +
+        "hello 223 world\n" +
+        "...\n" +
+        "hello /*$111+112$*/ world\n" +
+        "...\n" +
+        "\"\"\"hello 223 world\n" +
+        "...\n" +
+        "\"\"\"hello /*$111+112$*/ world\n", calledForText.toString());
   }
 
   @Override
