@@ -62,6 +62,13 @@ import org.apache.commons.io.FilenameUtils;
  */
 public final class PreprocessorUtils {
 
+  /**
+   * Property if defined and true then search of services in class path is disabled.
+   *
+   * @since 7.2.0
+   */
+  public static final String SYSTEM_PROPERTY_DISABLE_SEARCH_SERVICES =
+      "jcp.preprocessor.disable.search.services";
   private static final Pattern PATTERN_MACROS_WITH_SPACES =
       Pattern.compile("\\/\\*\\s*\\$(.*?)\\$\\s*\\*\\/");
 
@@ -113,7 +120,6 @@ public final class PreprocessorUtils {
     }
   }
 
-
   /**
    * Find comment remover type for provided identifier. Decoding also true and false values.
    *
@@ -154,7 +160,6 @@ public final class PreprocessorUtils {
     return result;
   }
 
-
   public static BufferedReader makeFileReader(final File file, final Charset charset,
                                               final int bufferSize) throws IOException {
     Objects.requireNonNull(file, "File is null");
@@ -182,11 +187,9 @@ public final class PreprocessorUtils {
     return result;
   }
 
-
   public static String extractTrimmedTail(final String prefix, final String value) {
     return extractTail(prefix, value).trim();
   }
-
 
   public static String extractTail(final String prefix, final String value) {
     Objects.requireNonNull(prefix, "Prefix is null");
@@ -226,7 +229,6 @@ public final class PreprocessorUtils {
     return result;
   }
 
-
   public static String replacePartByChar(final String text, final char chr, final int startPosition,
                                          final int length) {
     if (startPosition < 0) {
@@ -247,6 +249,9 @@ public final class PreprocessorUtils {
   }
 
   public static <T> List<T> findAndInstantiateAllServices(final Class<T> serviceClass) {
+    if (Boolean.getBoolean(SYSTEM_PROPERTY_DISABLE_SEARCH_SERVICES)) {
+      return List.of();
+    }
     final ServiceLoader<T> serviceLoader = ServiceLoader.load(serviceClass);
     return serviceLoader.stream().map(ServiceLoader.Provider::get).collect(Collectors.toList());
   }

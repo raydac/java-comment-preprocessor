@@ -4,9 +4,11 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import java.io.IOException;
 
 /**
- * Custom processor to detect and process text line or text block
+ * Custom processor to detect and process uncommenting text line or text block
  * defined through //$ and //$$ directives. It can return the same value or
- * changed one.
+ * changed one. The processor is called after ext prepared for injection into preprocessed source.
+ * If activated merge block mode for preprocessor so sequentially
+ * situated lines started with """ will be merged into single text block (and """ will be removed)
  *
  * @since 7.2.0
  */
