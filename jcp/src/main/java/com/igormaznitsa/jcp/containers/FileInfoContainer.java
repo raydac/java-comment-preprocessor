@@ -510,7 +510,8 @@ public class FileInfoContainer {
           }
 
           if (rawString == null) {
-            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+                context);
             lastTextFileDataContainer = preprocessingState.popTextContainer();
             if (preprocessingState.isIncludeStackEmpty()) {
               break;
@@ -538,7 +539,8 @@ public class FileInfoContainer {
           final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
           if (isHashPrefixed(stringToBeProcessed, context)) {
-            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+                context);
             final String extractedDirective =
                 extractHashPrefixedDirective(stringToBeProcessed, context);
             switch (processDirective(preprocessingState, extractedDirective, context, false)) {
@@ -594,12 +596,14 @@ public class FileInfoContainer {
                   textBlockBuffer.append(context.getEol());
                 }
               } else {
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                    preprocessingState, context);
                 textBlockBuffer.append(stringPrefix).append(text);
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                    preprocessingState, context);
               }
             } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
               // Output the tail of the string to the output stream without comments
@@ -614,16 +618,19 @@ public class FileInfoContainer {
                   textBlockBuffer.append(context.getEol());
                 }
               } else {
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                    preprocessingState, context);
                 textBlockBuffer.append(stringPrefix).append(text);
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                    preprocessingState, context);
               }
             } else {
               // Just string
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                  preprocessingState, context);
 
               final String strToOut = findTailRemover(stringToBeProcessed, context);
 
@@ -642,7 +649,8 @@ public class FileInfoContainer {
               }
             }
           } else if (context.isKeepLines()) {
-            flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, state, context);
+            flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+                context);
             final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
             if (doPrintLn) {
               thePrinter.println(text, context.getEol());
