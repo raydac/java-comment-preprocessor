@@ -38,7 +38,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Data;
@@ -344,9 +346,10 @@ public class FileInfoContainer {
   }
 
 
-  private String extractDoubleDollarPrefixedDirective(final String line,
-                                                      final boolean block,
-                                                      final PreprocessorContext context) {
+  private String extractDoubleDollarPrefixedDirective(
+      final String line,
+      final boolean block,
+      final PreprocessorContext context) {
     String tail;
     if (context.isAllowWhitespaces()) {
       final Matcher matcher = block ? DIRECTIVE_TWO_DOLLARS_BLOCK_PREFIXED.matcher(line) :
@@ -401,11 +404,17 @@ public class FileInfoContainer {
     return tail;
   }
 
-  private void flushTextBufferForRemovedComments(final StringBuilder textBuffer,
-                                                 final ResetablePrinter resetablePrinter,
-                                                 final PreprocessingState state,
-                                                 final PreprocessorContext context)
+  private void flushTextBufferForRemovedComments(
+      final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,
+      final StringBuilder textBuffer,
+      final ResetablePrinter resetablePrinter,
+      final PreprocessingState state,
+      final PreprocessorContext context)
       throws IOException {
+
+    final Map.Entry<String, String> firstUncommentLine =
+        firstDetectedUncommentLinePtr.getAndSet(null);
+
     if (textBuffer.length() > 0) {
       final List<CommentTextProcessor> processors = context.getCommentTextProcessors();
       final String origText = textBuffer.toString();
@@ -415,7 +424,9 @@ public class FileInfoContainer {
       if (!processors.isEmpty()) {
         processors.forEach(x -> {
           try {
-            final String result = x.onUncommentText(origText, this, context, state);
+            final String result = x.onUncommentText(
+                firstUncommentLine == null ? 0 : firstUncommentLine.getKey().length(), origText,
+                this, context, state);
             textBuffer.append(result);
           } catch (Exception ex) {
             throw new PreprocessorException(
@@ -486,6 +497,9 @@ public class FileInfoContainer {
       final StringBuilder textBlockBuffer = new StringBuilder();
 
       try {
+        final AtomicReference<Map.Entry<String, String>> firstUncommentLine =
+            new AtomicReference<>();
+
         while (!Thread.currentThread().isInterrupted()) {
           final ResetablePrinter thePrinter =
               requireNonNull(preprocessingState.getPrinter(), "Printer must be defined");
@@ -510,7 +524,8 @@ public class FileInfoContainer {
           }
 
           if (rawString == null) {
-            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+            this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer, thePrinter,
+                preprocessingState,
                 context);
             lastTextFileDataContainer = preprocessingState.popTextContainer();
             if (preprocessingState.isIncludeStackEmpty()) {
@@ -539,7 +554,8 @@ public class FileInfoContainer {
           final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
 
           if (isHashPrefixed(stringToBeProcessed, context)) {
-            this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+            this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer, thePrinter,
+                preprocessingState,
                 context);
             final String extractedDirective =
                 extractHashPrefixedDirective(stringToBeProcessed, context);
@@ -585,51 +601,77 @@ public class FileInfoContainer {
             }
 
             if (startsWithTwoDollars) {
-              // Output the tail of the string to the output stream without comments and macroses
-              final String text =
-                  extractDoubleDollarPrefixedDirective(leftTrimmedString, false, context);
+              // Output the tail of the string to the output stream without comments and macros
+              String text = extractDoubleDollarPrefixedDirective(leftTrimmedString, false, context);
+              Map.Entry<String, String> indentText =
+                  Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
+              final boolean firstLineSet = firstUncommentLine.compareAndSet(null, indentText);
+
               if (context.isAllowsBlocks() &&
                   isDoubleDollarBlockPrefixed(leftTrimmedString, context.isAllowWhitespaces())) {
-                textBlockBuffer.append(
-                    extractDoubleDollarPrefixedDirective(leftTrimmedString, true, context));
+                text =
+                    extractDoubleDollarPrefixedDirective(leftTrimmedString, true, context);
+                indentText = Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
+
+                if (firstLineSet) {
+                  firstUncommentLine.set(indentText);
+                }
+                textBlockBuffer.append(indentText.getValue());
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
               } else {
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer,
+                    thePrinter,
                     preprocessingState, context);
-                textBlockBuffer.append(stringPrefix).append(text);
+                textBlockBuffer.append(stringPrefix).append(indentText.getKey())
+                    .append(indentText.getValue());
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer,
+                    thePrinter,
                     preprocessingState, context);
               }
             } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
               // Output the tail of the string to the output stream without comments
-              final String text =
+              String text =
                   extractSingleDollarPrefixedDirective(stringToBeProcessed, false, context);
+              Map.Entry<String, String> indentText =
+                  Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
+              final boolean firstLineSet = firstUncommentLine.compareAndSet(null, indentText);
 
               if (context.isAllowsBlocks() &&
                   isDollarBlockPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
-                textBlockBuffer.append(
-                    extractSingleDollarPrefixedDirective(stringToBeProcessed, true, context));
+                text =
+                    extractSingleDollarPrefixedDirective(stringToBeProcessed, true, context);
+                indentText = Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
+
+                if (firstLineSet) {
+                  firstUncommentLine.set(indentText);
+                }
+
+                textBlockBuffer.append(indentText.getValue());
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
               } else {
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer,
+                    thePrinter,
                     preprocessingState, context);
-                textBlockBuffer.append(stringPrefix).append(text);
+                textBlockBuffer.append(stringPrefix).append(indentText.getKey())
+                    .append(indentText.getValue());
                 if (doPrintLn) {
                   textBlockBuffer.append(context.getEol());
                 }
-                this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+                this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer,
+                    thePrinter,
                     preprocessingState, context);
               }
             } else {
               // Just string
-              this.flushTextBufferForRemovedComments(textBlockBuffer, thePrinter,
+              this.flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer,
+                  thePrinter,
                   preprocessingState, context);
 
               final String strToOut = findTailRemover(stringToBeProcessed, context);
@@ -649,7 +691,8 @@ public class FileInfoContainer {
               }
             }
           } else if (context.isKeepLines()) {
-            flushTextBufferForRemovedComments(textBlockBuffer, thePrinter, preprocessingState,
+            flushTextBufferForRemovedComments(firstUncommentLine, textBlockBuffer, thePrinter,
+                preprocessingState,
                 context);
             final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
             if (doPrintLn) {

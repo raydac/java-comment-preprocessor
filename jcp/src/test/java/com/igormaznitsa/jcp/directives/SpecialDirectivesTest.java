@@ -59,7 +59,7 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
-      public String onUncommentText(String text, FileInfoContainer fileInfoContainer,
+      public String onUncommentText(int indent, String text, FileInfoContainer fileInfoContainer,
                                     PreprocessorContext context, PreprocessingState state) {
         assertNotNull(text);
         assertNotNull(fileInfoContainer);

@@ -30,7 +30,9 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 // This test checks work of //$$""", //$"""
 // Those directives are very specific and they don't have any distinguished handler
@@ -59,8 +61,11 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
       }
 
       @Override
-      public String onUncommentText(String text, FileInfoContainer fileInfoContainer,
-                                    PreprocessorContext context, PreprocessingState state) {
+      public String onUncommentText(
+          int firstLineIndent,
+          String text,
+          FileInfoContainer fileInfoContainer,
+          PreprocessorContext context, PreprocessingState state) {
         assertNotNull(text);
         assertNotNull(fileInfoContainer);
         assertNotNull(context);
@@ -68,40 +73,51 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
 
         calledForText.append("...\n").append(text);
 
-        return text;
+        final String indent = context.isPreserveIndents() ? " ".repeat(firstLineIndent) : "";
+
+        return Arrays.stream(text.split("\\R"))
+            .map(x -> indent + x)
+            .peek(x -> System.out.println(">>>" + x))
+            .collect(Collectors.joining(context.getEol(), "", context.getEol()));
       }
     };
 
     assertFilePreprocessing("directive_special_block.txt", false, true, null, null,
-        c -> c.addCommentTextProcessor(testProcessor));
+        c -> {
+          c.setPreserveIndents(true);
+          c.addCommentTextProcessor(testProcessor);
+        });
     assertTrue(started.get());
     assertTrue(stopped.get());
     assertEquals("...\n" +
-            "hello 223 world\n" +
-            "next\n" +
+            "      hello 223 world\n" +
+            "      next\n" +
             "...\n" +
-            "hello /*$111+112$*/ world\n" +
-            "next/*$111+112$*/\n" +
+            "       hello /*$111+112$*/ world\n" +
+            "       next/*$111+112$*/\n" +
             "...\n" +
-            "hello /*$111+112$*/ world\n" +
-            "middle\n" +
-            "next/*$111+112$*/\n" +
+            "       hello /*$111+112$*/ world\n" +
+            "      middle\n" +
+            "       next/*$111+112$*/\n" +
             "...\n" +
-            "hello /*$111+112$*/ world\n" +
+            "       hello /*$111+112$*/ world\n" +
             "...\n" +
-            "split\n" +
+            "   split\n" +
             "...\n" +
-            "next/*$111+112$*/\n" +
+            "       next/*$111+112$*/\n" +
             "...\n" +
-            "hello 223 world\n" +
+            "      hello 223 world\n" +
             "...\n" +
-            "split\n" +
+            "    split\n" +
             "...\n" +
-            "next223\n" +
+            "      next223\n" +
             "...\n" +
-            "line1\n" +
+            "      line1\n" +
             "...\n" +
-            "line2\n"
+            "      line2\n" +
+            "...\n" +
+            "      hello\n" +
+            "      world earth\n"
         , calledForText.toString());
   }
 

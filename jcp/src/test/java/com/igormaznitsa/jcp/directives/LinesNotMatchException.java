@@ -64,7 +64,7 @@ public class LinesNotMatchException extends RuntimeException {
   public String toString() {
     return LinesNotMatchException.class.getName() + "(etalonLineNum=" + this.etalonLineNumber
         + ",resultLineNum=" + this.resultLineNumber
-        + ",problemLine" + (this.problemStringIndex + 1)
+        + ",problemLine=" + (this.problemStringIndex + 1)
         + ",etalonString=" + this.etalonString
         + ",resultString=" + this.resultString
         + ')';
