@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -61,11 +62,11 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
       }
 
       @Override
-      public String onUncommentText(
-          int firstLineIndent,
-          String text,
-          FileInfoContainer fileInfoContainer,
-          PreprocessorContext context, PreprocessingState state) {
+      public String onUncommentText(int firstLineIndent, String text,
+                                    FilePositionInfo filePositionInfo,
+                                    FileInfoContainer fileInfoContainer,
+                                    PreprocessorContext context, PreprocessingState state) {
+        assertTrue(filePositionInfo.getLineNumber() >= 0);
         assertNotNull(text);
         assertNotNull(fileInfoContainer);
         assertNotNull(context);
@@ -77,7 +78,6 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
 
         return Arrays.stream(text.split("\\R"))
             .map(x -> indent + x)
-            .peek(x -> System.out.println(">>>" + x))
             .collect(Collectors.joining(context.getEol(), "", context.getEol()));
       }
     };

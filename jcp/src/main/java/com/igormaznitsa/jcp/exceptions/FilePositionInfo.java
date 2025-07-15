@@ -73,7 +73,6 @@ public class FilePositionInfo {
   }
 
   @Override
-
   public String toString() {
     final String filePath = PreprocessorUtils.getFilePath(this.file);
     return filePath + ':' + this.getLineNumber();

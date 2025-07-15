@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // This test checks work of //$$, //$ and /*-*/
@@ -59,8 +60,11 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
-      public String onUncommentText(int indent, String text, FileInfoContainer fileInfoContainer,
+      public String onUncommentText(int firstLineIndent, String text,
+                                    FilePositionInfo filePositionInfo,
+                                    FileInfoContainer fileInfoContainer,
                                     PreprocessorContext context, PreprocessingState state) {
+        assertTrue(filePositionInfo.getLineNumber() >= 0);
         assertNotNull(text);
         assertNotNull(fileInfoContainer);
         assertNotNull(context);

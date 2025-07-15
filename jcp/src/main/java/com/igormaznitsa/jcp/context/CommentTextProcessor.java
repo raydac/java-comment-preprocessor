@@ -1,6 +1,7 @@
 package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import java.io.IOException;
 
 /**
@@ -13,11 +14,13 @@ import java.io.IOException;
  * @since 7.2.0
  */
 public interface CommentTextProcessor extends PreprocessorContextListener {
+
   /**
    * Process text value.
    *
    * @param firstLineIndent   detected indent for the first line during accumulation
    * @param text              the source text
+   * @param filePositionInfo  position of the uncommented line or the first line of the uncommented text block
    * @param fileInfoContainer the source file info container, must not be null
    * @param context           the source preprocessor context, must not be null
    * @param state             the current preprocess state, must not be null
@@ -28,6 +31,7 @@ public interface CommentTextProcessor extends PreprocessorContextListener {
   String onUncommentText(
       int firstLineIndent,
       String text,
+      FilePositionInfo filePositionInfo,
       FileInfoContainer fileInfoContainer,
       PreprocessorContext context,
       PreprocessingState state) throws IOException;
