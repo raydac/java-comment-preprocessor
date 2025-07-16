@@ -2,7 +2,6 @@ package com.igormaznitsa.jcp.context;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
-import java.io.IOException;
 
 /**
  * Custom processor to detect and process uncommenting text line or text block
@@ -16,23 +15,21 @@ import java.io.IOException;
 public interface CommentTextProcessor extends PreprocessorContextListener {
 
   /**
-   * Process text value.
+   * Process uncommented text detected in //$ or //$$ sections. If processing not needed then the provided text must be returned.
    *
-   * @param firstLineIndent   detected indent for the first line during accumulation
-   * @param text              the source text
-   * @param filePositionInfo  position of the uncommented line or the first line of the uncommented text block
-   * @param fileInfoContainer the source file info container, must not be null
-   * @param context           the source preprocessor context, must not be null
+   * @param recommendedIndent indent to be recommended for the processed text if it will be processed
+   * @param uncommentedText   the text which was uncommented and needs processing, must not be null
+   * @param fileContainer     the source file info container calling the processor, must not be null
+   * @param positionInfo      position of the uncommented line or the first line of the uncommented text block, must not be null
+   * @param context           the current preprocessor context, must not be null
    * @param state             the current preprocess state, must not be null
    * @return must return value as the same text or as the changed one.
-   * @throws IOException if any IO error during operation
    * @since 7.2.1
    */
-  String onUncommentText(
-      int firstLineIndent,
-      String text,
-      FilePositionInfo filePositionInfo,
-      FileInfoContainer fileInfoContainer,
+  String processUncommentedText(
+      int recommendedIndent,
+      String uncommentedText,
+      FileInfoContainer fileContainer, FilePositionInfo positionInfo,
       PreprocessorContext context,
-      PreprocessingState state) throws IOException;
+      PreprocessingState state);
 }

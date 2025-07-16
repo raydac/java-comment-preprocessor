@@ -456,9 +456,9 @@ public class FileInfoContainer {
           try {
             final FilePositionInfo filePositionInfo =
                 new FilePositionInfo(this.sourceFile, stringIndex);
-            final String result = x.onUncommentText(
+            final String result = x.processUncommentedText(
                 firstUncommentLine == null ? 0 : firstUncommentLine.getKey().length(), origText,
-                filePositionInfo, this, context, state);
+                this, filePositionInfo, context, state);
             textBuffer.append(result);
           } catch (Exception ex) {
             throw new PreprocessorException(

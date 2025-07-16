@@ -60,19 +60,19 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
-      public String onUncommentText(int firstLineIndent, String text,
-                                    FilePositionInfo filePositionInfo,
-                                    FileInfoContainer fileInfoContainer,
-                                    PreprocessorContext context, PreprocessingState state) {
-        assertTrue(filePositionInfo.getLineNumber() >= 0);
-        assertNotNull(text);
-        assertNotNull(fileInfoContainer);
+      public String processUncommentedText(int recommendedIndent, String uncommentedText,
+                                           FileInfoContainer fileContainer,
+                                           FilePositionInfo positionInfo,
+                                           PreprocessorContext context, PreprocessingState state) {
+        assertTrue(positionInfo.getLineNumber() >= 0);
+        assertNotNull(uncommentedText);
+        assertNotNull(fileContainer);
         assertNotNull(context);
         assertNotNull(state);
 
-        calledForText.append("...\n").append(text);
+        calledForText.append("...\n").append(uncommentedText);
 
-        return text;
+        return uncommentedText;
       }
     };
 
