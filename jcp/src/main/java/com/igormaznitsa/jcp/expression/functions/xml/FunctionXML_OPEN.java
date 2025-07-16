@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -61,13 +60,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
 
     NodeContainer docContainer = (NodeContainer) context.getSharedResource(documentId);
     if (docContainer == null) {
-      File file;
-      try {
-        file = context.findFileInSources(name);
-      } catch (IOException unexpected) {
-        throw context.makeException("Can't read '" + name + '\'', null);
-      }
-
+      final File file = context.findFileInSources(name);
       final Document document = openFileAndParse(context, file);
 
       findFirstActiveFileContainer(context)

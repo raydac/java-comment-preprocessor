@@ -199,12 +199,7 @@ public class FunctionBINFILE extends AbstractFunction {
     final int lengthOfLine = hasSplitFlag(encodeTypeAsString, type) ? 80 : -1;
     final boolean doDeflate = hasDeflateFlag(encodeTypeAsString, type);
 
-    final File theFile;
-    try {
-      theFile = context.findFileInSources(filePath);
-    } catch (IOException ex) {
-      throw context.makeException("Can't find bin file '" + filePath + '\'', null);
-    }
+    final File theFile = context.findFileInSources(filePath);
 
     if (context.isVerbose()) {
       context.logForVerbose("Loading content of bin file '" + theFile + '\'');

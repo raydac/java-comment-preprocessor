@@ -69,14 +69,14 @@ public class PreprocessorContext {
       List.of("java", "txt", "htm", "html");
   public static final List<String> DEFAULT_EXCLUDED_EXTENSIONS = singletonList("xml");
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
+  private static final List<AbstractDirectiveHandler> directiveHandlers =
+      AbstractDirectiveHandler.findAllDirectives();
   private final Map<String, Value> globalVarTable = new HashMap<>();
   private final Map<String, Value> localVarTable = new HashMap<>();
   private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor =
       new HashMap<>();
   private final Map<String, Object> sharedResources = new HashMap<>();
   private final List<File> configFiles = new ArrayList<>();
-
   @Setter(AccessLevel.NONE)
   private final boolean cloned;
   @Setter(AccessLevel.NONE)
@@ -84,14 +84,13 @@ public class PreprocessorContext {
   private final List<SourceFolder> sources = new ArrayList<>();
   private final File baseDir;
   private final Collection<File> activatedConfigFiles;
-
   @Setter(AccessLevel.NONE)
   @Getter(AccessLevel.NONE)
   private final Collection<FileInfoContainer> preprocessedResources;
-
   @Setter(AccessLevel.NONE)
   @Getter(AccessLevel.NONE)
   private final AtomicReference<PreprocessingState> preprocessingState = new AtomicReference<>();
+  private final List<CommentTextProcessor> commentTextProcessors;
   private String eol = GetUtils
       .ensureNonNull(System.getProperty("jcp.line.separator", System.getProperty("line.separator")),
           "\n");
@@ -116,8 +115,6 @@ public class PreprocessorContext {
   @Setter(AccessLevel.NONE)
   private PreprocessorLogger preprocessorLogger = new SystemOutLogger();
   private List<String> excludeFolders = new ArrayList<>();
-  private static final List<AbstractDirectiveHandler> directiveHandlers = AbstractDirectiveHandler.findAllDirectives();
-  private final List<CommentTextProcessor> commentTextProcessors;
 
   /**
    * Constructor
@@ -135,7 +132,7 @@ public class PreprocessorContext {
     this.currentInCloneSource = null;
     this.commentTextProcessors = new ArrayList<>();
     this.preprocessingState
-            .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
+        .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
   }
 
   /**
@@ -200,74 +197,6 @@ public class PreprocessorContext {
     this.currentInCloneSource = context.getPreprocessingState().peekFile();
   }
 
-  /**
-   * Add comment text processor.
-   *
-   * @param commentTextProcessor comment text processor, must not be null
-   * @since 7.2.0
-   */
-  public void addCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
-    this.commentTextProcessors.add(requireNonNull(commentTextProcessor));
-  }
-
-  /**
-   * Remove comment text processor.
-   *
-   * @param commentTextProcessor remove registered comment text processor.
-   * @since 7.2.0
-   */
-  public void removeCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
-    this.commentTextProcessors.remove(commentTextProcessor);
-  }
-
-  /**
-   * Get all directive handlers allowed for processing.
-   * @return list of direction handlers for the context
-   * @since 7.0.6
-   */
-  public List<AbstractDirectiveHandler> getDirectiveHandlers() {
-    return directiveHandlers;
-  }
-
-  public void addPreprocessedResource(final FileInfoContainer container) {
-    if (container != null) {
-      this.preprocessedResources.add(container);
-    }
-  }
-
-  public void addAllPreprocessedResources(final Collection<FileInfoContainer> containers) {
-    if (containers != null) {
-      this.preprocessedResources.addAll(containers);
-    }
-  }
-
-  public Set<FileInfoContainer> findPreprocessedResources() {
-    return new HashSet<>(this.preprocessedResources);
-  }
-
-  /**
-   * Send notification about context start to all registered listeners.
-   *
-   * @since 7.2.0
-   */
-  public void fireNotificationStart() {
-    this.getCommentTextProcessors().forEach(x -> x.onContextStarted(this));
-    this.getMapVariableNameToSpecialVarProcessor()
-        .values().forEach(x -> x.onContextStarted(this));
-  }
-
-  /**
-   * Send notification about context stop to all registered listeners.
-   *
-   * @param error error to be detected during preprocess, can be null if no errors
-   * @since 7.2.0
-   */
-  public void fireNotificationStop(final Throwable error) {
-    this.getCommentTextProcessors().forEach(x -> x.onContextStopped(this, error));
-    this.getMapVariableNameToSpecialVarProcessor()
-        .values().forEach(x -> x.onContextStopped(this, error));
-  }
-
   private static String makeStackView(
       final TextFileDataContainer cloneSource,
       final boolean cloned,
@@ -312,6 +241,75 @@ public class PreprocessorContext {
     } else {
       throw new IllegalArgumentException("Unsupported charset: " + charsetName);
     }
+  }
+
+  /**
+   * Add comment text processor.
+   *
+   * @param commentTextProcessor comment text processor, must not be null
+   * @since 7.2.0
+   */
+  public void addCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
+    this.commentTextProcessors.add(requireNonNull(commentTextProcessor));
+  }
+
+  /**
+   * Remove comment text processor.
+   *
+   * @param commentTextProcessor remove registered comment text processor.
+   * @since 7.2.0
+   */
+  public void removeCommentTextProcessor(final CommentTextProcessor commentTextProcessor) {
+    this.commentTextProcessors.remove(commentTextProcessor);
+  }
+
+  /**
+   * Get all directive handlers allowed for processing.
+   *
+   * @return list of direction handlers for the context
+   * @since 7.0.6
+   */
+  public List<AbstractDirectiveHandler> getDirectiveHandlers() {
+    return directiveHandlers;
+  }
+
+  public void addPreprocessedResource(final FileInfoContainer container) {
+    if (container != null) {
+      this.preprocessedResources.add(container);
+    }
+  }
+
+  public void addAllPreprocessedResources(final Collection<FileInfoContainer> containers) {
+    if (containers != null) {
+      this.preprocessedResources.addAll(containers);
+    }
+  }
+
+  public Set<FileInfoContainer> findPreprocessedResources() {
+    return new HashSet<>(this.preprocessedResources);
+  }
+
+  /**
+   * Send notification about context start to all registered listeners.
+   *
+   * @since 7.2.0
+   */
+  public void fireNotificationStart() {
+    this.getCommentTextProcessors().forEach(x -> x.onContextStarted(this));
+    this.getMapVariableNameToSpecialVarProcessor()
+        .values().forEach(x -> x.onContextStarted(this));
+  }
+
+  /**
+   * Send notification about context stop to all registered listeners.
+   *
+   * @param error error to be detected during preprocess, can be null if no errors
+   * @since 7.2.0
+   */
+  public void fireNotificationStop(final Throwable error) {
+    this.getCommentTextProcessors().forEach(x -> x.onContextStopped(this, error));
+    this.getMapVariableNameToSpecialVarProcessor()
+        .values().forEach(x -> x.onContextStopped(this, error));
   }
 
   /**
@@ -841,13 +839,40 @@ public class PreprocessorContext {
   }
 
   /**
-   * Finds file in source folders, the file can be found only inside source folders and external placement is disabled for security purposes.
+   * Ensure that the file is in the project folder hierarchy.
+   *
+   * @param file the file to be checked
+   * @return true if there is no info about hierarchy or the file in the hierarchy, false if the file is outbounds
+   * @since 7.2.1
+   */
+  public boolean isFileInBaseDir(final File file) {
+    final String normalizedPath =
+        FilenameUtils.normalizeNoEndSeparator(file.getAbsolutePath());
+    return normalizedPath.startsWith(
+        FilenameUtils.normalizeNoEndSeparator(this.baseDir.getAbsolutePath()));
+  }
+
+  /**
+   * It finds file among source folders, the file can be found only among source folders and
+   * any outside place is disabled for security purposes.
    *
    * @param path the file path to find, it must not be null and must be existing file
-   * @return detected file object for the path, must not be null
-   * @throws IOException if it is impossible to find a file for the path
+   * @return found existing file object for the path, must not be null
    */
-  public File findFileInSources(final String path) throws IOException {
+  public File findFileInSources(final String path) {
+    return this.findFileInSources(path, true);
+  }
+
+  /**
+   * It finds file among source folders, the file can be found only among source folders and
+   * any outside place is disabled for security purposes.
+   *
+   * @param path      the file path to find, it must not be null and must be existing file
+   * @param mustExist if true then the file must exist, false otherwise
+   * @return created file object for the path
+   * @since 7.2.1
+   */
+  public File findFileInSources(final String path, final boolean mustExist) {
     if (path == null) {
       throw makeException("File path is null", null);
     }
@@ -890,7 +915,7 @@ public class PreprocessorContext {
       final List<File> setOfFoundFiles = new ArrayList<>();
       getSources().stream().map((root) -> new File(root.getAsFile(), path))
           .filter((variant) -> (variant.exists() && variant.isFile())).forEachOrdered(
-          setOfFoundFiles::add);
+              setOfFoundFiles::add);
 
       if (setOfFoundFiles.size() == 1) {
         result = setOfFoundFiles.get(0);
@@ -904,7 +929,7 @@ public class PreprocessorContext {
       if (result == null) {
         throw makeException("Can't find file for path '" + path +
             "' among source files registered for preprocessing.", null);
-      } else if (!result.isFile()) {
+      } else if (mustExist && !result.isFile()) {
         throw makeException("File '" + PreprocessorUtils.getFilePath(result) +
             "' is either not found or not a file", null);
       }

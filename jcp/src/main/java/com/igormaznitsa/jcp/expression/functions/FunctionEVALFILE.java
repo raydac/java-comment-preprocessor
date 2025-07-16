@@ -31,7 +31,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 
 /**
@@ -87,13 +86,7 @@ public class FunctionEVALFILE extends AbstractFunction {
 
   public Value executeStr(final PreprocessorContext context, final Value strFilePath) {
     final String filePath = strFilePath.asString();
-
-    final File fileToEvaluate;
-    try {
-      fileToEvaluate = context.findFileInSources(filePath);
-    } catch (IOException ex) {
-      throw context.makeException("Can't get get source file '" + filePath + '\'', null);
-    }
+    final File fileToEvaluate = context.findFileInSources(filePath);
 
     if (context.isVerbose()) {
       context.logForVerbose("Eval file '" + fileToEvaluate + '\'');
