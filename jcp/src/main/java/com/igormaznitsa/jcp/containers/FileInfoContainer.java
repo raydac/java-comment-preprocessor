@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.Data;
 
 /**
@@ -447,28 +448,42 @@ public class FileInfoContainer {
 
     if (textBuffer.length() > 0) {
       final List<CommentTextProcessor> processors = context.getCommentTextProcessors();
-      final String origText = textBuffer.toString();
+      final String textToProcess = textBuffer.toString();
       textBuffer.setLength(0);
-      String text = origText;
+      String text = textToProcess;
 
       if (!processors.isEmpty()) {
-        processors.forEach(x -> {
-          try {
-            final FilePositionInfo filePositionInfo =
-                new FilePositionInfo(this.sourceFile, stringIndex);
-            final String result = x.processUncommentedText(
-                firstUncommentLine == null ? 0 : firstUncommentLine.getKey().length(), origText,
-                this, filePositionInfo, context, state);
-            textBuffer.append(result);
-          } catch (Exception ex) {
-            throw new PreprocessorException(
-                "Error during external comment text processor call",
-                origText, state.makeIncludeStack(), ex);
-          }
-        });
+        final FilePositionInfo filePositionInfo =
+            new FilePositionInfo(this.sourceFile, stringIndex);
+        final int indent = firstUncommentLine == null ? 0 : firstUncommentLine.getKey().length();
 
-        text = textBuffer.toString();
-        textBuffer.setLength(0);
+        final List<String> results = processors
+            .stream()
+            .filter(x -> x.isEnabled(this, filePositionInfo, context, state))
+            .map(x -> {
+              try {
+                return x.processUncommentedText(
+                    indent,
+                    textToProcess,
+                    this,
+                    filePositionInfo,
+                    context,
+                    state
+                );
+              } catch (Exception ex) {
+                throw new PreprocessorException(
+                    "Error during external comment text processor call: " +
+                        x.getClass().getCanonicalName(),
+                    textToProcess, state.makeIncludeStack(), ex);
+              }
+            }).collect(Collectors.toList());
+
+        if (results.isEmpty()) {
+          context.logDebug("No any result from processors for text block at " + filePositionInfo);
+          text = textToProcess;
+        } else {
+          text = String.join("", results);
+        }
       }
       resetablePrinter.print(text);
     }

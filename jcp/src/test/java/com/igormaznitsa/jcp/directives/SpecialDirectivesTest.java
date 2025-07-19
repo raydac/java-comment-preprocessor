@@ -60,6 +60,12 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
+      public boolean isEnabled(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
+                               PreprocessorContext context, PreprocessingState state) {
+        return true;
+      }
+
+      @Override
       public String processUncommentedText(int recommendedIndent, String uncommentedText,
                                            FileInfoContainer fileContainer,
                                            FilePositionInfo positionInfo,

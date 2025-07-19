@@ -180,7 +180,6 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

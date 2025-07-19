@@ -16,6 +16,7 @@ public interface CommentTextProcessor extends PreprocessorContextListener {
 
   /**
    * Process uncommented text detected in //$ or //$$ sections. If processing not needed then the provided text must be returned.
+   * Returned text should contain EOL in the end because will be printed into result directly.
    *
    * @param recommendedIndent indent to be recommended for the processed text if it will be processed
    * @param uncommentedText   the text which was uncommented and needs processing, must not be null
@@ -29,7 +30,22 @@ public interface CommentTextProcessor extends PreprocessorContextListener {
   String processUncommentedText(
       int recommendedIndent,
       String uncommentedText,
-      FileInfoContainer fileContainer, FilePositionInfo positionInfo,
+      FileInfoContainer fileContainer,
+      FilePositionInfo positionInfo,
       PreprocessorContext context,
       PreprocessingState state);
+
+  /**
+   * Returns flag that the preprocessor is enabled and can be called. It gets full info about current context and file so can make decision on fly.
+   * It will be called before every processor call.
+   *
+   * @return true if the preprocessor allowed, false if not
+   * @since 7.2.1
+   */
+  boolean isEnabled(
+      FileInfoContainer fileContainer,
+      FilePositionInfo positionInfo,
+      PreprocessorContext context,
+      PreprocessingState state
+  );
 }
