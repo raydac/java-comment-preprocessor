@@ -60,7 +60,7 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
-      public boolean isEnabled(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
+      public boolean isAllowed(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
                                PreprocessorContext context, PreprocessingState state) {
         return true;
       }
@@ -76,7 +76,7 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
         assertNotNull(context);
         assertNotNull(state);
 
-        calledForText.append("...\n").append(uncommentedText);
+        calledForText.append("\n...\n").append(uncommentedText);
 
         return uncommentedText;
       }
@@ -86,14 +86,14 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
         c -> c.addCommentTextProcessor(testProcessor));
     assertTrue(started.get());
     assertTrue(stopped.get());
-    assertEquals("...\n" +
-        "hello 223 world\n" +
-        "...\n" +
-        "hello /*$111+112$*/ world\n" +
-        "...\n" +
-        "\"\"\"hello 223 world\n" +
-        "...\n" +
-        "\"\"\"hello /*$111+112$*/ world\n", calledForText.toString());
+    assertEquals("\n...\n" +
+        "hello 223 world" +
+        "\n...\n" +
+        "hello /*$111+112$*/ world" +
+        "\n...\n" +
+        "\"\"\"hello 223 world" +
+        "\n...\n" +
+        "\"\"\"hello /*$111+112$*/ world", calledForText.toString());
   }
 
   @Override

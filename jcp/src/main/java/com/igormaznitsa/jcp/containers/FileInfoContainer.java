@@ -36,6 +36,7 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.Data;
 
 /**
@@ -434,10 +436,12 @@ public class FileInfoContainer {
     return this.preprocessFileWithNotification(state, context, true);
   }
 
+  private static final String EOL_MARKER = "-=$$$$$$$$__EOL__$$$$$$$$=-";
+
   private void flushTextBufferForRemovedComments(
       final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,
       final int stringIndex,
-      final StringBuilder textBuffer,
+      final List<String> textPieces,
       final ResetablePrinter resetablePrinter,
       final PreprocessingState state,
       final PreprocessorContext context)
@@ -446,11 +450,22 @@ public class FileInfoContainer {
     final Map.Entry<String, String> firstUncommentLine =
         firstDetectedUncommentLinePtr.getAndSet(null);
 
-    if (textBuffer.length() > 0) {
+    final boolean lastEol = !textPieces.isEmpty() && textPieces.get(textPieces.size() - 1) ==
+        EOL_MARKER;
+    final String accumulated = (lastEol ? IntStream.range(0, textPieces.size() - 1) :
+        IntStream.range(0, textPieces.size()))
+        .mapToObj(textPieces::get)
+        .map(x -> (x == EOL_MARKER ? context.getEol() : x))
+        .collect(Collectors.joining());
+    textPieces.clear();
+
+    if (accumulated.isEmpty()) {
+      if (lastEol) {
+        resetablePrinter.print(context.getEol());
+      }
+    } else {
       final List<CommentTextProcessor> processors = context.getCommentTextProcessors();
-      final String textToProcess = textBuffer.toString();
-      textBuffer.setLength(0);
-      String text = textToProcess;
+      String text = accumulated;
 
       if (!processors.isEmpty()) {
         final FilePositionInfo filePositionInfo =
@@ -459,12 +474,12 @@ public class FileInfoContainer {
 
         final List<String> results = processors
             .stream()
-            .filter(x -> x.isEnabled(this, filePositionInfo, context, state))
+            .filter(x -> x.isAllowed(this, filePositionInfo, context, state))
             .map(x -> {
               try {
                 return x.processUncommentedText(
                     indent,
-                    textToProcess,
+                    accumulated,
                     this,
                     filePositionInfo,
                     context,
@@ -474,18 +489,18 @@ public class FileInfoContainer {
                 throw new PreprocessorException(
                     "Error during external comment text processor call: " +
                         x.getClass().getCanonicalName(),
-                    textToProcess, state.makeIncludeStack(), ex);
+                    accumulated, state.makeIncludeStack(), ex);
               }
             }).collect(Collectors.toList());
 
         if (results.isEmpty()) {
           context.logDebug("No any result from processors for text block at " + filePositionInfo);
-          text = textToProcess;
+          text = accumulated;
         } else {
-          text = String.join("", results);
+          text = results.stream().collect(Collectors.joining(context.getEol()));
         }
       }
-      resetablePrinter.print(text);
+      resetablePrinter.print(text + (lastEol ? context.getEol() : ""));
     }
   }
 
@@ -526,7 +541,7 @@ public class FileInfoContainer {
       String leftTrimmedString = null;
 
       TextFileDataContainer lastTextFileDataContainer = null;
-      final StringBuilder textBlockBuffer = new StringBuilder();
+      final List<String> textPieces = new ArrayList<>();
 
       Integer firstBlockLineIndex = null;
       try {
@@ -560,7 +575,8 @@ public class FileInfoContainer {
             this.flushTextBufferForRemovedComments(
                 firstUncommentLine,
                 requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                textBlockBuffer, thePrinter,
+                textPieces,
+                thePrinter,
                 theState,
                 context);
             firstBlockLineIndex = null;
@@ -588,12 +604,12 @@ public class FileInfoContainer {
           }
 
           String stringToBeProcessed = leftTrimmedString;
-          final boolean doPrintLn = presentedNextLine || !context.isCareForLastEol();
+          final boolean doPrintEol = presentedNextLine || !context.isCareForLastEol();
 
           if (isHashPrefixed(stringToBeProcessed, context)) {
             this.flushTextBufferForRemovedComments(firstUncommentLine,
                 requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                textBlockBuffer,
+                textPieces,
                 thePrinter,
                 theState,
                 context);
@@ -607,7 +623,7 @@ public class FileInfoContainer {
                   final String text = stringPrefix +
                       AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                       extractedDirective;
-                  if (doPrintLn) {
+                  if (doPrintEol) {
                     thePrinter.println(text, context.getEol());
                   } else {
                     thePrinter.print(text);
@@ -619,7 +635,7 @@ public class FileInfoContainer {
                 final String text = stringPrefix +
                     AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES +
                     extractedDirective;
-                if (doPrintLn) {
+                if (doPrintEol) {
                   thePrinter.println(text, context.getEol());
                 } else {
                   thePrinter.print(text);
@@ -658,26 +674,27 @@ public class FileInfoContainer {
                   firstBlockLineIndex = findLastReadLineIndex(theState);
                   firstUncommentLine.set(indentText);
                 }
-                textBlockBuffer.append(indentText.getValue());
-                if (doPrintLn) {
-                  textBlockBuffer.append(context.getEol());
+                textPieces.add(indentText.getValue());
+                if (doPrintEol) {
+                  textPieces.add(EOL_MARKER);
                 }
               } else {
                 this.flushTextBufferForRemovedComments(firstUncommentLine,
                     requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                    textBlockBuffer,
+                    textPieces,
                     thePrinter,
                     theState, context);
                 firstBlockLineIndex = null;
 
-                textBlockBuffer.append(stringPrefix).append(indentText.getKey())
-                    .append(indentText.getValue());
-                if (doPrintLn) {
-                  textBlockBuffer.append(context.getEol());
+                textPieces.add(stringPrefix);
+                textPieces.add(indentText.getKey());
+                textPieces.add(indentText.getValue());
+                if (doPrintEol) {
+                  textPieces.add(EOL_MARKER);
                 }
                 this.flushTextBufferForRemovedComments(firstUncommentLine,
                     requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                    textBlockBuffer,
+                    textPieces,
                     thePrinter,
                     theState, context);
                 firstBlockLineIndex = null;
@@ -701,27 +718,29 @@ public class FileInfoContainer {
                   firstUncommentLine.set(indentText);
                 }
 
-                textBlockBuffer.append(indentText.getValue());
-                if (doPrintLn) {
-                  textBlockBuffer.append(context.getEol());
+                textPieces.add(indentText.getValue());
+                if (doPrintEol) {
+                  textPieces.add(EOL_MARKER);
                 }
               } else {
                 this.flushTextBufferForRemovedComments(firstUncommentLine,
                     requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                    textBlockBuffer,
+                    textPieces,
                     thePrinter,
                     theState, context);
                 firstBlockLineIndex = null;
 
-                textBlockBuffer.append(stringPrefix).append(indentText.getKey())
-                    .append(indentText.getValue());
-                if (doPrintLn) {
-                  textBlockBuffer.append(context.getEol());
+                textPieces.add(stringPrefix);
+                textPieces.add(indentText.getKey());
+                textPieces.add(indentText.getValue());
+
+                if (doPrintEol) {
+                  textPieces.add(EOL_MARKER);
                 }
                 this.flushTextBufferForRemovedComments(
                     firstUncommentLine,
                     requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                    textBlockBuffer,
+                    textPieces,
                     thePrinter,
                     theState, context);
                 firstBlockLineIndex = null;
@@ -730,7 +749,7 @@ public class FileInfoContainer {
               // Just string
               this.flushTextBufferForRemovedComments(firstUncommentLine,
                   requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                  textBlockBuffer,
+                  textPieces,
                   thePrinter,
                   theState, context);
               firstBlockLineIndex = null;
@@ -745,24 +764,23 @@ public class FileInfoContainer {
               }
 
               thePrinter.print(stringPrefix);
-              if (doPrintLn) {
+              if (doPrintEol) {
                 thePrinter.println(strToOut, context.getEol());
               } else {
                 thePrinter.print(strToOut);
               }
             }
           } else if (context.isKeepLines()) {
-
             flushTextBufferForRemovedComments(firstUncommentLine,
                 requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
-                textBlockBuffer,
+                textPieces,
                 thePrinter,
                 theState,
                 context);
             firstBlockLineIndex = null;
 
             final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
-            if (doPrintLn) {
+            if (doPrintEol) {
               thePrinter.println(text, context.getEol());
             } else {
               thePrinter.print(text);

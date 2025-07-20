@@ -62,7 +62,7 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
       }
 
       @Override
-      public boolean isEnabled(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
+      public boolean isAllowed(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
                                PreprocessorContext context, PreprocessingState state) {
         return true;
       }
@@ -78,13 +78,13 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
         assertNotNull(context);
         assertNotNull(state);
 
-        calledForText.append("...\n").append(uncommentedText);
+        calledForText.append("\n...\n").append(uncommentedText);
 
         final String indent = context.isPreserveIndents() ? " ".repeat(recommendedIndent) : "";
 
         return Arrays.stream(uncommentedText.split("\\R"))
             .map(x -> indent + x)
-            .collect(Collectors.joining(context.getEol(), "", context.getEol()));
+            .collect(Collectors.joining(context.getEol()));
       }
     };
 
@@ -95,35 +95,35 @@ public class SpecialDirectivesBlockTest extends AbstractDirectiveHandlerAcceptan
         });
     assertTrue(started.get());
     assertTrue(stopped.get());
-    assertEquals("...\n" +
+    assertEquals("\n...\n" +
             "      hello 223 world\n" +
-            "      next\n" +
-            "...\n" +
+            "      next" +
+            "\n...\n" +
             "       hello /*$111+112$*/ world\n" +
-            "       next/*$111+112$*/\n" +
-            "...\n" +
+            "       next/*$111+112$*/" +
+            "\n...\n" +
             "       hello /*$111+112$*/ world\n" +
             "      middle\n" +
-            "       next/*$111+112$*/\n" +
-            "...\n" +
-            "       hello /*$111+112$*/ world\n" +
-            "...\n" +
-            "   split\n" +
-            "...\n" +
-            "       next/*$111+112$*/\n" +
-            "...\n" +
-            "      hello 223 world\n" +
-            "...\n" +
-            "    split\n" +
-            "...\n" +
-            "      next223\n" +
-            "...\n" +
-            "      line1\n" +
-            "...\n" +
-            "      line2\n" +
-            "...\n" +
+            "       next/*$111+112$*/" +
+            "\n...\n" +
+            "       hello /*$111+112$*/ world" +
+            "\n...\n" +
+            "   split" +
+            "\n...\n" +
+            "       next/*$111+112$*/" +
+            "\n...\n" +
+            "      hello 223 world" +
+            "\n...\n" +
+            "    split" +
+            "\n...\n" +
+            "      next223" +
+            "\n...\n" +
+            "      line1" +
+            "\n...\n" +
+            "      line2" +
+            "\n...\n" +
             "      hello\n" +
-            "      world earth\n"
+            "      world earth"
         , calledForText.toString());
   }
 
