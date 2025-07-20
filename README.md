@@ -5,9 +5,8 @@
 [![Java 11+](https://img.shields.io/badge/java-11%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Gradle 6.0+](https://img.shields.io/badge/gradle-6.0%2b-green.svg)](https://gradle.org/)
-[![Ant 1.8.2+](https://img.shields.io/badge/ant-1.8.2%2b-green.svg)](http://ant.apache.org/)
-[![PayPal donation](https://img.shields.io/badge/donation-PayPal-cyan.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AHWJHJFBAWGL2)
-[![YooMoney donation](https://img.shields.io/badge/donation-Yoo.money-blue.svg)](https://yoomoney.ru/to/41001158080699)
+[![Ant 1.8.2+](https://img.shields.io/badge/ant-1.8.2%2b-green.svg)](http://ant.apache.org/)   
+[![Arthur's acres sanctuary donation](assets/arthur_sanctuary_banner.png)](https://www.arthursacresanimalsanctuary.org/donate)
 
 # Changelog
 
@@ -83,13 +82,13 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
 # How to use from command line
 The uber-jar can be started directly under Java through CLI interface. Let's take a look at short example below how to start it in command line under Linux:
 ```
-java -jar jcp-7.1.2.jar  --i:./test --o:./result
+java -jar jcp-7.2.0.jar  --i:./test --o:./result
 ```
 The example above just preprocessing files from ./test folder (which extensions allowed to be preprocessed by default), and placing result files into ./result folder. Keep in your mind that the preprocessor processing not all files, for instance XML files will not be preprocessed by default. Files which extension not marked for preprocessing will be just copied (of course if the extensions is not in the excluded extension list)
 
 More complex example:
 ```
-java -jar jcp-7.1.2.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-7.2.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -148,6 +147,6 @@ In opposite a regular document, a Java document has as minimum two sections - pr
 # How to remove all comments from sources
 Sometimes it is very useful to remove totally all comments from sources, such possibility included into JCP and can be activated with either a special flag or command line switcher. The example below shows how to remove all comments with CLI use:
 ```
-java -jar ./jcp-7.1.2.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-7.2.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ``` 
 
