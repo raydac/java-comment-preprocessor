@@ -1,7 +1,7 @@
 ![Logo](assets/github1280x640.png)
 
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.igormaznitsa/jcp/badge.svg)](http://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.0|jar)
+[![Maven central](https://img.shields.io/badge/maven%20central-7.2.0-green.svg)](https://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.0|jar)
 [![Java 11+](https://img.shields.io/badge/java-11%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Gradle 6.0+](https://img.shields.io/badge/gradle-6.0%2b-green.svg)](https://gradle.org/)
