@@ -45,7 +45,7 @@ Moreover, various Linux repositories offer the preprocessor as a package, common
 The Preprocessor can work as:
   - CLI tool
   - Java JAR-library
-- [Maven goal](jcp-tests/jcp-test-maven) [Maven mojo site.](https://raydac.github.io/jcp-maven-plugin-site/index.html)
+  - [Maven goal](jcp-tests/jcp-test-maven) [Maven mojo site.](https://raydac.github.io/jcp-maven-plugin-site/index.html)
   - [ANT task](jcp-tests/jcp-test-ant)
   - [Gradle task](jcp-tests/jcp-test-gradle)
 
