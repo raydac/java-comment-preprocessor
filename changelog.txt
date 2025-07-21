@@ -1,4 +1,10 @@
+__7.2.1 (21-jul-2025)__
+
+- refactoring of CommentTextProcessor call
+- refactoring
+
 __7.2.0 (13-jul-2025)__
+
 - minimum JDK version 11
 - added support for external processors calls during uncommenting actions `//$` and `//$$`, processors can be provided as services
 - removed support of Gradle 5

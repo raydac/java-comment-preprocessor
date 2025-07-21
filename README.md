@@ -1,7 +1,7 @@
 ![Logo](assets/github1280x640.png)
 
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Maven central](https://img.shields.io/badge/maven%20central-7.2.0-green.svg)](https://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.0|jar)
+[![Maven central](https://img.shields.io/badge/maven%20central-7.2.1-green.svg)](https://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.1|jar)
 [![Java 11+](https://img.shields.io/badge/java-11%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Gradle 6.0+](https://img.shields.io/badge/gradle-6.0%2b-green.svg)](https://gradle.org/)
@@ -10,23 +10,17 @@
 
 # Changelog
 
+__7.2.1 (21-jul-2025)__
+
+- refactoring of CommentTextProcessor call
+- refactoring
+
 __7.2.0 (13-jul-2025)__
 
 - minimum JDK version 11
 - added support for external processors calls during uncommenting actions `//$` and `//$$`, processors can be provided
   as services
 - removed support of Gradle 5
-- updated dependencies
-
-__7.1.2 (08-jun-2024)__
-
-- added way to define a preprocessor extension class through CLI (as `/EA:<class.name>`) and in plugins (as `actionPreprocessorExtension`). The class should be provided in the clas path.[#48](https://github.com/raydac/java-comment-preprocessor/issues/48)
-- updated some dependencies
-
-__7.1.1 (13-jan-2024)__
-
-- fixed NPE for empty or null global variable value in Maven and
-  Gradle [#47](https://github.com/raydac/java-comment-preprocessor/issues/47)
 - updated dependencies
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
@@ -63,7 +57,7 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>7.1.2</version>
+                <version>7.2.1</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -82,13 +76,13 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
 # How to use from command line
 The uber-jar can be started directly under Java through CLI interface. Let's take a look at short example below how to start it in command line under Linux:
 ```
-java -jar jcp-7.2.0.jar  --i:./test --o:./result
+java -jar jcp-7.2.1.jar  --i:./test --o:./result
 ```
 The example above just preprocessing files from ./test folder (which extensions allowed to be preprocessed by default), and placing result files into ./result folder. Keep in your mind that the preprocessor processing not all files, for instance XML files will not be preprocessed by default. Files which extension not marked for preprocessing will be just copied (of course if the extensions is not in the excluded extension list)
 
 More complex example:
 ```
-java -jar jcp-7.2.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-7.2.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -147,6 +141,6 @@ In opposite a regular document, a Java document has as minimum two sections - pr
 # How to remove all comments from sources
 Sometimes it is very useful to remove totally all comments from sources, such possibility included into JCP and can be activated with either a special flag or command line switcher. The example below shows how to remove all comments with CLI use:
 ```
-java -jar ./jcp-7.2.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-7.2.1.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ``` 
 

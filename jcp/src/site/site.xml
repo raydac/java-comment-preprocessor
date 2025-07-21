@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>2.0.1</version>
+    </skin>
+    <body>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Goals" href="plugin-info.html"/>
+            <item name="Usage" href="usage.html"/>
+            <!--            <item name="FAQ" href="faq.html"/>-->
+        </menu>
+        <menu name="Examples">
+            <item name="Hello World" href="examples/hello-world.html"/>
+        </menu>
+    </body>
+</project>
