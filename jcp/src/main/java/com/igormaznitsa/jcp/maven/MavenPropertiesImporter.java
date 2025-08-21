@@ -87,7 +87,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     this.session = session;
     this.project = project;
     for (final String paramName : TO_IMPORT) {
-      final String varName = "mvn." + paramName.toLowerCase(Locale.ENGLISH);
+      final String varName = "mvn." + paramName.toLowerCase(Locale.ROOT);
       final String value = getProperty(this.project, paramName);
       addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
     }
@@ -106,7 +106,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     // add properties
     for (final String propertyName : this.project.getProperties().stringPropertyNames()) {
       final String varName =
-              "mvn.project.property." + propertyName.toLowerCase(Locale.ENGLISH).replace(' ', '_');
+              "mvn.project.property." + propertyName.toLowerCase(Locale.ROOT).replace(' ', '_');
       final String value = this.findPropertyValue(propertyName);
       if (value!= null) {
         addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);

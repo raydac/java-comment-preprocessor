@@ -46,7 +46,7 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
     final Properties properties = System.getProperties();
 
     for (final String key : properties.stringPropertyNames()) {
-      env.put(PREFIX + key.toLowerCase(Locale.ENGLISH).replace(' ', '_'),
+      env.put(PREFIX + key.toLowerCase(Locale.ROOT).replace(' ', '_'),
           Value.valueOf(properties.getProperty(key)));
     }
 

@@ -51,7 +51,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
-    if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+    if (!key.isEmpty() && key.toUpperCase(Locale.ROOT).startsWith(ARG_NAME)) {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!tail.isEmpty()) {
         context.setSources(

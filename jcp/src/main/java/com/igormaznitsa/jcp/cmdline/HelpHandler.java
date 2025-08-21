@@ -43,7 +43,7 @@ public class HelpHandler implements CommandLineHandler {
     boolean result = false;
     if (!key.isEmpty()) {
 
-      final String argUpperCase = key.trim().toUpperCase(Locale.ENGLISH);
+      final String argUpperCase = key.trim().toUpperCase(Locale.ROOT);
 
       for (final String str : ARG_NAMES) {
         if (str.equals(argUpperCase)) {

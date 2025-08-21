@@ -130,7 +130,7 @@ public final class PreprocessorUtils {
   public static CommentRemoverType findCommentRemoverForId(final String text) {
     CommentRemoverType result = null;
     if (text != null && !text.isEmpty()) {
-      final String normalized = text.trim().toUpperCase(Locale.ENGLISH);
+      final String normalized = text.trim().toUpperCase(Locale.ROOT);
       if (normalized.equals("TRUE")) {
         result = KEEP_ALL;
       } else if (normalized.equals("FALSE")) {
@@ -437,7 +437,7 @@ public final class PreprocessorUtils {
       return null;
     }
 
-    return name.trim().toLowerCase(Locale.ENGLISH);
+    return name.trim().toLowerCase(Locale.ROOT);
   }
 
 

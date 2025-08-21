@@ -72,7 +72,7 @@ public final class FunctionESC extends AbstractFunction {
           break;
         default: {
           if (chr > 0x7F || Character.isISOControl(chr)) {
-            String hexCode = Integer.toHexString(chr).toUpperCase(Locale.ENGLISH);
+            String hexCode = Integer.toHexString(chr).toUpperCase(Locale.ROOT);
             if (hexCode.length() < 4) {
               hexCode = "0000".substring(0, 4 - hexCode.length()) + hexCode;
             }

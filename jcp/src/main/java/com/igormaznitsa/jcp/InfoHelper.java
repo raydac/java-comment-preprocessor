@@ -189,7 +189,7 @@ public final class InfoHelper {
     final String description = func.getReference();
 
     final StringBuilder variants = new StringBuilder("  [");
-    final String result = func.getResultType().getSignature().toUpperCase(Locale.ENGLISH);
+    final String result = func.getResultType().getSignature().toUpperCase(Locale.ROOT);
 
     int variantIndex = 0;
     for (ValueType[] signature : func.getAllowedArgumentTypes()) {
@@ -201,7 +201,7 @@ public final class InfoHelper {
         if (i > 0) {
           variants.append(',');
         }
-        variants.append(signature[i].getSignature().toUpperCase(Locale.ENGLISH));
+        variants.append(signature[i].getSignature().toUpperCase(Locale.ROOT));
       }
       variants.append(')');
       variantIndex++;

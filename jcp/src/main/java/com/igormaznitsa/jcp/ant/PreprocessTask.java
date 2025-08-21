@@ -262,7 +262,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
         final String keyStr = key.toString();
         final String value = theProject.getProperty(keyStr);
         if (value != null) {
-          result.put("ant." + keyStr.toLowerCase(Locale.ENGLISH), Value.valueOf(value));
+          result.put("ant." + keyStr.toLowerCase(Locale.ROOT), Value.valueOf(value));
         }
       }
     }

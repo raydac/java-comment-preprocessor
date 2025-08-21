@@ -51,7 +51,7 @@ public class OutCharsetHandler implements CommandLineHandler {
 
     boolean result = false;
 
-    if (key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+    if (key.toUpperCase(Locale.ROOT).startsWith(ARG_NAME)) {
       final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!value.isEmpty()) {

@@ -560,7 +560,7 @@ public final class JcpPreprocessor {
             throwPreprocessorException("Wrong variable definition", trimmed, file, readStringIndex,
                 null);
           }
-          final String name = split[0].trim().toLowerCase(Locale.ENGLISH);
+          final String name = split[0].trim().toLowerCase(Locale.ROOT);
           final String expression = split[1].trim();
           if (name.isEmpty()) {
             throwPreprocessorException("Empty variable name detected", trimmed, file,

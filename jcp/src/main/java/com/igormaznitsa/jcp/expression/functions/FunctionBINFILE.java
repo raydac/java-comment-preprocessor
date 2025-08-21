@@ -96,15 +96,15 @@ public class FunctionBINFILE extends AbstractFunction {
           switch (type) {
             case BYTEARRAY: {
               result.append("(byte)0x")
-                  .append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+                  .append(Integer.toHexString(b & 0xFF).toUpperCase(Locale.ROOT));
             }
             break;
             case UINT8: {
-              result.append(Integer.toString(b & 0xFF).toUpperCase(Locale.ENGLISH));
+              result.append(Integer.toString(b & 0xFF).toUpperCase(Locale.ROOT));
             }
             break;
             case INT8: {
-              result.append(Integer.toString(b).toUpperCase(Locale.ENGLISH));
+              result.append(Integer.toString(b).toUpperCase(Locale.ROOT));
             }
             break;
             default:
@@ -231,7 +231,7 @@ public class FunctionBINFILE extends AbstractFunction {
     public static Type find(final String name) {
       Type result = null;
       if (name != null) {
-        final String normalized = name.toLowerCase(Locale.ENGLISH).trim();
+        final String normalized = name.toLowerCase(Locale.ROOT).trim();
         for (final Type t : values()) {
           if (normalized.startsWith(t.name)) {
             result = t;

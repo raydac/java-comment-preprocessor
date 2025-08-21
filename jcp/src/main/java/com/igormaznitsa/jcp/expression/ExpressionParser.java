@@ -570,7 +570,7 @@ public final class ExpressionParser {
         }
         break;
         case OPERATOR: {
-          final String operatorLC = builder.toString().toLowerCase(Locale.ENGLISH);
+          final String operatorLC = builder.toString().toLowerCase(Locale.ROOT);
           for (final AbstractOperator operator : AbstractOperator.getAllOperators()) {
             if (operator.getKeyword().equals(operatorLC)) {
               result = operator;

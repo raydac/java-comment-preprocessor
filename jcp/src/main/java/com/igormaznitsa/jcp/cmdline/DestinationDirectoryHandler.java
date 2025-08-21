@@ -45,7 +45,7 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
   public boolean processCommandLineKey(final String key, final PreprocessorContext context) {
     boolean result = false;
 
-    if (!key.isEmpty() && key.toUpperCase(Locale.ENGLISH).startsWith(ARG_NAME)) {
+    if (!key.isEmpty() && key.toUpperCase(Locale.ROOT).startsWith(ARG_NAME)) {
       final String name = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!name.isEmpty()) {
         final String path = PreprocessorUtils.extractTail(ARG_NAME, key);
