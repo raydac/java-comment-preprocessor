@@ -36,7 +36,7 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
 
   @Override
   protected void tuneContext(PreprocessorContext context) {
-    context.setPreprocessorExtension(this);
+    context.addPreprocessorExtension(this);
   }
 
   @Override
@@ -69,6 +69,19 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
       fail("Unexpected function '" + functionName + '\'');
       throw new RuntimeException("Error");
     }
+  }
+
+  @Override
+  public boolean hasAction(int arity) {
+    return arity == 3;
+  }
+
+  @Override
+  public boolean hasUserFunction(String name, int arity) {
+    if ("testfunc".equals(name)) {
+      return arity == ANY_ARITY || arity == 3;
+    }
+    return false;
   }
 
   @Override

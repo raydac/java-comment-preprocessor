@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
@@ -37,7 +39,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * This class is a parser allows to parse an expression and make a tree as the output
@@ -102,7 +103,7 @@ public final class ExpressionParser {
 
   public ExpressionTree parse(final String expressionStr, final PreprocessorContext context)
       throws IOException {
-    Objects.requireNonNull(expressionStr, "Expression is null");
+    requireNonNull(expressionStr, "Expression is null");
 
     final PushbackReader reader = new PushbackReader(new StringReader(expressionStr));
 
@@ -342,7 +343,7 @@ public final class ExpressionParser {
 
   ExpressionItem nextItem(final PushbackReader reader, final PreprocessorContext context)
       throws IOException {
-    Objects.requireNonNull(reader, "Reader is null");
+    requireNonNull(reader, "Reader is null");
 
     ParserState state = ParserState.WAIT;
     final StringBuilder builder = new StringBuilder(12);
@@ -591,11 +592,11 @@ public final class ExpressionParser {
           final String str = builder.toString().toLowerCase();
           if (str.charAt(0) == '$') {
 
-            Objects.requireNonNull(context,
+            requireNonNull(context,
                 "There is not a preprocessor context to define a user function [" + str + ']');
 
-            final PreprocessorExtension extension = context.getPreprocessorExtension();
-            if (extension == null) {
+            final List<PreprocessorExtension> extensions = context.getPreprocessorExtensions();
+            if (extensions.isEmpty()) {
               throw context.makeException(
                   "There is not any defined preprocessor extension to get data about user functions [" +
                       str + ']', null);
@@ -603,9 +604,28 @@ public final class ExpressionParser {
 
             final String userFunctionName = PreprocessorUtils.extractTail("$", str);
 
-            // user defined
-            result = new FunctionDefinedByUser(userFunctionName,
-                extension.getUserFunctionArity(userFunctionName), context);
+            final PreprocessorExtension preprocessorExtension =
+                context.getPreprocessorExtensions().stream()
+                    .filter(x -> x.isAllowed(
+                        findLastActiveFileContainer(context).orElseThrow(
+                            () -> new IllegalStateException("Can't find active file container")),
+                        context.getPreprocessingState().findLastPositionInfoInStack().orElseThrow(
+                            () -> new IllegalStateException(
+                                "Can't find last position in include stack")),
+                        context,
+                        context.getPreprocessingState()
+                    ))
+                    .filter(x -> x.hasUserFunction(userFunctionName,
+                        PreprocessorExtension.ANY_ARITY)).findFirst().orElse(null);
+
+            if (preprocessorExtension == null) {
+              throw context.makeException(
+                  "Can't find any preprocessor extension processing the user functions [" +
+                      userFunctionName + ']', null);
+            } else {
+              result = new FunctionDefinedByUser(userFunctionName,
+                  preprocessorExtension.getUserFunctionArity(userFunctionName), context);
+            }
           } else if ("true".equals(str)) {
             result = Value.BOOLEAN_TRUE;
           } else if ("false".equals(str)) {

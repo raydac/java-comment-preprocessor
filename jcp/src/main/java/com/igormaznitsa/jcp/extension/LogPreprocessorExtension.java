@@ -11,12 +11,23 @@ import java.util.regex.Pattern;
 /**
  * Preprocessor extension which just make info logging for arguments of action calls and also
  * can log user function calls, their arity should be provided in the end of function name like '$hello2(1,2)'
+ * <b>It is for internal test purposes to log all calls of user defined functions.</b>
  *
  * @since 7.1.2
  */
 public class LogPreprocessorExtension implements PreprocessorExtension {
 
   private static final Pattern PATTERN = Pattern.compile("^(\\D+)(\\d+)?$");
+
+  @Override
+  public boolean hasAction(int arity) {
+    return true;
+  }
+
+  @Override
+  public boolean hasUserFunction(String name, int arity) {
+    return true;
+  }
 
   private static String findPosition(final PreprocessorContext context) {
     if (context == null) {

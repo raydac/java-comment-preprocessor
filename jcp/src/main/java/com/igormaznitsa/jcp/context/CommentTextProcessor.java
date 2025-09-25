@@ -13,7 +13,7 @@ import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
  *
  * @since 7.2.0
  */
-public interface CommentTextProcessor extends PreprocessorContextListener {
+public interface CommentTextProcessor extends PreprocessorContextListener, ExecutionAllowable {
 
   /**
    * Processes uncommented text detected in `//$` or `//$$` sections.
@@ -36,23 +36,4 @@ public interface CommentTextProcessor extends PreprocessorContextListener {
       PreprocessorContext context,
       PreprocessingState state);
 
-  /**
-   * Indicates whether the preprocessor is allowed to run in the current context.
-   * This method is invoked before each call to the processor and receives complete
-   * information about the current context and source file, enabling it to make a
-   * dynamic decision.
-   *
-   * @param fileContainer     the container holding metadata about the source file invoking the processor; must not be null
-   * @param positionInfo      the position of the uncommented line or the first line of the uncommented block; must not be null
-   * @param context           the current preprocessor context; must not be null
-   * @param state             the current preprocessor state; must not be null
-   * @return {@code true} if the preprocessor is permitted to run; {@code false} otherwise
-   * @since 7.2.1
-   */
-  boolean isAllowed(
-      FileInfoContainer fileContainer,
-      FilePositionInfo positionInfo,
-      PreprocessorContext context,
-      PreprocessingState state
-  );
 }

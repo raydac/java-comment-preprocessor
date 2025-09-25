@@ -46,12 +46,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FileUtils;
@@ -89,6 +91,12 @@ public final class PreprocessingState {
   private TextFileDataContainer activeWhile;
   private String lastReadString;
   private boolean globalPhase;
+
+  public static final String FAKE_FILE_PATH = "some_fake_file.txt";
+
+  public static PreprocessingState makeFake(final PreprocessorContext context) {
+    return new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8);
+  }
 
   PreprocessingState(final PreprocessorContext context, final Charset inEncoding,
                      final Charset outEncoding) {
@@ -201,7 +209,7 @@ public final class PreprocessingState {
 
 
   public TextFileDataContainer getRootTextContainer() {
-    return rootReference;
+    return this.rootReference;
   }
 
 
@@ -226,6 +234,17 @@ public final class PreprocessingState {
     return this.includeStack;
   }
 
+  public Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
+    if (this.fake) {
+      return Optional.of(new TextFileDataContainer(new File(FAKE_FILE_PATH), new String[]{""}, false, 0));
+    }
+    return this.includeStack.isEmpty() ? Optional.empty() : Optional.of(this.includeStack.get(this.includeStack.size() - 1));
+  }
+
+  public Optional<FilePositionInfo> findLastPositionInfoInStack() {
+    return findLastTextFileDataContainerInStack().map(x -> new FilePositionInfo(x.getFile(), x.getLastReadStringIndex()));
+  }
+
   public FilePositionInfo[] makeIncludeStack() {
     if (this.fake) {
       return EMPTY_STACK;
@@ -240,17 +259,15 @@ public final class PreprocessingState {
     return stack;
   }
 
-
   public TextFileDataContainer getCurrentIncludeFileContainer() {
     return this.includeStack.isEmpty() ? null : this.includeStack.get(this.includeStack.size() - 1);
   }
 
-
   public TextFileDataContainer popTextContainer() {
-    if (includeStack.isEmpty()) {
+    if (this.includeStack.isEmpty()) {
       throw new IllegalStateException("Include stack is empty");
     }
-    return includeStack.pop();
+    return this.includeStack.pop();
   }
 
 

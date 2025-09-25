@@ -21,7 +21,11 @@
 
 package com.igormaznitsa.jcp.extension;
 
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.ExecutionAllowable;
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Value;
 
 /**
@@ -30,7 +34,33 @@ import com.igormaznitsa.jcp.expression.Value;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public interface PreprocessorExtension {
+public interface PreprocessorExtension extends ExecutionAllowable {
+
+  int ANY_ARITY = -1;
+
+  @Override
+  default boolean isAllowed(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
+                            PreprocessorContext context, PreprocessingState state) {
+    return true;
+  }
+
+  /**
+   * Allows to check that the extension contains an action with required number of parameters.
+   * @param arity number of parameters for action, zero or great
+   * @return true if such action is provided by the extension
+   * @since 7.2.2
+   */
+  boolean hasAction(int arity);
+
+  /**
+   * Allows to check that the extension contains a user defined function with required number of parameters.
+   * @param name name of the function to be checked, must not be null
+   * @param arity number of parameters for action, if ANY_ARITY then check only by name
+   * @return true if such user defined function is provided by the extension
+   * @since 7.2.2
+   * @see #ANY_ARITY
+   */
+  boolean hasUserFunction(String name, int arity);
 
   /**
    * To process an action (it will be called if the preprocessor is met

@@ -6,6 +6,20 @@ import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.util.Arrays;
 
 public class CustomPreprocessorExtension implements PreprocessorExtension {
+
+  @Override
+  public boolean hasAction(int arity) {
+    return true;
+  }
+
+  @Override
+  public boolean hasUserFunction(String name, int arity) {
+    if ("hellofunc".equals(name)) {
+      return arity == ANY_ARITY || arity == 1;
+    }
+    return false;
+  }
+
   @Override
   public boolean processAction(PreprocessorContext context, Value[] parameters) {
     System.out.println("Called action for parameters: " + Arrays.toString(parameters));

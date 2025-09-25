@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -114,14 +115,13 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   private String eol = null;
 
   /**
-   * Name of a class to be used as action preprocessor extension. The class must have default constructor.
-   * Empty string will be recognized as missing class name.
+   * List of class names to be used as action preprocessor extensions. The class must have default constructor.
    *
    * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
-   * @since 7.1.2
+   * @since 7.2.2
    */
-  @Parameter(alias = "actionPreprocessorExtension", property = "jcp.action.preprocessor.extension", defaultValue = "")
-  private String actionPreprocessorExtension = "";
+  @Parameter(alias = "actionPreprocessorExtensions", property = "jcp.action.preprocessor.extensions", defaultValue = "")
+  private List<String> actionPreprocessorExtensions = List.of();
 
   /**
    * Keep attributes for preprocessing file and copy them to result one.
@@ -392,13 +392,16 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       context.registerSpecialVariableProcessor(mavenPropertiesImporter);
     }
 
-    if (this.actionPreprocessorExtension != null &&
-        !this.actionPreprocessorExtension.trim().isEmpty()) {
-      final String extensionClassName = this.actionPreprocessorExtension.trim();
-      info("Detected request of action preprocessor extension class: " + extensionClassName);
-      context.setPreprocessorExtension(
-          PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
-              extensionClassName));
+    if (this.actionPreprocessorExtensions != null &&
+        !this.actionPreprocessorExtensions.isEmpty()) {
+      this.actionPreprocessorExtensions
+          .forEach(x -> {
+            final String extensionClassName = x.trim();
+            info("Adding preprocessor action extension class: " + extensionClassName);
+            context.addPreprocessorExtension(
+                PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
+                    extensionClassName));
+          });
     }
 
     context.setSources(formSourceRootList());
@@ -543,5 +546,15 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
   @Override
   public void debug(final String message) {
     getLog().debug(ensureNonNull(message, "<null>"));
+  }
+
+  @Override
+  public void debug(Supplier<String> supplier) {
+    if (getLog().isDebugEnabled()) {
+      final String text = supplier.get();
+      if (text != null) {
+        getLog().debug(text);
+      }
+    }
   }
 }

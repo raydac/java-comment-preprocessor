@@ -203,7 +203,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     context.setSources(Collections.singletonList(srcfile.getParent()));
     context.setKeepLines(keepLines);
     context.setAllowsBlocks(allowBlocks);
-    context.setPreprocessorExtension(extension);
+    context.addPreprocessorExtension(extension);
 
     setGlobalVars(context, globalVariables);
 

@@ -22,9 +22,11 @@
 package com.igormaznitsa.jcp;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
@@ -42,6 +44,8 @@ import java.util.List;
 
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
@@ -85,12 +89,12 @@ public abstract class AbstractSpyPreprocessorContextTest {
 
   protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders, final ContextDataProvider provider) throws Exception {
     final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
-    final PreprocessingState stateMock = PowerMockito.mock(PreprocessingState.class);
+    final PreprocessingState fakeState = PreprocessingState.makeFake(resultContext);
+    PowerMockito.when(resultContext.findFileInfoContainer(any(File.class)))
+        .then(x ->
+            Optional.ofNullable(provider.findFileInfoContainer(x.getArgument(0))));
 
-    PowerMockito.when(stateMock.getRootFileInfo()).thenReturn(new FileInfoContainer(new File("src/fake.java"), "fake.java", false));
-    PowerMockito.when(stateMock.getPrinter()).thenReturn(new ResetablePrinter(10));
-
-    PowerMockito.when(resultContext.getPreprocessingState()).thenReturn(stateMock);
+    PowerMockito.when(resultContext.getPreprocessingState()).thenReturn(fakeState);
 
     resultContext.setAllowWhitespaces(provider.getAllowSpaceBeforeDirectiveFlag());
     resultContext.setSources(sourceFolders);
@@ -100,7 +104,16 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
 
   public interface ContextDataProvider {
+
     boolean getAllowSpaceBeforeDirectiveFlag();
+
+    default Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
+      return Optional.of(new TextFileDataContainer(new File(PreprocessingState.FAKE_FILE_PATH), new String[]{""}, false, 0 ));
+    }
+
+    default FileInfoContainer findFileInfoContainer(File file) {
+      return new FileInfoContainer(file, file.getName(), false);
+    }
   }
 
 }

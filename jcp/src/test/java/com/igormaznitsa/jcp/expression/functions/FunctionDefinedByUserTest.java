@@ -23,16 +23,22 @@ package com.igormaznitsa.jcp.expression.functions;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
+import java.io.File;
+import java.util.List;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 
@@ -41,11 +47,13 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   @Test
   public void testExecution_withArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
+    when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
+    when(mock.isAllowed(any(), any(), any(), any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
 
     final Value testResult = Value.valueOf("result");
-    context.setPreprocessorExtension(mock);
+    context.addPreprocessorExtension(mock);
 
     when(mock.processUserFunction(any(), eq("test"), any(Value[].class))).thenReturn(testResult);
     when(mock.getUserFunctionArity(eq("test"))).thenReturn(5);
@@ -63,10 +71,14 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   @Test
   public void testExecution_withoutArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
+    when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
+    when(mock.isAllowed(any(), any(), any(), any())).thenReturn(true);
+
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+    context.addAllPreprocessedResources(List.of(new FileInfoContainer(new File(PreprocessingState.FAKE_FILE_PATH), PreprocessingState.FAKE_FILE_PATH, false)));
 
     final Value testResult = Value.valueOf("result");
-    context.setPreprocessorExtension(mock);
+    context.addPreprocessorExtension(mock);
 
     when(mock.processUserFunction(any(), eq("test"), any(Value[].class))).thenReturn(testResult);
     when(mock.getUserFunctionArity(eq("test"))).thenReturn(0);

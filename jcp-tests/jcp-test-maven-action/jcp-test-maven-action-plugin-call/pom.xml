@@ -36,8 +36,9 @@
               <keepAttributes>true</keepAttributes>
               <keepComments>true</keepComments>
               <keepLines>true</keepLines>
-              <actionPreprocessorExtension>com.igormaznitsa.jcp.it.CustomPreprocessorExtension
-              </actionPreprocessorExtension>
+                <actionPreprocessorExtensions>
+                    <actionPreprocessorExtension>com.igormaznitsa.jcp.it.CustomPreprocessorExtension</actionPreprocessorExtension>
+                </actionPreprocessorExtensions>
               <sourceEncoding>UTF-8</sourceEncoding>
               <targetEncoding>UTF-8</targetEncoding>
             </configuration>

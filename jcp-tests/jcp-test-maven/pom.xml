@@ -47,8 +47,9 @@
               <vars>
                 <some.test.global>Some Test Global Value</some.test.global>
               </vars>
-              <actionPreprocessorExtension>com.igormaznitsa.jcp.extension.LogPreprocessorExtension
-              </actionPreprocessorExtension>
+              <actionPreprocessorExtensions>
+                  <actionPreprocessorExtension>com.igormaznitsa.jcp.extension.LogPreprocessorExtension</actionPreprocessorExtension>
+              </actionPreprocessorExtensions>
               <sourceEncoding>UTF-8</sourceEncoding>
               <targetEncoding>UTF-8</targetEncoding>
               <ignoreMissingSources>false</ignoreMissingSources>

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
@@ -70,13 +71,13 @@ public class JcpTask extends DefaultTask {
    */
   private final Property<String> targetEncoding;
   /**
-   * Property contains preprocessor action extension class name or blank string if not provided.
+   * Property contains preprocessor action extension class names or blank string if not provided.
    * The class must have the default constructor.
    *
-   * @since 7.1.2
+   * @since 7.2.2
    * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
    */
-  private final Property<String> actionPreprocessorExtension;
+  private final ListProperty<String> actionPreprocessorExtensions;
   /**
    * Flag to ignore missing source folders, if false then mojo fail for any
    * missing source folder, if true then missing folder will be ignored.
@@ -174,7 +175,7 @@ public class JcpTask extends DefaultTask {
 
   @Inject
   public JcpTask(final ObjectFactory factory) {
-    this.actionPreprocessorExtension = factory.property(String.class).convention("");
+    this.actionPreprocessorExtensions = factory.listProperty(String.class);
     this.allowWhitespaces = factory.property(Boolean.class).convention(false);
     this.careForLastEol = factory.property(Boolean.class).convention(false);
     this.clearTarget = factory.property(Boolean.class).convention(false);
@@ -303,8 +304,8 @@ public class JcpTask extends DefaultTask {
   }
 
   @Input
-  public Property<String> getActionPreprocessorExtension() {
-    return actionPreprocessorExtension;
+  public ListProperty<String> getActionPreprocessorExtensions() {
+    return actionPreprocessorExtensions;
   }
 
   @Input
@@ -382,6 +383,16 @@ public class JcpTask extends DefaultTask {
       }
 
       @Override
+      public void debug(final Supplier<String> supplier) {
+        if (logger.isDebugEnabled() && supplier != null) {
+          final String text = supplier.get();
+          if (text != null) {
+            logger.debug(text);
+          }
+        }
+      }
+
+      @Override
       public void warning(final String message) {
         logger.warn(message);
       }
@@ -445,12 +456,14 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setUnknownVariableAsFalse(this.unknownVarAsFalse.get());
     preprocessorContext.setVerbose(this.verbose.get());
 
-    if (!this.actionPreprocessorExtension.get().trim().isEmpty()) {
-      final String className = this.actionPreprocessorExtension.get().trim();
-      logger.info(
-          String.format("Detected action preprocessor extension class name: %s", className));
-      preprocessorContext.setPreprocessorExtension(
-          findAndInstantiatePreprocessorExtensionForClassName(className));
+    if (!this.actionPreprocessorExtensions.get().isEmpty()) {
+      this.actionPreprocessorExtensions.get()
+          .forEach(x -> {
+            final String className = x.trim();
+            logger.info(
+                String.format("Detected action preprocessor extension class name: %s", className));
+            preprocessorContext.addPreprocessorExtension(findAndInstantiatePreprocessorExtensionForClassName(className));
+          });
     }
 
     final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(

@@ -28,6 +28,7 @@ import static com.igormaznitsa.jcp.context.CommentRemoverType.makeListOfAllRemov
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
+import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -95,6 +96,22 @@ public final class PreprocessorUtils {
         .findFirst();
     return result.isPresent() ? result :
         Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
+  }
+
+  /**
+   * Find last presented FileInfoContainer among incoming files for include stack files.
+   *
+   * @param context preprocessor context, must not be null
+   * @return found FileInfoContainer or empty optional
+   * @see FileInfoContainer
+   * @since 7.3.0
+   */
+  public static Optional<FileInfoContainer> findLastActiveFileContainer(
+      final PreprocessorContext context
+  ) {
+    return context.getPreprocessingState().findLastTextFileDataContainerInStack()
+        .map(TextFileDataContainer::getFile)
+        .flatMap(context::findFileInfoContainer);
   }
 
   /**

@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -29,6 +31,7 @@ import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
 import com.igormaznitsa.jcp.expression.Value;
+import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
@@ -60,31 +63,49 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
   @Override
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
-    if (context.getPreprocessorExtension() != null) {
+    final List<PreprocessorExtension> extensions = context.getPreprocessorExtensions();
 
-      try {
-        final List<ExpressionTree> args = parseString(string, context);
-
-        final Value[] results = new Value[args.size()];
-        int index = 0;
-        for (final ExpressionTree expr : args) {
-          final Value val = Expression.evalTree(expr, context);
-          results[index++] = val;
-        }
-
-        if (context.getPreprocessorExtension() == null) {
-          throw context.makeException(
-              "Detected action directive but there is no any provided action preprocessor extension to process it",
-              null);
-        }
-
-        if (!context.getPreprocessorExtension().processAction(context, results)) {
-          throw context.makeException("Unable to process an action", null);
-        }
-      } catch (IOException ex) {
-        throw context.makeException("Unexpected string detected [" + string + ']', ex);
-      }
+    if (extensions.isEmpty()) {
+      throw context.makeException(
+          "Detected action directive but there is no any provided action preprocessor extension to process it [" +
+              string + ']',
+          null);
     }
+
+    try {
+      final List<ExpressionTree> args = parseString(string, context);
+      final PreprocessorExtension extension = extensions.stream()
+          .filter(x -> x.isAllowed(
+              findLastActiveFileContainer(context).orElseThrow(
+                  () -> new IllegalStateException("Can't find active file container")),
+              context.getPreprocessingState().findLastPositionInfoInStack().orElseThrow(
+                  () -> new IllegalStateException("Can't find last position in include stack")),
+              context,
+              context.getPreprocessingState()
+          ))
+          .filter(x -> x.hasAction(args.size()))
+          .findFirst().orElse(null);
+
+      if (extension == null) {
+        throw context.makeException(
+            "Can't find any preprocessor extension to process action: " + string,
+            null);
+      }
+
+      final Value[] results = new Value[args.size()];
+      int index = 0;
+      for (final ExpressionTree expr : args) {
+        final Value val = Expression.evalTree(expr, context);
+        results[index++] = val;
+      }
+
+      if (!extension.processAction(context, results)) {
+        throw context.makeException("Unable to process an action", null);
+      }
+    } catch (IOException ex) {
+      throw context.makeException("Unexpected string detected [" + string + ']', ex);
+    }
+
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 

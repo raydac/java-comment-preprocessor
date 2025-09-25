@@ -21,10 +21,13 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static java.util.Objects.requireNonNull;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.util.Objects;
+import com.igormaznitsa.jcp.extension.PreprocessorExtension;
+import java.util.List;
 
 /**
  * The class implements the user defined function handler (a function which name
@@ -41,8 +44,8 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   public FunctionDefinedByUser(final String name, final int argsNumber,
                                final PreprocessorContext context) {
     super();
-    Objects.requireNonNull(name, "Name is null");
-    Objects.requireNonNull(context, "Context is null");
+    requireNonNull(name, "Name is null");
+    requireNonNull(context, "Context is null");
 
     if (argsNumber < 0) {
       throw context.makeException("Unexpected argument number [" + argsNumber + ']', null);
@@ -72,9 +75,23 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
 
   public Value execute(final PreprocessorContext context, final Value[] values) {
-    return Objects.requireNonNull(
-        context.getPreprocessorExtension(), "Preprocessor extension must not be null")
-        .processUserFunction(context, name, values);
+    final List<PreprocessorExtension> extensionList = context.getPreprocessorExtensions();
+    if (extensionList.isEmpty()) {
+      throw context
+          .makeException(
+              "Found user defined function, but there is not any preprocessor extension to process it",
+              null);
+    }
+
+    final PreprocessorExtension extension =
+        extensionList.stream().filter(x -> x.hasUserFunction(this.name, values.length))
+            .findFirst().orElseThrow(() -> context
+                .makeException(
+                    "Can't find any preprocessor extension to process function " + this.name + " for " +
+                        values.length + " argument(s)", null));
+    context.logDebug("Processing " + this.name + '/' + values.length + " by " +
+        extension.getClass().getCanonicalName());
+    return extension.processUserFunction(context, name, values);
   }
 
   @Override

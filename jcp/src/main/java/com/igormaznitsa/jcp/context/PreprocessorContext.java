@@ -23,6 +23,7 @@ package com.igormaznitsa.jcp.context;
 
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
@@ -46,10 +47,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -109,7 +113,7 @@ public class PreprocessorContext {
   private File target;
   private Set<String> extensions = new HashSet<>(DEFAULT_PROCESSING_EXTENSIONS);
   private Set<String> excludeExtensions = new HashSet<>(DEFAULT_EXCLUDED_EXTENSIONS);
-  private PreprocessorExtension preprocessorExtension;
+  private List<PreprocessorExtension> preprocessorExtensions = List.of();
   private Charset sourceEncoding = DEFAULT_CHARSET;
   private Charset targetEncoding = DEFAULT_CHARSET;
   @Setter(AccessLevel.NONE)
@@ -168,7 +172,7 @@ public class PreprocessorContext {
     this.unknownVariableAsFalse = context.unknownVariableAsFalse;
     this.allowsBlocks = context.allowsBlocks;
 
-    this.preprocessorExtension = context.getPreprocessorExtension();
+    this.preprocessorExtensions = context.getPreprocessorExtensions();
     this.sourceEncoding = context.getSourceEncoding();
     this.targetEncoding = context.getTargetEncoding();
     this.dontOverwriteSameContent = context.isDontOverwriteSameContent();
@@ -362,6 +366,30 @@ public class PreprocessorContext {
     this.target = file.isAbsolute() ? file : new File(this.getBaseDir(), file.getPath());
   }
 
+  public List<PreprocessorExtension> getPreprocessorExtensions() {
+    return this.preprocessorExtensions;
+  }
+
+  public void setPreprocessorExtensions(final List<PreprocessorExtension> extensions) {
+    if (extensions == null) {
+      this.logDebug("Removed all preprocessor extensions");
+      this.preprocessorExtensions = List.of();
+    } else {
+      this.preprocessorExtensions = extensions.stream().filter(Objects::nonNull).collect(toUnmodifiableList());
+      this.logDebug(() -> "Replaces preprocessor extensions: " + this.preprocessorExtensions.stream()
+              .map(x -> x.getClass().getCanonicalName())
+          .collect(Collectors.joining(",")));
+    }
+  }
+
+  public void addPreprocessorExtension(final PreprocessorExtension extension) {
+    if (extension == null) return;
+    if (this.preprocessorExtensions.stream().anyMatch(x -> x == extension)) return;
+    this.preprocessorExtensions = Stream.concat(this.preprocessorExtensions.stream(), Stream.of(extension)).collect(
+        toUnmodifiableList());
+    this.logDebug("Added preprocessor extension: " + extension.getClass().getCanonicalName());
+  }
+
   /**
    * Check that the preprocessor context is a clone of another context.
    *
@@ -429,6 +457,18 @@ public class PreprocessorContext {
   public void logDebug(final String text) {
     if (text != null && this.preprocessorLogger != null) {
       this.preprocessorLogger.debug(text);
+    }
+  }
+
+  /**
+   * Print some debug info into the current log
+   *
+   * @param textSupplier a String supplier to generate text to be printed into the debug log, it can be null
+   * @since 7.3.0
+   */
+  public void logDebug(final Supplier<String> textSupplier) {
+    if (textSupplier != null && this.preprocessorLogger != null) {
+      this.preprocessorLogger.debug(textSupplier);
     }
   }
 

@@ -26,7 +26,7 @@ public class ActionPreprocessorExtensionHandler implements CommandLineHandler {
       } else {
         final PreprocessorExtension preprocessorExtension =
             PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(tail);
-        context.setPreprocessorExtension(preprocessorExtension);
+        context.addPreprocessorExtension(preprocessorExtension);
         result = true;
       }
     }

@@ -36,12 +36,14 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -82,7 +84,7 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   private boolean allowWhitespaces = false;
   private boolean preserveIndents = false;
   private boolean dontOverwriteSameContent = false;
-  private String actionPreprocessorExtension = null;
+  private String actionPreprocessorExtensions = "";
   private Map<String, Value> antVariables = new HashMap<>();
 
   private void registerConfigFiles(final PreprocessorContext context) {
@@ -175,11 +177,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
       );
     }
 
-    if (this.getActionPreprocessorExtension() != null) {
-      info("Instantiating action preprocessor extension: " + this.getActionPreprocessorExtension());
-      context.setPreprocessorExtension(
+    if (!this.getActionPreprocessorExtensions().isEmpty()) {
+      info("Instantiating action preprocessor extensions: " + this.getActionPreprocessorExtensions());
+      Arrays.stream(this.getActionPreprocessorExtensions().split(","))
+          .filter(x -> !x.trim().isEmpty())
+          .forEach(x -> context.addPreprocessorExtension(
           PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
-              this.getActionPreprocessorExtension().trim()));
+              x.trim())));
     }
 
     final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
@@ -241,6 +245,16 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   @Override
   public void debug(final String message) {
     log(message, Project.MSG_DEBUG);
+  }
+
+  @Override
+  public void debug(final Supplier<String> supplier) {
+    if (supplier != null) {
+      final String text = supplier.get();
+      if (text != null) {
+        log(text, Project.MSG_DEBUG);
+      }
+    }
   }
 
   @Override

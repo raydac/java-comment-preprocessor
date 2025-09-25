@@ -252,6 +252,16 @@ public class PreprocessorContextTest {
       } else if (type == PreprocessorExtension.class) {
         final PreprocessorExtension exx = new PreprocessorExtension() {
           @Override
+          public boolean hasAction(int arity) {
+            return true;
+          }
+
+          @Override
+          public boolean hasUserFunction(String name, int arity) {
+            return true;
+          }
+
+          @Override
           public boolean processAction(PreprocessorContext context, Value[] parameters) {
             throw new UnsupportedOperationException(
                 "Not supported yet.");

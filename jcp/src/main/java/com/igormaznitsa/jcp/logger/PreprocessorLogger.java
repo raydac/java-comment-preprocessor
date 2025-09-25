@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.logger;
 
+import java.util.function.Supplier;
+
 /**
  * The interface describes a logger to be used by a preprocessor during its work
  *
@@ -45,10 +47,22 @@ public interface PreprocessorLogger {
   /**
    * Log a debug message
    *
-   * @param message the text to be output into the information log
+   * @param message the text to be output into the debug log
    * @since 6.0.1
    */
   void debug(String message);
+
+  /**
+   * Log a debug message
+   *
+   * @param message text supplier of text to be output into the debug log
+   * @since 7.3.3
+   */
+  default void debug(Supplier<String> supplier) {
+    if (supplier != null) {
+      this.debug(supplier.get());
+    }
+  }
 
   /**
    * Log a warning message

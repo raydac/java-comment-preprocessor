@@ -61,7 +61,7 @@ preprocess {
     allowWhitespaces = true
     preserveIndents = true
     dontOverwriteSameContent = false
-    actionPreprocessorExtension = "com.igormaznitsa.jcp.extension.LogPreprocessorExtension"
+    actionPreprocessorExtensions = ["com.igormaznitsa.jcp.extension.LogPreprocessorExtension"]
     vars = ['some.test.global': 'Some Test Global Value']
 }
 task(changeSourceFolder) {
