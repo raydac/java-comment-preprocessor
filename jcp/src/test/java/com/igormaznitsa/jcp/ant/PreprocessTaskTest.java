@@ -42,9 +42,8 @@ import org.junit.Test;
 
 public class PreprocessTaskTest {
 
-  static File THIS_DIRECTORY;
-
   final static Project projectMock = mock(Project.class);
+  static File THIS_DIRECTORY;
 
   static {
     when(projectMock.getBaseDir()).thenReturn(new File("base/dir"));
@@ -55,7 +54,8 @@ public class PreprocessTaskTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    THIS_DIRECTORY = new File(com.igormaznitsa.jcp.ant.PreprocessTaskTest.class.getResource("./").toURI());
+    THIS_DIRECTORY =
+        new File(com.igormaznitsa.jcp.ant.PreprocessTaskTest.class.getResource("./").toURI());
   }
 
   @Before
@@ -71,7 +71,8 @@ public class PreprocessTaskTest {
 
   @Test
   public void testSetSources() {
-    final List<PreprocessorContext.SourceFolder> sourceDirs = antTask.makePreprocessorContext().getSources();
+    final List<PreprocessorContext.SourceFolder> sourceDirs =
+        antTask.makePreprocessorContext().getSources();
     assertEquals(1, sourceDirs.size());
     assertEquals(THIS_DIRECTORY, sourceDirs.get(0).getAsFile());
   }
@@ -86,14 +87,16 @@ public class PreprocessTaskTest {
   public void testSourceEncoding() {
     final String TEST = "ISO-8859-1";
     antTask.setSourceEncoding(TEST);
-    assertEquals(StandardCharsets.ISO_8859_1, antTask.makePreprocessorContext().getSourceEncoding());
+    assertEquals(StandardCharsets.ISO_8859_1,
+        antTask.makePreprocessorContext().getSourceEncoding());
   }
 
   @Test
   public void testTargetEncoding() {
     final String TEST = "ISO-8859-1";
     antTask.setTargetEncoding(TEST);
-    assertEquals(StandardCharsets.ISO_8859_1, antTask.makePreprocessorContext().getTargetEncoding());
+    assertEquals(StandardCharsets.ISO_8859_1,
+        antTask.makePreprocessorContext().getTargetEncoding());
   }
 
   @Test
@@ -136,7 +139,8 @@ public class PreprocessTaskTest {
     antTask.setKeepComments("true");
     assertEquals(CommentRemoverType.KEEP_ALL, antTask.makePreprocessorContext().getKeepComments());
     antTask.setKeepComments("false");
-    assertEquals(CommentRemoverType.REMOVE_C_STYLE, antTask.makePreprocessorContext().getKeepComments());
+    assertEquals(CommentRemoverType.REMOVE_C_STYLE,
+        antTask.makePreprocessorContext().getKeepComments());
   }
 
   @Test
@@ -166,7 +170,7 @@ public class PreprocessTaskTest {
   @Test
   public void testEol() {
     antTask.setEol("someeol\\r\\n");
-    assertEquals("someeol\r\n",antTask.makePreprocessorContext().getEol());
+    assertEquals("someeol\r\n", antTask.makePreprocessorContext().getEol());
   }
 
   @Test
@@ -207,7 +211,8 @@ public class PreprocessTaskTest {
     final PreprocessTask.Vars.Var var = vars.createVar();
     var.setName("hello_world");
     var.setValue("4");
-    assertEquals(Value.INT_FOUR, antTask.makePreprocessorContext().findVariableForName("hello_world", false));
+    assertEquals(Value.INT_FOUR,
+        antTask.makePreprocessorContext().findVariableForName("hello_world", false));
   }
 
   @Test
@@ -218,7 +223,9 @@ public class PreprocessTaskTest {
 
     final List<File> foundConfigFiles = antTask.makePreprocessorContext().getConfigFiles();
     assertEquals("Must be 2", 2, foundConfigFiles.size());
-    assertEquals("base/dir/what/that".replace('/', File.separatorChar), foundConfigFiles.get(0).getPath());
-    assertEquals("base/dir/what/those".replace('/', File.separatorChar), foundConfigFiles.get(1).getPath());
+    assertEquals("base/dir/what/that".replace('/', File.separatorChar),
+        foundConfigFiles.get(0).getPath());
+    assertEquals("base/dir/what/those".replace('/', File.separatorChar),
+        foundConfigFiles.get(1).getPath());
   }
 }

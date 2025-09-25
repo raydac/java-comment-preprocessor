@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -36,19 +35,22 @@ public class FunctionXML_XLISTTest extends AbstractFunctionXMLTest {
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_ForWrongElement() throws Exception {
-    assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
+    assertNotNull(
+        HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
   }
 
   @Test
   public void testExecution_NonExistElement() throws Exception {
-    final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/nonexist"));
+    final Value value =
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/nonexist"));
     assertNotNull(value);
     assertEquals(0, new FunctionXML_SIZE().executeStr(SPY_CONTEXT, value).asLong().intValue());
   }
 
   @Test
   public void testExecution_ForExistElements() throws Exception {
-    final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
+    final Value value =
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
     assertNotNull(value);
     assertEquals(4, new FunctionXML_SIZE().executeStr(SPY_CONTEXT, value).asLong().intValue());
   }

@@ -29,7 +29,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class ClearTargetFolderHandlerTest extends AbstractCommandLineHandlerTest {

@@ -21,21 +21,24 @@ public abstract class AbstractCommentRemover {
     this.whiteSpaceAllowed = whiteSpaceAllowed;
   }
 
-  public abstract Writer process() throws IOException;
-
   public static AbstractCommentRemover makeCommentRemover(
       final CommentRemoverType keepComments,
       final Reader src,
       final Writer dst,
       final boolean whiteSpaceAllowed) {
     switch (keepComments) {
-      case KEEP_ALL: return new JustCopyRemover(src, dst, whiteSpaceAllowed);
-      case REMOVE_C_STYLE: return new CStyleCommentRemover(src, dst, whiteSpaceAllowed);
+      case KEEP_ALL:
+        return new JustCopyRemover(src, dst, whiteSpaceAllowed);
+      case REMOVE_C_STYLE:
+        return new CStyleCommentRemover(src, dst, whiteSpaceAllowed);
       case REMOVE_JCP_ONLY:
         return new JcpCommentLineRemover(src, dst, whiteSpaceAllowed);
-      default: throw new IllegalStateException("Unsupported keep comments value: " + keepComments);
+      default:
+        throw new IllegalStateException("Unsupported keep comments value: " + keepComments);
     }
   }
+
+  public abstract Writer process() throws IOException;
 
   protected void skipTillNextString() throws IOException {
     while (!Thread.currentThread().isInterrupted()) {

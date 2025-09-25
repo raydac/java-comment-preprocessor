@@ -21,11 +21,11 @@
 
 package com.igormaznitsa.jcp.expression.operators;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class OperatorMODTest extends AbstractOperatorTest {
 
@@ -69,7 +69,8 @@ public class OperatorMODTest extends AbstractOperatorTest {
 
   @Override
   public void testPriority() {
-    assertEquals(ExpressionItemPriority.ARITHMETIC_MUL_DIV_MOD, HANDLER.getExpressionItemPriority());
+    assertEquals(ExpressionItemPriority.ARITHMETIC_MUL_DIV_MOD,
+        HANDLER.getExpressionItemPriority());
   }
 
 }

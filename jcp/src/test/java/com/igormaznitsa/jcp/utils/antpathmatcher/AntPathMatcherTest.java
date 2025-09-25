@@ -24,9 +24,8 @@ package com.igormaznitsa.jcp.utils.antpathmatcher;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
-import org.junit.Test;
 import com.igormaznitsa.jcp.utils.AntPathMatcher;
+import org.junit.Test;
 
 public class AntPathMatcherTest {
 

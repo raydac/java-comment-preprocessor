@@ -74,8 +74,8 @@ public class JcpTask extends DefaultTask {
    * Property contains preprocessor action extension class names or blank string if not provided.
    * The class must have the default constructor.
    *
-   * @since 7.2.2
    * @see com.igormaznitsa.jcp.extension.PreprocessorExtension
+   * @since 7.2.2
    */
   private final ListProperty<String> actionPreprocessorExtensions;
   /**
@@ -462,7 +462,8 @@ public class JcpTask extends DefaultTask {
             final String className = x.trim();
             logger.info(
                 String.format("Detected action preprocessor extension class name: %s", className));
-            preprocessorContext.addPreprocessorExtension(findAndInstantiatePreprocessorExtensionForClassName(className));
+            preprocessorContext.addPreprocessorExtension(
+                findAndInstantiatePreprocessorExtensionForClassName(className));
           });
     }
 

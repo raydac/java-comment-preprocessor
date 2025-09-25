@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -36,17 +35,20 @@ public class FunctionXML_LISTTest extends AbstractFunctionXMLTest {
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_ForWrongElement() throws Exception {
-    assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
+    assertNotNull(
+        HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
   }
 
   @Test
   public void testExecution_ForNonExistElements() throws Exception {
-    assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("nonexist")));
+    assertNotNull(
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("nonexist")));
   }
 
   @Test
   public void testExecution_ForExistElements() throws Exception {
-    assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element")));
+    assertNotNull(
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("element")));
   }
 
   @Override

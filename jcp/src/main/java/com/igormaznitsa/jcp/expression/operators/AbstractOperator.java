@@ -41,7 +41,8 @@ public abstract class AbstractOperator implements ExpressionItem {
   /**
    * The list contains operators allowed by the preprocessor
    */
-  private static final AtomicReference<List<AbstractOperator>> allOperators = new AtomicReference<>();
+  private static final AtomicReference<List<AbstractOperator>> allOperators =
+      new AtomicReference<>();
 
   @SuppressWarnings("StaticInitializerReferencesSubClass")
   private static final List<AbstractOperator> DEFAULT_OPERATORS = List.of(

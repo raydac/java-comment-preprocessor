@@ -21,15 +21,16 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ExpressionTest extends AbstractSpyPreprocessorContextTest {
 
   @Test
   public void testSimpleExpression() throws Exception {
-    assertEquals("Must be equal", Value.INT_TWO, Expression.evalExpression("40/4-2*4", preparePreprocessorContext(getCurrentTestFolder())));
+    assertEquals("Must be equal", Value.INT_TWO,
+        Expression.evalExpression("40/4-2*4", preparePreprocessorContext(getCurrentTestFolder())));
   }
 }

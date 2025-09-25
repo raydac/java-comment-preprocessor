@@ -56,7 +56,8 @@ public class KeepCommentsHandler implements CommandLineHandler {
         mode = PreprocessorUtils.findCommentRemoverForId(tail);
       } catch (IllegalArgumentException ex) {
         throw context.makeException(
-            "Illegal keep comments mode '" + tail + "' in " + ARG_NAME + ", expected one of: true,false," +
+            "Illegal keep comments mode '" + tail + "' in " + ARG_NAME +
+                ", expected one of: true,false," +
                 makeListOfAllRemoverIds(), null);
       }
 

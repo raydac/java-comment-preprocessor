@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.directives;
 
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
 
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;

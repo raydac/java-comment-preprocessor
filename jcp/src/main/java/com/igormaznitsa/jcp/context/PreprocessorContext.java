@@ -375,18 +375,25 @@ public class PreprocessorContext {
       this.logDebug("Removed all preprocessor extensions");
       this.preprocessorExtensions = List.of();
     } else {
-      this.preprocessorExtensions = extensions.stream().filter(Objects::nonNull).collect(toUnmodifiableList());
-      this.logDebug(() -> "Replaces preprocessor extensions: " + this.preprocessorExtensions.stream()
+      this.preprocessorExtensions =
+          extensions.stream().filter(Objects::nonNull).collect(toUnmodifiableList());
+      this.logDebug(
+          () -> "Replaces preprocessor extensions: " + this.preprocessorExtensions.stream()
               .map(x -> x.getClass().getCanonicalName())
-          .collect(Collectors.joining(",")));
+              .collect(Collectors.joining(",")));
     }
   }
 
   public void addPreprocessorExtension(final PreprocessorExtension extension) {
-    if (extension == null) return;
-    if (this.preprocessorExtensions.stream().anyMatch(x -> x == extension)) return;
-    this.preprocessorExtensions = Stream.concat(this.preprocessorExtensions.stream(), Stream.of(extension)).collect(
-        toUnmodifiableList());
+    if (extension == null) {
+      return;
+    }
+    if (this.preprocessorExtensions.stream().anyMatch(x -> x == extension)) {
+      return;
+    }
+    this.preprocessorExtensions =
+        Stream.concat(this.preprocessorExtensions.stream(), Stream.of(extension)).collect(
+            toUnmodifiableList());
     this.logDebug("Added preprocessor extension: " + extension.getClass().getCanonicalName());
   }
 

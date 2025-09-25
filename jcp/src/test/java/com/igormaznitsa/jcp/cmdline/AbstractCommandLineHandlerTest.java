@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import org.junit.Test;
@@ -48,7 +47,8 @@ public abstract class AbstractCommandLineHandlerTest extends AbstractMockPreproc
   protected void assertDescription(final CommandLineHandler handler) {
     assertNotNull("Reference must not be null", handler.getDescription());
     assertFalse("Reference must not be empty one", handler.getDescription().isEmpty());
-    assertTrue("Reference length must be great than 10 chars", handler.getDescription().length() > 10);
+    assertTrue("Reference length must be great than 10 chars",
+        handler.getDescription().length() > 10);
   }
 
   protected void assertHandlerInTheHandlerList(final CommandLineHandler handler) {

@@ -69,7 +69,7 @@ public final class PreprocessingState {
   public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
 
   public static final int MAX_WRITE_BUFFER_SIZE = 65536;
-
+  public static final String FAKE_FILE_PATH = "some_fake_file.txt";
   private final Charset globalInCharacterEncoding;
   private final Charset globalOutCharacterEncoding;
   private final TextFileDataContainer rootReference;
@@ -91,12 +91,6 @@ public final class PreprocessingState {
   private TextFileDataContainer activeWhile;
   private String lastReadString;
   private boolean globalPhase;
-
-  public static final String FAKE_FILE_PATH = "some_fake_file.txt";
-
-  public static PreprocessingState makeFake(final PreprocessorContext context) {
-    return new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8);
-  }
 
   PreprocessingState(final PreprocessorContext context, final Charset inEncoding,
                      final Charset outEncoding) {
@@ -142,6 +136,10 @@ public final class PreprocessingState {
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
+  }
+
+  public static PreprocessingState makeFake(final PreprocessorContext context) {
+    return new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8);
   }
 
   public boolean isGlobalPhase() {
@@ -236,13 +234,16 @@ public final class PreprocessingState {
 
   public Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
     if (this.fake) {
-      return Optional.of(new TextFileDataContainer(new File(FAKE_FILE_PATH), new String[]{""}, false, 0));
+      return Optional.of(
+          new TextFileDataContainer(new File(FAKE_FILE_PATH), new String[] {""}, false, 0));
     }
-    return this.includeStack.isEmpty() ? Optional.empty() : Optional.of(this.includeStack.get(this.includeStack.size() - 1));
+    return this.includeStack.isEmpty() ? Optional.empty() :
+        Optional.of(this.includeStack.get(this.includeStack.size() - 1));
   }
 
   public Optional<FilePositionInfo> findLastPositionInfoInStack() {
-    return findLastTextFileDataContainerInStack().map(x -> new FilePositionInfo(x.getFile(), x.getLastReadStringIndex()));
+    return findLastTextFileDataContainerInStack().map(
+        x -> new FilePositionInfo(x.getFile(), x.getLastReadStringIndex()));
   }
 
   public FilePositionInfo[] makeIncludeStack() {

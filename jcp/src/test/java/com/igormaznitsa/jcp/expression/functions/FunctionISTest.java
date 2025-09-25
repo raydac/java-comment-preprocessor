@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
@@ -34,17 +33,28 @@ public class FunctionISTest extends AbstractFunctionTest {
 
   @Test
   public void testExecution_StrAny_VarPresented() throws Exception {
-    assertFunction("is(\"hello_var\",true)", Value.BOOLEAN_TRUE, var("hello_var", Value.BOOLEAN_TRUE), null);
-    assertFunction("is(\"HELLO_VAR\",true)", Value.BOOLEAN_TRUE, var("hello_var", Value.BOOLEAN_TRUE), null);
-    assertFunction("is(\"hello_var\",false)", Value.BOOLEAN_FALSE, var("hello_var", Value.BOOLEAN_TRUE), null);
-    assertFunction("is(\"hello_var\",true)", Value.BOOLEAN_TRUE, null, var("hello_var", Value.BOOLEAN_TRUE));
-    assertFunction("is(\"hello_var\",false)", Value.BOOLEAN_FALSE, null, var("hello_var", Value.BOOLEAN_TRUE));
-    assertFunction("is(\"hello_var\",\"true\")", Value.BOOLEAN_TRUE, null, var("hello_var", Value.BOOLEAN_TRUE));
-    assertFunction("is(\"hello_var\",\"false\")", Value.BOOLEAN_FALSE, null, var("hello_var", Value.BOOLEAN_TRUE));
-    assertFunction("is(\"hello_var\",\"1\")", Value.BOOLEAN_TRUE, null, var("hello_var", Value.INT_ONE));
-    assertFunction("is(\"hello_var\",\"2\")", Value.BOOLEAN_FALSE, null, var("hello_var", Value.INT_ONE));
-    assertFunction("is(\"hello_var\",1)", Value.BOOLEAN_TRUE, null, var("hello_var", Value.valueOf("1")));
-    assertFunction("is(\"hello_var\",2)", Value.BOOLEAN_FALSE, null, var("hello_var", Value.valueOf("1")));
+    assertFunction("is(\"hello_var\",true)", Value.BOOLEAN_TRUE,
+        var("hello_var", Value.BOOLEAN_TRUE), null);
+    assertFunction("is(\"HELLO_VAR\",true)", Value.BOOLEAN_TRUE,
+        var("hello_var", Value.BOOLEAN_TRUE), null);
+    assertFunction("is(\"hello_var\",false)", Value.BOOLEAN_FALSE,
+        var("hello_var", Value.BOOLEAN_TRUE), null);
+    assertFunction("is(\"hello_var\",true)", Value.BOOLEAN_TRUE, null,
+        var("hello_var", Value.BOOLEAN_TRUE));
+    assertFunction("is(\"hello_var\",false)", Value.BOOLEAN_FALSE, null,
+        var("hello_var", Value.BOOLEAN_TRUE));
+    assertFunction("is(\"hello_var\",\"true\")", Value.BOOLEAN_TRUE, null,
+        var("hello_var", Value.BOOLEAN_TRUE));
+    assertFunction("is(\"hello_var\",\"false\")", Value.BOOLEAN_FALSE, null,
+        var("hello_var", Value.BOOLEAN_TRUE));
+    assertFunction("is(\"hello_var\",\"1\")", Value.BOOLEAN_TRUE, null,
+        var("hello_var", Value.INT_ONE));
+    assertFunction("is(\"hello_var\",\"2\")", Value.BOOLEAN_FALSE, null,
+        var("hello_var", Value.INT_ONE));
+    assertFunction("is(\"hello_var\",1)", Value.BOOLEAN_TRUE, null,
+        var("hello_var", Value.valueOf("1")));
+    assertFunction("is(\"hello_var\",2)", Value.BOOLEAN_FALSE, null,
+        var("hello_var", Value.valueOf("1")));
     assertDestinationFolderEmpty();
   }
 

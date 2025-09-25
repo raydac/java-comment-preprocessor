@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.expression.functions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
@@ -38,14 +37,18 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   private static final FunctionEVALFILE HANDLER = new FunctionEVALFILE();
 
-  private static final String TEST_EVAL_PATH = "/eval/TestEval.java".replace('/', File.separatorChar);
-  private static final String TEST_EVAL_WITH_INCLUDED_PATH = "/eval/TestEvalWithIncluded.java".replace('/', File.separatorChar);
+  private static final String TEST_EVAL_PATH =
+      "/eval/TestEval.java".replace('/', File.separatorChar);
+  private static final String TEST_EVAL_WITH_INCLUDED_PATH =
+      "/eval/TestEvalWithIncluded.java".replace('/', File.separatorChar);
 
   @Test
   public void testExecution_ErrorForUndefinedVariable() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     try {
-      Expression.evalExpression(String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)), context);
+      Expression.evalExpression(
+          String.format("evalfile(\".%s\")", StringEscapeUtils.escapeJava(TEST_EVAL_PATH)),
+          context);
     } catch (Exception ex) {
       assertTrue(getRootCause(ex).getMessage().contains("hello_world"));
     }

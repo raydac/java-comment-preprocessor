@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -37,14 +36,17 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
   @Test
   public void testProcess_NoSpaced_SpacesNotAllowed() throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
-    final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
+    final String text =
+        Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
     assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 
   @Test
   public void testProcess_NoSpaced_SpacesAllowed() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
-    final String text = Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
+    final PreprocessorContext context =
+        preparePreprocessorContext(getCurrentTestFolder(), () -> true);
+    final String text =
+        Expression.evalExpression("evalfile(\"./standardFile.txt\")", context).asString();
     assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 
@@ -61,8 +63,10 @@ public class ProcessContentWithSpacesAndWithoutTest extends AbstractSpyPreproces
 
   @Test
   public void testProcess_Spaced_SpacesAllowed() throws Exception {
-    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder(), () -> true);
-    final String text = Expression.evalExpression("evalfile(\"./spacedFile.txt\")", context).asString();
+    final PreprocessorContext context =
+        preparePreprocessorContext(getCurrentTestFolder(), () -> true);
+    final String text =
+        Expression.evalExpression("evalfile(\"./spacedFile.txt\")", context).asString();
     assertEquals(" hello\n /*$VAR$*/ Universe\nsome test", TestUtils.normalizeNextLine(text));
   }
 

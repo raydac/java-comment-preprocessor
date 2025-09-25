@@ -62,7 +62,8 @@ public class PreprocessorContextTest {
     return result;
   }
 
-  private static Map<Field, Object> extractValues(final PreprocessorContext context) throws Exception {
+  private static Map<Field, Object> extractValues(final PreprocessorContext context)
+      throws Exception {
     final Map<Field, Object> result = new HashMap<>();
     for (final Field f : extractDeclaredNonStaticNonFinalFields(PreprocessorContext.class)) {
       f.setAccessible(true);
@@ -71,7 +72,8 @@ public class PreprocessorContextTest {
     return result;
   }
 
-  private static void assertObjectValue(final String fieldName, final Object value, final Object that) {
+  private static void assertObjectValue(final String fieldName, final Object value,
+                                        final Object that) {
     if (value != that) {
       if (value == null || that == null) {
         assertSame(fieldName, value, that);
@@ -115,7 +117,8 @@ public class PreprocessorContextTest {
     }
   }
 
-  private static void assertMapFields(final String mapFieldName, final PreprocessorContext etalon, final PreprocessorContext that) throws Exception {
+  private static void assertMapFields(final String mapFieldName, final PreprocessorContext etalon,
+                                      final PreprocessorContext that) throws Exception {
     Field field = null;
     for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
       if (mapFieldName.equals(f.getName())) {
@@ -134,11 +137,14 @@ public class PreprocessorContextTest {
 
     for (final Object k : thisMap.keySet()) {
       assertTrue(thatMap.containsKey(k));
-      assertSame("Key '" + k + "' at map field '" + mapFieldName + "'", thisMap.get(k), thatMap.get(k));
+      assertSame("Key '" + k + "' at map field '" + mapFieldName + "'", thisMap.get(k),
+          thatMap.get(k));
     }
   }
 
-  private static void assertPreprocessorContextMaps(final PreprocessorContext etalon, final PreprocessorContext that) throws Exception {
+  private static void assertPreprocessorContextMaps(final PreprocessorContext etalon,
+                                                    final PreprocessorContext that)
+      throws Exception {
     int detected = 0;
     for (final Field f : PreprocessorContext.class.getDeclaredFields()) {
       if (Modifier.isFinal(f.getModifiers()) && Map.class.isAssignableFrom(f.getType())) {
@@ -149,7 +155,8 @@ public class PreprocessorContextTest {
     assertEquals(4, detected);
   }
 
-  private static void assertContextEquals(final Map<Field, Object> etalon, final Map<Field, Object> value) {
+  private static void assertContextEquals(final Map<Field, Object> etalon,
+                                          final Map<Field, Object> value) {
     assertEquals("Must have same number of elements", etalon.size(), value.size());
 
     for (final Field f : etalon.keySet()) {
@@ -230,7 +237,8 @@ public class PreprocessorContextTest {
         }
         f.set(context, charset);
       } else if (type == PreprocessingState.class) {
-        f.set(context, new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8));
+        f.set(context,
+            new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8));
       } else if (type == PreprocessorLogger.class) {
         f.set(context, new PreprocessorLogger() {
           @Override
@@ -283,7 +291,8 @@ public class PreprocessorContextTest {
 
         f.set(context, exx);
       } else if (type.isAssignableFrom(CommentRemoverType.class)) {
-        f.set(context, CommentRemoverType.values()[((int)System.nanoTime() & 0x1FFFFFFF) % CommentRemoverType.values().length]);
+        f.set(context, CommentRemoverType.values()[((int) System.nanoTime() & 0x1FFFFFFF) %
+            CommentRemoverType.values().length]);
       } else if (type.isAssignableFrom(List.class) || type.isAssignableFrom(Set.class)) {
         // ignored
       } else {
@@ -302,19 +311,22 @@ public class PreprocessorContextTest {
 
       @Override
       public Value getVariable(String varName, PreprocessorContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(
+            "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
       }
 
       @Override
       public void setVariable(String varName, Value value, PreprocessorContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException(
+            "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
       }
     });
   }
 
   @Test
   public void testConstuctorWithBaseContext_DefaultValues() throws Exception {
-    final PreprocessorContext baseContext = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext baseContext =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
 
     final Map<Field, Object> baseContextValues = extractValues(baseContext);
     assertFalse(baseContextValues.isEmpty());
@@ -331,7 +343,8 @@ public class PreprocessorContextTest {
   @Test
   public void testConstructorWithBaseContext_RandomValues() throws Exception {
     for (int i = 0; i < 100; i++) {
-      final PreprocessorContext etalon = new PreprocessorContext(new File("some_impossible_folder_121212"));
+      final PreprocessorContext etalon =
+          new PreprocessorContext(new File("some_impossible_folder_121212"));
       fillByRandomValues(etalon);
       final PreprocessorContext cloned = new PreprocessorContext(etalon);
       assertFalse(etalon.isCloned());

@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions;
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;

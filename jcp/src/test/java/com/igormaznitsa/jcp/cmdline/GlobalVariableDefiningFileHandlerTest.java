@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.TestUtils;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -34,7 +33,8 @@ import org.junit.Test;
 
 public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final GlobalVariableDefiningFileHandler HANDLER = new GlobalVariableDefiningFileHandler();
+  private static final GlobalVariableDefiningFileHandler HANDLER =
+      new GlobalVariableDefiningFileHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
@@ -43,9 +43,11 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
 
-    final File testFile = new File(this.getClass().getResource("./global_variable_def.txt").toURI());
+    final File testFile =
+        new File(this.getClass().getResource("./global_variable_def.txt").toURI());
 
     final String param = "@" + PreprocessorUtils.getFilePath(testFile);
 
@@ -59,13 +61,16 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Test
   public void testExecution_Expression() throws Exception {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
 
-    final File testFile = new File(this.getClass().getResource("./global_variable_def.txt").toURI());
+    final File testFile =
+        new File(this.getClass().getResource("./global_variable_def.txt").toURI());
 
     final String path = testFile.getParent().replace('\'', '/').replace("\"", "\\\"");
 
-    final String param = "@@\"" + path.replace("\\", "\\\\") + "\"+\"/\"+\"" + "global_variable_def.txt" + "\"";
+    final String param =
+        "@@\"" + path.replace("\\", "\\\\") + "\"+\"/\"+\"" + "global_variable_def.txt" + "\"";
 
     HANDLER.processCommandLineKey(param, context);
 
@@ -77,25 +82,29 @@ public final class GlobalVariableDefiningFileHandlerTest extends AbstractCommand
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFileWithExpression() {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@@\"undefinded_file.111111.txtt\"", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_nonExistingFile() {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@undefinded_file.111111.txtt", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFile() {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@", context);
   }
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_emptyFileForExpressionMode() {
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     HANDLER.processCommandLineKey("@@", context);
   }
 

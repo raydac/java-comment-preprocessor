@@ -28,7 +28,6 @@ import static com.igormaznitsa.jcp.context.CommentRemoverType.makeListOfAllRemov
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;

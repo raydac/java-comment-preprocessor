@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.directives;
 
 import static org.junit.Assert.assertFalse;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -36,7 +35,9 @@ public class AbstractDirectiveHandlerTest {
     for (final AbstractDirectiveHandler h : AbstractDirectiveHandler.findAllDirectives()) {
       final String name = h.getName();
       for (final String p : processed) {
-        assertFalse(h.getFullName() + " conflicts with " + (AbstractDirectiveHandler.DIRECTIVE_PREFIX + p), name.startsWith(p));
+        assertFalse(
+            h.getFullName() + " conflicts with " + (AbstractDirectiveHandler.DIRECTIVE_PREFIX + p),
+            name.startsWith(p));
       }
       processed.add(name);
     }

@@ -21,11 +21,17 @@
 
 package com.igormaznitsa.jcp;
 
+import static org.apache.commons.io.FilenameUtils.normalize;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -38,17 +44,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
-import static org.apache.commons.io.FilenameUtils.normalize;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
+@PrepareForTest({PreprocessorContext.class, PreprocessingState.class})
 public abstract class AbstractSpyPreprocessorContextTest {
 
   protected static TemporaryFolder destinationFolder;
@@ -70,9 +67,11 @@ public abstract class AbstractSpyPreprocessorContextTest {
   }
 
   protected List<String> getCurrentTestFolder() {
-    final String testFolder = FilenameUtils.normalizeNoEndSeparator(System.getProperty("test.folder"));
+    final String testFolder =
+        FilenameUtils.normalizeNoEndSeparator(System.getProperty("test.folder"));
     final String fullClassPath = this.getClass().getName().replace('.', File.separatorChar);
-    return Collections.singletonList(normalize(testFolder + File.separator + fullClassPath.substring(0, fullClassPath.lastIndexOf(File.separatorChar))));
+    return Collections.singletonList(normalize(testFolder + File.separator +
+        fullClassPath.substring(0, fullClassPath.lastIndexOf(File.separatorChar))));
   }
 
   protected File getDestinationFolder() {
@@ -83,12 +82,16 @@ public abstract class AbstractSpyPreprocessorContextTest {
     assertEquals("Destination folder must be enpty", 0, destinationFolder.getRoot().list().length);
   }
 
-  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders) throws Exception {
+  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders)
+      throws Exception {
     return this.preparePreprocessorContext(sourceFolders, () -> false);
   }
 
-  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders, final ContextDataProvider provider) throws Exception {
-    final PreprocessorContext resultContext = PowerMockito.spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
+  protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders,
+                                                           final ContextDataProvider provider)
+      throws Exception {
+    final PreprocessorContext resultContext =
+        PowerMockito.spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
     final PreprocessingState fakeState = PreprocessingState.makeFake(resultContext);
     PowerMockito.when(resultContext.findFileInfoContainer(any(File.class)))
         .then(x ->
@@ -108,7 +111,9 @@ public abstract class AbstractSpyPreprocessorContextTest {
     boolean getAllowSpaceBeforeDirectiveFlag();
 
     default Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
-      return Optional.of(new TextFileDataContainer(new File(PreprocessingState.FAKE_FILE_PATH), new String[]{""}, false, 0 ));
+      return Optional.of(
+          new TextFileDataContainer(new File(PreprocessingState.FAKE_FILE_PATH), new String[] {""},
+              false, 0));
     }
 
     default FileInfoContainer findFileInfoContainer(File file) {

@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.InfoHelper;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -38,20 +37,24 @@ public class JCPSpecialVariableProcessorTest extends AbstractMockPreprocessorCon
   public void testReadVariable() throws Exception {
     final PreprocessorContext context = prepareMockContext();
 
-    assertEquals("Must be equal", InfoHelper.getVersion(), new JCPSpecialVariableProcessor().getVariable("jcp.version", context).asString());
+    assertEquals("Must be equal", InfoHelper.getVersion(),
+        new JCPSpecialVariableProcessor().getVariable("jcp.version", context).asString());
     assertNotNull(new JCPSpecialVariableProcessor().getVariable("__line__", context).toString());
     assertNotNull(new JCPSpecialVariableProcessor().getVariable("__date__", context).asString());
     assertNotNull(new JCPSpecialVariableProcessor().getVariable("__time__", context).asString());
-    assertNotNull(new JCPSpecialVariableProcessor().getVariable("__timestamp__", context).asString());
+    assertNotNull(
+        new JCPSpecialVariableProcessor().getVariable("__timestamp__", context).asString());
   }
 
   @Test(expected = PreprocessorException.class)
   public void testReadUnknownVariable() {
-    new JCPSpecialVariableProcessor().getVariable("jcp.version2", new PreprocessorContext(new File("some_impossible_folder_121212")));
+    new JCPSpecialVariableProcessor().getVariable("jcp.version2",
+        new PreprocessorContext(new File("some_impossible_folder_121212")));
   }
 
   @Test(expected = PreprocessorException.class)
   public void testWriteDisallowed() {
-    new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE, new PreprocessorContext(new File("some_impossible_folder_121212")));
+    new JCPSpecialVariableProcessor().setVariable("jcp.version", Value.INT_ONE,
+        new PreprocessorContext(new File("some_impossible_folder_121212")));
   }
 }

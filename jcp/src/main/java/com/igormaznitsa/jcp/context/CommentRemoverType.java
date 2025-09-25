@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 /**
  * Type of comment remover.
+ *
  * @since 7.1.0
  */
 public enum CommentRemoverType {
@@ -23,6 +24,7 @@ public enum CommentRemoverType {
 
   /**
    * Make comma separated list of enum item names.
+   *
    * @return comma separated list of all enum items, without spaces.
    */
   public static String makeListOfAllRemoverIds() {

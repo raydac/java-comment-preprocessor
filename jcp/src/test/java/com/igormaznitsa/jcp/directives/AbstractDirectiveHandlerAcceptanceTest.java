@@ -59,7 +59,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    THIS_CLASS_FILE = new File(AbstractDirectiveHandler.class.getResource(AbstractDirectiveHandlerAcceptanceTest.class.getSimpleName() + ".class").toURI());
+    THIS_CLASS_FILE = new File(AbstractDirectiveHandler.class.getResource(
+        AbstractDirectiveHandlerAcceptanceTest.class.getSimpleName() + ".class").toURI());
   }
 
   @Test
@@ -89,7 +90,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     assertFalse("Reference must not be too short", reference.length() < 10);
   }
 
-  private PreprocessorContext setGlobalVars(final PreprocessorContext context, final VariablePair... vars) {
+  private PreprocessorContext setGlobalVars(final PreprocessorContext context,
+                                            final VariablePair... vars) {
     if (vars.length != 0) {
       for (final VariablePair p : vars) {
         context.setGlobalVariable(p.getName(), p.getValue());
@@ -98,12 +100,16 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     return context;
   }
 
-  public void assertPreprocessorException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension, final VariablePair... globalVars) {
+  public void assertPreprocessorException(final String preprocessingText,
+                                          final int exceptionStringIndex,
+                                          final PreprocessorExtension extension,
+                                          final VariablePair... globalVars) {
     try {
       preprocessString(preprocessingText, null, extension, globalVars);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
-      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getLineNumber());
+      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(),
+          exceptionStringIndex, expected.getLineNumber());
     } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
@@ -111,25 +117,33 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
 
   }
 
-  public void assertGlobalPhaseException(final String preprocessingText, final int exceptionStringIndex, final PreprocessorExtension extension) {
+  public void assertGlobalPhaseException(final String preprocessingText,
+                                         final int exceptionStringIndex,
+                                         final PreprocessorExtension extension) {
     try {
       preprocessStringAtGlobalPhase(preprocessingText, null);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
-      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(), exceptionStringIndex, expected.getLineNumber());
+      assertEquals("Expected " + PreprocessorException.class.getCanonicalName(),
+          exceptionStringIndex, expected.getLineNumber());
     } catch (Exception unExpected) {
       unExpected.printStackTrace();
       fail("Unexpected exception " + unExpected.getClass().getCanonicalName());
     }
   }
 
-  private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding, final List<ExcludeIfInfo> excludeInfoList) throws IOException {
+  private PreprocessorContext preprocessStringAtGlobalPhase(final String encoding,
+                                                            final List<ExcludeIfInfo> excludeInfoList)
+      throws IOException {
     final List<String> parsedText = parseStringForLines(encoding);
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(THIS_CLASS_FILE, "fake_name", false);
-    final TextFileDataContainer textContainer = new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[0]), false, 0);
+    final TextFileDataContainer textContainer =
+        new TextFileDataContainer(reference.getSourceFile(), parsedText.toArray(new String[0]),
+            false, 0);
     final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
     final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
@@ -141,9 +155,12 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     return context;
   }
 
-  public PreprocessorContext executeGlobalPhase(final String fileName, final List<ExcludeIfInfo> excludeIf) throws Exception {
+  public PreprocessorContext executeGlobalPhase(final String fileName,
+                                                final List<ExcludeIfInfo> excludeIf)
+      throws Exception {
     final File file = new File(getClass().getResource(fileName).toURI());
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
@@ -155,7 +172,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     return context;
   }
 
-  private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator) throws IOException {
+  private void readWholeDataFromReader(final BufferedReader reader, final List<String> accumulator)
+      throws IOException {
     while (!Thread.currentThread().isInterrupted()) {
       final String line = reader.readLine();
       if (line == null) {
@@ -174,8 +192,10 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       final String etalonStr = i < etalonStrings.length ? etalonStrings[i] : null;
       final String resultStr = i < resultStrings.length ? resultStrings[i] : null;
 
-      if ((etalonStr != null && !etalonStr.equals(resultStr)) || (resultStr != null && !resultStr.equals(etalonStr))) {
-        throw new LinesNotMatchException(etalonStrings.length, resultStrings.length, i, etalonStr, resultStr);
+      if ((etalonStr != null && !etalonStr.equals(resultStr)) ||
+          (resultStr != null && !resultStr.equals(etalonStr))) {
+        throw new LinesNotMatchException(etalonStrings.length, resultStrings.length, i, etalonStr,
+            resultStr);
       }
     }
   }
@@ -208,7 +228,9 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     setGlobalVars(context, globalVariables);
 
     final FileInfoContainer reference = new FileInfoContainer(srcfile, srcfile.getName(), false);
-    final PreprocessingState state = context.produceNewPreprocessingState(reference, new TextFileDataContainer(reference.getSourceFile(), preprocessingText.toArray(new String[0]), false, 0));
+    final PreprocessingState state = context.produceNewPreprocessingState(reference,
+        new TextFileDataContainer(reference.getSourceFile(),
+            preprocessingText.toArray(new String[0]), false, 0));
     context.addPreprocessedResource(reference);
 
     if (contextTuner != null) {
@@ -279,7 +301,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     }
 
     final List<String> preprocessingPart = new ArrayList<>(100);
-    try (final BufferedReader reader = new BufferedReader(new StringReader(text), text.length() * 2)) {
+    try (final BufferedReader reader = new BufferedReader(new StringReader(text),
+        text.length() * 2)) {
       while (!Thread.currentThread().isInterrupted()) {
         final String line = reader.readLine();
         if (line == null) {
@@ -333,7 +356,8 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     final List<String> etalonPart = new ArrayList<>(100);
 
     boolean readFirestPart = true;
-    try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8), 1024)) {
+    try (final BufferedReader reader = new BufferedReader(
+        new InputStreamReader(stream, StandardCharsets.UTF_8), 1024)) {
       while (!Thread.currentThread().isInterrupted()) {
         final String line = reader.readLine();
         if (line == null) {

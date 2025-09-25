@@ -25,10 +25,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import org.junit.Test;
 
-public class WhileContinueBreakEndDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
+public class WhileContinueBreakEndDirectiveHandlerTest
+    extends AbstractDirectiveHandlerAcceptanceTest {
 
   private static final WhileDirectiveHandler WHILE_HANDLER = new WhileDirectiveHandler();
   private static final ContinueDirectiveHandler CONTINUE_HANDLER = new ContinueDirectiveHandler();

@@ -21,12 +21,12 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class FunctionSTR2JAVATest extends AbstractFunctionTest {
 
@@ -42,8 +42,10 @@ public class FunctionSTR2JAVATest extends AbstractFunctionTest {
   @Test
   public void testExecution_Split() throws Exception {
     assertFunction("str2java(\"\",true)", Value.valueOf("\"\""));
-    assertFunction("str2java(\"hello\nworld\",true)", Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\""));
-    assertFunction("str2java(\"hello\nworld\n\",true)", Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\\n\""));
+    assertFunction("str2java(\"hello\nworld\",true)",
+        Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\""));
+    assertFunction("str2java(\"hello\nworld\n\",true)",
+        Value.valueOf("\"hello\\n\"" + PreprocessorUtils.getNextLineCodes() + "+\"world\\n\""));
     assertDestinationFolderEmpty();
   }
 

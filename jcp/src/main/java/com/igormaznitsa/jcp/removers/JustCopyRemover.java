@@ -13,10 +13,12 @@ public class JustCopyRemover extends AbstractCommentRemover {
 
   @Override
   public Writer process() throws IOException {
-    final char [] buffer = new char[32768];
-    while(!Thread.currentThread().isInterrupted()) {
+    final char[] buffer = new char[32768];
+    while (!Thread.currentThread().isInterrupted()) {
       final int read = this.srcReader.read(buffer);
-      if (read < 0) break;
+      if (read < 0) {
+        break;
+      }
       this.dstWriter.write(buffer, 0, read);
     }
     return this.dstWriter;

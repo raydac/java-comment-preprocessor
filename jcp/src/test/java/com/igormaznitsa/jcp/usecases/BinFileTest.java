@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.usecases;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.util.Collections;

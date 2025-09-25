@@ -21,11 +21,11 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class FunctionSTR2WEBTest extends AbstractFunctionTest {
 
@@ -34,7 +34,8 @@ public class FunctionSTR2WEBTest extends AbstractFunctionTest {
   @Test
   public void testExecution_Str() throws Exception {
     assertFunction("str2web(\"<hello>\")", Value.valueOf("&lt;hello&gt;"));
-    assertFunction("str2web(\"<привет>\")", Value.valueOf("&lt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;&gt;"));
+    assertFunction("str2web(\"<привет>\")",
+        Value.valueOf("&lt;&#1087;&#1088;&#1080;&#1074;&#1077;&#1090;&gt;"));
     assertDestinationFolderEmpty();
   }
 

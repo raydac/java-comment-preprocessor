@@ -41,7 +41,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {PreprocessorContext.class, PreprocessingState.class})
+@PrepareForTest({PreprocessorContext.class, PreprocessingState.class})
 public abstract class AbstractMockPreprocessorContextTest {
 
   protected PreprocessorContext prepareMockContext() throws Exception {

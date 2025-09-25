@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import org.junit.Test;
@@ -49,7 +48,8 @@ public class ErrorDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Test
   public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#error 324444444444987987987982374987294873294324324\n", 3, null);
+    assertPreprocessorException("\n\n//#error 324444444444987987987982374987294873294324324\n", 3,
+        null);
     assertPreprocessorException("\n\n//#error sjdasd\n", 3, null);
     assertPreprocessorException("\n\n//#error \n", 3, null);
   }

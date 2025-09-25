@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.nio.charset.StandardCharsets;
 

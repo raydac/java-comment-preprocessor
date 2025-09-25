@@ -28,7 +28,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import java.util.List;
 import org.mockito.ArgumentCaptor;

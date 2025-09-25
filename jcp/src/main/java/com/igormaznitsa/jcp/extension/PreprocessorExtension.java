@@ -46,6 +46,7 @@ public interface PreprocessorExtension extends ExecutionAllowable {
 
   /**
    * Allows to check that the extension contains an action with required number of parameters.
+   *
    * @param arity number of parameters for action, zero or great
    * @return true if such action is provided by the extension
    * @since 7.2.2
@@ -54,11 +55,12 @@ public interface PreprocessorExtension extends ExecutionAllowable {
 
   /**
    * Allows to check that the extension contains a user defined function with required number of parameters.
-   * @param name name of the function to be checked, must not be null
+   *
+   * @param name  name of the function to be checked, must not be null
    * @param arity number of parameters for action, if ANY_ARITY then check only by name
    * @return true if such user defined function is provided by the extension
-   * @since 7.2.2
    * @see #ANY_ARITY
+   * @since 7.2.2
    */
   boolean hasUserFunction(String name, int arity);
 

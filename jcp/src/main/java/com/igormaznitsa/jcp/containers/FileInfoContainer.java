@@ -69,11 +69,11 @@ public class FileInfoContainer {
   private static final Pattern DIRECTIVE_SINGLE_DOLLAR_BLOCK_PREFIXED =
       Pattern.compile("^\\s*//\\s*\\$\"(.*)$");
   private static final Pattern DIRECTIVE_TAIL_REMOVER = Pattern.compile("\\/\\*\\s*-\\s*\\*\\/");
+  private static final String EOL_MARKER = "-=$$$$$$$$__EOL__$$$$$$$$=-";
   /**
    * The source file for the container
    */
   private final File sourceFile;
-
   /**
    * The flag shows that the file should be just copied into the destination place without any preprocessing
    */
@@ -218,6 +218,19 @@ public class FileInfoContainer {
     }
   }
 
+  private static int findLastReadLineIndex(final PreprocessingState state) {
+    if (state == null) {
+      return -1;
+    }
+
+    var fileData = state.peekFile();
+    if (fileData == null) {
+      return -1;
+    } else {
+      return fileData.getLastReadStringIndex();
+    }
+  }
+
   public void setTargetFolder(final String folder) {
     this.targetFolder = requireNonNull(folder, "Target folder must not be null");
   }
@@ -333,7 +346,6 @@ public class FileInfoContainer {
     return result;
   }
 
-
   private String extractHashPrefixedDirective(final String line,
                                               final PreprocessorContext context) {
     if (context.isAllowWhitespaces()) {
@@ -348,7 +360,6 @@ public class FileInfoContainer {
       return PreprocessorUtils.extractTail(AbstractDirectiveHandler.DIRECTIVE_PREFIX, line);
     }
   }
-
 
   private String extractDoubleDollarPrefixedDirective(
       final String line,
@@ -379,7 +390,6 @@ public class FileInfoContainer {
     return tail;
   }
 
-
   private String extractSingleDollarPrefixedDirective(final String line,
                                                       final boolean block,
                                                       final PreprocessorContext context) {
@@ -408,19 +418,6 @@ public class FileInfoContainer {
     return tail;
   }
 
-  private static int findLastReadLineIndex(final PreprocessingState state) {
-    if (state == null) {
-      return -1;
-    }
-
-    var fileData = state.peekFile();
-    if (fileData == null) {
-      return -1;
-    } else {
-      return fileData.getLastReadStringIndex();
-    }
-  }
-
   /**
    * Preprocess the file described by the object, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
    *
@@ -435,8 +432,6 @@ public class FileInfoContainer {
                                            final PreprocessorContext context) throws IOException {
     return this.preprocessFileWithNotification(state, context, true);
   }
-
-  private static final String EOL_MARKER = "-=$$$$$$$$__EOL__$$$$$$$$=-";
 
   private void flushTextBufferForRemovedComments(
       final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,

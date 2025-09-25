@@ -25,7 +25,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunctionTest;

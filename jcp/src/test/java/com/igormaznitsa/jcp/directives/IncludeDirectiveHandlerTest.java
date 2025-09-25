@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
@@ -50,7 +49,8 @@ public class IncludeDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
     assertPreprocessorException("\n\n\n//#include=\n", 4, null);
     assertPreprocessorException("\n\n\n//#include333\n", 4, null);
     assertPreprocessorException("\n\n\n//#include true\n", 4, null);
-    assertPreprocessorException("\n\n\n//#include \"/some/nonexist/absolutnonexist/file.ttxt\"\n", 4, null);
+    assertPreprocessorException("\n\n\n//#include \"/some/nonexist/absolutnonexist/file.ttxt\"\n",
+        4, null);
   }
 
   @Override

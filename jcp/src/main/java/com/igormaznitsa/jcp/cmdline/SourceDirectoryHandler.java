@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.cmdline;
 
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.extractTail;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.io.File;

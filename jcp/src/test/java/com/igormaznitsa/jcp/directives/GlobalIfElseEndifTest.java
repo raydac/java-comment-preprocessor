@@ -25,15 +25,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
 public class GlobalIfElseEndifTest extends AbstractDirectiveHandlerAcceptanceTest {
 
   private static final GlobalIfDirectiveHandler HANDLER_GLOBAL_IF = new GlobalIfDirectiveHandler();
-  private static final GlobalElseDirectiveHandler HANDLER_GLOBAL_ELSE = new GlobalElseDirectiveHandler();
-  private static final GlobalEndIfDirectiveHandler HANDLER_GLOBAL_ENDIF = new GlobalEndIfDirectiveHandler();
+  private static final GlobalElseDirectiveHandler HANDLER_GLOBAL_ELSE =
+      new GlobalElseDirectiveHandler();
+  private static final GlobalEndIfDirectiveHandler HANDLER_GLOBAL_ENDIF =
+      new GlobalEndIfDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {

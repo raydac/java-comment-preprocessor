@@ -19,16 +19,6 @@ public class LogPreprocessorExtension implements PreprocessorExtension {
 
   private static final Pattern PATTERN = Pattern.compile("^(\\D+)(\\d+)?$");
 
-  @Override
-  public boolean hasAction(int arity) {
-    return true;
-  }
-
-  @Override
-  public boolean hasUserFunction(String name, int arity) {
-    return true;
-  }
-
   private static String findPosition(final PreprocessorContext context) {
     if (context == null) {
       return "";
@@ -42,6 +32,16 @@ public class LogPreprocessorExtension implements PreprocessorExtension {
           + ':'
           + (dataContainer.getLastReadStringIndex() + 1);
     }
+  }
+
+  @Override
+  public boolean hasAction(int arity) {
+    return true;
+  }
+
+  @Override
+  public boolean hasUserFunction(String name, int arity) {
+    return true;
   }
 
   @Override

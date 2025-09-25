@@ -29,12 +29,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class PreserveIndentDirectiveHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final PreserveIndentDirectiveHandler HANDLER = new PreserveIndentDirectiveHandler();
+  private static final PreserveIndentDirectiveHandler HANDLER =
+      new PreserveIndentDirectiveHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {

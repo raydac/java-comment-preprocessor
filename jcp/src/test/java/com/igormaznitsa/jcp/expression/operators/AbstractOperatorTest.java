@@ -21,14 +21,18 @@
 
 package com.igormaznitsa.jcp.expression.operators;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public abstract class AbstractOperatorTest extends AbstractSpyPreprocessorContextTest {
 
@@ -57,9 +61,11 @@ public abstract class AbstractOperatorTest extends AbstractSpyPreprocessorContex
     assertTrue("The reference must be longer that 7 chars", reference.length() > 7);
   }
 
-  public PreprocessorContext assertExecution(final Value expectedResult, final String expression) throws Exception {
+  public PreprocessorContext assertExecution(final Value expectedResult, final String expression)
+      throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
-    assertEquals("The expression result must be equal to the expected one", expectedResult, Expression.evalExpression(expression, context));
+    assertEquals("The expression result must be equal to the expected one", expectedResult,
+        Expression.evalExpression(expression, context));
     return context;
   }
 

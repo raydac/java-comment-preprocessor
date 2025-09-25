@@ -28,7 +28,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.util.Arrays;
 

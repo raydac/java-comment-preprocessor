@@ -31,7 +31,9 @@ public class LinesNotMatchException extends RuntimeException {
   private final String etalonString;
   private final String resultString;
 
-  public LinesNotMatchException(final int etalonLineNumber, final int resultLineNumber, final int problemStringIndex, final String etalonString, final String resultString) {
+  public LinesNotMatchException(final int etalonLineNumber, final int resultLineNumber,
+                                final int problemStringIndex, final String etalonString,
+                                final String resultString) {
     super("Lines not match in the etalon and the result");
     this.etalonLineNumber = etalonLineNumber;
     this.resultLineNumber = resultLineNumber;

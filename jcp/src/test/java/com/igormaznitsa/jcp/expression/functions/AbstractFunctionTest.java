@@ -21,24 +21,28 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import com.igormaznitsa.jcp.AbstractSpyPreprocessorContextTest;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContextTest {
 
-  protected static Map<String, Value> var(final Map<String, Value> map, final String name, final Value val) {
+  protected static Map<String, Value> var(final Map<String, Value> map, final String name,
+                                          final Value val) {
     map.put(name, val);
     return map;
   }
@@ -71,7 +75,8 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
     assertTrue("Reference must not be too short", reference.length() > 10);
   }
 
-  protected void assertAllowedArguments(final AbstractFunction function, final ValueType[][] checkingData) {
+  protected void assertAllowedArguments(final AbstractFunction function,
+                                        final ValueType[][] checkingData) {
     final ValueType[][] argTypes = function.getAllowedArgumentTypes();
     for (final ValueType[] currentTypes : argTypes) {
       boolean found = false;
@@ -91,7 +96,9 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
     this.assertFunction(expression, expected, null, null);
   }
 
-  protected void assertFunction(final String expression, final Value expected, final Map<String, Value> localVars, final Map<String, Value> globalVars) throws Exception {
+  protected void assertFunction(final String expression, final Value expected,
+                                final Map<String, Value> localVars,
+                                final Map<String, Value> globalVars) throws Exception {
     final PreprocessorContext context = preparePreprocessorContext(singletonList("./"));
 
     if (localVars != null) {
@@ -135,7 +142,8 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
         return;
       }
       ex.printStackTrace();
-      fail("Expression must contain preprocessor exception as cause [" + expression + "] but it doesn't have [" + ex.getClass().getName() + ']');
+      fail("Expression must contain preprocessor exception as cause [" + expression +
+          "] but it doesn't have [" + ex.getClass().getName() + ']');
     }
   }
 }

@@ -31,7 +31,8 @@ public class IfDefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Override
   public void testExecution() throws Exception {
-    assertFilePreprocessing("directive_ifdef.txt", false, null, null, new VariablePair("BYTECODE", "true"));
+    assertFilePreprocessing("directive_ifdef.txt", false, null, null,
+        new VariablePair("BYTECODE", "true"));
 
     try {
       assertFilePreprocessing("directive_ifdef.txt", false, null, null);

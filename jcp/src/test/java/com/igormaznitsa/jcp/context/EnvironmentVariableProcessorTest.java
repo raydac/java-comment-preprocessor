@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -44,18 +43,21 @@ public class EnvironmentVariableProcessorTest extends AbstractMockPreprocessorCo
 
     final EnvironmentVariableProcessor test = new EnvironmentVariableProcessor();
 
-    assertEquals("Must be equal", javaVersion, test.getVariable("env.java.version", context).asString());
+    assertEquals("Must be equal", javaVersion,
+        test.getVariable("env.java.version", context).asString());
     assertEquals("Must be equal", osName, test.getVariable("env.os.name", context).asString());
   }
 
   @Test(expected = PreprocessorException.class)
   public void testReadUnknownVariable() throws Exception {
-    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue", prepareMockContext());
+    new EnvironmentVariableProcessor().getVariable("kjhaksjdhksajqwoiueoqiwue",
+        prepareMockContext());
   }
 
   @Test(expected = PreprocessorException.class)
   public void testWriteVariable() throws Exception {
     PreprocessorContext context = prepareMockContext();
-    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE, context);
+    new EnvironmentVariableProcessor().setVariable("kjhaksjdhksajqwoiueoqiwue", Value.BOOLEAN_FALSE,
+        context);
   }
 }

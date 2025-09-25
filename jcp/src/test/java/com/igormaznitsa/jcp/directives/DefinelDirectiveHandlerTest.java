@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import org.junit.Test;
 
 public class DefinelDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
@@ -34,7 +33,8 @@ public class DefinelDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
 
   @Override
   public void testExecution() throws Exception {
-    assertTrue(assertFilePreprocessing("directive_definel.txt", false, null, null).isLocalVariable("somevar"));
+    assertTrue(assertFilePreprocessing("directive_definel.txt", false, null, null).isLocalVariable(
+        "somevar"));
   }
 
   @Test

@@ -21,6 +21,11 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import com.igormaznitsa.jcp.AbstractMockPreprocessorContextTest;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
@@ -34,12 +39,9 @@ import com.igormaznitsa.jcp.expression.operators.OperatorLESS;
 import com.igormaznitsa.jcp.expression.operators.OperatorMOD;
 import com.igormaznitsa.jcp.expression.operators.OperatorMUL;
 import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
-import org.junit.Test;
-
 import java.io.PushbackReader;
 import java.io.StringReader;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
@@ -69,7 +71,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0"));
-    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 0", Value.INT_ZERO,
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -78,8 +81,10 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("-1"));
-    assertEquals("Must be SUB", AbstractOperator.findForClass(OperatorSUB.class), ExpressionParser.getInstance().nextItem(reader, context));
-    assertEquals("Must be 1", Value.INT_ONE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be SUB", AbstractOperator.findForClass(OperatorSUB.class),
+        ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 1", Value.INT_ONE,
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -88,8 +93,10 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0<"));
-    assertEquals("Must be 0", Value.INT_ZERO, ExpressionParser.getInstance().nextItem(reader, context));
-    assertEquals("Must be LESS", AbstractOperator.findForClass(OperatorLESS.class), ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 0", Value.INT_ZERO,
+        ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be LESS", AbstractOperator.findForClass(OperatorLESS.class),
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -98,7 +105,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("3"));
-    assertEquals("Must be 3", Value.INT_THREE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 3", Value.INT_THREE,
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -107,7 +115,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("0xfF"));
-    assertEquals("Must be 255", Value.valueOf(255L), ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be 255", Value.valueOf(255L),
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -116,7 +125,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("true"));
-    assertEquals("Must be TRUE", Value.BOOLEAN_TRUE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be TRUE", Value.BOOLEAN_TRUE,
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -125,7 +135,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("false"));
-    assertEquals("Must be FALSE", Value.BOOLEAN_FALSE, ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be FALSE", Value.BOOLEAN_FALSE,
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -134,7 +145,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final PushbackReader reader = new PushbackReader(new StringReader("/"));
-    assertEquals("Must be DIV", AbstractOperator.findForClass(OperatorDIV.class), ExpressionParser.getInstance().nextItem(reader, context));
+    assertEquals("Must be DIV", AbstractOperator.findForClass(OperatorDIV.class),
+        ExpressionParser.getInstance().nextItem(reader, context));
     assertNull("Must be null", ExpressionParser.getInstance().nextItem(reader, context));
   }
 
@@ -143,7 +155,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     final PreprocessorContext context = prepareMockContext();
 
-    final PushbackReader reader = new PushbackReader(new StringReader("xml_attr(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
+    final PushbackReader reader =
+        new PushbackReader(new StringReader("xml_attr(1.3%abs(1+2)*3/4,\"hello\"==\"\nworld\t\")"));
 
     final ExpressionItem[] items = new ExpressionItem[] {
         AbstractFunction.findForClass(FunctionXML_ATTR.class),
@@ -169,7 +182,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     int index = 0;
     for (final ExpressionItem item : items) {
-      assertEquals("Position " + index + " must be equal", item, ExpressionParser.getInstance().nextItem(reader, context));
+      assertEquals("Position " + index + " must be equal", item,
+          ExpressionParser.getInstance().nextItem(reader, context));
       index++;
     }
     assertNull(ExpressionParser.getInstance().nextItem(reader, context));
@@ -219,17 +233,21 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
     final PreprocessorContext context = prepareMockContext();
 
     final ExpressionParser parser = ExpressionParser.getInstance();
-    final ExpressionTree tree = parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", context);
+    final ExpressionTree tree =
+        parser.parse("(var1+1)*xml_attr(\"first\",\"hello\"+\"world\")", context);
 
     final ExpressionTreeElement root = tree.getRoot();
 
-    assertEquals("Root must be MUL", AbstractOperator.findForClass(OperatorMUL.class), root.getItem());
+    assertEquals("Root must be MUL", AbstractOperator.findForClass(OperatorMUL.class),
+        root.getItem());
 
     final ExpressionTreeElement left = root.getChildForIndex(0);
     final ExpressionTreeElement right = root.getChildForIndex(1);
 
-    assertEquals("Left must be ADD", AbstractOperator.findForClass(OperatorADD.class), left.getItem());
-    assertEquals("Right must be Function", AbstractFunction.findForClass(FunctionXML_ATTR.class), right.getItem());
+    assertEquals("Left must be ADD", AbstractOperator.findForClass(OperatorADD.class),
+        left.getItem());
+    assertEquals("Right must be Function", AbstractFunction.findForClass(FunctionXML_ATTR.class),
+        right.getItem());
   }
 
   @Test
@@ -241,7 +259,8 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     final ExpressionTreeElement root = tree.getRoot();
 
-    assertEquals("Root must be ADD", AbstractOperator.findForClass(OperatorADD.class), root.getItem());
+    assertEquals("Root must be ADD", AbstractOperator.findForClass(OperatorADD.class),
+        root.getItem());
     assertEquals("Left must be 1", Value.INT_ONE, root.getChildForIndex(0).getItem());
     assertEquals("Left must be 2", Value.INT_TWO, root.getChildForIndex(1).getItem());
   }
@@ -290,8 +309,10 @@ public class ExpressionParserTest extends AbstractMockPreprocessorContextTest {
 
     final ExpressionTreeElement rightRight = right.getChildForIndex(1);
     assertEquals("Right-right must be SUB", SUB, rightRight.getItem());
-    assertEquals("Right-right-left must be 3", Value.INT_THREE, rightRight.getChildForIndex(0).getItem());
-    assertEquals("Right-right-right must be 4", Value.INT_FOUR, rightRight.getChildForIndex(1).getItem());
+    assertEquals("Right-right-left must be 3", Value.INT_THREE,
+        rightRight.getChildForIndex(0).getItem());
+    assertEquals("Right-right-right must be 4", Value.INT_FOUR,
+        rightRight.getChildForIndex(1).getItem());
   }
 
   @Test

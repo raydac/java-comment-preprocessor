@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -40,17 +39,21 @@ public class FunctionXML_ATTRTest extends AbstractFunctionXMLTest {
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_WrongElementId() throws Exception {
-    HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("kajshdjksaoiqweqwjdsa"), Value.valueOf("test"));
+    HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("kajshdjksaoiqweqwjdsa"),
+        Value.valueOf("test"));
   }
 
   @Test
   public void testExecution_ExistsAttribute() throws Exception {
-    assertEquals("hello", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("attr")).asString());
+    assertEquals("hello",
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("attr")).asString());
   }
 
   @Test
   public void testExecution_nonExistsAttribute() throws Exception {
-    assertEquals("", HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("hhhmattr")).asString());
+    assertEquals("",
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("hhhmattr"))
+            .asString());
   }
 
   @Override

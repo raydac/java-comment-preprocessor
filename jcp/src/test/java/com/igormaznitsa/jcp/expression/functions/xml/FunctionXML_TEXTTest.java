@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -40,8 +39,11 @@ public class FunctionXML_TEXTTest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution() throws Exception {
-    final Value elements = HANDLER.executeStr(SPY_CONTEXT, new FunctionXML_XELEMENT().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/languages")));
-    assertEquals("rustext\n  gertext\n  esttext\n  fintext\n  frtext\n  ittext", elements.asString().trim());
+    final Value elements = HANDLER.executeStr(SPY_CONTEXT,
+        new FunctionXML_XELEMENT().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID,
+            Value.valueOf("/root/languages")));
+    assertEquals("rustext\n  gertext\n  esttext\n  fintext\n  frtext\n  ittext",
+        elements.asString().trim());
   }
 
   @Override

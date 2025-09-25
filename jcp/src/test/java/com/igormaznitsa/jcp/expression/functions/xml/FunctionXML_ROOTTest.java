@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -40,7 +39,8 @@ public class FunctionXML_ROOTTest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution() throws Exception {
-    assertEquals(OPENED_DOCUMENT_ID.asString() + "_#root", HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID).asString());
+    assertEquals(OPENED_DOCUMENT_ID.asString() + "_#root",
+        HANDLER.executeStr(SPY_CONTEXT, OPENED_DOCUMENT_ID).asString());
   }
 
   @Override

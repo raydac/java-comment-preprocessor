@@ -75,7 +75,9 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
     when(mock.isAllowed(any(), any(), any(), any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
-    context.addAllPreprocessedResources(List.of(new FileInfoContainer(new File(PreprocessingState.FAKE_FILE_PATH), PreprocessingState.FAKE_FILE_PATH, false)));
+    context.addAllPreprocessedResources(List.of(
+        new FileInfoContainer(new File(PreprocessingState.FAKE_FILE_PATH),
+            PreprocessingState.FAKE_FILE_PATH, false)));
 
     final Value testResult = Value.valueOf("result");
     context.addPreprocessorExtension(mock);

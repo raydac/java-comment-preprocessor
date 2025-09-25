@@ -21,10 +21,10 @@
 
 package com.igormaznitsa.jcp.expression.operators;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.expression.ExpressionItemPriority;
 import com.igormaznitsa.jcp.expression.Value;
-
-import static org.junit.Assert.assertEquals;
 
 public class OperatorGREATTest extends AbstractOperatorTest {
 

@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,7 +42,8 @@ public class WarningDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
 
   @Test
   public void testExecution_wrongCases() {
-    assertPreprocessorException("\n\n//#warning 324444444444987987987982374987294873294324324\n", 3, null);
+    assertPreprocessorException("\n\n//#warning 324444444444987987987982374987294873294324324\n", 3,
+        null);
     assertPreprocessorException("\n\n//#warning sjdasd\n", 3, null);
     assertPreprocessorException("\n\n//#warning \n", 3, null);
   }

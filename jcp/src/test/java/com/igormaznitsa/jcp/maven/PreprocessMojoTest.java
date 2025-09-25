@@ -88,7 +88,8 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
 
     assertArrayEqualsWithoutOrders(new String[] {"/", "/some", "/another/some"}, sources);
     assertEquals("destination_dir", context.getTarget().getName());
-    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"}, context.getExcludeExtensions().toArray());
+    assertArrayEqualsWithoutOrders(new String[] {"xml", "html"},
+        context.getExcludeExtensions().toArray());
     assertArrayEqualsWithoutOrders(new String[] {"java", "txt"}, context.getExtensions().toArray());
     assertEquals(StandardCharsets.UTF_16, context.getSourceEncoding());
     assertEquals(StandardCharsets.US_ASCII, context.getTargetEncoding());
@@ -104,7 +105,9 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     assertTrue(context.isKeepAttributes());
     assertTrue(context.isUnknownVariableAsFalse());
 
-    assertArrayEquals(Arrays.asList(".git", ".hg", "**/.cvs", "c:\\hello\\**\\world").toArray(new String[0]), context.getExcludeFolders().toArray(new String[0]));
+    assertArrayEquals(
+        Arrays.asList(".git", ".hg", "**/.cvs", "c:\\hello\\**\\world").toArray(new String[0]),
+        context.getExcludeFolders().toArray(new String[0]));
 
     final List<File> configFiles = context.getConfigFiles();
     assertEquals("Must be two", 2, configFiles.size());
@@ -112,6 +115,7 @@ public final class PreprocessMojoTest extends AbstractMojoTestCase {
     assertEquals("Must be test2.cfg", "test2.cfg", configFiles.get(1).getName());
 
     assertEquals("Must be 3", Value.INT_THREE, context.findVariableForName("globalvar1", true));
-    assertEquals("Must be 'hello world'", Value.valueOf("hello world"), context.findVariableForName("globalvar2", true));
+    assertEquals("Must be 'hello world'", Value.valueOf("hello world"),
+        context.findVariableForName("globalvar2", true));
   }
 }

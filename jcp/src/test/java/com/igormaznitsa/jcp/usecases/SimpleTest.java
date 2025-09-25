@@ -23,14 +23,14 @@ package com.igormaznitsa.jcp.usecases;
 
 import static org.junit.Assert.assertEquals;
 
-
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 public class SimpleTest extends AbstractUseCaseTest {
 
   @Override
-  public void check(final PreprocessorContext context, final JcpPreprocessor.Statistics stat) throws Exception {
+  public void check(final PreprocessorContext context, final JcpPreprocessor.Statistics stat)
+      throws Exception {
     assertEquals(1, stat.getPreprocessed());
     assertEquals(0, stat.getCopied());
   }

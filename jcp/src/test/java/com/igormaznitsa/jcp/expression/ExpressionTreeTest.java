@@ -21,6 +21,9 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import com.igormaznitsa.jcp.expression.operators.OperatorADD;
 import com.igormaznitsa.jcp.expression.operators.OperatorDIV;
@@ -28,9 +31,6 @@ import com.igormaznitsa.jcp.expression.operators.OperatorEQU;
 import com.igormaznitsa.jcp.expression.operators.OperatorMUL;
 import com.igormaznitsa.jcp.expression.operators.OperatorNOT;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ExpressionTreeTest {
 
@@ -46,7 +46,8 @@ public class ExpressionTreeTest {
     final ExpressionTreeElement root = tree.getRoot();
 
     assertNotNull("Root must not be null", root);
-    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class), root.getItem());
+    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class),
+        root.getItem());
     assertEquals("Left must be 1", Value.INT_ONE, root.getChildForIndex(0).getItem());
     assertEquals("Right must be 2", Value.INT_TWO, root.getChildForIndex(1).getItem());
   }
@@ -65,12 +66,14 @@ public class ExpressionTreeTest {
     final ExpressionTreeElement root = tree.getRoot();
 
     assertNotNull("Root must not be null", root);
-    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class), root.getItem());
+    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class),
+        root.getItem());
     assertEquals("Left must be 1", Value.INT_ONE, root.getChildForIndex(0).getItem());
 
     final ExpressionTreeElement right = root.getChildForIndex(1);
 
-    assertEquals("Right must be div", AbstractOperator.findForClass(OperatorDIV.class), right.getItem());
+    assertEquals("Right must be div", AbstractOperator.findForClass(OperatorDIV.class),
+        right.getItem());
     assertEquals("Left for div must be 2", Value.INT_TWO, right.getChildForIndex(0).getItem());
     assertEquals("Right for div must be 3", Value.INT_THREE, right.getChildForIndex(1).getItem());
   }
@@ -89,8 +92,10 @@ public class ExpressionTreeTest {
     final ExpressionTreeElement root = tree.getRoot();
 
     assertNotNull("Root must not be null", root);
-    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class), root.getItem());
-    assertEquals("Left must be div", AbstractOperator.findForClass(OperatorDIV.class), root.getChildForIndex(0).getItem());
+    assertEquals("Root must be add", AbstractOperator.findForClass(OperatorADD.class),
+        root.getItem());
+    assertEquals("Left must be div", AbstractOperator.findForClass(OperatorDIV.class),
+        root.getChildForIndex(0).getItem());
 
     final ExpressionTreeElement left = root.getChildForIndex(0);
 
@@ -221,8 +226,10 @@ public class ExpressionTreeTest {
 
     final ExpressionTreeElement rightLeft = right.getChildForIndex(1);
     assertEquals("Right-left must be ADD", ADD, rightLeft.getItem());
-    assertEquals("Right-left-right must be 2", Value.INT_TWO, rightLeft.getChildForIndex(0).getItem());
-    assertEquals("Right-left-right must be 3", Value.INT_THREE, rightLeft.getChildForIndex(1).getItem());
+    assertEquals("Right-left-right must be 2", Value.INT_TWO,
+        rightLeft.getChildForIndex(0).getItem());
+    assertEquals("Right-left-right must be 3", Value.INT_THREE,
+        rightLeft.getChildForIndex(1).getItem());
 
   }
 
@@ -243,11 +250,13 @@ public class ExpressionTreeTest {
     final ExpressionTreeElement root = MAIN_TREE.getRoot();
 
     assertEquals("Root must be EQU", EQU, root.getItem());
-    assertEquals("Root right must be FALSE", Value.BOOLEAN_FALSE, root.getChildForIndex(1).getItem());
+    assertEquals("Root right must be FALSE", Value.BOOLEAN_FALSE,
+        root.getChildForIndex(1).getItem());
 
     final ExpressionTreeElement rootLeft = root.getChildForIndex(0);
 
     assertEquals("Left must be NOT", NOT, rootLeft.getItem());
-    assertEquals("Left-left must be TRUE", Value.BOOLEAN_TRUE, rootLeft.getChildForIndex(0).getItem());
+    assertEquals("Left-left must be TRUE", Value.BOOLEAN_TRUE,
+        rootLeft.getChildForIndex(0).getItem());
   }
 }

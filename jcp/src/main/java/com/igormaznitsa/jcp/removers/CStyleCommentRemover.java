@@ -32,7 +32,8 @@ import java.io.Writer;
  */
 public class CStyleCommentRemover extends AbstractCommentRemover {
 
-  public CStyleCommentRemover(final Reader src, final Writer dst, final boolean whiteSpacesAllowed) {
+  public CStyleCommentRemover(final Reader src, final Writer dst,
+                              final boolean whiteSpacesAllowed) {
     super(src, dst, whiteSpacesAllowed);
   }
 

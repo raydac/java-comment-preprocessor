@@ -26,7 +26,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import org.junit.Test;
@@ -45,7 +44,8 @@ public class GlobalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
 
   @Test
   public void testExecution_PreprocessingPhase() throws Exception {
-    final PreprocessorContext context = assertFilePreprocessing("directive_global.txt", false, null, null);
+    final PreprocessorContext context =
+        assertFilePreprocessing("directive_global.txt", false, null, null);
     assertFalse(context.containsGlobalVariable("xxx"));
     assertNull(context.findVariableForName("xxx", true));
   }

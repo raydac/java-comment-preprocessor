@@ -34,7 +34,8 @@ public class IfNDefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     assertFilePreprocessing("directive_ifndef.txt", false, null, null);
 
     try {
-      assertFilePreprocessing("directive_ifndef.txt", false, null, null, new VariablePair("BYTECODE", "123"));
+      assertFilePreprocessing("directive_ifndef.txt", false, null, null,
+          new VariablePair("BYTECODE", "123"));
     } catch (LinesNotMatchException expected) {
       assertEquals("somebytecode", expected.getEtalonString());
       assertEquals("end", expected.getResultString());

@@ -32,7 +32,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
@@ -50,7 +49,8 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     when(mockup.hasUserFunction(anyString(), anyInt())).thenReturn(true);
     when(mockup.hasAction(anyInt())).thenReturn(true);
     when(mockup.isAllowed(any(), any(), any(), any())).thenReturn(true);
-    when(mockup.processAction(any(PreprocessorContext.class), any(Value[].class))).thenReturn(Boolean.TRUE);
+    when(mockup.processAction(any(PreprocessorContext.class), any(Value[].class))).thenReturn(
+        Boolean.TRUE);
 
     assertFilePreprocessing("directive_action.txt", false, mockup, null);
 
@@ -61,7 +61,8 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     final Value val5 = Value.valueOf(Boolean.TRUE);
     final Value val6 = Value.valueOf("hello,");
 
-    verify(mockup).processAction(any(PreprocessorContext.class), eq(new Value[] {val1, val2, val3, val4, val5, val6}));
+    verify(mockup).processAction(any(PreprocessorContext.class),
+        eq(new Value[] {val1, val2, val3, val4, val5, val6}));
   }
 
   @Test

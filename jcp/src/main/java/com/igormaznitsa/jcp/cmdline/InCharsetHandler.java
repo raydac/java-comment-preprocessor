@@ -55,8 +55,8 @@ public class InCharsetHandler implements CommandLineHandler {
       final String value = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
       if (!value.isEmpty() && Charset.isSupported(value)) {
-          context.setSourceEncoding(Charset.forName(value));
-          result = true;
+        context.setSourceEncoding(Charset.forName(value));
+        result = true;
       }
     }
     return result;

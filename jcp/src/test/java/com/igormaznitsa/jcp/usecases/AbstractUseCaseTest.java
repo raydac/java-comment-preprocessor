@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
@@ -46,7 +45,8 @@ public abstract class AbstractUseCaseTest {
   @Before
   public void before() throws Exception {
 
-    final File testDir = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+    final File testDir =
+        new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 
     final File base = new File(testDir, this.getClass().getName().replace('.', File.separatorChar));
 
@@ -77,15 +77,18 @@ public abstract class AbstractUseCaseTest {
     return true;
   }
 
-  public abstract void check(PreprocessorContext context, JcpPreprocessor.Statistics stat) throws Exception;
+  public abstract void check(PreprocessorContext context, JcpPreprocessor.Statistics stat)
+      throws Exception;
 
-  private void assertFolder(final File folder1, final File folder2, final boolean ignoreEOL) throws Exception {
+  private void assertFolder(final File folder1, final File folder2, final boolean ignoreEOL)
+      throws Exception {
     assertTrue("Folder 1 must be folder", folder1.isDirectory());
     assertTrue("Folder 2 must be folder", folder2.isDirectory());
 
     final File[] folder1files = folder1.listFiles();
     File[] folde2files = folder2.listFiles();
-    assertEquals("Must have the same number of files and folders", folder1files.length, folde2files.length);
+    assertEquals("Must have the same number of files and folders", folder1files.length,
+        folde2files.length);
 
     for (final File f : folder1files) {
       final File f2 = new File(folder2, f.getName());
@@ -115,13 +118,15 @@ public abstract class AbstractUseCaseTest {
           System.err.println("=============================");
 
           if (ignoreEOL) {
-            assertEquals("File content must be same", fileOne.replace('\r', ' ').replace('\n', ' '), fileTwo.replace('\r', ' ').replace('\n', ' '));
+            assertEquals("File content must be same", fileOne.replace('\r', ' ').replace('\n', ' '),
+                fileTwo.replace('\r', ' ').replace('\n', ' '));
           } else {
             assertEquals("File content must be same", fileOne, fileTwo);
           }
         }
         if (!ignoreEOL) {
-          assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f), FileUtils.checksumCRC32(f2));
+          assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f),
+              FileUtils.checksumCRC32(f2));
         }
       }
     }
@@ -154,7 +159,8 @@ public abstract class AbstractUseCaseTest {
 
   @Test
   public final void main() throws Exception {
-    final PreprocessorContext context = createPreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        createPreprocessorContext(new File("some_impossible_folder_121212"));
     tuneDefaultContextOptions(context);
     tuneContext(context);
 

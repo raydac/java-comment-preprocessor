@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
@@ -35,7 +34,9 @@ public class UndefDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = assertFilePreprocessing("directive_undef.txt", false, null, null, new VariablePair("somevar", "true"));
+    final PreprocessorContext context =
+        assertFilePreprocessing("directive_undef.txt", false, null, null,
+            new VariablePair("somevar", "true"));
     assertFalse(context.isGlobalVariable("somevar"));
     assertFalse(context.isLocalVariable("localone"));
   }

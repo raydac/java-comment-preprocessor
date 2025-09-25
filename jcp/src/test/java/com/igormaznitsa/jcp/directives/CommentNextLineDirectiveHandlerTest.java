@@ -27,7 +27,8 @@ import static org.junit.Assert.assertTrue;
 
 public class CommentNextLineDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanceTest {
 
-  private static final CommentNextLineDirectiveHandler HANDLER = new CommentNextLineDirectiveHandler();
+  private static final CommentNextLineDirectiveHandler HANDLER =
+      new CommentNextLineDirectiveHandler();
 
   @Override
   public void testExecution() throws Exception {

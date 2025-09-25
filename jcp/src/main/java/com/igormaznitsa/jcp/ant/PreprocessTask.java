@@ -178,12 +178,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
     }
 
     if (!this.getActionPreprocessorExtensions().isEmpty()) {
-      info("Instantiating action preprocessor extensions: " + this.getActionPreprocessorExtensions());
+      info("Instantiating action preprocessor extensions: " +
+          this.getActionPreprocessorExtensions());
       Arrays.stream(this.getActionPreprocessorExtensions().split(","))
           .filter(x -> !x.trim().isEmpty())
           .forEach(x -> context.addPreprocessorExtension(
-          PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
-              x.trim())));
+              PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(
+                  x.trim())));
     }
 
     final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(

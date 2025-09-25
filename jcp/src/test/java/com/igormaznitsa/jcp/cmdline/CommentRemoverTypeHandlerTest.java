@@ -48,9 +48,9 @@ public class CommentRemoverTypeHandlerTest extends AbstractCommandLineHandlerTes
     assertFalse(HANDLER.processCommandLineKey("/mm:", mock));
     assertThrows(PreprocessorException.class, () -> HANDLER.processCommandLineKey("/m:", mock));
 
-    assertEquals(CommentRemoverType.REMOVE_C_STYLE,mock.getKeepComments());
+    assertEquals(CommentRemoverType.REMOVE_C_STYLE, mock.getKeepComments());
     assertTrue(HANDLER.processCommandLineKey("/m:keep_all", mock));
-    assertEquals(CommentRemoverType.KEEP_ALL,mock.getKeepComments());
+    assertEquals(CommentRemoverType.KEEP_ALL, mock.getKeepComments());
   }
 
   @Override

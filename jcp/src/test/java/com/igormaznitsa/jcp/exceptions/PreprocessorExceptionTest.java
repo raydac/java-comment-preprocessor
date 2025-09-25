@@ -36,7 +36,8 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracket() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
@@ -52,7 +53,8 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracketClosing() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket_closing.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setDryRun(true);
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
@@ -68,7 +70,8 @@ public final class PreprocessorExceptionTest {
   public void testExceptionStringIndex_WrongBracketInIncluded() throws Exception {
     final File file = new File(this.getClass().getResource("wrong_bracket_include.txt").toURI());
 
-    final PreprocessorContext context = new PreprocessorContext(new File("some_impossible_folder_121212"));
+    final PreprocessorContext context =
+        new PreprocessorContext(new File("some_impossible_folder_121212"));
     context.setSources(Collections.singletonList(file.getParent()));
     context.setDryRun(true);
 
@@ -80,7 +83,8 @@ public final class PreprocessorExceptionTest {
       final FilePositionInfo[] fileStack = expected.getIncludeChain();
       assertEquals("Must have depth 2", 2, fileStack.length);
       assertEquals("String index in the including file is 26", 26, fileStack[1].getLineNumber());
-      assertEquals("String index in the wrong bracket file is 15", 17, fileStack[0].getLineNumber());
+      assertEquals("String index in the wrong bracket file is 15", 17,
+          fileStack[0].getLineNumber());
 
       assertEquals("Expected correct line number", 17, expected.getLineNumber());
     }

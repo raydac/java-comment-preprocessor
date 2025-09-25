@@ -25,7 +25,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -38,7 +37,8 @@ public class PreprocessorUtilsTest {
   @Test
   public void testReplaceStringPrefix() throws Exception {
     final String[] testData = new String[] {"--ae:123", "-homa-", "-hbd", "---Some", "-", "--"};
-    final String[] processed = PreprocessorUtils.replaceStringPrefix(new String[] {"-", "--"}, "/", testData);
+    final String[] processed =
+        PreprocessorUtils.replaceStringPrefix(new String[] {"-", "--"}, "/", testData);
     assertArrayEquals(new String[] {"/ae:123", "/homa-", "/hbd", "/-Some", "/", "/"}, processed);
   }
 
@@ -71,7 +71,9 @@ public class PreprocessorUtilsTest {
       }
     }
 
-    assertNotNull("We must have found a non default charset, system must have more than one available charset", nonDefaultCharset);
+    assertNotNull(
+        "We must have found a non default charset, system must have more than one available charset",
+        nonDefaultCharset);
 
     // some hack to get access to the wrapped reader
     final Field inField = BufferedReader.class.getDeclaredField("in");
@@ -81,12 +83,14 @@ public class PreprocessorUtilsTest {
 
     final int BUFFER_SIZE = 0xCAFE;
 
-    final BufferedReader reader = PreprocessorUtils.makeFileReader(testFile, nonDefaultCharset, BUFFER_SIZE);
+    final BufferedReader reader =
+        PreprocessorUtils.makeFileReader(testFile, nonDefaultCharset, BUFFER_SIZE);
 
     // check that we have selected the non standard charset
     final InputStreamReader wrappedReader = (InputStreamReader) inField.get(reader);
     assertNotNull("Must not be null", wrappedReader);
-    assertEquals("The non default charset must be set", nonDefaultCharset.name(), wrappedReader.getEncoding());
+    assertEquals("The non default charset must be set", nonDefaultCharset.name(),
+        wrappedReader.getEncoding());
 
     // check that we have changed the buffer size
     final char[] insideCharBuffer = (char[]) cbField.get(reader);

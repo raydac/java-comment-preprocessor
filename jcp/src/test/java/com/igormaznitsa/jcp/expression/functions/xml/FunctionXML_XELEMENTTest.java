@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -36,7 +35,8 @@ public class FunctionXML_XELEMENTTest extends AbstractFunctionXMLTest {
 
   @Test(expected = PreprocessorException.class)
   public void testExecution_ForWrongElement() throws Exception {
-    assertNotNull(HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
+    assertNotNull(
+        HANDLER.executeStrStr(SPY_CONTEXT, Value.valueOf("some wrong"), Value.valueOf("nonexist")));
   }
 
   @Test(expected = PreprocessorException.class)
@@ -46,9 +46,11 @@ public class FunctionXML_XELEMENTTest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution_ForExistElements() throws Exception {
-    final Value value = HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
+    final Value value =
+        HANDLER.executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ID, Value.valueOf("/root/element"));
     assertNotNull(value);
-    assertEquals("first", new FunctionXML_ATTR().executeStrStr(SPY_CONTEXT, value, Value.valueOf("attr")).asString());
+    assertEquals("first",
+        new FunctionXML_ATTR().executeStrStr(SPY_CONTEXT, value, Value.valueOf("attr")).asString());
   }
 
   @Override

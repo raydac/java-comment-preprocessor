@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
@@ -35,7 +34,8 @@ public class LocalDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptanc
 
   @Override
   public void testExecution() throws Exception {
-    final PreprocessorContext context = assertFilePreprocessing("directive_local.txt", false, null, null);
+    final PreprocessorContext context =
+        assertFilePreprocessing("directive_local.txt", false, null, null);
 
     assertEquals(Long.valueOf(5), context.getLocalVariable("x").asLong());
     assertEquals(Long.valueOf(10), context.getLocalVariable("y").asLong());

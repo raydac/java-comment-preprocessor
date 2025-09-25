@@ -24,7 +24,6 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
@@ -46,8 +45,11 @@ public class FunctionXML_SIZETest extends AbstractFunctionXMLTest {
 
   @Test
   public void testExecution() throws Exception {
-    final Value languageElement = new FunctionXML_GET().executeStrInt(SPY_CONTEXT, new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT, Value.valueOf("languages")), Value.valueOf(0L));
-    final Value elementList = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, languageElement, Value.valueOf("language"));
+    final Value languageElement = new FunctionXML_GET().executeStrInt(SPY_CONTEXT,
+        new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, OPENED_DOCUMENT_ROOT,
+            Value.valueOf("languages")), Value.valueOf(0L));
+    final Value elementList = new FunctionXML_LIST().executeStrStr(SPY_CONTEXT, languageElement,
+        Value.valueOf("language"));
     assertNotNull(elementList);
     assertEquals(6L, HANDLER.executeStr(SPY_CONTEXT, elementList).asLong().longValue());
   }

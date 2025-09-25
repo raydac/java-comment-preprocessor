@@ -26,7 +26,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
 import java.util.Arrays;
@@ -49,7 +48,8 @@ public class SourceDirectoryHandlerTest extends AbstractCommandLineHandlerTest {
     assertFalse(HANDLER.processCommandLineKey("/I:", mock));
     assertFalse(HANDLER.processCommandLineKey("/II", mock));
 
-    assertTrue(HANDLER.processCommandLineKey("/i:testdir" + File.pathSeparatorChar + "somedir", mock));
+    assertTrue(
+        HANDLER.processCommandLineKey("/i:testdir" + File.pathSeparatorChar + "somedir", mock));
     verify(mock).setSources(Arrays.asList("testdir", "somedir"));
   }
 

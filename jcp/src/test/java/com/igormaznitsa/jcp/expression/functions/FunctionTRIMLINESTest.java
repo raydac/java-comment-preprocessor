@@ -21,12 +21,12 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class FunctionTRIMLINESTest extends AbstractFunctionTest {
 
@@ -36,7 +36,8 @@ public class FunctionTRIMLINESTest extends AbstractFunctionTest {
   public void testExecution_WorkingCases() throws Exception {
     assertFunction("trimlines(\"\")", Value.valueOf(""));
     assertFunction("trimlines(\"hello world\")", Value.valueOf("hello world"));
-    assertFunction("trimlines(\"  hello   \n   \n   world\n\")", Value.valueOf("hello" + PreprocessorUtils.getNextLineCodes() + "world"));
+    assertFunction("trimlines(\"  hello   \n   \n   world\n\")",
+        Value.valueOf("hello" + PreprocessorUtils.getNextLineCodes() + "world"));
     assertDestinationFolderEmpty();
   }
 

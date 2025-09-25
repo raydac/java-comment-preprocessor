@@ -29,13 +29,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import org.junit.Test;
 
 public class AllowWhitespaceDirectiveHandlerTest extends AbstractCommandLineHandlerTest {
 
-  private static final AllowWhitespaceDirectiveHandler HANDLER = new AllowWhitespaceDirectiveHandler();
+  private static final AllowWhitespaceDirectiveHandler HANDLER =
+      new AllowWhitespaceDirectiveHandler();
 
   @Override
   public void testThatTheHandlerInTheHandlerList() {
