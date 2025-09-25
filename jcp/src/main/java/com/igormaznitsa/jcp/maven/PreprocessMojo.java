@@ -22,11 +22,10 @@
 package com.igormaznitsa.jcp.maven;
 
 import static com.igormaznitsa.jcp.utils.GetUtils.ensureNonNull;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.fillContextByFoundServices;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
-import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
@@ -480,22 +479,7 @@ public class PreprocessMojo extends AbstractMojo implements PreprocessorLogger {
       final PreprocessorContext context;
       try {
         context = makePreprocessorContext();
-        final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
-            CommentTextProcessor.class);
-        if (!commentTextProcessors.isEmpty()) {
-          getLog().info("Detected " + commentTextProcessors.size() +
-              " external comment text processing services");
-          if (this.isVerbose()) {
-            getLog().info("Detected comment text processors: " +
-                commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
-                    .collect(Collectors.joining(",")));
-          } else {
-            getLog().debug("Detected comment text processors: " +
-                commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
-                    .collect(Collectors.joining(",")));
-          }
-          commentTextProcessors.forEach(context::addCommentTextProcessor);
-        }
+        fillContextByFoundServices(context);
       } catch (Exception ex) {
         final PreprocessorException newException =
             PreprocessorException.extractPreprocessorException(ex);

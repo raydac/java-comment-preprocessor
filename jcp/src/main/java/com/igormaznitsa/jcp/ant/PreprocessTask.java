@@ -21,11 +21,10 @@
 
 package com.igormaznitsa.jcp.ant;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.fillContextByFoundServices;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
-import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -188,19 +187,10 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
                   x.trim())));
     }
 
-    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
-        CommentTextProcessor.class);
-    if (!commentTextProcessors.isEmpty()) {
-      info(String.format("Detected %d external comment text processing services",
-          commentTextProcessors.size()));
-      info(String.format("Detected comment text processors: %s",
-          commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
-              .collect(Collectors.joining(","))));
-      commentTextProcessors.forEach(context::addCommentTextProcessor);
-    }
-
     this.registerConfigFiles(context);
     this.fillGlobalVars(context);
+
+    fillContextByFoundServices(context);
 
     return context;
   }

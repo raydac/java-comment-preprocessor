@@ -28,7 +28,9 @@ import static com.igormaznitsa.jcp.context.CommentRemoverType.makeListOfAllRemov
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
+import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.context.SpecialVariableProcessor;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
@@ -111,6 +113,47 @@ public final class PreprocessorUtils {
     return context.getPreprocessingState().findLastTextFileDataContainerInStack()
         .map(TextFileDataContainer::getFile)
         .flatMap(context::findFileInfoContainer);
+  }
+
+  /**
+   * Find all services in class path and register them in provided context.
+   *
+   * @param context target context must not be null
+   * @since 7.3.0
+   */
+  public static void fillContextByFoundServices(final PreprocessorContext context) {
+    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
+        CommentTextProcessor.class);
+    if (!commentTextProcessors.isEmpty()) {
+      context.getPreprocessorLogger()
+          .info(String.format("Detected %d comment text processing service(s): %s",
+              commentTextProcessors.size(),
+              commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
+                  .collect(Collectors.joining(","))));
+      commentTextProcessors.forEach(context::addCommentTextProcessor);
+    }
+
+    final List<SpecialVariableProcessor> specialVariableProcessors = findAndInstantiateAllServices(
+        SpecialVariableProcessor.class);
+    if (!specialVariableProcessors.isEmpty()) {
+      context.getPreprocessorLogger()
+          .info(String.format("Detected %d special variable service(s): %s",
+              specialVariableProcessors.size(),
+              specialVariableProcessors.stream().map(x -> x.getClass().getCanonicalName())
+                  .collect(Collectors.joining(","))));
+      specialVariableProcessors.forEach(context::registerSpecialVariableProcessor);
+    }
+
+    final List<PreprocessorExtension> preprocessorExtensions = findAndInstantiateAllServices(
+        PreprocessorExtension.class);
+    if (!preprocessorExtensions.isEmpty()) {
+      context.getPreprocessorLogger()
+          .info(String.format("Detected %d preprocessor extension service(s): %s",
+              preprocessorExtensions.size(),
+              preprocessorExtensions.stream().map(x -> x.getClass().getCanonicalName())
+                  .collect(Collectors.joining(","))));
+      preprocessorExtensions.forEach(context::addPreprocessorExtension);
+    }
   }
 
   /**

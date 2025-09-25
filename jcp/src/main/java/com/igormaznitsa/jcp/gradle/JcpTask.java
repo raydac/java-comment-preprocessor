@@ -1,12 +1,11 @@
 package com.igormaznitsa.jcp.gradle;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.fillContextByFoundServices;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findCommentRemoverForId;
 import static java.util.Collections.emptyMap;
 
 import com.igormaznitsa.jcp.JcpPreprocessor;
-import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.logger.PreprocessorLogger;
@@ -456,6 +455,8 @@ public class JcpTask extends DefaultTask {
     preprocessorContext.setUnknownVariableAsFalse(this.unknownVarAsFalse.get());
     preprocessorContext.setVerbose(this.verbose.get());
 
+    fillContextByFoundServices(preprocessorContext);
+
     if (!this.actionPreprocessorExtensions.get().isEmpty()) {
       this.actionPreprocessorExtensions.get()
           .forEach(x -> {
@@ -465,17 +466,6 @@ public class JcpTask extends DefaultTask {
             preprocessorContext.addPreprocessorExtension(
                 findAndInstantiatePreprocessorExtensionForClassName(className));
           });
-    }
-
-    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
-        CommentTextProcessor.class);
-    if (!commentTextProcessors.isEmpty()) {
-      logger.info("Detected {} external comment text processing services",
-          commentTextProcessors.size());
-      logger.info("Detected comment text processors: {}",
-          commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
-              .collect(Collectors.joining(",")));
-      commentTextProcessors.forEach(preprocessorContext::addCommentTextProcessor);
     }
 
     this.vars.getOrElse(emptyMap()).entrySet().stream()

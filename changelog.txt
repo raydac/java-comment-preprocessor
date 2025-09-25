@@ -1,5 +1,6 @@
 __7.3.0 (SNAPSHOT)__
 
+- added way to find `PreprocessorExtension` and `SpecialVariableProcessor` among Java services
 - refactoring of API for `SpecialVariableProcessor` and `CommentTextProcessor`
 - replaced single string property `actionPreprocessorExtension` by string list `actionPreprocessorExtensions` to provide way for many preprocessor extensions.
 - internal refactoring

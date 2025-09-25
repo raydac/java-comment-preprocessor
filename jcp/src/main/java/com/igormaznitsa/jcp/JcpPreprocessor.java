@@ -22,7 +22,7 @@
 package com.igormaznitsa.jcp;
 
 import static com.igormaznitsa.jcp.InfoHelper.makeTextForHelpInfo;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findAndInstantiateAllServices;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.fillContextByFoundServices;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.readWholeTextFileIntoArray;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.throwPreprocessorException;
 
@@ -51,7 +51,6 @@ import com.igormaznitsa.jcp.cmdline.SourceDirectoryHandler;
 import com.igormaznitsa.jcp.cmdline.UnknownAsFalseHandler;
 import com.igormaznitsa.jcp.cmdline.VerboseHandler;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
@@ -73,7 +72,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -192,14 +190,7 @@ public final class JcpPreprocessor {
       }
     }
 
-    final List<CommentTextProcessor> commentTextProcessors = findAndInstantiateAllServices(
-        CommentTextProcessor.class);
-    if (!commentTextProcessors.isEmpty()) {
-      System.out.printf("Detected comment text processors: %s%n",
-          commentTextProcessors.stream().map(x -> x.getClass().getCanonicalName())
-              .collect(Collectors.joining(",")));
-      commentTextProcessors.forEach(result::addCommentTextProcessor);
-    }
+    fillContextByFoundServices(result);
 
     return result;
   }
