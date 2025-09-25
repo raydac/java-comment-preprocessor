@@ -33,7 +33,7 @@ import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import com.igormaznitsa.jcp.utils.ResettablePrinter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -437,7 +437,7 @@ public class FileInfoContainer {
       final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,
       final int stringIndex,
       final List<String> textPieces,
-      final ResetablePrinter resetablePrinter,
+      final ResettablePrinter resettablePrinter,
       final PreprocessingState state,
       final PreprocessorContext context)
       throws IOException {
@@ -456,7 +456,7 @@ public class FileInfoContainer {
 
     if (accumulated.isEmpty()) {
       if (lastEol) {
-        resetablePrinter.print(context.getEol());
+        resettablePrinter.print(context.getEol());
       }
     } else {
       final List<CommentTextProcessor> processors = context.getCommentTextProcessors();
@@ -495,7 +495,7 @@ public class FileInfoContainer {
           text = results.stream().collect(Collectors.joining(context.getEol()));
         }
       }
-      resetablePrinter.print(text + (lastEol ? context.getEol() : ""));
+      resettablePrinter.print(text + (lastEol ? context.getEol() : ""));
     }
   }
 
@@ -544,8 +544,8 @@ public class FileInfoContainer {
             new AtomicReference<>();
 
         while (!Thread.currentThread().isInterrupted()) {
-          final ResetablePrinter thePrinter =
-              requireNonNull(theState.getPrinter(), "Printer must be defined");
+          final ResettablePrinter thePrinter =
+              requireNonNull(theState.getSelectedPrinter(), "Printer must be defined");
 
           String rawString = theState.nextLine();
           final boolean presentedNextLine = theState.hasReadLineNextLineInEnd();

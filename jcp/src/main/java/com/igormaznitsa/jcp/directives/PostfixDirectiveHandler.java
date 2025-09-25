@@ -57,11 +57,11 @@ public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
     if (!string.isEmpty()) {
       switch (string.charAt(0)) {
         case '+': {
-          state.setPrinter(PreprocessingState.PrinterType.POSTFIX);
+          state.selectPrinter(PreprocessingState.PrinterType.POSTFIX);
         }
         break;
         case '-': {
-          state.setPrinter(PreprocessingState.PrinterType.NORMAL);
+          state.selectPrinter(PreprocessingState.PrinterType.NORMAL);
         }
         break;
         default: {

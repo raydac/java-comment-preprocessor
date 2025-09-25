@@ -40,6 +40,10 @@ import java.util.Set;
  */
 public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
 
+  public static final String VAR_JCP_BUFFER_ALL = "jcp.text.buffer.all";
+  public static final String VAR_JCP_BUFFER_MIDDLE = "jcp.text.buffer.middle";
+  public static final String VAR_JCP_BUFFER_PREFIX = "jcp.text.buffer.prefix";
+  public static final String VAR_JCP_BUFFER_POSTFIX = "jcp.text.buffer.postfix";
   public static final String VAR_DEST_DIR = "jcp.dst.dir";
   public static final String VAR_VERSION = "jcp.version";
   public static final String VAR_DEST_FILE_NAME = "jcp.dst.name";
@@ -84,12 +88,25 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     result.add(
         new NameReferencePair(VAR_TIMESTAMP, "Source file timestamp (EEE MMM dd HH:mm:ss yyyy)"));
 
+    result.add(new NameReferencePair(VAR_JCP_BUFFER_ALL,
+        "Whole current text buffer for preprocessing file"));
+    result.add(new NameReferencePair(VAR_JCP_BUFFER_MIDDLE,
+        "Current middle text buffer for preprocessing file"));
+    result.add(new NameReferencePair(VAR_JCP_BUFFER_PREFIX,
+        "Current prefix text buffer for preprocessing file"));
+    result.add(new NameReferencePair(VAR_JCP_BUFFER_POSTFIX,
+        "Current postfix text buffer for preprocessing file"));
+
     return result;
   }
 
   @Override
   public Set<String> getVariableNames() {
     return Set.of(
+        VAR_JCP_BUFFER_PREFIX,
+        VAR_JCP_BUFFER_MIDDLE,
+        VAR_JCP_BUFFER_POSTFIX,
+        VAR_JCP_BUFFER_ALL,
         VAR_DEST_DIR,
         VAR_DEST_FILE_NAME,
         VAR_DEST_FULLPATH,
@@ -112,6 +129,17 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     final PreprocessingState state = context.getPreprocessingState();
 
     switch (varName) {
+      case VAR_JCP_BUFFER_ALL:
+        return Value.valueOf(context.getPreprocessingState().getCurrentText());
+      case VAR_JCP_BUFFER_POSTFIX:
+        return Value.valueOf(context.getPreprocessingState().findPrinter(
+            PreprocessingState.PrinterType.POSTFIX).getText());
+      case VAR_JCP_BUFFER_MIDDLE:
+        return Value.valueOf(context.getPreprocessingState().findPrinter(
+            PreprocessingState.PrinterType.NORMAL).getText());
+      case VAR_JCP_BUFFER_PREFIX:
+        return Value.valueOf(context.getPreprocessingState().findPrinter(
+            PreprocessingState.PrinterType.PREFIX).getText());
       case VAR_DEST_DIR:
         return Value.valueOf(state.getRootFileInfo().getTargetFolder());
       case VAR_DEST_FILE_NAME:
@@ -164,6 +192,22 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
                           final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     switch (varName) {
+      case VAR_JCP_BUFFER_ALL: {
+        state.setBufferText(value.toString());
+      }
+      break;
+      case VAR_JCP_BUFFER_POSTFIX: {
+        state.setBufferText(value.toString(), PreprocessingState.PrinterType.POSTFIX);
+      }
+      break;
+      case VAR_JCP_BUFFER_MIDDLE: {
+        state.setBufferText(value.toString(), PreprocessingState.PrinterType.NORMAL);
+      }
+      break;
+      case VAR_JCP_BUFFER_PREFIX: {
+        state.setBufferText(value.toString(), PreprocessingState.PrinterType.PREFIX);
+      }
+      break;
       case VAR_DEST_DIR:
         if (value.getType() != ValueType.STRING) {
           throw new IllegalArgumentException("Only STRING type allowed");

@@ -33,7 +33,7 @@ import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
-import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import com.igormaznitsa.jcp.utils.ResettablePrinter;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.runner.RunWith;
@@ -71,8 +71,8 @@ public abstract class AbstractMockPreprocessorContextTest {
 
     when(preparedState.getRootFileInfo()).thenReturn(container);
 
-    final ResetablePrinter printer = new ResetablePrinter(10);
-    when(preparedState.getPrinter()).thenReturn(printer);
+    final ResettablePrinter printer = new ResettablePrinter(10);
+    when(preparedState.getSelectedPrinter()).thenReturn(printer);
     when(preparedContext.getPreprocessingState()).thenReturn(preparedState);
 
     return preparedContext;

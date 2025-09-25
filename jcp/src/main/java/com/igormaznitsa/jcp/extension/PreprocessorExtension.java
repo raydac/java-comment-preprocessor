@@ -36,6 +36,9 @@ import com.igormaznitsa.jcp.expression.Value;
  */
 public interface PreprocessorExtension extends ExecutionAllowable {
 
+  /**
+   * Undefined arity. In case of functions it means to check only name.
+   */
   int ANY_ARITY = -1;
 
   @Override

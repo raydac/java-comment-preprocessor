@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.context;
 import static com.igormaznitsa.jcp.removers.AbstractCommentRemover.makeCommentRemover;
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
 import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.containers.PreprocessingFlag;
@@ -31,7 +33,7 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
-import com.igormaznitsa.jcp.utils.ResetablePrinter;
+import com.igormaznitsa.jcp.utils.ResettablePrinter;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -52,7 +54,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,15 +80,15 @@ public final class PreprocessingState {
   private final LinkedList<TextFileDataContainer> ifStack = new LinkedList<>();
   private final LinkedList<TextFileDataContainer> includeStack = new LinkedList<>();
   private final LinkedList<ExcludeIfInfo> deferredExcludeStack = new LinkedList<>();
-  private final ResetablePrinter prefixPrinter = new ResetablePrinter(1024);
-  private final ResetablePrinter postfixPrinter = new ResetablePrinter(64 * 1024);
-  private final ResetablePrinter normalPrinter = new ResetablePrinter(1024);
+  private final ResettablePrinter prefixPrinter = new ResettablePrinter(1024);
+  private final ResettablePrinter postfixPrinter = new ResettablePrinter(64 * 1024);
+  private final ResettablePrinter normalPrinter = new ResettablePrinter(1024);
   private final boolean overrideOnlyIfContentChanged;
   private final EnumSet<PreprocessingFlag> preprocessingFlags =
       EnumSet.noneOf(PreprocessingFlag.class);
   private final PreprocessorContext context;
   private final boolean mockMode;
-  private ResetablePrinter currentPrinter;
+  private ResettablePrinter selectedPrinter;
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
   private String lastReadString;
@@ -96,8 +97,8 @@ public final class PreprocessingState {
   PreprocessingState(final PreprocessorContext context, final Charset inEncoding,
                      final Charset outEncoding) {
     this.mockMode = true;
-    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
-    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
+    this.globalInCharacterEncoding = requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = requireNonNull(outEncoding);
     this.rootReference = null;
     this.lastReadString = "";
     this.rootFileInfo = new FileInfoContainer(new File("global"), "global", true);
@@ -114,10 +115,10 @@ public final class PreprocessingState {
     this.context = context;
 
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
-    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
-    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
+    this.globalInCharacterEncoding = requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = requireNonNull(outEncoding);
 
-    this.rootFileInfo = Objects.requireNonNull(rootFile, "The root file is null");
+    this.rootFileInfo = requireNonNull(rootFile, "The root file is null");
     init();
     rootReference = openFile(rootFile.getSourceFile());
   }
@@ -129,11 +130,11 @@ public final class PreprocessingState {
 
     this.context = context;
 
-    this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
-    this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
+    this.globalInCharacterEncoding = requireNonNull(inEncoding);
+    this.globalOutCharacterEncoding = requireNonNull(outEncoding);
     this.overrideOnlyIfContentChanged = overrideOnlyIfContentChanged;
 
-    this.rootFileInfo = Objects.requireNonNull(rootFile, "The root file is null");
+    this.rootFileInfo = requireNonNull(rootFile, "The root file is null");
     init();
     rootReference = rootContainer;
     includeStack.push(rootContainer);
@@ -161,8 +162,8 @@ public final class PreprocessingState {
 
   public void pushExcludeIfData(final FileInfoContainer infoContainer,
                                 final String excludeIfCondition, final int stringIndex) {
-    Objects.requireNonNull(infoContainer, "File info is null");
-    Objects.requireNonNull(excludeIfCondition, "Condition is null");
+    requireNonNull(infoContainer, "File info is null");
+    requireNonNull(excludeIfCondition, "Condition is null");
 
     if (stringIndex < 0) {
       throw new IllegalArgumentException("Unexpected string index [" + stringIndex + ']');
@@ -171,6 +172,9 @@ public final class PreprocessingState {
     deferredExcludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
   }
 
+  public ResettablePrinter getSelectedPrinter() {
+    return this.selectedPrinter;
+  }
 
   public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
     final List<ExcludeIfInfo> result = new ArrayList<>(deferredExcludeStack);
@@ -188,22 +192,29 @@ public final class PreprocessingState {
     return preprocessingFlags;
   }
 
-
-  public ResetablePrinter getPrinter() throws IOException {
-    return currentPrinter;
+  public ResettablePrinter findPrinter(final PrinterType type) {
+    switch (requireNonNull(type, "Type is null")) {
+      case NORMAL:
+        return this.normalPrinter;
+      case POSTFIX:
+        return this.postfixPrinter;
+      case PREFIX:
+        return this.prefixPrinter;
+      default:
+        throw new IllegalArgumentException("Unsupported type detected [" + type.name() + ']');
+    }
   }
 
-  public void setPrinter(final PrinterType type) {
-    Objects.requireNonNull(type, "Type is null");
-    switch (type) {
+  public void selectPrinter(final PrinterType type) {
+    switch (requireNonNull(type, "Type is null")) {
       case NORMAL:
-        currentPrinter = normalPrinter;
+        this.selectedPrinter = this.normalPrinter;
         break;
       case POSTFIX:
-        currentPrinter = postfixPrinter;
+        this.selectedPrinter = this.postfixPrinter;
         break;
       case PREFIX:
-        currentPrinter = prefixPrinter;
+        this.selectedPrinter = this.prefixPrinter;
         break;
       default:
         throw new IllegalArgumentException("Unsupported type detected [" + type.name() + ']');
@@ -217,7 +228,7 @@ public final class PreprocessingState {
 
 
   public TextFileDataContainer openFile(final File file) throws IOException {
-    Objects.requireNonNull(file, "The file is null");
+    requireNonNull(file, "The file is null");
 
     final AtomicBoolean endedByNextLineContainer = new AtomicBoolean();
 
@@ -275,7 +286,6 @@ public final class PreprocessingState {
     }
     return this.includeStack.pop();
   }
-
 
   public FileInfoContainer getRootFileInfo() {
     return rootFileInfo;
@@ -422,7 +432,7 @@ public final class PreprocessingState {
     preprocessingFlags.clear();
     resetPrinters();
 
-    setPrinter(PrinterType.NORMAL);
+    selectPrinter(PrinterType.NORMAL);
   }
 
   public void resetPrinters() {
@@ -430,7 +440,42 @@ public final class PreprocessingState {
     prefixPrinter.reset();
     postfixPrinter.reset();
 
-    currentPrinter = normalPrinter;
+    selectedPrinter = normalPrinter;
+  }
+
+  public void setBufferText(final String text) {
+    this.prefixPrinter.reset();
+    this.normalPrinter.reset();
+    this.postfixPrinter.reset();
+    this.setBufferText(text, PrinterType.NORMAL);
+  }
+
+  public void setBufferText(final String text, final PrinterType printerType) {
+    switch (printerType) {
+      case NORMAL: {
+        this.normalPrinter.reset();
+        this.normalPrinter.print(requireNonNullElse(text, ""));
+      }
+      break;
+      case PREFIX: {
+        this.prefixPrinter.reset();
+        this.prefixPrinter.print(requireNonNullElse(text, ""));
+      }
+      break;
+      case POSTFIX: {
+        this.postfixPrinter.reset();
+        this.postfixPrinter.print(requireNonNullElse(text, ""));
+      }
+      break;
+      default:
+        throw new IllegalArgumentException("Unsupported printer type: " + printerType);
+    }
+  }
+
+  public String getCurrentText() {
+    return this.prefixPrinter.getText()
+        + this.normalPrinter.getText()
+        + this.postfixPrinter.getText();
   }
 
   public void saveBuffersToStreams(final OutputStream prefix, final OutputStream normal,

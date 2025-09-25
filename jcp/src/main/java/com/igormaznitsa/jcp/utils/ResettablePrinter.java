@@ -26,46 +26,50 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * The class implements a resetable char printer
+ * Text printer to keep text in internal buffer.
  *
- * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
+ * @since 7.3.0
  */
-public class ResetablePrinter {
+public class ResettablePrinter {
 
-  private final CharArrayWriter outStream;
+  private final CharArrayWriter internalBuffer;
 
-  public ResetablePrinter(final int initialCapacity) {
-    outStream = new CharArrayWriter(initialCapacity);
+  public ResettablePrinter(final int initialCapacity) {
+    this.internalBuffer = new CharArrayWriter(initialCapacity);
+  }
+
+  public String getText() {
+    return new String(this.internalBuffer.toCharArray());
   }
 
   public boolean isEmpty() {
-    return outStream.size() == 0;
+    return internalBuffer.size() == 0;
   }
 
   public void writeBufferTo(final Writer writer) throws IOException {
-    outStream.flush();
-    writer.write(outStream.toCharArray());
+    this.internalBuffer.flush();
+    writer.write(internalBuffer.toCharArray());
     writer.flush();
   }
 
   public int getSize() {
-    return outStream.size();
+    return internalBuffer.size();
   }
 
   public void reset() {
-    outStream.reset();
+    internalBuffer.reset();
   }
 
-  public void print(final String text) throws IOException {
+  public void print(final String text) {
     for (final char chr : text.toCharArray()) {
-      outStream.write(chr);
+      internalBuffer.write(chr);
     }
   }
 
   public void println(final String text, final String eol) throws IOException {
     for (final char chr : text.toCharArray()) {
-      this.outStream.write(chr);
+      this.internalBuffer.write(chr);
     }
-    outStream.write(eol, 0, eol.length());
+    internalBuffer.write(eol, 0, eol.length());
   }
 }
