@@ -1,3 +1,9 @@
+__7.3.0 (SNAPSHOT)__
+
+- refactoring of API for `SpecialVariableProcessor` and `CommentTextProcessor`
+- replaced single string property `actionPreprocessorExtension` by string list `actionPreprocessorExtensions` to provide way for many preprocessor extensions.
+- internal refactoring
+
 __7.2.1 (21-jul-2025)__
 
 - refactoring of CommentTextProcessor call
