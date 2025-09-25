@@ -53,6 +53,7 @@ import com.igormaznitsa.jcp.cmdline.VerboseHandler;
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.context.PreprocessorContextAware;
 import com.igormaznitsa.jcp.directives.ExcludeIfDirectiveHandler;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -319,7 +320,21 @@ public final class JcpPreprocessor {
   private Statistics preprocessFiles(final Collection<FileInfoContainer> files,
                                      final boolean notifyProcessors) throws IOException {
     if (notifyProcessors) {
-      context.fireNotificationStart();
+      final List<PreprocessorContextAware> successfullyNotified = new ArrayList<>();
+      try {
+        context.fireNotificationStart(successfullyNotified);
+      } catch (final Exception ex) {
+        context.logError("Error during init of context aware processors: " + ex.getMessage());
+        successfullyNotified.forEach(x -> {
+          try {
+            x.onContextStopped(context, ex);
+          } catch (Exception err) {
+            context.logError("Error: " + err.getMessage());
+          }
+        });
+        throw new IllegalStateException("Exception during notification of context aware listeners",
+            ex);
+      }
     }
 
     int preprocessedCounter = 0;

@@ -27,6 +27,7 @@ import static java.util.Objects.requireNonNullElse;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.context.PreprocessorContextAware;
 import com.igormaznitsa.jcp.directives.AbstractDirectiveHandler;
 import com.igormaznitsa.jcp.directives.AfterDirectiveProcessingBehaviour;
 import com.igormaznitsa.jcp.directives.DirectiveArgumentType;
@@ -516,7 +517,21 @@ public class FileInfoContainer {
                                                            final boolean notifyProcessors)
       throws IOException {
     if (!context.isCloned() && notifyProcessors) {
-      context.fireNotificationStart();
+      final List<PreprocessorContextAware> successfullyNotified = new ArrayList<>();
+      try {
+        context.fireNotificationStart(successfullyNotified);
+      } catch (final Exception ex) {
+        context.logError("Error during init of context aware processors: " + ex.getMessage());
+        successfullyNotified.forEach(x -> {
+          try {
+            x.onContextStopped(context, ex);
+          } catch (Exception err) {
+            context.logError("Error: " + err.getMessage());
+          }
+        });
+        throw new IllegalStateException("Exception during notification of context aware listeners",
+            ex);
+      }
     }
 
     PreprocessingState theState = null;

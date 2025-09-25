@@ -25,6 +25,7 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.ExecutionAllowable;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
+import com.igormaznitsa.jcp.context.PreprocessorContextAware;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Value;
 
@@ -34,7 +35,7 @@ import com.igormaznitsa.jcp.expression.Value;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public interface PreprocessorExtension extends ExecutionAllowable {
+public interface PreprocessorExtension extends PreprocessorContextAware, ExecutionAllowable {
 
   /**
    * Undefined arity. In case of functions it means to check only name.

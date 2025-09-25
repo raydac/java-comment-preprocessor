@@ -3,9 +3,9 @@ package com.igormaznitsa.jcp.context;
 /**
  * Listener for preprocessor context work states.
  *
- * @since 7.2.0
+ * @since 7.3.0
  */
-public interface PreprocessorContextListener {
+public interface PreprocessorContextAware {
   /**
    * Called when context started.
    *

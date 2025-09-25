@@ -32,7 +32,7 @@ import java.util.Set;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public interface SpecialVariableProcessor extends PreprocessorContextListener,
+public interface SpecialVariableProcessor extends PreprocessorContextAware,
     ExecutionAllowable {
 
   /**

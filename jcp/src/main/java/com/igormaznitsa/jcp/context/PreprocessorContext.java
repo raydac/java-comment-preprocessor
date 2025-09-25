@@ -296,13 +296,23 @@ public class PreprocessorContext {
 
   /**
    * Send notification about context start to all registered listeners.
-   *
+   * @param initedList list accumulating successfully processed listeners, must not be immutable and must not be null
    * @since 7.2.0
    */
-  public void fireNotificationStart() {
-    this.getCommentTextProcessors().forEach(x -> x.onContextStarted(this));
+  public void fireNotificationStart(final List<PreprocessorContextAware> initedList) {
+    this.getCommentTextProcessors().forEach(x -> {
+      x.onContextStarted(this);
+      initedList.add(x);
+    });
     this.getMapVariableNameToSpecialVarProcessor()
-        .values().stream().flatMap(Collection::stream).forEach(x -> x.onContextStarted(this));
+        .values().stream().flatMap(Collection::stream).forEach(x -> {
+          x.onContextStarted(this);
+          initedList.add(x);
+        });
+    this.getPreprocessorExtensions().forEach(x -> {
+      x.onContextStarted(this);
+      initedList.add(x);
+    });
   }
 
   /**
@@ -316,6 +326,7 @@ public class PreprocessorContext {
     this.getMapVariableNameToSpecialVarProcessor()
         .values().stream().flatMap(Collection::stream)
         .forEach(x -> x.onContextStopped(this, error));
+    this.getPreprocessorExtensions().forEach(x -> x.onContextStopped(this, error));
   }
 
   /**

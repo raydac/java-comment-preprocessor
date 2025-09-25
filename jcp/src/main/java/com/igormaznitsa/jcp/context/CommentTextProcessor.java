@@ -13,7 +13,7 @@ import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
  *
  * @since 7.2.0
  */
-public interface CommentTextProcessor extends PreprocessorContextListener, ExecutionAllowable {
+public interface CommentTextProcessor extends PreprocessorContextAware, ExecutionAllowable {
 
   /**
    * Processes uncommented text detected in `//$` or `//$$` sections.
