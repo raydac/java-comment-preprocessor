@@ -35,10 +35,12 @@ import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_SIZE;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_TEXT;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_XELEMENT;
 import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_XLIST;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The abstract class is the base for each function handler in the preprocessor
@@ -51,59 +53,69 @@ public abstract class AbstractFunction implements ExpressionItem {
    * The string contains the prefix for all executing methods of functions
    */
   public static final String EXECUTION_PREFIX = "execute";
+
   /**
-   * Inside counter to generate UID for some cases
+   * Internal counter to generate UID for some cases
    */
   protected static final AtomicLong UID_COUNTER = new AtomicLong(1);
+
   /**
-   * Inside array contains all functions supported by the preprocessor
+   * Current internal map contains all preprocessor functions, mapped by their names
    */
-  private static volatile AbstractFunction[] allFunctions;
-  private static volatile Map<String, AbstractFunction> functionNameMap;
+  private static final AtomicReference<Map<String, AbstractFunction>> allFunctions =
+      new AtomicReference<>();
 
+  @SuppressWarnings("StaticInitializerReferencesSubClass")
+  private static final List<AbstractFunction> DEFAULT_INTERNAL_FUNCTIONS = List.of(
+      new FunctionABS(),
+      new FunctionROUND(),
+      new FunctionESC(),
+      new FunctionSTR2INT(),
+      new FunctionSTR2WEB(),
+      new FunctionSTR2CSV(),
+      new FunctionSTR2JS(),
+      new FunctionSTR2JSON(),
+      new FunctionSTR2XML(),
+      new FunctionSTR2JAVA(),
+      new FunctionSTR2GO(),
+      new FunctionTRIMLINES(),
+      new FunctionSTRLEN(),
+      new FunctionISSUBSTR(),
+      new FunctionIS(),
+      new FunctionEVALFILE(),
+      new FunctionBINFILE(),
+      new FunctionXML_GET(),
+      new FunctionXML_SIZE(),
+      new FunctionXML_ATTR(),
+      new FunctionXML_ROOT(),
+      new FunctionXML_NAME(),
+      new FunctionXML_LIST(),
+      new FunctionXML_TEXT(),
+      new FunctionXML_OPEN(),
+      new FunctionXML_XLIST(),
+      new FunctionXML_XELEMENT()
+  );
+  private static final Map<String, AbstractFunction> DEFAULT_INTERNAL_FUNCTIONS_MAP =
+      DEFAULT_INTERNAL_FUNCTIONS.stream()
+          .collect(Collectors.toMap(AbstractFunction::getName, x -> x));
 
-  public static AbstractFunction[] getAllFunctions() {
-    if (allFunctions == null) {
-      allFunctions = new AbstractFunction[] {
-          new FunctionABS(),
-          new FunctionROUND(),
-          new FunctionESC(),
-          new FunctionSTR2INT(),
-          new FunctionSTR2WEB(),
-          new FunctionSTR2CSV(),
-          new FunctionSTR2JS(),
-          new FunctionSTR2JSON(),
-          new FunctionSTR2XML(),
-          new FunctionSTR2JAVA(),
-          new FunctionSTR2GO(),
-          new FunctionTRIMLINES(),
-          new FunctionSTRLEN(),
-          new FunctionISSUBSTR(),
-          new FunctionIS(),
-          new FunctionEVALFILE(),
-          new FunctionBINFILE(),
-          new FunctionXML_GET(),
-          new FunctionXML_SIZE(),
-          new FunctionXML_ATTR(),
-          new FunctionXML_ROOT(),
-          new FunctionXML_NAME(),
-          new FunctionXML_LIST(),
-          new FunctionXML_TEXT(),
-          new FunctionXML_OPEN(),
-          new FunctionXML_XLIST(),
-          new FunctionXML_XELEMENT()
-      };
+  public static List<AbstractFunction> findAllFunctions() {
+    Map<String, AbstractFunction> currentAllFunctions = allFunctions.get();
+    if (currentAllFunctions == null) {
+      return DEFAULT_INTERNAL_FUNCTIONS;
+    } else {
+      return currentAllFunctions.values().stream()
+          .sorted(Comparator.comparing(AbstractFunction::getName))
+          .collect(Collectors.toList());
     }
-    return allFunctions;
   }
 
-
   public static Map<String, AbstractFunction> getFunctionNameMap() {
-    if (functionNameMap == null) {
-      functionNameMap =
-          Stream.of(getAllFunctions()).collect(Collectors.toMap(AbstractFunction::getName, x -> x));
+    final Map<String, AbstractFunction> result = allFunctions.get();
+    if (result == null) {
+      return DEFAULT_INTERNAL_FUNCTIONS_MAP;
     }
-    return functionNameMap;
+    return result;
   }
 
   /**
@@ -117,7 +129,7 @@ public abstract class AbstractFunction implements ExpressionItem {
    */
   public static <E extends AbstractFunction> E findForClass(final Class<E> functionClass) {
     E result = null;
-    for (final AbstractFunction function : getAllFunctions()) {
+    for (final AbstractFunction function : findAllFunctions()) {
       if (function.getClass() == functionClass) {
         result = functionClass.cast(function);
         break;

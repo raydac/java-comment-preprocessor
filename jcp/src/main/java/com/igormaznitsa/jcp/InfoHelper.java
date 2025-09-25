@@ -118,7 +118,7 @@ public final class InfoHelper {
     result.add(DELIMITER);
     result.add("Functions");
     result.add(SHORT_DELIMITER);
-    for (final AbstractFunction handler : AbstractFunction.getAllFunctions()) {
+    for (final AbstractFunction handler : AbstractFunction.findAllFunctions()) {
       result.add(makeFunctionReference(handler));
     }
     result.add(DELIMITER);

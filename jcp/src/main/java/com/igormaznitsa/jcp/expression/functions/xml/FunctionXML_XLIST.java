@@ -41,7 +41,6 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
       new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   @Override
-
   public String getName() {
     return "xml_xlist";
   }
@@ -75,20 +74,16 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
   }
 
   @Override
-
-
   public ValueType[][] getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "find element list with XPath";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

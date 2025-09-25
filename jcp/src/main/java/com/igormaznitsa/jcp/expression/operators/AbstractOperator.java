@@ -23,6 +23,8 @@ package com.igormaznitsa.jcp.expression.operators;
 
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionItemType;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The class is the base for all operator handlers
@@ -37,31 +39,35 @@ public abstract class AbstractOperator implements ExpressionItem {
   public static final String EXECUTION_PREFIX = "execute";
 
   /**
-   * The array contains all operators allowed by the preprocessor
+   * The list contains operators allowed by the preprocessor
    */
-  private static AbstractOperator[] allOperators;
+  private static final AtomicReference<List<AbstractOperator>> allOperators = new AtomicReference<>();
 
+  @SuppressWarnings("StaticInitializerReferencesSubClass")
+  private static final List<AbstractOperator> DEFAULT_OPERATORS = List.of(
+      new OperatorEQU(),
+      new OperatorGREAT(),
+      new OperatorGREATEQU(),
+      new OperatorLESS(),
+      new OperatorLESSEQU(),
+      new OperatorNOTEQU(),
+      new OperatorADD(),
+      new OperatorSUB(),
+      new OperatorMUL(),
+      new OperatorDIV(),
+      new OperatorMOD(),
+      new OperatorNOT(),
+      new OperatorAND(),
+      new OperatorOR(),
+      new OperatorXOR()
+  );
 
-  public static AbstractOperator[] getAllOperators() {
-    if (allOperators == null) {
-      allOperators = new AbstractOperator[] {
-          new OperatorEQU(),
-          new OperatorGREAT(),
-          new OperatorGREATEQU(),
-          new OperatorLESS(),
-          new OperatorLESSEQU(),
-          new OperatorNOTEQU(),
-          new OperatorADD(),
-          new OperatorSUB(),
-          new OperatorMUL(),
-          new OperatorDIV(),
-          new OperatorMOD(),
-          new OperatorNOT(),
-          new OperatorAND(),
-          new OperatorOR(),
-          new OperatorXOR()};
+  public static List<AbstractOperator> getAllOperators() {
+    final List<AbstractOperator> current = allOperators.get();
+    if (current == null) {
+      return DEFAULT_OPERATORS;
     }
-    return allOperators;
+    return current;
   }
 
   /**

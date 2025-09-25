@@ -41,7 +41,6 @@ public final class FunctionXML_XELEMENT extends AbstractXMLFunction {
       new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
 
   @Override
-
   public String getName() {
     return "xml_xelement";
   }
