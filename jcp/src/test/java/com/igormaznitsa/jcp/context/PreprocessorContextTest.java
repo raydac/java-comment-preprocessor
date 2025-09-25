@@ -305,20 +305,20 @@ public class PreprocessorContextTest {
     context.setSharedResource("RESOURCE111", "Some string");
     context.registerSpecialVariableProcessor(new SpecialVariableProcessor() {
       @Override
-      public String[] getVariableNames() {
-        return new String[] {"uno::", "tuo::"};
+      public Set<String> getVariableNames() {
+        return Set.of("uno::", "tuo::");
       }
 
       @Override
       public Value getVariable(String varName, PreprocessorContext context) {
         throw new UnsupportedOperationException(
-            "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            "Not supported yet.");
       }
 
       @Override
       public void setVariable(String varName, Value value, PreprocessorContext context) {
         throw new UnsupportedOperationException(
-            "Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            "Not supported yet.");
       }
     });
   }

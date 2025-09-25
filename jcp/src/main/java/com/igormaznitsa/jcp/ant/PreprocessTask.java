@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -285,15 +286,13 @@ public class PreprocessTask extends Task implements PreprocessorLogger, SpecialV
   }
 
   @Override
-  public String[] getVariableNames() {
-    String[] result;
-
-    if (antVariables == null) {
-      result = new String[0];
+  public Set<String> getVariableNames() {
+    final Set<String> result;
+    if (this.antVariables == null) {
+      result = Set.of();
     } else {
-      result = antVariables.keySet().toArray(new String[0]);
+      result = this.antVariables.keySet();
     }
-
     return result;
   }
 

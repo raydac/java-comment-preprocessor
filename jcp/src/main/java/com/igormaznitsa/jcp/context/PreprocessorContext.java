@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.context;
 
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -75,9 +76,15 @@ public class PreprocessorContext {
   public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private static final List<AbstractDirectiveHandler> directiveHandlers =
       AbstractDirectiveHandler.findAllDirectives();
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  protected final Collection<FileInfoContainer> preprocessedResources;
+  @Setter(AccessLevel.NONE)
+  @Getter(AccessLevel.NONE)
+  protected final AtomicReference<PreprocessingState> preprocessingState = new AtomicReference<>();
   private final Map<String, Value> globalVarTable = new HashMap<>();
   private final Map<String, Value> localVarTable = new HashMap<>();
-  private final Map<String, SpecialVariableProcessor> mapVariableNameToSpecialVarProcessor =
+  private final Map<String, List<SpecialVariableProcessor>> mapVariableNameToSpecialVarProcessor =
       new HashMap<>();
   private final Map<String, Object> sharedResources = new HashMap<>();
   private final List<File> configFiles = new ArrayList<>();
@@ -88,12 +95,6 @@ public class PreprocessorContext {
   private final List<SourceFolder> sources = new ArrayList<>();
   private final File baseDir;
   private final Collection<File> activatedConfigFiles;
-  @Setter(AccessLevel.NONE)
-  @Getter(AccessLevel.NONE)
-  private final Collection<FileInfoContainer> preprocessedResources;
-  @Setter(AccessLevel.NONE)
-  @Getter(AccessLevel.NONE)
-  private final AtomicReference<PreprocessingState> preprocessingState = new AtomicReference<>();
   private final List<CommentTextProcessor> commentTextProcessors;
   private String eol = GetUtils
       .ensureNonNull(System.getProperty("jcp.line.separator", System.getProperty("line.separator")),
@@ -136,7 +137,7 @@ public class PreprocessorContext {
     this.currentInCloneSource = null;
     this.commentTextProcessors = new ArrayList<>();
     this.preprocessingState
-        .set(new PreprocessingState(this, this.sourceEncoding, this.targetEncoding));
+        .set(this.makeNewPreprocessorState(this.sourceEncoding, this.targetEncoding));
   }
 
   /**
@@ -301,7 +302,7 @@ public class PreprocessorContext {
   public void fireNotificationStart() {
     this.getCommentTextProcessors().forEach(x -> x.onContextStarted(this));
     this.getMapVariableNameToSpecialVarProcessor()
-        .values().forEach(x -> x.onContextStarted(this));
+        .values().stream().flatMap(Collection::stream).forEach(x -> x.onContextStarted(this));
   }
 
   /**
@@ -313,7 +314,8 @@ public class PreprocessorContext {
   public void fireNotificationStop(final Throwable error) {
     this.getCommentTextProcessors().forEach(x -> x.onContextStopped(this, error));
     this.getMapVariableNameToSpecialVarProcessor()
-        .values().forEach(x -> x.onContextStopped(this, error));
+        .values().stream().flatMap(Collection::stream)
+        .forEach(x -> x.onContextStopped(this, error));
   }
 
   /**
@@ -429,7 +431,9 @@ public class PreprocessorContext {
       if (mapVariableNameToSpecialVarProcessor.containsKey(varName)) {
         throw new IllegalStateException("There is already defined processor for " + varName);
       }
-      mapVariableNameToSpecialVarProcessor.put(varName, processor);
+      mapVariableNameToSpecialVarProcessor.compute(varName,
+          (k, l) -> l == null ? List.of(processor) :
+              Stream.concat(l.stream(), Stream.of(processor)).collect(toUnmodifiableList()));
     }
   }
 
@@ -762,9 +766,24 @@ public class PreprocessorContext {
 
     requireNonNull(value, "Value is null");
 
-    if (mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
-      mapVariableNameToSpecialVarProcessor.get(normalizedName)
-          .setVariable(normalizedName, value, this);
+    if (this.mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
+      final SpecialVariableProcessor firstActiveProcessor =
+          this.mapVariableNameToSpecialVarProcessor.get(normalizedName)
+              .stream()
+              .filter(x -> x.isAllowed(
+                  findLastActiveFileContainer(this).orElse(null),
+                  this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
+                  this,
+                  this.getPreprocessingState()
+              )).findFirst().orElse(null);
+
+      if (firstActiveProcessor == null) {
+        throw this.makeException(
+            "Can't set special variable because no any allowed variable processor in the position",
+            null);
+      } else {
+        firstActiveProcessor.setVariable(normalizedName, value, this);
+      }
     } else {
       if (isVerbose()) {
         final String valueAsStr = value.toString();
@@ -804,7 +823,7 @@ public class PreprocessorContext {
    *
    * @param name                    the name for the needed variable, it will be normalized to the supported format
    * @param enforceUnknownVarAsNull if true then state of the unknownVariableAsFalse flag in context will be ignored
-   * @return false if either the variable is not found or the name is null, otherwise the variable value
+   * @return null if either the variable is not found or the name is null, otherwise the variable value
    */
   public Value findVariableForName(final String name, final boolean enforceUnknownVarAsNull) {
     if (name == null) {
@@ -817,7 +836,15 @@ public class PreprocessorContext {
       return null;
     }
 
-    final SpecialVariableProcessor processor = mapVariableNameToSpecialVarProcessor.get(normalized);
+    final SpecialVariableProcessor processor =
+        mapVariableNameToSpecialVarProcessor.containsKey(normalized) ?
+            mapVariableNameToSpecialVarProcessor.get(normalized).
+                stream().filter(x -> x.isAllowed(
+                    findLastActiveFileContainer(this).orElse(null),
+                    this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
+                    this,
+                    this.getPreprocessingState()
+                )).findFirst().orElse(null) : null;
 
     if (processor != null) {
       return processor.getVariable(normalized, this);
@@ -1017,11 +1044,37 @@ public class PreprocessorContext {
                 '\'');
       }
     }
-    this.preprocessingState.set(
-        new PreprocessingState(this, fileContainer, getSourceEncoding(), getTargetEncoding(),
-            this.isDontOverwriteSameContent()));
 
+    this.preprocessingState.set(this.makeNewPreprocessorState(fileContainer));
     return this.getPreprocessingState();
+  }
+
+  protected PreprocessingState makeNewPreprocessorState(final Charset sourceEncoding,
+                                                        final Charset targetEncoding) {
+    return new PreprocessingState(this, sourceEncoding, targetEncoding);
+  }
+
+  protected PreprocessingState makeNewPreprocessorState(final FileInfoContainer fileContainer)
+      throws IOException {
+    return new PreprocessingState(
+        this,
+        fileContainer,
+        getSourceEncoding(),
+        getTargetEncoding(),
+        this.isDontOverwriteSameContent()
+    );
+  }
+
+  protected PreprocessingState makeNewPreprocessorState(final FileInfoContainer fileContainer,
+                                                        final TextFileDataContainer textFileDataContainer) {
+    return new PreprocessingState(
+        this,
+        fileContainer,
+        textFileDataContainer,
+        this.getSourceEncoding(),
+        this.getTargetEncoding(),
+        this.isDontOverwriteSameContent()
+    );
   }
 
   /**
@@ -1034,8 +1087,7 @@ public class PreprocessorContext {
   public PreprocessingState produceNewPreprocessingState(final FileInfoContainer fileContainer,
                                                          final TextFileDataContainer textContainer) {
     this.preprocessingState.set(
-        new PreprocessingState(this, fileContainer, textContainer, getSourceEncoding(),
-            getTargetEncoding(), this.isDontOverwriteSameContent()));
+        this.makeNewPreprocessorState(fileContainer, textContainer));
     return this.getPreprocessingState();
   }
 

@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the special variable processor interface and allows to get access to inside JCP variables Inside JCP variables have the "jcp." prefix
@@ -87,10 +88,8 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-
-
-  public String[] getVariableNames() {
-    return new String[] {
+  public Set<String> getVariableNames() {
+    return Set.of(
         VAR_DEST_DIR,
         VAR_DEST_FILE_NAME,
         VAR_DEST_FULLPATH,
@@ -105,11 +104,10 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         VAR_TIME,
         VAR_TIMESTAMP,
         VAR_DATE
-    };
+    );
   }
 
   @Override
-
   public Value getVariable(final String varName, final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
 

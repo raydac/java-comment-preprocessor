@@ -23,16 +23,12 @@ package com.igormaznitsa.jcp;
 
 import static org.apache.commons.io.FilenameUtils.normalize;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.AfterClass;
@@ -90,35 +86,20 @@ public abstract class AbstractSpyPreprocessorContextTest {
   protected PreprocessorContext preparePreprocessorContext(final List<String> sourceFolders,
                                                            final ContextDataProvider provider)
       throws Exception {
-    final PreprocessorContext resultContext =
+    final PreprocessorContext spyContext =
         PowerMockito.spy(new PreprocessorContext(new File("some_impossible_folder_121212")));
-    final PreprocessingState fakeState = PreprocessingState.makeFake(resultContext);
-    PowerMockito.when(resultContext.findFileInfoContainer(any(File.class)))
-        .then(x ->
-            Optional.ofNullable(provider.findFileInfoContainer(x.getArgument(0))));
+    final PreprocessingState fakeState = PreprocessingState.makeMock(spyContext);
+    PowerMockito.when(spyContext.getPreprocessingState()).thenReturn(fakeState);
 
-    PowerMockito.when(resultContext.getPreprocessingState()).thenReturn(fakeState);
+    spyContext.setAllowWhitespaces(provider.getAllowSpaceBeforeDirectiveFlag());
+    spyContext.setSources(sourceFolders);
+    spyContext.setTarget(destinationFolder.getRoot());
 
-    resultContext.setAllowWhitespaces(provider.getAllowSpaceBeforeDirectiveFlag());
-    resultContext.setSources(sourceFolders);
-    resultContext.setTarget(destinationFolder.getRoot());
-
-    return resultContext;
+    return spyContext;
   }
 
   public interface ContextDataProvider {
-
     boolean getAllowSpaceBeforeDirectiveFlag();
-
-    default Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
-      return Optional.of(
-          new TextFileDataContainer(new File(PreprocessingState.FAKE_FILE_PATH), new String[] {""},
-              false, 0));
-    }
-
-    default FileInfoContainer findFileInfoContainer(File file) {
-      return new FileInfoContainer(file, file.getName(), false);
-    }
   }
 
 }

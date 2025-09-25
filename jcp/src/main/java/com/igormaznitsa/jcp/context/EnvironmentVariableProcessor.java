@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * The class allows to get access to environment variables from preprocessor
@@ -54,10 +55,8 @@ public class EnvironmentVariableProcessor implements SpecialVariableProcessor {
   }
 
   @Override
-
-
-  public String[] getVariableNames() {
-    return environmentVars.keySet().toArray(new String[0]);
+  public Set<String> getVariableNames() {
+    return environmentVars.keySet();
   }
 
   @Override

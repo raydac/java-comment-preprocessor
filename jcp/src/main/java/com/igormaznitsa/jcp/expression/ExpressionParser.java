@@ -607,11 +607,8 @@ public final class ExpressionParser {
             final PreprocessorExtension preprocessorExtension =
                 context.getPreprocessorExtensions().stream()
                     .filter(x -> x.isAllowed(
-                        findLastActiveFileContainer(context).orElseThrow(
-                            () -> new IllegalStateException("Can't find active file container")),
-                        context.getPreprocessingState().findLastPositionInfoInStack().orElseThrow(
-                            () -> new IllegalStateException(
-                                "Can't find last position in include stack")),
+                        findLastActiveFileContainer(context).orElse(null),
+                        context.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
                         context,
                         context.getPreprocessingState()
                     ))

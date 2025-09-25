@@ -69,7 +69,8 @@ public final class PreprocessingState {
   public static final FilePositionInfo[] EMPTY_STACK = new FilePositionInfo[0];
 
   public static final int MAX_WRITE_BUFFER_SIZE = 65536;
-  public static final String FAKE_FILE_PATH = "some_fake_file.txt";
+  public static final String FAKE_FILE_FOLDER = "/fake_test_folder";
+  public static final String FAKE_FILE_PATH = FAKE_FILE_FOLDER + "/some_fake_file.txt";
   private final Charset globalInCharacterEncoding;
   private final Charset globalOutCharacterEncoding;
   private final TextFileDataContainer rootReference;
@@ -85,7 +86,7 @@ public final class PreprocessingState {
   private final EnumSet<PreprocessingFlag> preprocessingFlags =
       EnumSet.noneOf(PreprocessingFlag.class);
   private final PreprocessorContext context;
-  private final boolean fake;
+  private final boolean mockMode;
   private ResetablePrinter currentPrinter;
   private TextFileDataContainer activeIf;
   private TextFileDataContainer activeWhile;
@@ -94,7 +95,7 @@ public final class PreprocessingState {
 
   PreprocessingState(final PreprocessorContext context, final Charset inEncoding,
                      final Charset outEncoding) {
-    this.fake = true;
+    this.mockMode = true;
     this.globalInCharacterEncoding = Objects.requireNonNull(inEncoding);
     this.globalOutCharacterEncoding = Objects.requireNonNull(outEncoding);
     this.rootReference = null;
@@ -108,7 +109,7 @@ public final class PreprocessingState {
   PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile,
                      final Charset inEncoding, final Charset outEncoding,
                      final boolean overrideOnlyIfContentChanged) throws IOException {
-    this.fake = false;
+    this.mockMode = false;
 
     this.context = context;
 
@@ -124,7 +125,7 @@ public final class PreprocessingState {
   PreprocessingState(final PreprocessorContext context, final FileInfoContainer rootFile,
                      final TextFileDataContainer rootContainer, final Charset inEncoding,
                      final Charset outEncoding, final boolean overrideOnlyIfContentChanged) {
-    this.fake = false;
+    this.mockMode = false;
 
     this.context = context;
 
@@ -138,8 +139,12 @@ public final class PreprocessingState {
     includeStack.push(rootContainer);
   }
 
-  public static PreprocessingState makeFake(final PreprocessorContext context) {
+  public static PreprocessingState makeMock(final PreprocessorContext context) {
     return new PreprocessingState(context, StandardCharsets.UTF_8, StandardCharsets.UTF_8);
+  }
+
+  public boolean isMockMode() {
+    return this.mockMode;
   }
 
   public boolean isGlobalPhase() {
@@ -233,11 +238,11 @@ public final class PreprocessingState {
   }
 
   public Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
-    if (this.fake) {
+    if (this.isMockMode()) {
       return Optional.of(
           new TextFileDataContainer(new File(FAKE_FILE_PATH), new String[] {""}, false, 0));
     }
-    return this.includeStack.isEmpty() ? Optional.empty() :
+    return this.includeStack.isEmpty() ? Optional.ofNullable(this.getRootTextContainer()) :
         Optional.of(this.includeStack.get(this.includeStack.size() - 1));
   }
 
@@ -247,7 +252,7 @@ public final class PreprocessingState {
   }
 
   public FilePositionInfo[] makeIncludeStack() {
-    if (this.fake) {
+    if (this.isMockMode()) {
       return EMPTY_STACK;
     }
 

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
@@ -45,7 +46,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
   private static final Pattern PATTERN_FOR_PROPERTY_WHICH_CAN_CONTAIN_PRIVATE_INFO =
       Pattern.compile("key|pass", Pattern.CASE_INSENSITIVE);
 
-  private static final String[] TO_IMPORT = {
+  private static final Set<String> TO_IMPORT = Set.of(
       "project.name",
       "project.version",
       "project.url",
@@ -72,9 +73,9 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
       "project.build.testOutputDirectory",
       "project.build.testSourceDirectory",
       "project.organization.name",
-      "project.organization.url"};
+      "project.organization.url");
 
-  private final Map<String, Value> insideVarMap = new HashMap<>();
+  private final Map<String, Value> internalVarMap = new HashMap<>();
   private final MavenProject project;
   private final MavenSession session;
 
@@ -170,29 +171,26 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
 
   private void addVariableIntoInsideMap(final PreprocessorContext context, final String name,
                                         final Value value, final boolean verbose) {
-    if (insideVarMap.containsKey(name)) {
+    if (internalVarMap.containsKey(name)) {
       throw context.makeException("Duplicated importing value detected [" + name + ']', null);
     }
-    insideVarMap.put(name, value);
+    internalVarMap.put(name, value);
     if (verbose) {
       printInfoAboutVarIntoLog(context, name, value.asString());
     }
   }
 
   @Override
-
-
-  public String[] getVariableNames() {
-    return insideVarMap.keySet().toArray(new String[0]);
+  public Set<String> getVariableNames() {
+    return this.internalVarMap.keySet();
   }
 
   @Override
-
   public Value getVariable(final String varName, final PreprocessorContext context) {
-    if (!insideVarMap.containsKey(varName)) {
+    if (!internalVarMap.containsKey(varName)) {
       throw new IllegalArgumentException("Unsupported property request detected [" + varName + ']');
     }
-    return insideVarMap.get(varName);
+    return internalVarMap.get(varName);
   }
 
   @Override

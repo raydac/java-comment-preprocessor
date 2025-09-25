@@ -21,7 +21,10 @@
 
 package com.igormaznitsa.jcp.context;
 
+import com.igormaznitsa.jcp.containers.FileInfoContainer;
+import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Value;
+import java.util.Set;
 
 /**
  * The interface describes a special variable processor which will be called for
@@ -29,7 +32,8 @@ import com.igormaznitsa.jcp.expression.Value;
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
-public interface SpecialVariableProcessor extends PreprocessorContextListener {
+public interface SpecialVariableProcessor extends PreprocessorContextListener,
+    ExecutionAllowable {
 
   /**
    * Get all variable names allowed by the processor as an array, all names must
@@ -37,7 +41,16 @@ public interface SpecialVariableProcessor extends PreprocessorContextListener {
    *
    * @return allowed variable names as a String array
    */
-  String[] getVariableNames();
+  Set<String> getVariableNames();
+
+  @Override
+  default boolean isAllowed(
+      FileInfoContainer fileContainer,
+      FilePositionInfo positionInfo,
+      PreprocessorContext context,
+      PreprocessingState state) {
+    return true;
+  }
 
   /**
    * Get the value for the variable
