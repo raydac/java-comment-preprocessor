@@ -32,15 +32,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class CommentNextLineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "//";
   }
 
   @Override
-
   public String getReference() {
-    return "comment immediately following line";
+    return "comment line after";
   }
 
   @Override

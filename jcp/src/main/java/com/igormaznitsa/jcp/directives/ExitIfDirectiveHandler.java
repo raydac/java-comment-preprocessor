@@ -36,25 +36,21 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public class ExitIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "exitif";
   }
 
   @Override
-
   public String getReference() {
-    return "conditionally end current file preprocessing, return to the calling file if presented";
+    return "conditionally end file preprocessing, return to caller";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

@@ -34,19 +34,16 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "global";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.SET;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     processDefinition(string, context);
@@ -54,9 +51,8 @@ public class GlobalDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public String getReference() {
-    return "define global variable";
+    return "set or define a global (including special) variable";
   }
 
   @Override

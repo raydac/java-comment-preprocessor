@@ -33,25 +33,21 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class AbortDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "abort";
   }
 
   @Override
-
   public String getReference() {
-    return "abort preprocessing and show following text as message (macroses allowed)";
+    return "abort preprocessing and print message (macros allowed)";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String rawTail,
                                                    final PreprocessorContext context) {
     final String normal =

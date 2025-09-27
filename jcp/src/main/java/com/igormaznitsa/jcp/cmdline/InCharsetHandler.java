@@ -42,7 +42,7 @@ public class InCharsetHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "set the input encoding for text files (by default " +
+    return "set input text file encoding (default: " +
         PreprocessorContext.DEFAULT_CHARSET + ')';
   }
 

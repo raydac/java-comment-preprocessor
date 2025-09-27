@@ -29,25 +29,13 @@ package com.igormaznitsa.jcp.directives;
 public class IfDefDirectiveHandler extends IfDefinedDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "ifdef";
   }
 
   @Override
-
   public String getReference() {
-    return "short variant of " + DIRECTIVE_PREFIX + super.getName();
+    return "short form of " + DIRECTIVE_PREFIX + super.getName();
   }
 
-  @Override
-  public boolean executeOnlyWhenExecutionAllowed() {
-    return false;
-  }
-
-  @Override
-
-  public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.VARNAME;
-  }
 }

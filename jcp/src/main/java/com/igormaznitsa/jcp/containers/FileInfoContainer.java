@@ -870,7 +870,7 @@ public class FileInfoContainer {
         result = trimmedRest.isEmpty();
       }
       break;
-      case ONOFF: {
+      case ON_OFF: {
         if (trimmedRest.isEmpty()) {
           result = false;
         } else {

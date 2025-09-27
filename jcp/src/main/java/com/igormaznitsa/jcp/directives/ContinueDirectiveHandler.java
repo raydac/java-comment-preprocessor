@@ -34,19 +34,16 @@ import java.util.Objects;
 public class ContinueDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "continue";
   }
 
   @Override
-
   public String getReference() {
-    return "immediately jump to the next iteration of " + DIRECTIVE_PREFIX + "while";
+    return "skip to next" + DIRECTIVE_PREFIX + "while iteration";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

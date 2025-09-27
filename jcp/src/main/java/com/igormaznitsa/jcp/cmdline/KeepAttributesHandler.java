@@ -34,7 +34,7 @@ public class KeepAttributesHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "copy original file attributes for result";
+    return "preserve original file attributes";
   }
 
   @Override

@@ -36,15 +36,13 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public class WhileDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "while";
   }
 
   @Override
-
   public String getReference() {
-    return "starts " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop";
+    return "start " + getFullName() + ".." + DIRECTIVE_PREFIX + "end loop";
   }
 
   @Override
@@ -53,13 +51,11 @@ public class WhileDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

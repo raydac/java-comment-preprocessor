@@ -42,7 +42,7 @@ public class SourceDirectoryHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "define the source folder for preprocessing (by default " +
+    return "set source folder for preprocessing (default: " +
         PreprocessorContext.DEFAULT_SOURCE_DIRECTORY + ')';
   }
 
@@ -63,7 +63,6 @@ public class SourceDirectoryHandler implements CommandLineHandler {
   }
 
   @Override
-
   public String getKeyName() {
     return ARG_NAME;
   }

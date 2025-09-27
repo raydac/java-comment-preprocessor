@@ -79,7 +79,7 @@ public class PrefixPostfixDirectiveHandlerTest extends AbstractDirectiveHandlerA
 
   @Override
   public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.ONOFF, HANDLER_POSTFIX.getArgumentType());
-    assertEquals(DirectiveArgumentType.ONOFF, HANDLER_PREFIX.getArgumentType());
+    assertEquals(DirectiveArgumentType.ON_OFF, HANDLER_POSTFIX.getArgumentType());
+    assertEquals(DirectiveArgumentType.ON_OFF, HANDLER_PREFIX.getArgumentType());
   }
 }

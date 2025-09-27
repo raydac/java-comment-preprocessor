@@ -33,16 +33,13 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "_else";
   }
 
   @Override
-
   public String getReference() {
-    return "invert condition result for " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX +
-        "_endif";
+    return "invert " + DIRECTIVE_PREFIX + "_if condition result";
   }
 
   @Override
@@ -56,7 +53,6 @@ public class GlobalElseDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

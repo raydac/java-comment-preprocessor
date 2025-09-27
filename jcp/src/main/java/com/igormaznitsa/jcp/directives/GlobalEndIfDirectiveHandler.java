@@ -44,9 +44,8 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public String getReference() {
-    return "end " + DIRECTIVE_PREFIX + "_if.." + DIRECTIVE_PREFIX + "_endif control structure";
+    return "end " + DIRECTIVE_PREFIX + "_if block";
   }
 
   @Override
@@ -60,7 +59,6 @@ public class GlobalEndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

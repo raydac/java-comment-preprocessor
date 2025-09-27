@@ -35,7 +35,7 @@ public class HelpHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "print information about preprocessor usage and its directives";
+    return "display preprocessor usage and directives info";
   }
 
   @Override

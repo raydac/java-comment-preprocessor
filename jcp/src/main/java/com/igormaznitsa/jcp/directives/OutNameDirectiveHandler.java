@@ -34,26 +34,22 @@ import com.igormaznitsa.jcp.expression.Value;
 public class OutNameDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "outname";
   }
 
   @Override
-
   public String getReference() {
-    return "change target file name (same as change '" +
+    return "change target file name (same as set the special var '" +
         JCPSpecialVariableProcessor.VAR_DEST_FILE_NAME + "')";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final Value fileName = Expression.evalExpression(string, context);

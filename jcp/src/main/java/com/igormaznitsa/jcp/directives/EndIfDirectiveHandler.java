@@ -44,13 +44,11 @@ public class EndIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public String getReference() {
-    return "end of " + DIRECTIVE_PREFIX + "if..." + getFullName() + " control structure";
+    return "end of " + DIRECTIVE_PREFIX + "if..." + getFullName() + " block";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

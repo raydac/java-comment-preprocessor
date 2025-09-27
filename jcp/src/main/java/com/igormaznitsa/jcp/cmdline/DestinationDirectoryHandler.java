@@ -37,7 +37,7 @@ public class DestinationDirectoryHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "define the destination folder (by default " +
+    return "set destination folder (default " +
         PreprocessorContext.DEFAULT_DEST_DIRECTORY + ')';
   }
 

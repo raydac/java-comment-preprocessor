@@ -34,13 +34,11 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class LocalDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "local";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     processLocalDefinition(string, context);
@@ -48,26 +46,24 @@ public class LocalDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public String getReference() {
-    return "local variable definition, visibility bounded by current file";
+    return "define local variable (file-scoped, no special vars)";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.SET;
   }
 
   private void processLocalDefinition(final String string, final PreprocessorContext context) {
-    final String[] splitted = PreprocessorUtils.splitForEqualChar(string);
+    final String[] split = PreprocessorUtils.splitForEqualChar(string);
 
-    if (splitted.length != 2) {
+    if (split.length != 2) {
       throw context.makeException("Can't find expression", null);
     }
 
-    final String name = splitted[0];
-    final Value value = Expression.evalExpression(splitted[1], context);
+    final String name = split[0];
+    final Value value = Expression.evalExpression(split[1], context);
 
     context.setLocalVariable(name, value);
   }

@@ -32,25 +32,21 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class MsgDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "msg";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-
   public String getReference() {
-    return "following text will be logged as info, macroses allowed, if verbose is ON then stack info will be logged";
+    return "log info message with macros, add include stack if verbose";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String rawTail,
                                                    final PreprocessorContext context) {
     final String normal =

@@ -11,7 +11,7 @@ public class ActionPreprocessorExtensionHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "class to be used for action directives, the class must be in the classpath and contain default constructor.";
+    return "class for action directives (must be in classpath with default constructor)";
   }
 
   @Override

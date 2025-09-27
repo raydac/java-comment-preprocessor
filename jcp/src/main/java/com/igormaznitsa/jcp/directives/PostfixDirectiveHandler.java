@@ -32,25 +32,21 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class PostfixDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "postfix";
   }
 
   @Override
-
   public String getReference() {
-    return "turn on(+) or turn off(-) output into postfix section";
+    return "enable (+) or disable (-) output to postfix buffer";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.ONOFF;
+    return DirectiveArgumentType.ON_OFF;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

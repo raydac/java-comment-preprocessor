@@ -32,7 +32,6 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "-";
   }
@@ -40,17 +39,10 @@ public class OutDisabledDirectiveHandler extends AbstractDirectiveHandler {
   @Override
 
   public String getReference() {
-    return "turn off text output";
+    return "disable text output to buffers";
   }
 
   @Override
-
-  public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.NONE;
-  }
-
-  @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     context.getPreprocessingState().getPreprocessingFlags()

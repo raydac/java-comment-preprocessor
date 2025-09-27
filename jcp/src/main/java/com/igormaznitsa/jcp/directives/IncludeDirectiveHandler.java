@@ -38,25 +38,21 @@ import java.io.IOException;
 public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "include";
   }
 
   @Override
-
   public String getReference() {
-    return "include file content in current preprocess context";
+    return "include file content in current preprocessing context";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

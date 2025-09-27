@@ -52,12 +52,12 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "call user extension with comma separated arguments";
+    return "call extension action with args";
   }
 
   @Override
   public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.MULTIEXPRESSION;
+    return DirectiveArgumentType.MULTI_EXPRESSION;
   }
 
   @Override

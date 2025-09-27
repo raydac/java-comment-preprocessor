@@ -36,19 +36,16 @@ import java.io.IOException;
 public class FlushDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "flush";
   }
 
   @Override
-
   public String getReference() {
-    return "force buffered texts to be written out then clear buffers";
+    return "flush current text buffers to file and clear them";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

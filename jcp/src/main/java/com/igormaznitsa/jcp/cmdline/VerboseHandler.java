@@ -35,7 +35,7 @@ public class VerboseHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "turn on verbose logging, verbose messages printed in info stream";
+    return "enable verbose logging (info stream)";
   }
 
   @Override

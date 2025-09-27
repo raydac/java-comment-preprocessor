@@ -65,7 +65,7 @@ public class WarningDirectiveHandlerTest extends AbstractDirectiveHandlerAccepta
 
   @Override
   public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.EXPRESSTION, HANDLER.getArgumentType());
+    assertEquals(DirectiveArgumentType.EXPRESSION, HANDLER.getArgumentType());
   }
 
   @Override

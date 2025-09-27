@@ -42,7 +42,7 @@ public class OutCharsetHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "set the output encoding for text files (by default " +
+    return "set output text file encoding (default: " +
         PreprocessorContext.DEFAULT_CHARSET + ')';
   }
 

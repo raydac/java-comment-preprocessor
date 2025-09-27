@@ -34,26 +34,22 @@ import com.igormaznitsa.jcp.expression.Value;
 public class OutdirDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "outdir";
   }
 
   @Override
-
   public String getReference() {
-    return "change target file folder (same as change '" +
+    return "change target file folder (same as set the special var '" +
         JCPSpecialVariableProcessor.VAR_DEST_DIR + "')";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.STRING;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final Value name = Expression.evalExpression(string, context);

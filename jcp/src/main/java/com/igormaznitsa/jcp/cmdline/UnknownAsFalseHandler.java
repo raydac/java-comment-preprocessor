@@ -35,7 +35,7 @@ public class UnknownAsFalseHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "interpret unknown variable as FALSE";
+    return "treat unknown variables as FALSE";
   }
 
   @Override

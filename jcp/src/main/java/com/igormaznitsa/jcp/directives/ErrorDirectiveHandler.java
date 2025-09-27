@@ -33,21 +33,18 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "error";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.EXPRESSTION;
+    return DirectiveArgumentType.EXPRESSION;
   }
 
   @Override
-
   public String getReference() {
-    return "throw fatal preprocessor exception with message and stop work";
+    return "throw fatal preprocessor error with message and abort";
   }
 
   protected void process(final PreprocessorContext context, final String message) {
@@ -57,7 +54,6 @@ public class ErrorDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String trimmedString,
                                                    final PreprocessorContext context) {
     final String message = trimmedString.isEmpty() ? "Thrown fatal error" :

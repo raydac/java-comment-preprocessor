@@ -32,15 +32,13 @@ import com.igormaznitsa.jcp.expression.Value;
 public class UndefDirectiveHandler extends DefineDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "undef";
   }
 
   @Override
-
   public String getReference() {
-    return "remove definition of existing variable from context";
+    return "undefine variable from context";
   }
 
   @Override

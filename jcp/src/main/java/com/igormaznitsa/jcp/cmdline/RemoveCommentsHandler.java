@@ -36,7 +36,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "remove all comments from result files";
+    return "strip all comments from output files";
   }
 
   @Override

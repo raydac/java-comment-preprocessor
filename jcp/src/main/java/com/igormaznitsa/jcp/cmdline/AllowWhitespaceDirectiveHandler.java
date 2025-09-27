@@ -34,7 +34,7 @@ public class AllowWhitespaceDirectiveHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "turn on mode to allow whitespace between the // and the #";
+    return "enable whitespace-tolerant mode between // and #";
   }
 
   @Override
@@ -50,7 +50,6 @@ public class AllowWhitespaceDirectiveHandler implements CommandLineHandler {
   }
 
   @Override
-
   public String getKeyName() {
     return ARG_NAME;
   }

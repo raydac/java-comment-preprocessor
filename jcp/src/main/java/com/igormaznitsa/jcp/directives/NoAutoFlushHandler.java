@@ -33,19 +33,16 @@ import java.util.Objects;
 public class NoAutoFlushHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "noautoflush";
   }
 
   @Override
-
   public String getReference() {
-    return "turn off auto-flush when EOF";
+    return "disable auto-flush of buffers at EOF";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

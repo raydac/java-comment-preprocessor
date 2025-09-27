@@ -38,7 +38,7 @@ public class FileExtensionsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "comma separated list of allowed extensions (case insensitive) (by default " +
+    return "comma-separated allowed extensions (default: " +
         String.join(",", PreprocessorContext.DEFAULT_PROCESSING_EXTENSIONS) + ')';
   }
 

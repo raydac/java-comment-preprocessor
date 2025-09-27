@@ -40,21 +40,18 @@ import java.util.Objects;
 public class DefineDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "define";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-
   public String getReference() {
-    return "add global BOOL variable and either set it TRUE (by default) or initialize by expression result";
+    return "add global BOOL variable (default TRUE or set from expression)";
   }
 
   protected void process(final PreprocessorContext context, final String varName, final Value value,

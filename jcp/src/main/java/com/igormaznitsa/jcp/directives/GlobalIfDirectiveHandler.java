@@ -36,19 +36,16 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "_if";
   }
 
   @Override
-
   public String getReference() {
-    return "start " + getFullName() + ".." + DIRECTIVE_PREFIX + "_endif control structure";
+    return "start " + DIRECTIVE_PREFIX + getFullName() + " block";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
@@ -69,7 +66,6 @@ public class GlobalIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

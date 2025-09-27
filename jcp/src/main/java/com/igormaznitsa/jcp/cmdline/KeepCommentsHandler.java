@@ -40,7 +40,7 @@ public class KeepCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "select keep comments mode, for instance /M:remove_c_style, (allowed: true,false," +
+    return "set comment handling mode (e.g., /M:remove_c_style; allowed: true,false," +
         makeListOfAllRemoverIds() + ')';
   }
 

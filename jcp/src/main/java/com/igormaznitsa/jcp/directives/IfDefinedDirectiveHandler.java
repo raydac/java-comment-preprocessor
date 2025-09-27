@@ -33,16 +33,14 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "ifdefined";
   }
 
   @Override
-
   public String getReference() {
-    return "check variable exists in current context, it starts " + DIRECTIVE_PREFIX +
-        "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif control structure";
+    return "check if variable exists in current context and start " + DIRECTIVE_PREFIX +
+        "ifdefined.." + DIRECTIVE_PREFIX + "else.." + DIRECTIVE_PREFIX + "endif block";
   }
 
   protected boolean postprocessFlag(final boolean variableExists) {
@@ -55,13 +53,11 @@ public class IfDefinedDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.VARNAME;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

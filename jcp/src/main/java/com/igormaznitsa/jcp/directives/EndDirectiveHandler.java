@@ -35,20 +35,16 @@ import java.util.Objects;
 public class EndDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "end";
   }
 
   @Override
-
   public String getReference() {
-    return "end of " + DIRECTIVE_PREFIX + "while..." + getFullName() +
-        " loop, start the next iteration";
+    return DIRECTIVE_PREFIX + "while loop end, continue next iteration";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

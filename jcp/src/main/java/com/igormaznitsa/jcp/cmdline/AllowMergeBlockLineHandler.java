@@ -36,7 +36,7 @@ public class AllowMergeBlockLineHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "interpret lines marked by //$\"\"\" and //$$\"\"\" as single text block";
+    return "treat //$\"\"\" and //$$\"\"\" prefixed lines as single text block";
   }
 
   @Override

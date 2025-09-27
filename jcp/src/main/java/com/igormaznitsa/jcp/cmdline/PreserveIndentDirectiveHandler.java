@@ -32,7 +32,7 @@ public class PreserveIndentDirectiveHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "turn on mode to preserve indent when removing //$ and //$$";
+    return "preserve indentation when removing //$ and //$$";
   }
 
   @Override

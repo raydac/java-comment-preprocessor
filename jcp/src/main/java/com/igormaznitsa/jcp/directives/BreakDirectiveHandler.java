@@ -34,15 +34,13 @@ import java.util.Objects;
 public class BreakDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "break";
   }
 
   @Override
-
   public String getReference() {
-    return "break " + DIRECTIVE_PREFIX + "while..." + DIRECTIVE_PREFIX + "end loop";
+    return "break from " + DIRECTIVE_PREFIX + "while..." + DIRECTIVE_PREFIX + "end loop";
   }
 
   @Override

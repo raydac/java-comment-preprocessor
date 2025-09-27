@@ -32,15 +32,13 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class WarningDirectiveHandler extends ErrorDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "warning";
   }
 
   @Override
-
   public String getReference() {
-    return "following text will be logged as warning, macroses allowed";
+    return "log warning message (macros allowed)";
   }
 
   @Override

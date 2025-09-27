@@ -40,7 +40,7 @@ public class DontOverwriteSameContentHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "don't overwrite target file with same content";
+    return "skip writing target file if content unchanged";
   }
 
   @Override

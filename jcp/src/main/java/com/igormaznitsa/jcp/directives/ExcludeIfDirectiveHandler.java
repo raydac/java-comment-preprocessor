@@ -33,15 +33,13 @@ import java.util.Objects;
 public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "excludeif";
   }
 
   @Override
-
   public String getReference() {
-    return "if argument is TRUE then the file will be ignored by preprocessor";
+    return "ignore file if argument is TRUE";
   }
 
   @Override
@@ -55,13 +53,11 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.BOOLEAN;
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

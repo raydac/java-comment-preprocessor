@@ -147,13 +147,11 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Override
-
   public String getName() {
     return "binfile";
   }
 
   @Override
-
   public String getReference() {
     final StringBuilder buffer = new StringBuilder();
     for (final Type t : Type.values()) {
@@ -163,8 +161,8 @@ public class FunctionBINFILE extends AbstractFunction {
       buffer.append(t.name);
     }
     buffer.append("[s|d|sd|ds]");
-    return "encode binary file as string, allowed types [" + buffer.toString() +
-        "], s - split lines, d - deflater compression";
+    return "encode binary file as string, allowed types [" + buffer +
+        "], s - split lines, d - deflate compression";
   }
 
   @Override

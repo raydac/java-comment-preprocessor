@@ -33,19 +33,16 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 public class ExitDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "exit";
   }
 
   @Override
-
   public String getReference() {
-    return "immediately end current file preprocessing, return to the calling file if presented";
+    return "immediately end file preprocessing, return to caller";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();

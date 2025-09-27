@@ -29,7 +29,6 @@ package com.igormaznitsa.jcp.directives;
 public class IfNDefDirectiveHandler extends IfDefinedDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "ifndef";
   }
@@ -40,9 +39,8 @@ public class IfNDefDirectiveHandler extends IfDefinedDirectiveHandler {
   }
 
   @Override
-
   public String getReference() {
     return "same as " + DIRECTIVE_PREFIX + super.getName() +
-        " but activated if variable is not defined";
+        " but triggers if variable is undefined";
   }
 }

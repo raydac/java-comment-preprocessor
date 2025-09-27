@@ -35,7 +35,7 @@ public class KeepLineHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "keep line numeration in result files, print non-processed strings as commented ones";
+    return "preserve line numbers, print unprocessed lines as comments";
   }
 
   @Override

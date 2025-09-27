@@ -96,7 +96,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
 
   @Override
   public void testArgumentType() throws Exception {
-    assertEquals(DirectiveArgumentType.MULTIEXPRESSION, HANDLER.getArgumentType());
+    assertEquals(DirectiveArgumentType.MULTI_EXPRESSION, HANDLER.getArgumentType());
   }
 
   @Test

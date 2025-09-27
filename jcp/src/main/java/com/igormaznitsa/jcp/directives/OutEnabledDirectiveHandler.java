@@ -38,12 +38,7 @@ public class OutEnabledDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
   public String getReference() {
-    return "activate preprocessing if inactive";
-  }
-
-  @Override
-  public DirectiveArgumentType getArgumentType() {
-    return DirectiveArgumentType.NONE;
+    return "enable text output to buffers";
   }
 
   @Override

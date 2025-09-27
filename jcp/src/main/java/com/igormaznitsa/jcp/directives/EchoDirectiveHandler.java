@@ -32,25 +32,21 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public class EchoDirectiveHandler extends AbstractDirectiveHandler {
 
   @Override
-
   public String getName() {
     return "echo";
   }
 
   @Override
-
   public DirectiveArgumentType getArgumentType() {
     return DirectiveArgumentType.TAIL;
   }
 
   @Override
-
   public String getReference() {
-    return "following text will be logged as info, macroses allowed";
+    return "log info message (macros allowed)";
   }
 
   @Override
-
   public AfterDirectiveProcessingBehaviour execute(final String string,
                                                    final PreprocessorContext context) {
     context.logInfo(PreprocessorUtils.processMacroses(string.trim(), context));

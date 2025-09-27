@@ -39,7 +39,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
   @Override
   public String getDescription() {
     return
-        "comma separated file extensions (case insensitive) to be excluded from preprocess and copy (by default " +
+        "comma-separated file extensions to exclude (default: " +
             String.join(",", PreprocessorContext.DEFAULT_EXCLUDED_EXTENSIONS) + ')';
   }
 
@@ -51,7 +51,7 @@ public class ExcludedFileExtensionsHandler implements CommandLineHandler {
       final String extensions = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
       if (!extensions.isEmpty()) {
         context.setExcludeExtensions(
-            Arrays.stream(extensions.split("\\,")).map(String::trim).collect(Collectors.toList()));
+            Arrays.stream(extensions.split(",")).map(String::trim).collect(Collectors.toList()));
         result = true;
       }
     }

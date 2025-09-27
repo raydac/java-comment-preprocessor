@@ -37,7 +37,7 @@ public class ExcludeFoldersHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "folders to be excluded from preprocessing, ANT matcher format allowed. Use system path separator as delimiter.";
+    return "folders to exclude (ANT pattern, delimited by system path separator)";
   }
 
   @Override

@@ -33,17 +33,16 @@ public enum DirectiveArgumentType {
   TAIL("TAIL"),
   BOOLEAN("BOOLEAN"),
   VARNAME("VAR"),
-  EXPRESSTION("EXPR"),
-  MULTIEXPRESSION("EXPR1,EXPR2...EXPRn"),
+  EXPRESSION("EXPR"),
+  MULTI_EXPRESSION("EXPR1,EXPR2...EXPRn"),
   SET("VAR=EXPR"),
-  ONOFF("[+|-]");
+  ON_OFF("[+|-]");
 
   private final String str;
 
   DirectiveArgumentType(final String str) {
     this.str = str;
   }
-
 
   public String getAsText() {
     return this.str;

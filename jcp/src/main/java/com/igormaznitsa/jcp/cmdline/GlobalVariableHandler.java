@@ -39,7 +39,7 @@ public class GlobalVariableHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "define global variable, for instance /P:DEBUG=true (in command line use $ instead \" char)";
+    return "define global variable (e.g., /P:DEBUG=true; use $ for \" in CLI)";
   }
 
   @Override
