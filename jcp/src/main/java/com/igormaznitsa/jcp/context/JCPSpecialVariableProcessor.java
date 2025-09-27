@@ -187,24 +187,35 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
     }
   }
 
+  private void assertNotGlobalPhase(final String varName, final PreprocessorContext context) {
+    if (context.getPreprocessingState().isGlobalPhase()) {
+      throw context.makeException(
+          "Variable '" + varName + "' is not allowed to set during global phase", null);
+    }
+  }
+
   @Override
   public void setVariable(final String varName, final Value value,
                           final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     switch (varName) {
       case VAR_JCP_BUFFER_ALL: {
+        this.assertNotGlobalPhase(varName, context);
         state.setBufferText(value.toString());
       }
       break;
       case VAR_JCP_BUFFER_POSTFIX: {
+        this.assertNotGlobalPhase(varName, context);
         state.setBufferText(value.toString(), PreprocessingState.PrinterType.POSTFIX);
       }
       break;
       case VAR_JCP_BUFFER_MIDDLE: {
+        this.assertNotGlobalPhase(varName, context);
         state.setBufferText(value.toString(), PreprocessingState.PrinterType.NORMAL);
       }
       break;
       case VAR_JCP_BUFFER_PREFIX: {
+        this.assertNotGlobalPhase(varName, context);
         state.setBufferText(value.toString(), PreprocessingState.PrinterType.PREFIX);
       }
       break;

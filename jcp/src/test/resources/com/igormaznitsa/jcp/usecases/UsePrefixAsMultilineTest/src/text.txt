@@ -1,0 +1,21 @@
+//#prefix+
+//$ public static final int mul(int a, b) {
+//$     return a * b;
+//$ }
+//#prefix-
+//#postfix+
+//$ public static final int div(int a, b) {
+//$     return a / b;
+//$ }
+//#postfix-
+//#local mul_func = jcp.text.buffer.prefix
+//#local div_func = jcp.text.buffer.postfix
+//#local jcp.text.buffer.prefix = ""
+//#local jcp.text.buffer.postfix = ""
+package test;
+
+public class Main {
+/*$mul_func$*/
+
+/*$div_func$*/
+}

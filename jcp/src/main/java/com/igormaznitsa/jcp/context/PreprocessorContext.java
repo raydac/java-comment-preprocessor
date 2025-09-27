@@ -296,6 +296,7 @@ public class PreprocessorContext {
 
   /**
    * Send notification about context start to all registered listeners.
+   *
    * @param initedList list accumulating successfully processed listeners, must not be immutable and must not be null
    * @since 7.2.0
    */
@@ -639,14 +640,19 @@ public class PreprocessorContext {
       throw makeException("Not defined variable name", null);
     }
 
-    if (mapVariableNameToSpecialVarProcessor.containsKey(normalized) ||
-        globalVarTable.containsKey(normalized)) {
+    if (this.mapVariableNameToSpecialVarProcessor.containsKey(normalized)) {
+      final SpecialVariableProcessor enabledProcessor =
+          findAllowedSpecialVariableProcessor(normalized)
+              .orElseThrow(() -> this.makeException("Set of local variable '" + normalized +
+                  "' is not allowed in the point by its processor", null));
+      enabledProcessor.setVariable(normalized, value, this);
+    } else if (this.globalVarTable.containsKey(normalized)) {
       throw makeException(
-          "Attempting to set either a global variable or a special variable as a local one [" +
+          "Cannot override global variable with a local variable of the same name [" +
               normalized + ']', null);
+    } else {
+      this.localVarTable.put(normalized, value);
     }
-
-    localVarTable.put(normalized, value);
     return this;
   }
 
@@ -754,8 +760,20 @@ public class PreprocessorContext {
    * @return this preprocessor context
    */
   public PreprocessorContext clearLocalVariables() {
-    localVarTable.clear();
+    this.localVarTable.clear();
     return this;
+  }
+
+  private Optional<SpecialVariableProcessor> findAllowedSpecialVariableProcessor(
+      final String normalizedName) {
+    return this.mapVariableNameToSpecialVarProcessor.get(normalizedName)
+        .stream()
+        .filter(x -> x.isAllowed(
+            findLastActiveFileContainer(this).orElse(null),
+            this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
+            this,
+            this.getPreprocessingState()
+        )).findFirst();
   }
 
   /**
@@ -779,22 +797,12 @@ public class PreprocessorContext {
 
     if (this.mapVariableNameToSpecialVarProcessor.containsKey(normalizedName)) {
       final SpecialVariableProcessor firstActiveProcessor =
-          this.mapVariableNameToSpecialVarProcessor.get(normalizedName)
-              .stream()
-              .filter(x -> x.isAllowed(
-                  findLastActiveFileContainer(this).orElse(null),
-                  this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
-                  this,
-                  this.getPreprocessingState()
-              )).findFirst().orElse(null);
-
-      if (firstActiveProcessor == null) {
-        throw this.makeException(
-            "Can't set special variable because no any allowed variable processor in the position",
-            null);
-      } else {
-        firstActiveProcessor.setVariable(normalizedName, value, this);
-      }
+          this.findAllowedSpecialVariableProcessor(normalizedName)
+              .orElseThrow(() -> this.makeException(
+                  "Cannot set special variable '" + normalizedName +
+                      "' no valid processor available here, may be it is read only",
+                  null));
+      firstActiveProcessor.setVariable(normalizedName, value, this);
     } else {
       if (isVerbose()) {
         final String valueAsStr = value.toString();

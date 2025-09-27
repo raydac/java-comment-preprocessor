@@ -1,7 +1,4 @@
-Some block text which
-will be placed into a variable as multiline text
-and prefix buffer is used to accumulate it
----
+set prefix---
 Some block text which
 will be placed into a variable as multiline text
 and prefix buffer is used to accumulate it
@@ -15,4 +12,4 @@ and prefix buffer is used to accumulate it
 ===
 
 ...
-defined postfix
+set postfix

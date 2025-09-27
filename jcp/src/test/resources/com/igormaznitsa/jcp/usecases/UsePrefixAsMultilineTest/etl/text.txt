@@ -1,0 +1,13 @@
+package test;
+
+public class Main {
+ public static final int mul(int a, b) {
+     return a * b;
+ }
+
+
+ public static final int div(int a, b) {
+     return a / b;
+ }
+
+}
