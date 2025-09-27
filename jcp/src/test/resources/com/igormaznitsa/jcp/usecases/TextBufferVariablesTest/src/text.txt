@@ -1,0 +1,16 @@
+//#postfix+
+defined postfix
+//#postfix-
+//#prefix+
+Some block text which
+will be placed into a variable as multiline text
+and prefix buffer is used to accumulate it
+//#prefix-
+//#local multiline_prefix = jcp.text.buffer.prefix
+//#global jcp.text.buffer.prefix="set prefix"
+//#global jcp.text.buffer.postfix="set postfix"
+---
+//$/*$multiline_prefix$*/
+===
+//$/*$jcp.text.buffer.middle$*/
+...

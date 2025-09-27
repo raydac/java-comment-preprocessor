@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.usecases;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -50,83 +51,90 @@ public abstract class AbstractUseCaseTest {
 
     final File base = new File(testDir, this.getClass().getName().replace('.', File.separatorChar));
 
-    final File simulfolder = new File(testDir.getParentFile(), "usecase_tests");
-    if (!simulfolder.isDirectory()) {
-      assertTrue("Can't make folders for simulation", simulfolder.mkdirs());
+    final File simulationFolder = new File(testDir.getParentFile(), "usecase_tests");
+    if (!simulationFolder.isDirectory()) {
+      assertTrue("Can't make folders for simulation", simulationFolder.mkdirs());
     }
 
-    tmpResultFolder = new TemporaryFolder(simulfolder);
-    tmpResultFolder.create();
+    this.tmpResultFolder = new TemporaryFolder(simulationFolder);
+    this.tmpResultFolder.create();
 
-    sourceFolder = new File(base, "src");
-    etalonFolder = new File(base, "etl");
+    this.sourceFolder = new File(base, "src");
+    this.etalonFolder = new File(base, "etl");
   }
 
   @After
   public void after() throws Exception {
-    if (deleteResult()) {
+    if (this.isDeleteTemporaryFolder()) {
       try {
         FileUtils.cleanDirectory(tmpResultFolder.getRoot());
       } finally {
-        tmpResultFolder.delete();
+        this.tmpResultFolder.delete();
       }
     }
   }
 
-  public boolean deleteResult() {
+  public boolean isDeleteTemporaryFolder() {
     return true;
   }
 
   public abstract void check(PreprocessorContext context, JcpPreprocessor.Statistics stat)
       throws Exception;
 
-  private void assertFolder(final File folder1, final File folder2, final boolean ignoreEOL)
+  private void assertFolder(final File etalonFolder, final File checkFolder,
+                            final boolean ignoreEOL)
       throws Exception {
-    assertTrue("Folder 1 must be folder", folder1.isDirectory());
-    assertTrue("Folder 2 must be folder", folder2.isDirectory());
+    assertTrue("Etalon folder must be a folder", etalonFolder.isDirectory());
+    assertTrue("Checked folder must be folder", checkFolder.isDirectory());
 
-    final File[] folder1files = folder1.listFiles();
-    File[] folde2files = folder2.listFiles();
-    assertEquals("Must have the same number of files and folders", folder1files.length,
-        folde2files.length);
+    final File[] etalonFolderFiles = requireNonNull(etalonFolder.listFiles());
+    final File[] checkFolderFiles = requireNonNull(checkFolder.listFiles());
+    assertEquals("Must have the same number of files and folders", etalonFolderFiles.length,
+        checkFolderFiles.length);
 
-    for (final File f : folder1files) {
-      final File f2 = new File(folder2, f.getName());
-      if (!f2.exists()) {
-        fail("Doesn't exist :" + f2.getAbsolutePath());
+    for (final File etalonFile : etalonFolderFiles) {
+      final File checkFile = new File(checkFolder, etalonFile.getName());
+      if (!checkFile.exists()) {
+        fail("Can't find generated file :" + checkFile.getAbsolutePath());
       }
-      if (f.isFile() && !f2.isFile()) {
-        fail("Must be file : " + f2.getAbsolutePath());
-      } else if (f.isDirectory()) {
-        if (!f2.isDirectory()) {
-          fail("Must be file : " + f2.getAbsolutePath());
+      if (etalonFile.isFile() && !checkFile.isFile()) {
+        fail("Expected file: " + checkFile.getAbsolutePath());
+      } else if (etalonFile.isDirectory()) {
+        if (!checkFile.isDirectory()) {
+          fail("Expected folder: " + checkFile.getAbsolutePath());
         } else {
-          assertFolder(f, f2, ignoreEOL);
+          assertFolder(etalonFile, checkFile, ignoreEOL);
         }
       } else {
-        final boolean equalsLength = ignoreEOL ? true : f.length() == f2.length();
-        if (!equalsLength) {
-          String fileOne = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
-          String fileTwo = FileUtils.readFileToString(f2, StandardCharsets.UTF_8);
+        if (ignoreEOL) {
+          final String[] etalonLines =
+              FileUtils.readFileToString(etalonFile, StandardCharsets.UTF_8).split("\\R", -1);
+          final String[] checkLines =
+              FileUtils.readFileToString(checkFile, StandardCharsets.UTF_8).split("\\R", -1);
 
-          System.err.println("FILE ONE=====================");
-          System.err.println(fileOne);
-          System.err.println("=============================");
-
-          System.err.println("FILE TWO=====================");
-          System.err.println(fileTwo);
-          System.err.println("=============================");
-
-          if (ignoreEOL) {
-            assertEquals("File content must be same", fileOne.replace('\r', ' ').replace('\n', ' '),
-                fileTwo.replace('\r', ' ').replace('\n', ' '));
-          } else {
-            assertEquals("File content must be same", fileOne, fileTwo);
+          if (etalonLines.length != checkLines.length) {
+            System.err.println(
+                "----Etalon----\n" + String.join(System.lineSeparator(), etalonLines));
+            System.err.println(
+                "----Checking----\n" + String.join(System.lineSeparator(), checkLines));
+            fail("Different number of lines, expected " + etalonLines.length + " but read " +
+                checkLines.length + " : " + checkFile.getAbsolutePath());
           }
-        }
-        if (!ignoreEOL) {
-          assertEquals("Checksum must be equal (" + f.getName() + ')', FileUtils.checksumCRC32(f),
-              FileUtils.checksumCRC32(f2));
+          for (int j = 0; j < etalonLines.length; j++) {
+            final String etalon = etalonLines[j];
+            final String check = checkLines[j];
+            if (!etalon.equals(check)) {
+              fail("Difference at line " + (j + 1) + ": etalon='" + etalon + "', check='" + check +
+                  '\'');
+            }
+          }
+        } else {
+          final long checksumEtalon = FileUtils.checksumCRC32(etalonFile);
+          final long checksumTested = FileUtils.checksumCRC32(checkFile);
+          if (checksumEtalon != checksumTested) {
+            fail("Wrong checksum, etalon file = " + etalonFile.getAbsolutePath() +
+                "  , check file " + checkFile.getAbsolutePath());
+          }
         }
       }
     }
@@ -158,19 +166,17 @@ public abstract class AbstractUseCaseTest {
   }
 
   @Test
-  public final void main() throws Exception {
+  public final void executeTest() throws Exception {
     final PreprocessorContext context =
         createPreprocessorContext(new File("some_impossible_folder_121212"));
-    tuneDefaultContextOptions(context);
-    tuneContext(context);
-
+    this.tuneDefaultContextOptions(context);
+    this.tuneContext(context);
     System.setProperty("jcp.line.separator", "\n");
 
-    JcpPreprocessor preprocessor = new JcpPreprocessor(context);
-    final JcpPreprocessor.Statistics stat = preprocessor.execute();
+    final JcpPreprocessor preprocessor = new JcpPreprocessor(context);
+    final JcpPreprocessor.Statistics preprocessorStatistics = preprocessor.execute();
 
-    assertFolder(etalonFolder, tmpResultFolder.getRoot(), this.isIgnoreEolInCheck());
-
-    check(context, stat);
+    this.assertFolder(this.etalonFolder, this.tmpResultFolder.getRoot(), this.isIgnoreEolInCheck());
+    this.check(context, preprocessorStatistics);
   }
 }
