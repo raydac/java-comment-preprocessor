@@ -21,14 +21,12 @@ public class ActionPreprocessorExtensionHandler implements CommandLineHandler {
     if (!key.isEmpty() && key.toUpperCase(Locale.ROOT).startsWith(ARG_NAME)) {
       final String tail = PreprocessorUtils.extractTrimmedTail(ARG_NAME, key);
 
-      if (tail.isEmpty()) {
-        result = true;
-      } else {
+      if (!tail.isEmpty()) {
         final PreprocessorExtension preprocessorExtension =
             PreprocessorUtils.findAndInstantiatePreprocessorExtensionForClassName(tail);
         context.addPreprocessorExtension(preprocessorExtension);
-        result = true;
       }
+      result = true;
     }
     return result;
   }

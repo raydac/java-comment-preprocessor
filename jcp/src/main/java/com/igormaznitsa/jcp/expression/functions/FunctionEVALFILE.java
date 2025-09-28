@@ -36,7 +36,7 @@ import java.io.StringWriter;
 /**
  * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
  *
- * @author Igor Maznitsa (http://www.igormaznitsa.com)
+ * @author Igor Maznitsa (<a href="https://www.igormaznitsa.com">...</a>)
  */
 public class FunctionEVALFILE extends AbstractFunction {
 

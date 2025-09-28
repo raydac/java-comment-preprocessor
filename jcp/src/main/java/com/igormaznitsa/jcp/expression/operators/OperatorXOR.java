@@ -39,7 +39,7 @@ public class OperatorXOR extends AbstractOperator {
   @Override
 
   public String getReference() {
-    return "conditional-XOR and bitwise exclusive OR";
+    return "conditional XOR & bitwise XOR";
   }
 
   @Override

@@ -169,7 +169,7 @@ public final class ExpressionParser {
           }
         } else if (nextItem == SpecialItem.BRACKET_OPENING) {
           if (prev != null && prev.getExpressionItemType() == ExpressionItemType.VARIABLE) {
-            final String text = "Unknown function detected [" + prev.toString() + ']';
+            final String text = "Unknown function detected [" + prev + ']';
             throw context.makeException(text, null);
           }
 

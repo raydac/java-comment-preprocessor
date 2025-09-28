@@ -193,7 +193,7 @@ public class Expression {
         return new ExpressionTreeElement(result, stack, sources);
       } catch (NoSuchMethodException unexpected) {
         throw this.context.makeException(
-            "[Expression]Can't find a function method to process data [" + signature.toString() +
+            "[Expression]Can't find a function method to process data [" + signature +
                 ']', unexpected);
       } catch (Exception unexpected) {
         final Throwable cause = unexpected.getCause();
@@ -202,7 +202,7 @@ public class Expression {
         }
         throw this.context.makeException(
             "[Expression]Can't execute a function method to process data [" +
-                function.getClass().getName() + '.' + signature.toString() + ']', unexpected);
+                function.getClass().getName() + '.' + signature + ']', unexpected);
       }
     }
   }

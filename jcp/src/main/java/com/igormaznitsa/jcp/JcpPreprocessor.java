@@ -580,7 +580,7 @@ public final class JcpPreprocessor {
             if (this.context.isVerbose()) {
               this.context.logForVerbose(String
                   .format("Registering global variable '%s' = '%s' (%s:%d)", name,
-                      result.toString(), file.getName(), readStringIndex + 1));
+                      result, file.getName(), readStringIndex + 1));
             }
           } catch (Exception unexpected) {
             throwPreprocessorException("Can't process the global variable definition", trimmed,

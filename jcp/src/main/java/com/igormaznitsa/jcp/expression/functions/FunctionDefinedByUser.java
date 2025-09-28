@@ -27,6 +27,7 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -56,9 +57,7 @@ public final class FunctionDefinedByUser extends AbstractFunction {
 
     final ValueType[] types = new ValueType[argsNumber];
 
-    for (int li = 0; li < argsNumber; li++) {
-      types[li] = ValueType.ANY;
-    }
+    Arrays.fill(types, ValueType.ANY);
     this.argTypes = new ValueType[][] {types};
   }
 

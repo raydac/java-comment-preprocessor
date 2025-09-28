@@ -434,14 +434,14 @@ public class FileInfoContainer {
     return this.preprocessFileWithNotification(state, context, true);
   }
 
+  @SuppressWarnings("StringEquality")
   private void flushTextBufferForRemovedComments(
       final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,
       final int stringIndex,
       final List<String> textPieces,
       final ResettablePrinter resettablePrinter,
       final PreprocessingState state,
-      final PreprocessorContext context)
-      throws IOException {
+      final PreprocessorContext context) {
 
     final Map.Entry<String, String> firstUncommentLine =
         firstDetectedUncommentLinePtr.getAndSet(null);

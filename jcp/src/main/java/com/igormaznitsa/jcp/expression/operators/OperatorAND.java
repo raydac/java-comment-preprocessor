@@ -39,7 +39,7 @@ public final class OperatorAND extends AbstractOperator {
   @Override
 
   public String getReference() {
-    return "conditional-AND and bitwise-AND";
+    return "conditional AND & bitwise AND";
   }
 
   @Override

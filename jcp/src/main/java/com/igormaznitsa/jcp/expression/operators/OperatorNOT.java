@@ -39,7 +39,7 @@ public class OperatorNOT extends AbstractOperator {
   @Override
 
   public String getReference() {
-    return "logical complement and unary bitwise complement";
+    return "logical & bitwise NOT";
   }
 
   @Override

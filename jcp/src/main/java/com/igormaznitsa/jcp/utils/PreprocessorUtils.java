@@ -338,7 +338,7 @@ public final class PreprocessorUtils {
         final String macrosBody = matcher.group(1);
         final Value value = Expression.evalExpression(macrosBody, context);
         buffer.append(processingString, prevEnd, start);
-        buffer.append(value.toString());
+        buffer.append(value);
       }
       if (end < processingString.length()) {
         buffer.append(processingString.substring(end));
@@ -358,7 +358,7 @@ public final class PreprocessorUtils {
 
             final Value value = Expression.evalExpression(macrosBody, context);
 
-            result = leftPart + value.toString() + rightPart;
+            result = leftPart + value + rightPart;
           } else {
             break;
           }

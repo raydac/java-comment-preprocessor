@@ -66,7 +66,7 @@ public class ResettablePrinter {
     }
   }
 
-  public void println(final String text, final String eol) throws IOException {
+  public void println(final String text, final String eol) {
     for (final char chr : text.toCharArray()) {
       this.internalBuffer.write(chr);
     }

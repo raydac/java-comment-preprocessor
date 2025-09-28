@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Exctracted from <a href="https://github.com/spring-projects/spring-framework/blob/main/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java">Spring utility Ant pattern matcher</a>.
+ * Extracted from <a href="https://github.com/spring-projects/spring-framework/blob/main/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java">Spring utility Ant pattern matcher</a>.
  * removed non-used methods and fields.
  */
 public class AntPathMatcher {
@@ -80,23 +80,23 @@ public class AntPathMatcher {
       return false;
     }
 
-    String[] pattDirs = tokenizePattern(pattern);
-    if (this.caseSensitive && !isPotentialMatch(path, pattDirs)) {
+    String[] patternDirs = tokenizePattern(pattern);
+    if (this.caseSensitive && !isPotentialMatch(path, patternDirs)) {
       return false;
     }
 
     String[] pathDirs = tokenizePath(path);
     int pattIdxStart = 0;
-    int pattIdxEnd = pattDirs.length - 1;
+    int pattIdxEnd = patternDirs.length - 1;
     int pathIdxStart = 0;
     int pathIdxEnd = pathDirs.length - 1;
 
     while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
-      String pattDir = pattDirs[pattIdxStart];
-      if ("**".equals(pattDir)) {
+      String patternDir = patternDirs[pattIdxStart];
+      if ("**".equals(patternDir)) {
         break;
       }
-      if (!matchStrings(pattDir, pathDirs[pathIdxStart])) {
+      if (!matchStrings(patternDir, pathDirs[pathIdxStart])) {
         return false;
       }
       pattIdxStart++;
@@ -110,31 +110,31 @@ public class AntPathMatcher {
       if (!fullMatch) {
         return true;
       }
-      if (pattIdxStart == pattIdxEnd && pattDirs[pattIdxStart].equals("*") &&
+      if (pattIdxStart == pattIdxEnd && patternDirs[pattIdxStart].equals("*") &&
           path.endsWith(this.pathSeparator)) {
         return true;
       }
       for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-        if (!pattDirs[i].equals("**")) {
+        if (!patternDirs[i].equals("**")) {
           return false;
         }
       }
       return true;
     } else if (pattIdxStart > pattIdxEnd) {
       return false;
-    } else if (!fullMatch && "**".equals(pattDirs[pattIdxStart])) {
+    } else if (!fullMatch && "**".equals(patternDirs[pattIdxStart])) {
       return true;
     }
 
     while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
-      String pattDir = pattDirs[pattIdxEnd];
-      if (pattDir.equals("**")) {
+      String patternDir = patternDirs[pattIdxEnd];
+      if (patternDir.equals("**")) {
         break;
       }
-      if (!matchStrings(pattDir, pathDirs[pathIdxEnd])) {
+      if (!matchStrings(patternDir, pathDirs[pathIdxEnd])) {
         return false;
       }
-      if (pattIdxEnd == (pattDirs.length - 1)
+      if (pattIdxEnd == (patternDirs.length - 1)
           && pattern.endsWith(this.pathSeparator) != path.endsWith(this.pathSeparator)) {
         return false;
       }
@@ -143,7 +143,7 @@ public class AntPathMatcher {
     }
     if (pathIdxStart > pathIdxEnd) {
       for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-        if (!pattDirs[i].equals("**")) {
+        if (!patternDirs[i].equals("**")) {
           return false;
         }
       }
@@ -153,7 +153,7 @@ public class AntPathMatcher {
     while (pattIdxStart != pattIdxEnd && pathIdxStart <= pathIdxEnd) {
       int patIdxTmp = -1;
       for (int i = pattIdxStart + 1; i <= pattIdxEnd; i++) {
-        if (pattDirs[i].equals("**")) {
+        if (patternDirs[i].equals("**")) {
           patIdxTmp = i;
           break;
         }
@@ -169,7 +169,7 @@ public class AntPathMatcher {
       strLoop:
       for (int i = 0; i <= strLength - patLength; i++) {
         for (int j = 0; j < patLength; j++) {
-          String subPat = pattDirs[pattIdxStart + j + 1];
+          String subPat = patternDirs[pattIdxStart + j + 1];
           String subStr = pathDirs[pathIdxStart + i + j];
           if (!matchStrings(subPat, subStr)) {
             continue strLoop;
@@ -188,7 +188,7 @@ public class AntPathMatcher {
     }
 
     for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-      if (!pattDirs[i].equals("**")) {
+      if (!patternDirs[i].equals("**")) {
         return false;
       }
     }
@@ -199,12 +199,12 @@ public class AntPathMatcher {
   private boolean isPotentialMatch(String path, String[] pattDirs) {
     if (!this.trimTokens) {
       int pos = 0;
-      for (String pattDir : pattDirs) {
+      for (String patternDir : pattDirs) {
         int skipped = skipSeparator(path, pos, this.pathSeparator);
         pos += skipped;
-        skipped = skipSegment(path, pos, pattDir);
-        if (skipped < pattDir.length()) {
-          return (skipped > 0 || (!pattDir.isEmpty() && isWildcardChar(pattDir.charAt(0))));
+        skipped = skipSegment(path, pos, patternDir);
+        if (skipped < patternDir.length()) {
+          return (skipped > 0 || (!patternDir.isEmpty() && isWildcardChar(patternDir.charAt(0))));
         }
         pos += skipped;
       }
