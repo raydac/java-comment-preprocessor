@@ -11,6 +11,8 @@
         <jcp.test.version>7.3.0-SNAPSHOT</jcp.test.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.13.3</junit.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.release>11</maven.compiler.release>
         <gradle5.executable>gradle5</gradle5.executable>
         <gradle6.executable>gradle6</gradle6.executable>
@@ -93,26 +95,26 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-clean-plugin</artifactId>
-              <executions>
-                  <execution>
-                      <id>force-clean</id>
-                      <goals>
-                          <goal>clean</goal>
-                      </goals>
-                      <phase>initialize</phase>
-                  </execution>
-              </executions>
-          </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>force-clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
