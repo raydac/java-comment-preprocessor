@@ -16,7 +16,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <min.maven.api>3.0</min.maven.api>
-        <junit.version>5.13.3</junit.version>
+        <junit.version>5.13.4</junit.version>
         <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
