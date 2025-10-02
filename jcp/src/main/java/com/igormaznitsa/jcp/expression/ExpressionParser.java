@@ -21,7 +21,6 @@
 
 package com.igormaznitsa.jcp.expression;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -606,12 +605,7 @@ public final class ExpressionParser {
 
             final PreprocessorExtension preprocessorExtension =
                 context.getPreprocessorExtensions().stream()
-                    .filter(x -> x.isAllowed(
-                        findLastActiveFileContainer(context).orElse(null),
-                        context.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
-                        context,
-                        context.getPreprocessingState()
-                    ))
+                    .filter(x -> x.isAllowed(context))
                     .filter(x -> x.hasUserFunction(userFunctionName,
                         PreprocessorExtension.ANY_ARITY)).findFirst().orElse(null);
 

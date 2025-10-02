@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.context;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
-import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Value;
 import java.util.Set;
 
@@ -44,11 +42,7 @@ public interface SpecialVariableProcessor extends PreprocessorContextAware,
   Set<String> getVariableNames();
 
   @Override
-  default boolean isAllowed(
-      FileInfoContainer fileContainer,
-      FilePositionInfo positionInfo,
-      PreprocessorContext context,
-      PreprocessingState state) {
+  default boolean isAllowed(PreprocessorContext context) {
     return true;
   }
 

@@ -146,7 +146,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
             false, 0);
     final PreprocessingState state = context.produceNewPreprocessingState(reference, textContainer);
 
-    final List<ExcludeIfInfo> result = reference.processGlobalDirectives(state, context);
+    final List<ExcludeIfInfo> result = reference.processGlobalDirectives(context, state);
 
     if (excludeInfoList != null) {
       excludeInfoList.addAll(result);
@@ -164,7 +164,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
     context.setDryRun(true);
 
     final FileInfoContainer reference = new FileInfoContainer(file, file.getName(), false);
-    final List<ExcludeIfInfo> result = reference.processGlobalDirectives(null, context);
+    final List<ExcludeIfInfo> result = reference.processGlobalDirectives(context, null);
 
     if (excludeIf != null) {
       excludeIf.addAll(result);
@@ -237,7 +237,7 @@ public abstract class AbstractDirectiveHandlerAcceptanceTest {
       contextTuner.accept(context);
     }
 
-    reference.preprocessFileWithNotification(state, context, true);
+    reference.preprocessFileWithNotification(context, state, true);
 
     final ByteArrayOutputStream prefix = new ByteArrayOutputStream();
     final ByteArrayOutputStream normal = new ByteArrayOutputStream();

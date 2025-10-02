@@ -21,8 +21,6 @@
 
 package com.igormaznitsa.jcp.directives;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
-
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
@@ -75,14 +73,7 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
     try {
       final List<ExpressionTree> args = parseString(string, context);
       final PreprocessorExtension extension = extensions.stream()
-          .filter(x -> x.isAllowed(
-              findLastActiveFileContainer(context).orElseThrow(
-                  () -> new IllegalStateException("Can't find active file container")),
-              context.getPreprocessingState().findLastPositionInfoInStack().orElseThrow(
-                  () -> new IllegalStateException("Can't find last position in include stack")),
-              context,
-              context.getPreprocessingState()
-          ))
+          .filter(x -> x.isAllowed(context))
           .filter(x -> x.hasAction(args.size()))
           .findFirst().orElse(null);
 

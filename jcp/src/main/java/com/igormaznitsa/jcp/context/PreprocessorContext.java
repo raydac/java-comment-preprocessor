@@ -21,7 +21,6 @@
 
 package com.igormaznitsa.jcp.context;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findLastActiveFileContainer;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -199,7 +198,7 @@ public class PreprocessorContext {
     this.preprocessorLogger = context.getPreprocessorLogger();
 
     this.commentTextProcessors = new ArrayList<>(context.commentTextProcessors);
-    this.currentInCloneSource = context.getPreprocessingState().peekFile();
+    this.currentInCloneSource = context.getPreprocessingState().peekIncludeStackFile();
   }
 
   private static String makeStackView(
@@ -768,12 +767,7 @@ public class PreprocessorContext {
       final String normalizedName) {
     return this.mapVariableNameToSpecialVarProcessor.get(normalizedName)
         .stream()
-        .filter(x -> x.isAllowed(
-            findLastActiveFileContainer(this).orElse(null),
-            this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
-            this,
-            this.getPreprocessingState()
-        )).findFirst();
+        .filter(x -> x.isAllowed(this)).findFirst();
   }
 
   /**
@@ -858,12 +852,7 @@ public class PreprocessorContext {
     final SpecialVariableProcessor processor =
         mapVariableNameToSpecialVarProcessor.containsKey(normalized) ?
             mapVariableNameToSpecialVarProcessor.get(normalized).
-                stream().filter(x -> x.isAllowed(
-                    findLastActiveFileContainer(this).orElse(null),
-                    this.getPreprocessingState().findLastPositionInfoInStack().orElse(null),
-                    this,
-                    this.getPreprocessingState()
-                )).findFirst().orElse(null) : null;
+                stream().filter(x -> x.isAllowed(this)).findFirst().orElse(null) : null;
 
     if (processor != null) {
       return processor.getVariable(normalized, this);
@@ -976,7 +965,7 @@ public class PreprocessorContext {
 
     File result = null;
 
-    final TextFileDataContainer theFile = this.getPreprocessingState().peekFile();
+    final TextFileDataContainer theFile = this.getPreprocessingState().peekIncludeStackFile();
     final String parentDir = theFile == null ? null : theFile.getFile().getParent();
 
     final File resultFile = new File(path);
@@ -1142,7 +1131,7 @@ public class PreprocessorContext {
     if (isVerbose()) {
       final String stack;
       stack = makeStackView(this.currentInCloneSource, this.cloned,
-          this.getPreprocessingState().getCurrentIncludeStack());
+          this.getPreprocessingState().getIncludeStack());
       this.logInfo(str + (stack.isEmpty() ? ' ' : '\n') + stack);
     }
   }

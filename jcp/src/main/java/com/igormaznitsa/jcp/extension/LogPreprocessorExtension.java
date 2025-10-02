@@ -23,11 +23,11 @@ public class LogPreprocessorExtension implements PreprocessorExtension {
     if (context == null) {
       return "";
     }
-    if (context.getPreprocessingState().getCurrentIncludeStack().isEmpty()) {
+    if (context.getPreprocessingState().getIncludeStack().isEmpty()) {
       return "";
     } else {
       final TextFileDataContainer dataContainer =
-          context.getPreprocessingState().getCurrentIncludeStack().get(0);
+          context.getPreprocessingState().getIncludeStack().get(0);
       return (dataContainer.getFile() == null ? "<unknown>" : dataContainer.getFile().getName())
           + ':'
           + (dataContainer.getLastReadStringIndex() + 1);

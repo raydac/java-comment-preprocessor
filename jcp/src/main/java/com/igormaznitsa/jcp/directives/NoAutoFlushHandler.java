@@ -49,7 +49,7 @@ public class NoAutoFlushHandler extends AbstractDirectiveHandler {
     if (context.isVerbose()) {
       context.logForVerbose("Disabling auto-flush");
     }
-    Objects.requireNonNull(state.peekFile(), "File stack is empty!").disableAutoFlush();
+    Objects.requireNonNull(state.peekIncludeStackFile(), "File stack is empty!").disableAutoFlush();
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }
 }

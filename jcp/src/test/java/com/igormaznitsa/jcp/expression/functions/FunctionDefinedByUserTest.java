@@ -48,7 +48,7 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   public void testExecution_withArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
     when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
-    when(mock.isAllowed(any(), any(), any(), any())).thenReturn(true);
+    when(mock.isAllowed(any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
 
@@ -72,7 +72,7 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   public void testExecution_withoutArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
     when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
-    when(mock.isAllowed(any(), any(), any(), any())).thenReturn(true);
+    when(mock.isAllowed(any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
     context.addAllPreprocessedResources(List.of(

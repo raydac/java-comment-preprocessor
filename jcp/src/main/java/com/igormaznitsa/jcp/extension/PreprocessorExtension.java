@@ -21,12 +21,9 @@
 
 package com.igormaznitsa.jcp.extension;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.ExecutionAllowable;
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.PreprocessorContextAware;
-import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.expression.Value;
 
 /**
@@ -43,8 +40,7 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
   int ANY_ARITY = -1;
 
   @Override
-  default boolean isAllowed(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
-                            PreprocessorContext context, PreprocessingState state) {
+  default boolean isAllowed(PreprocessorContext context) {
     return true;
   }
 

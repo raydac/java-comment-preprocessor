@@ -26,11 +26,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentTextProcessor;
-import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // This test checks work of //$$, //$ and /*-*/
@@ -60,21 +57,15 @@ public class SpecialDirectivesTest extends AbstractDirectiveHandlerAcceptanceTes
       }
 
       @Override
-      public boolean isAllowed(FileInfoContainer fileContainer, FilePositionInfo positionInfo,
-                               PreprocessorContext context, PreprocessingState state) {
+      public boolean isAllowed(PreprocessorContext context) {
         return true;
       }
 
       @Override
-      public String processUncommentedText(int recommendedIndent, String uncommentedText,
-                                           FileInfoContainer fileContainer,
-                                           FilePositionInfo positionInfo,
-                                           PreprocessorContext context, PreprocessingState state) {
-        assertTrue(positionInfo.getLineNumber() >= 0);
+      public String processUncommentedText(PreprocessorContext context, int recommendedIndent,
+                                           String uncommentedText) {
         assertNotNull(uncommentedText);
-        assertNotNull(fileContainer);
         assertNotNull(context);
-        assertNotNull(state);
 
         calledForText.append("\n...\n").append(uncommentedText);
 

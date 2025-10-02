@@ -178,18 +178,18 @@ public final class PreprocessingState {
 
   public List<ExcludeIfInfo> popAllExcludeIfInfoData() {
     final List<ExcludeIfInfo> result = new ArrayList<>(deferredExcludeStack);
-    deferredExcludeStack.clear();
+    this.deferredExcludeStack.clear();
     return result;
   }
 
 
   public ExcludeIfInfo popExcludeIfData() {
-    return deferredExcludeStack.pop();
+    return this.deferredExcludeStack.pop();
   }
 
 
   public Set<PreprocessingFlag> getPreprocessingFlags() {
-    return preprocessingFlags;
+    return this.preprocessingFlags;
   }
 
   public ResettablePrinter findPrinter(final PrinterType type) {
@@ -240,25 +240,26 @@ public final class PreprocessingState {
     return newContainer;
   }
 
-  public TextFileDataContainer peekFile() {
-    return includeStack.peek();
+  public TextFileDataContainer peekIncludeStackFile() {
+    return this.includeStack.peek();
   }
 
-  public List<TextFileDataContainer> getCurrentIncludeStack() {
+  public List<TextFileDataContainer> getIncludeStack() {
     return this.includeStack;
   }
 
-  public Optional<TextFileDataContainer> findLastTextFileDataContainerInStack() {
+  public Optional<TextFileDataContainer> findActiveTextFileDataContainer() {
     if (this.isMockMode()) {
       return Optional.of(
           new TextFileDataContainer(new File(FAKE_FILE_PATH), new String[] {""}, false, 0));
     }
-    return this.includeStack.isEmpty() ? Optional.ofNullable(this.getRootTextContainer()) :
-        Optional.of(this.includeStack.get(this.includeStack.size() - 1));
+    final TextFileDataContainer includeFile = this.peekIncludeStackFile();
+    return includeFile == null ? Optional.ofNullable(this.getRootTextContainer()) :
+        Optional.of(includeFile);
   }
 
-  public Optional<FilePositionInfo> findLastPositionInfoInStack() {
-    return findLastTextFileDataContainerInStack().map(
+  public Optional<FilePositionInfo> findFilePositionInfo() {
+    return this.findActiveTextFileDataContainer().map(
         x -> new FilePositionInfo(x.getFile(), x.getLastReadStringIndex()));
   }
 
@@ -269,7 +270,7 @@ public final class PreprocessingState {
 
     final FilePositionInfo[] stack = new FilePositionInfo[includeStack.size()];
     for (int i = 0; i < includeStack.size(); i++) {
-      final TextFileDataContainer fileContainer = includeStack.get(i);
+      final TextFileDataContainer fileContainer = this.includeStack.get(i);
       stack[i] =
           new FilePositionInfo(fileContainer.getFile(), fileContainer.getLastReadStringIndex());
     }
@@ -288,7 +289,7 @@ public final class PreprocessingState {
   }
 
   public FileInfoContainer getRootFileInfo() {
-    return rootFileInfo;
+    return this.rootFileInfo;
   }
 
   public boolean isIncludeStackEmpty() {
@@ -300,11 +301,10 @@ public final class PreprocessingState {
   }
 
 
-  private TextFileDataContainer cloneTopTextDataContainer(final boolean useLastReadStringIndex) {
-    final TextFileDataContainer topElement = includeStack.peek();
+  private TextFileDataContainer cloneTopTextDataContainer() {
+    final TextFileDataContainer topElement = requireNonNull(includeStack.peek());
     return new TextFileDataContainer(topElement,
-        useLastReadStringIndex ? topElement.getLastReadStringIndex() :
-            topElement.getNextStringIndex());
+        topElement.getLastReadStringIndex());
   }
 
 
@@ -323,7 +323,7 @@ public final class PreprocessingState {
 
 
   public PreprocessingState pushWhile(final boolean makeActive) {
-    final TextFileDataContainer whileRef = cloneTopTextDataContainer(true);
+    final TextFileDataContainer whileRef = cloneTopTextDataContainer();
     whileStack.push(whileRef);
     if (makeActive) {
       activeWhile = whileRef;
@@ -355,7 +355,7 @@ public final class PreprocessingState {
 
 
   public PreprocessingState pushIf(final boolean makeActive) {
-    final TextFileDataContainer ifRef = cloneTopTextDataContainer(true);
+    final TextFileDataContainer ifRef = cloneTopTextDataContainer();
     ifStack.push(ifRef);
     if (makeActive) {
       activeIf = ifRef;

@@ -28,6 +28,7 @@ import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import java.io.File;
 import java.util.Collections;
+import java.util.Objects;
 import org.junit.Test;
 
 public final class PreprocessorExceptionTest {
@@ -42,7 +43,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFileWithNotification(null, context, true);
+      container.preprocessFileWithNotification(context, null, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       assertEquals("Expected correct line number", 17, expected.getLineNumber());
@@ -51,7 +52,8 @@ public final class PreprocessorExceptionTest {
 
   @Test
   public void testExceptionStringIndex_WrongBracketClosing() throws Exception {
-    final File file = new File(this.getClass().getResource("wrong_bracket_closing.txt").toURI());
+    final File file = new File(
+        Objects.requireNonNull(this.getClass().getResource("wrong_bracket_closing.txt")).toURI());
 
     final PreprocessorContext context =
         new PreprocessorContext(new File("some_impossible_folder_121212"));
@@ -59,7 +61,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFileWithNotification(null, context, true);
+      container.preprocessFileWithNotification(context, null, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       assertEquals("Expected correct line number", 17, expected.getLineNumber());
@@ -77,7 +79,7 @@ public final class PreprocessorExceptionTest {
 
     final FileInfoContainer container = new FileInfoContainer(file, "test", false);
     try {
-      container.preprocessFileWithNotification(null, context, true);
+      container.preprocessFileWithNotification(context, null, true);
       fail("Must throw PreprocessorException");
     } catch (PreprocessorException expected) {
       final FilePositionInfo[] fileStack = expected.getIncludeChain();

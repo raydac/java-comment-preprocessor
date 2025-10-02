@@ -304,7 +304,7 @@ public final class JcpPreprocessor {
     for (final FileInfoContainer fileRef : files) {
       if (!(fileRef.isExcludedFromPreprocessing() || fileRef.isCopyOnly())) {
         final long startTime = System.currentTimeMillis();
-        result.addAll(fileRef.processGlobalDirectives(null, context));
+        result.addAll(fileRef.processGlobalDirectives(context, null));
         final long elapsedTime = System.currentTimeMillis() - startTime;
         if (context.isVerbose()) {
           context.logForVerbose(String
@@ -377,7 +377,7 @@ public final class JcpPreprocessor {
           }
         } else {
           final long startTime = System.currentTimeMillis();
-          fileRef.preprocessFileWithNotification(null, this.context, false);
+          fileRef.preprocessFileWithNotification(this.context, null, false);
           final long elapsedTime = System.currentTimeMillis() - startTime;
           if (this.context.isVerbose()) {
             this.context.logForVerbose(String

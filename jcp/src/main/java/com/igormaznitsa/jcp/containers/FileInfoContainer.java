@@ -219,12 +219,12 @@ public class FileInfoContainer {
     }
   }
 
-  private static int findLastReadLineIndex(final PreprocessingState state) {
-    if (state == null) {
+  private static int findLastReadStringIndexInStack(final PreprocessingState nullableState) {
+    if (nullableState == null) {
       return -1;
     }
 
-    var fileData = state.peekFile();
+    var fileData = nullableState.peekIncludeStackFile();
     if (fileData == null) {
       return -1;
     } else {
@@ -260,18 +260,18 @@ public class FileInfoContainer {
   }
 
   public List<PreprocessingState.ExcludeIfInfo> processGlobalDirectives(
-      final PreprocessingState state, final PreprocessorContext context) throws IOException {
-    final PreprocessingState preprocessingState =
-        state == null ? context.produceNewPreprocessingState(this, 0) : state;
-    preprocessingState.setGlobalPhase(true);
+      final PreprocessorContext context, final PreprocessingState stateInUse) throws IOException {
+    final PreprocessingState activeState =
+        stateInUse == null ? context.produceNewPreprocessingState(this, 0) : stateInUse;
+    activeState.setGlobalPhase(true);
 
     String leftTrimmedString = null;
     try {
       try {
         while (!Thread.currentThread().isInterrupted()) {
-          String nonTrimmedProcessingString = preprocessingState.nextLine();
+          String nonTrimmedProcessingString = activeState.nextLine();
 
-          final Set<PreprocessingFlag> processFlags = preprocessingState.getPreprocessingFlags();
+          final Set<PreprocessingFlag> processFlags = activeState.getPreprocessingFlags();
 
           if (processFlags.contains(PreprocessingFlag.END_PROCESSING) ||
               processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
@@ -282,8 +282,8 @@ public class FileInfoContainer {
           }
 
           if (nonTrimmedProcessingString == null) {
-            preprocessingState.popTextContainer();
-            if (preprocessingState.isIncludeStackEmpty()) {
+            activeState.popTextContainer();
+            if (activeState.isIncludeStackEmpty()) {
               break;
             } else {
               continue;
@@ -293,8 +293,8 @@ public class FileInfoContainer {
           leftTrimmedString = PreprocessorUtils.leftTrim(nonTrimmedProcessingString);
 
           if (isHashPrefixed(leftTrimmedString, context)) {
-            switch (processDirective(preprocessingState,
-                extractHashPrefixedDirective(leftTrimmedString, context), context, true)) {
+            switch (processDirective(context, activeState,
+                this.extractHashPrefixedDirective(leftTrimmedString, context))) {
               case PROCESSED:
               case READ_NEXT_LINE:
               case SHOULD_BE_COMMENTED:
@@ -308,23 +308,23 @@ public class FileInfoContainer {
         final PreprocessorException pp =
             PreprocessorException.extractPreprocessorException(unexpected);
         if (pp == null) {
-          throw preprocessingState
+          throw activeState
               .makeException("Unexpected exception detected", leftTrimmedString, unexpected);
         } else {
           throw pp;
         }
       }
-      if (!preprocessingState.isIfStackEmpty()) {
-        final TextFileDataContainer lastIf = requireNonNull(preprocessingState.peekIf());
+      if (!activeState.isIfStackEmpty()) {
+        final TextFileDataContainer lastIf = requireNonNull(activeState.peekIf());
         throw new PreprocessorException(
             "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "_if instruction detected",
             "", new FilePositionInfo[] {
             new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
       }
 
-      return preprocessingState.popAllExcludeIfInfoData();
+      return activeState.popAllExcludeIfInfoData();
     } finally {
-      preprocessingState.setGlobalPhase(false);
+      activeState.setGlobalPhase(false);
     }
   }
 
@@ -422,26 +422,24 @@ public class FileInfoContainer {
   /**
    * Preprocess the file described by the object, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
    *
-   * @param state   the start preprocessing state, can be null
    * @param context the preprocessor context, must not be null
    * @return the state for the preprocessed file
    * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
-   * @see #preprocessFileWithNotification(PreprocessingState, PreprocessorContext, boolean)
+   * @see #preprocessFileWithNotification(PreprocessorContext, PreprocessingState, boolean)
+   * @since 7.3.0
    */
-  public PreprocessingState preprocessFile(final PreprocessingState state,
-                                           final PreprocessorContext context) throws IOException {
-    return this.preprocessFileWithNotification(state, context, true);
+  public PreprocessingState preprocessFile(final PreprocessorContext context) throws IOException {
+    return this.preprocessFileWithNotification(context, context.getPreprocessingState(), true);
   }
 
   @SuppressWarnings("StringEquality")
   private void flushTextBufferForRemovedComments(
+      final PreprocessorContext context,
       final AtomicReference<Map.Entry<String, String>> firstDetectedUncommentLinePtr,
       final int stringIndex,
       final List<String> textPieces,
-      final ResettablePrinter resettablePrinter,
-      final PreprocessingState state,
-      final PreprocessorContext context) {
+      final ResettablePrinter resettablePrinter) {
 
     final Map.Entry<String, String> firstUncommentLine =
         firstDetectedUncommentLinePtr.getAndSet(null);
@@ -470,22 +468,18 @@ public class FileInfoContainer {
 
         final List<String> results = processors
             .stream()
-            .filter(x -> x.isAllowed(this, filePositionInfo, context, state))
+            .filter(x -> x.isAllowed(context))
             .map(x -> {
               try {
                 return x.processUncommentedText(
-                    indent,
-                    accumulated,
-                    this,
-                    filePositionInfo,
                     context,
-                    state
-                );
+                    indent,
+                    accumulated);
               } catch (Exception ex) {
                 throw new PreprocessorException(
                     "Error during external comment text processor call: " +
                         x.getClass().getCanonicalName(),
-                    accumulated, state.makeIncludeStack(), ex);
+                    accumulated, context.getPreprocessingState().makeIncludeStack(), ex);
               }
             }).collect(Collectors.toList());
 
@@ -503,18 +497,19 @@ public class FileInfoContainer {
   /**
    * Preprocess the file described by the object, <b>NB! it doesn't clear local variables automatically for cloned contexts</b>
    *
-   * @param state            the start preprocessing state, can be null
    * @param context          the preprocessor context, must not be null
+   * @param stateInUse       initial preprocessing state, if it is null then it will be automatically created
    * @param notifyProcessors send notification to all processors registered in context about start and stop,
    *                         it should be true for direct call of preprocess of standalone file. <b>Works only for non-cloned contexts.</b>
    * @return the state for the preprocessed file
    * @throws IOException           it will be thrown for IO errors
    * @throws PreprocessorException it will be thrown for violation of preprocessing logic, like undefined variable
-   * @since 7.2.0
+   * @since 7.3.0
    */
-  public PreprocessingState preprocessFileWithNotification(final PreprocessingState state,
-                                                           final PreprocessorContext context,
-                                                           final boolean notifyProcessors)
+  public PreprocessingState preprocessFileWithNotification(
+      final PreprocessorContext context,
+      final PreprocessingState stateInUse,
+      final boolean notifyProcessors)
       throws IOException {
     if (!context.isCloned() && notifyProcessors) {
       final List<PreprocessorContextAware> successfullyNotified = new ArrayList<>();
@@ -534,7 +529,7 @@ public class FileInfoContainer {
       }
     }
 
-    PreprocessingState theState = null;
+    PreprocessingState state = null;
     Throwable error = null;
     try {
       // do not clear local variables for cloned context to keep them in the new context
@@ -542,10 +537,10 @@ public class FileInfoContainer {
         context.clearLocalVariables();
       }
 
-      if (state == null) {
-        theState = context.produceNewPreprocessingState(this, 1);
+      if (stateInUse == null) {
+        state = context.produceNewPreprocessingState(this, 1);
       } else {
-        theState = state;
+        state = stateInUse;
       }
 
       String leftTrimmedString = null;
@@ -560,12 +555,12 @@ public class FileInfoContainer {
 
         while (!Thread.currentThread().isInterrupted()) {
           final ResettablePrinter thePrinter =
-              requireNonNull(theState.getSelectedPrinter(), "Printer must be defined");
+              requireNonNull(state.getSelectedPrinter(), "Printer must be defined");
 
-          String rawString = theState.nextLine();
-          final boolean presentedNextLine = theState.hasReadLineNextLineInEnd();
+          String rawString = state.nextLine();
+          final boolean presentedNextLine = state.hasReadLineNextLineInEnd();
 
-          final Set<PreprocessingFlag> processFlags = theState.getPreprocessingFlags();
+          final Set<PreprocessingFlag> processFlags = state.getPreprocessingFlags();
 
           if (processFlags.contains(PreprocessingFlag.END_PROCESSING) ||
               processFlags.contains(PreprocessingFlag.ABORT_PROCESSING)) {
@@ -575,23 +570,22 @@ public class FileInfoContainer {
             rawString = null;
           }
 
-          if (theState.getPreprocessingFlags()
+          if (state.getPreprocessingFlags()
               .contains(PreprocessingFlag.END_PROCESSING)) {
-            theState.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
+            state.getPreprocessingFlags().remove(PreprocessingFlag.END_PROCESSING);
             rawString = null;
           }
 
           if (rawString == null) {
             this.flushTextBufferForRemovedComments(
+                context,
                 firstUncommentLine,
-                requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+                requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                 textPieces,
-                thePrinter,
-                theState,
-                context);
+                thePrinter);
             firstBlockLineIndex = null;
-            lastTextFileDataContainer = theState.popTextContainer();
-            if (theState.isIncludeStackEmpty()) {
+            lastTextFileDataContainer = state.popTextContainer();
+            if (state.isIncludeStackEmpty()) {
               break;
             } else {
               continue;
@@ -617,16 +611,16 @@ public class FileInfoContainer {
           final boolean doPrintEol = presentedNextLine || !context.isCareForLastEol();
 
           if (isHashPrefixed(stringToBeProcessed, context)) {
-            this.flushTextBufferForRemovedComments(firstUncommentLine,
-                requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+            this.flushTextBufferForRemovedComments(
+                context,
+                firstUncommentLine,
+                requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                 textPieces,
-                thePrinter,
-                theState,
-                context);
+                thePrinter);
             firstBlockLineIndex = null;
             final String extractedDirective =
                 extractHashPrefixedDirective(stringToBeProcessed, context);
-            switch (processDirective(theState, extractedDirective, context, false)) {
+            switch (this.processDirective(context, state, extractedDirective)) {
               case PROCESSED:
               case READ_NEXT_LINE: {
                 if (context.isKeepLines()) {
@@ -657,8 +651,8 @@ public class FileInfoContainer {
             }
           }
 
-          if (theState.isDirectiveCanBeProcessed() &&
-              !theState.getPreprocessingFlags()
+          if (state.isDirectiveCanBeProcessed() &&
+              !state.getPreprocessingFlags()
                   .contains(PreprocessingFlag.TEXT_OUTPUT_DISABLED)) {
             final boolean startsWithTwoDollars =
                 isDoubleDollarPrefixed(leftTrimmedString, context.isAllowWhitespaces());
@@ -681,7 +675,7 @@ public class FileInfoContainer {
                 indentText = Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
 
                 if (firstLineSet) {
-                  firstBlockLineIndex = findLastReadLineIndex(theState);
+                  firstBlockLineIndex = findLastReadStringIndexInStack(state);
                   firstUncommentLine.set(indentText);
                 }
                 textPieces.add(indentText.getValue());
@@ -689,11 +683,12 @@ public class FileInfoContainer {
                   textPieces.add(EOL_MARKER);
                 }
               } else {
-                this.flushTextBufferForRemovedComments(firstUncommentLine,
-                    requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+                this.flushTextBufferForRemovedComments(
+                    context,
+                    firstUncommentLine,
+                    requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                     textPieces,
-                    thePrinter,
-                    theState, context);
+                    thePrinter);
                 firstBlockLineIndex = null;
 
                 textPieces.add(stringPrefix);
@@ -702,11 +697,12 @@ public class FileInfoContainer {
                 if (doPrintEol) {
                   textPieces.add(EOL_MARKER);
                 }
-                this.flushTextBufferForRemovedComments(firstUncommentLine,
-                    requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+                this.flushTextBufferForRemovedComments(
+                    context,
+                    firstUncommentLine,
+                    requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                     textPieces,
-                    thePrinter,
-                    theState, context);
+                    thePrinter);
                 firstBlockLineIndex = null;
               }
             } else if (isSingleDollarPrefixed(stringToBeProcessed, context.isAllowWhitespaces())) {
@@ -724,7 +720,7 @@ public class FileInfoContainer {
                 indentText = Map.entry(context.isPreserveIndents() ? stringPrefix : "", text);
 
                 if (firstLineSet) {
-                  firstBlockLineIndex = findLastReadLineIndex(theState);
+                  firstBlockLineIndex = findLastReadStringIndexInStack(state);
                   firstUncommentLine.set(indentText);
                 }
 
@@ -733,11 +729,12 @@ public class FileInfoContainer {
                   textPieces.add(EOL_MARKER);
                 }
               } else {
-                this.flushTextBufferForRemovedComments(firstUncommentLine,
-                    requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+                this.flushTextBufferForRemovedComments(
+                    context,
+                    firstUncommentLine,
+                    requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                     textPieces,
-                    thePrinter,
-                    theState, context);
+                    thePrinter);
                 firstBlockLineIndex = null;
 
                 textPieces.add(stringPrefix);
@@ -748,28 +745,29 @@ public class FileInfoContainer {
                   textPieces.add(EOL_MARKER);
                 }
                 this.flushTextBufferForRemovedComments(
+                    context,
                     firstUncommentLine,
-                    requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+                    requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                     textPieces,
-                    thePrinter,
-                    theState, context);
+                    thePrinter);
                 firstBlockLineIndex = null;
               }
             } else {
               // Just string
-              this.flushTextBufferForRemovedComments(firstUncommentLine,
-                  requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+              this.flushTextBufferForRemovedComments(
+                  context,
+                  firstUncommentLine,
+                  requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                   textPieces,
-                  thePrinter,
-                  theState, context);
+                  thePrinter);
               firstBlockLineIndex = null;
 
               final String strToOut = findTailRemover(stringToBeProcessed, context);
 
-              if (theState.getPreprocessingFlags()
+              if (state.getPreprocessingFlags()
                   .contains(PreprocessingFlag.COMMENT_NEXT_LINE)) {
                 thePrinter.print(AbstractDirectiveHandler.ONE_LINE_COMMENT);
-                theState.getPreprocessingFlags()
+                state.getPreprocessingFlags()
                     .remove(PreprocessingFlag.COMMENT_NEXT_LINE);
               }
 
@@ -781,12 +779,10 @@ public class FileInfoContainer {
               }
             }
           } else if (context.isKeepLines()) {
-            flushTextBufferForRemovedComments(firstUncommentLine,
-                requireNonNullElse(firstBlockLineIndex, findLastReadLineIndex(theState)),
+            flushTextBufferForRemovedComments(context, firstUncommentLine,
+                requireNonNullElse(firstBlockLineIndex, findLastReadStringIndexInStack(state)),
                 textPieces,
-                thePrinter,
-                theState,
-                context);
+                thePrinter);
             firstBlockLineIndex = null;
 
             final String text = AbstractDirectiveHandler.PREFIX_FOR_KEEPING_LINES + rawString;
@@ -800,20 +796,20 @@ public class FileInfoContainer {
       } catch (Exception unexpected) {
         final String message =
             unexpected.getMessage() == null ? "Unexpected exception" : unexpected.getMessage();
-        throw theState.makeException(message, leftTrimmedString, unexpected);
+        throw state.makeException(message, leftTrimmedString, unexpected);
       }
 
-      if (!theState.isIfStackEmpty()) {
+      if (!state.isIfStackEmpty()) {
         final TextFileDataContainer lastIf =
-            requireNonNull(theState.peekIf(), "'IF' stack is empty");
+            requireNonNull(state.peekIf(), "'IF' stack is empty");
         throw new PreprocessorException(
             "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "if instruction detected",
             "", new FilePositionInfo[] {
             new FilePositionInfo(lastIf.getFile(), lastIf.getNextStringIndex())}, null);
       }
-      if (!theState.isWhileStackEmpty()) {
+      if (!state.isWhileStackEmpty()) {
         final TextFileDataContainer lastWhile =
-            requireNonNull(theState.peekWhile(), "'WHILE' stack is empty");
+            requireNonNull(state.peekWhile(), "'WHILE' stack is empty");
         throw new PreprocessorException(
             "Unclosed " + AbstractDirectiveHandler.DIRECTIVE_PREFIX + "while instruction detected",
             "", new FilePositionInfo[] {
@@ -824,7 +820,7 @@ public class FileInfoContainer {
         final File outFile = context.createDestinationFileForPath(makeTargetFilePathAsString());
 
         final boolean wasSaved =
-            theState.saveBuffersToFile(outFile, context.getKeepComments());
+            state.saveBuffersToFile(outFile, context.getKeepComments());
 
         if (context.isVerbose()) {
           context.logForVerbose(String
@@ -855,7 +851,7 @@ public class FileInfoContainer {
         context.fireNotificationStop(error);
       }
     }
-    return theState;
+    return state;
   }
 
   private boolean checkDirectiveArgumentRoughly(final AbstractDirectiveHandler directive,
@@ -896,11 +892,12 @@ public class FileInfoContainer {
   }
 
 
-  protected AfterDirectiveProcessingBehaviour processDirective(final PreprocessingState state,
-                                                               final String directiveString,
-                                                               final PreprocessorContext context,
-                                                               final boolean firstPass) {
-    final boolean executionEnabled = state.isDirectiveCanBeProcessed();
+  private AfterDirectiveProcessingBehaviour processDirective(
+      final PreprocessorContext context,
+      final PreprocessingState stateInUse,
+      final String directiveString) {
+    final boolean executionEnabled = stateInUse.isDirectiveCanBeProcessed();
+    final boolean firstPass = stateInUse.isGlobalPhase();
 
     for (final AbstractDirectiveHandler handler : context.getDirectiveHandlers()) {
       final String name = handler.getName();

@@ -48,7 +48,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     final PreprocessorExtension mockup = mock(PreprocessorExtension.class);
     when(mockup.hasUserFunction(anyString(), anyInt())).thenReturn(true);
     when(mockup.hasAction(anyInt())).thenReturn(true);
-    when(mockup.isAllowed(any(), any(), any(), any())).thenReturn(true);
+    when(mockup.isAllowed(any())).thenReturn(true);
     when(mockup.processAction(any(PreprocessorContext.class), any(Value[].class))).thenReturn(
         Boolean.TRUE);
 

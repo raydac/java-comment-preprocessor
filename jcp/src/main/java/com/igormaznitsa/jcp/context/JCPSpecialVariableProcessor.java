@@ -163,7 +163,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
       case VAR_DATE:
         return Value.valueOf(dateFormat.format(new Date()));
       case VAR_TIMESTAMP:
-        final TextFileDataContainer filedata = state.peekFile();
+        final TextFileDataContainer filedata = state.peekIncludeStackFile();
         final Value result;
         if (filedata == null) {
           result = Value.valueOf("<no file>");
@@ -173,7 +173,7 @@ public class JCPSpecialVariableProcessor implements SpecialVariableProcessor {
         }
         return result;
       case VAR_LINE:
-        final TextFileDataContainer currentFile = state.peekFile();
+        final TextFileDataContainer currentFile = state.peekIncludeStackFile();
         final long line;
         if (currentFile == null) {
           line = -1L;

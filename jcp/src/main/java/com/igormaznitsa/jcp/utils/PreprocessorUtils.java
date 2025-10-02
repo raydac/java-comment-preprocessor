@@ -89,7 +89,7 @@ public final class PreprocessorUtils {
       final PreprocessorContext context
   ) {
     final Optional<FileInfoContainer> result = context.getPreprocessingState()
-        .getCurrentIncludeStack()
+        .getIncludeStack()
         .stream()
         .map(TextFileDataContainer::getFile)
         .map(x -> context.findFileInfoContainer(x).orElse(null))
@@ -100,17 +100,17 @@ public final class PreprocessorUtils {
   }
 
   /**
-   * Find last presented FileInfoContainer among incoming files for include stack files.
+   * Find active FileInfoContainer among files for active include stack file.
    *
    * @param context preprocessor context, must not be null
    * @return found FileInfoContainer or empty optional
    * @see FileInfoContainer
    * @since 7.3.0
    */
-  public static Optional<FileInfoContainer> findLastActiveFileContainer(
+  public static Optional<FileInfoContainer> findActiveFileContainer(
       final PreprocessorContext context
   ) {
-    return context.getPreprocessingState().findLastTextFileDataContainerInStack()
+    return context.getPreprocessingState().findActiveTextFileDataContainer()
         .map(TextFileDataContainer::getFile)
         .flatMap(context::findFileInfoContainer);
   }
