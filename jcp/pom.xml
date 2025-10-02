@@ -363,14 +363,14 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <excludes>
-                    <exclude>/jcpversion.props</exclude>
+                    <exclude>/jcpversion.properties</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>**/jcpversion.props</include>
+                    <include>**/jcpversion.properties</include>
                 </includes>
             </resource>
         </resources>

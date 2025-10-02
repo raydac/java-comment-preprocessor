@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp;
 
 import static com.igormaznitsa.jcp.context.JCPSpecialVariableProcessor.getReference;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import com.igormaznitsa.jcp.cmdline.CommandLineHandler;
@@ -35,7 +36,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Properties;
 
 public final class InfoHelper {
@@ -48,13 +48,13 @@ public final class InfoHelper {
   public static final int YEAR;
 
   static {
-    final String path = "/jcpversion.props";
+    final String path = "/jcpversion.properties";
     try (final InputStream stream = InfoHelper.class.getResourceAsStream(path)) {
       final Properties props = new Properties();
       props.load(stream);
-      VERSION = Objects.requireNonNull(props.getProperty("version"));
-      URL = Objects.requireNonNull(props.getProperty("url"));
-      YEAR = Integer.parseInt(Objects.requireNonNull(props.getProperty("year")).trim());
+      VERSION = requireNonNull(props.getProperty("version"));
+      URL = requireNonNull(props.getProperty("url"));
+      YEAR = Integer.parseInt(requireNonNull(props.getProperty("year")).trim());
     } catch (IOException ex) {
       throw new IllegalStateException("Can't read resource: " + path, ex);
     }
