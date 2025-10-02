@@ -415,7 +415,7 @@ public final class JcpPreprocessor {
     final boolean targetExists = target.isDirectory();
 
     if (context.isClearTarget() && targetExists) {
-      this.context.logForVerbose("Cleaining target folder: " + target);
+      this.context.logForVerbose("Cleaning target folder: " + target);
       try {
         FileUtils.cleanDirectory(target);
       } catch (IOException ex) {

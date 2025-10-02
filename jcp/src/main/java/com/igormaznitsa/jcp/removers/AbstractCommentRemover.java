@@ -1,23 +1,27 @@
 package com.igormaznitsa.jcp.removers;
 
+import static java.util.Objects.requireNonNull;
+
 import com.igormaznitsa.jcp.context.CommentRemoverType;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Objects;
 
 public abstract class AbstractCommentRemover {
   protected final Reader srcReader;
-  protected final Writer dstWriter;
+  protected final Writer targetWriter;
 
   protected final boolean whiteSpaceAllowed;
 
-  protected AbstractCommentRemover(final Reader src, final Writer dst,
-                                   final boolean whiteSpaceAllowed) {
-    Objects.requireNonNull(src, "The reader is null");
-    Objects.requireNonNull(dst, "The writer is null");
+  protected AbstractCommentRemover(
+      final Reader src,
+      final Writer target,
+      final boolean whiteSpaceAllowed
+  ) {
+    requireNonNull(src, "The reader is null");
+    requireNonNull(target, "The writer is null");
     this.srcReader = src;
-    this.dstWriter = dst;
+    this.targetWriter = target;
     this.whiteSpaceAllowed = whiteSpaceAllowed;
   }
 
@@ -48,7 +52,7 @@ public abstract class AbstractCommentRemover {
       }
 
       if (chr == '\n') {
-        this.dstWriter.write(chr);
+        this.targetWriter.write(chr);
         return;
       }
     }
@@ -82,7 +86,7 @@ public abstract class AbstractCommentRemover {
       if (chr < 0) {
         return;
       }
-      this.dstWriter.write(chr);
+      this.targetWriter.write(chr);
       if (starFound) {
         if (chr == '/') {
           return;
@@ -101,7 +105,7 @@ public abstract class AbstractCommentRemover {
       if (chr < 0) {
         return;
       } else {
-        this.dstWriter.write(chr);
+        this.targetWriter.write(chr);
         if (chr == '\n') {
           break;
         }

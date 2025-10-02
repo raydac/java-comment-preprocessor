@@ -29,7 +29,7 @@ import java.util.Locale;
 
 /**
  * The handler for global variables, it adds met global variables into the
- * inside storage
+ * internal storage
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */

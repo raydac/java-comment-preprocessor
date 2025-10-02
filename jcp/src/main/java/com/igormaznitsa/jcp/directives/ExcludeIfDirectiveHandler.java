@@ -21,9 +21,10 @@
 
 package com.igormaznitsa.jcp.directives;
 
+import static java.util.Objects.requireNonNull;
+
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
-import java.util.Objects;
 
 /**
  * The class implements the //#excludeif directive handler
@@ -62,7 +63,7 @@ public class ExcludeIfDirectiveHandler extends AbstractDirectiveHandler {
                                                    final PreprocessorContext context) {
     final PreprocessingState state = context.getPreprocessingState();
     state.pushExcludeIfData(state.getRootFileInfo(), string,
-        Objects.requireNonNull(state.peekIncludeStackFile(), "'IF' stack is empty!")
+        requireNonNull(state.peekIncludeStackFile(), "'IF' stack is empty!")
             .getLastReadStringIndex());
     return AfterDirectiveProcessingBehaviour.PROCESSED;
   }

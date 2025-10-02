@@ -34,7 +34,6 @@ public interface ExpressionItem {
    *
    * @return the item type
    */
-
   ExpressionItemType getExpressionItemType();
 
   /**
@@ -42,6 +41,5 @@ public interface ExpressionItem {
    *
    * @return the item priority, must not be null
    */
-
   ExpressionItemPriority getExpressionItemPriority();
 }

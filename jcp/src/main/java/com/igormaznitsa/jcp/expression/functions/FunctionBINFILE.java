@@ -204,7 +204,7 @@ public class FunctionBINFILE extends AbstractFunction {
 
     try {
       final String endOfLine = System.getProperty("line.separator", "\r\n");
-      PreprocessorUtils.findFirstActiveFileContainer(context)
+      PreprocessorUtils.findActiveFileInfoContainer(context)
           .ifPresent(t ->
               t.getIncludedSources().add(theFile));
       return Value.valueOf(convertTo(theFile, type, doDeflate, lengthOfLine, endOfLine));

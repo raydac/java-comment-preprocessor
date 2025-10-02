@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.directives;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findActiveFileInfoContainer;
 
 import com.igormaznitsa.jcp.context.PreprocessingState;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
@@ -67,7 +67,7 @@ public class IncludeDirectiveHandler extends AbstractDirectiveHandler {
       }
       state.openFile(fileToInclude);
 
-      findFirstActiveFileContainer(context)
+      findActiveFileInfoContainer(context)
           .ifPresent(f -> f.getIncludedSources().add(fileToInclude));
     } catch (IOException ex) {
       throw context.makeException("Can't open file '" + filePath + '\'', ex);

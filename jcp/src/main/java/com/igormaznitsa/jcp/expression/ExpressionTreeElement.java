@@ -125,7 +125,7 @@ public class ExpressionTreeElement {
   }
 
   /**
-   * Inside auxiliary function to set the maximum priority the the element
+   * Internal auxiliary function to set the maximum priority the element
    */
   void makeMaxPriority() {
     priority = ExpressionItemPriority.VALUE.getPriority();

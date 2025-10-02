@@ -51,7 +51,6 @@ public final class ExpressionParser {
    */
   private static final ExpressionParser INSTANCE = new ExpressionParser();
 
-
   public static ExpressionParser getInstance() {
     return INSTANCE;
   }
@@ -99,7 +98,6 @@ public final class ExpressionParser {
    * @return a tree containing parsed expression
    * @throws IOException it will be thrown if there is a problem to read the expression string
    */
-
   public ExpressionTree parse(final String expressionStr, final PreprocessorContext context)
       throws IOException {
     requireNonNull(expressionStr, "Expression is null");
@@ -123,19 +121,21 @@ public final class ExpressionParser {
   /**
    * It reads an expression from a reader and fill a tree
    *
-   * @param reader        the reader to be used as the character source, must not be null
-   * @param tree          the result tree to be filled by read items, must not be null
-   * @param context       a preprocessor context to be used for variables
-   * @param insideBracket the flag shows that the expression can be ended by a bracket
-   * @param argument      the flag shows that the expression can be ended by a comma
+   * @param reader     the reader to be used as the character source, must not be null
+   * @param tree       the result tree to be filled by read items, must not be null
+   * @param context    a preprocessor context to be used for variables
+   * @param inBrackets the flag shows that the expression can be ended by a bracket
+   * @param argument   the flag shows that the expression can be ended by a comma
    * @return the last read expression item (a comma or a bracket for instance), it can be null
    * @throws IOException it will be thrown if there is a problem in reading from the reader
    */
-
-  public ExpressionItem readExpression(final PushbackReader reader, final ExpressionTree tree,
-                                       final PreprocessorContext context,
-                                       final boolean insideBracket, final boolean argument)
-      throws IOException {
+  public ExpressionItem readExpression(
+      final PushbackReader reader,
+      final ExpressionTree tree,
+      final PreprocessorContext context,
+      final boolean inBrackets,
+      final boolean argument
+  ) throws IOException {
     boolean working = true;
 
     ExpressionItem result = null;
@@ -153,10 +153,9 @@ public final class ExpressionParser {
       final ExpressionItem nextItem = nextItem(reader, context);
       if (nextItem == null) {
         working = false;
-        result = null;
       } else if (nextItem.getExpressionItemType() == ExpressionItemType.SPECIAL) {
         if (nextItem == SpecialItem.BRACKET_CLOSING) {
-          if (insideBracket) {
+          if (inBrackets) {
             working = false;
             result = nextItem;
           } else if (argument) {
@@ -206,7 +205,6 @@ public final class ExpressionParser {
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
-
   private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader,
                                       final PreprocessorContext context,
                                       final FilePositionInfo[] includeStack, final String sources)
@@ -282,7 +280,6 @@ public final class ExpressionParser {
    * @return the last read expression item (a comma or a bracket)
    * @throws IOException it will be thrown if there is any error during char reading from the reader
    */
-
   ExpressionItem readFunctionArgument(final PushbackReader reader, final ExpressionTree tree,
                                       final PreprocessorContext context,
                                       final FilePositionInfo[] callStack, final String source)
@@ -339,7 +336,6 @@ public final class ExpressionParser {
    * @return a read expression item, it can be null if the end is reached
    * @throws IOException it will be thrown if there is any error during a char reading
    */
-
   ExpressionItem nextItem(final PushbackReader reader, final PreprocessorContext context)
       throws IOException {
     requireNonNull(reader, "Reader is null");
@@ -669,13 +665,11 @@ public final class ExpressionParser {
     }
 
     @Override
-
     public ExpressionItemPriority getExpressionItemPriority() {
       return null;
     }
 
     @Override
-
     public ExpressionItemType getExpressionItemType() {
       return ExpressionItemType.SPECIAL;
     }

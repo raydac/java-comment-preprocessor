@@ -66,7 +66,6 @@ public class Expression {
    * @param context    a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
-
   public static Value evalExpression(final String expression, final PreprocessorContext context) {
     try {
       final ExpressionTree tree = ExpressionParser.getInstance().parse(expression, context);
@@ -85,12 +84,10 @@ public class Expression {
    * @param context a preprocessor context to be used for expression operations
    * @return the result as a Value object, it can't be null
    */
-
   public static Value evalTree(final ExpressionTree tree, final PreprocessorContext context) {
     final Expression exp = new Expression(tree);
     return exp.eval(context);
   }
-
 
   private ExpressionTreeElement evalFunction(final ExpressionTreeElement functionElement,
                                              final PreprocessorContext context) {

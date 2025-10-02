@@ -19,8 +19,8 @@ public class JustCopyRemover extends AbstractCommentRemover {
       if (read < 0) {
         break;
       }
-      this.dstWriter.write(buffer, 0, read);
+      this.targetWriter.write(buffer, 0, read);
     }
-    return this.dstWriter;
+    return this.targetWriter;
   }
 }

@@ -40,7 +40,7 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
   @Override
   public Writer process() throws IOException {
     final int STATE_NORMAL = 0;
-    final int STATE_INSIDE_STRING = 1;
+    final int STATE_IN_STRING = 1;
     final int STATE_NEXT_SPECIAL_CHAR = 2;
     final int STATE_FORWARD_SLASH = 3;
 
@@ -56,8 +56,8 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
         case STATE_NORMAL: {
           switch (chr) {
             case '\"': {
-              dstWriter.write(chr);
-              state = STATE_INSIDE_STRING;
+              targetWriter.write(chr);
+              state = STATE_IN_STRING;
             }
             break;
             case '/': {
@@ -65,7 +65,7 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
             }
             break;
             default: {
-              dstWriter.write(chr);
+              targetWriter.write(chr);
             }
             break;
           }
@@ -84,15 +84,15 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
             }
             break;
             default: {
-              dstWriter.write('/');
-              dstWriter.write(chr);
+              targetWriter.write('/');
+              targetWriter.write(chr);
               state = STATE_NORMAL;
             }
             break;
           }
         }
         break;
-        case STATE_INSIDE_STRING: {
+        case STATE_IN_STRING: {
           switch (chr) {
             case '\\': {
               state = STATE_NEXT_SPECIAL_CHAR;
@@ -105,18 +105,18 @@ public class CStyleCommentRemover extends AbstractCommentRemover {
             default:
               break;
           }
-          dstWriter.write(chr);
+          targetWriter.write(chr);
         }
         break;
         case STATE_NEXT_SPECIAL_CHAR: {
-          dstWriter.write(chr);
-          state = STATE_INSIDE_STRING;
+          targetWriter.write(chr);
+          state = STATE_IN_STRING;
         }
         break;
         default:
           throw new IllegalStateException("Unexpected state: " + state);
       }
     }
-    return dstWriter;
+    return targetWriter;
   }
 }

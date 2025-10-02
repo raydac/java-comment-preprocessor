@@ -83,14 +83,14 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
             null);
       }
 
-      final Value[] results = new Value[args.size()];
+      final Value[] argValues = new Value[args.size()];
       int index = 0;
       for (final ExpressionTree expr : args) {
         final Value val = Expression.evalTree(expr, context);
-        results[index++] = val;
+        argValues[index++] = val;
       }
 
-      if (!extension.processAction(context, results)) {
+      if (!extension.processAction(context, argValues)) {
         throw context.makeException("Unable to process an action", null);
       }
     } catch (IOException ex) {

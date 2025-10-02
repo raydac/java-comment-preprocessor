@@ -63,9 +63,9 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
           if (chr == '/') {
             state = STATE_FORWARD_SLASH;
           } else if (Character.isWhitespace(chr)) {
-            this.dstWriter.write(chr);
+            this.targetWriter.write(chr);
           } else {
-            this.dstWriter.write(chr);
+            this.targetWriter.write(chr);
             this.copyTillNextString();
           }
         }
@@ -80,8 +80,8 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
                 skipTillNextString();
                 state = STATE_NORMAL;
               } else {
-                this.dstWriter.write(jcpBuffer.toString());
-                this.dstWriter.write(chr);
+                this.targetWriter.write(jcpBuffer.toString());
+                this.targetWriter.write(chr);
                 this.copyTillNextString();
               }
             }
@@ -95,14 +95,14 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
                 this.skipTillNextString();
                 state = STATE_NORMAL;
               } else if (chr == '\n') {
-                this.dstWriter.write(currentBuffer);
+                this.targetWriter.write(currentBuffer);
                 jcpBuffer.setLength(0);
                 state = STATE_NORMAL;
               } else if ((!PREFIX_FOR_KEEPING_LINES.startsWith(currentBuffer) &&
                   !PREFIX_FOR_KEEPING_LINES_PROCESSED_DIRECTIVES.startsWith(currentBuffer)) &&
                   (!this.whiteSpaceAllowed || !Character.isSpaceChar(chr))) {
                 jcpBuffer.setLength(0);
-                this.dstWriter.write(currentBuffer);
+                this.targetWriter.write(currentBuffer);
                 this.copyTillNextString();
                 state = STATE_NORMAL;
               }
@@ -113,7 +113,7 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
         case STATE_FORWARD_SLASH: {
           switch (chr) {
             case '*': {
-              this.dstWriter.write("/*");
+              this.targetWriter.write("/*");
               copyTillClosingJavaComments();
               state = STATE_NORMAL;
             }
@@ -124,8 +124,8 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
             }
             break;
             default: {
-              dstWriter.write('/');
-              dstWriter.write(chr);
+              targetWriter.write('/');
+              targetWriter.write(chr);
               state = STATE_NORMAL;
             }
             break;
@@ -137,8 +137,8 @@ public class JcpCommentLineRemover extends AbstractCommentRemover {
       }
     }
     if (jcpBuffer.length() > 0) {
-      this.dstWriter.write(jcpBuffer.toString());
+      this.targetWriter.write(jcpBuffer.toString());
     }
-    return this.dstWriter;
+    return this.targetWriter;
   }
 }

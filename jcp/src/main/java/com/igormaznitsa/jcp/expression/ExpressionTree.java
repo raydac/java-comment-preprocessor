@@ -96,7 +96,6 @@ public class ExpressionTree {
    *
    * @return the root of the tree or EMPTY_SLOT if the tree is empty
    */
-
   public ExpressionTreeElement getRoot() {
     if (last.isEmptySlot()) {
       return this.last;

@@ -21,7 +21,7 @@
 
 package com.igormaznitsa.jcp.expression.functions.xml;
 
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findActiveFileInfoContainer;
 
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
@@ -63,7 +63,7 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
       final File file = context.findFileInSources(name);
       final Document document = openFileAndParse(context, file);
 
-      findFirstActiveFileContainer(context)
+      findActiveFileInfoContainer(context)
           .ifPresent(t -> t.getIncludedSources().add(file));
 
       docContainer = new NodeContainer(UID_COUNTER.getAndIncrement(), document);

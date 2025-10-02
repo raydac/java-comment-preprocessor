@@ -23,7 +23,7 @@ package com.igormaznitsa.jcp.context;
 
 import static com.igormaznitsa.jcp.removers.AbstractCommentRemover.makeCommentRemover;
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findActiveFileInfoContainer;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
@@ -160,8 +160,11 @@ public final class PreprocessingState {
     return this.lastReadString;
   }
 
-  public void pushExcludeIfData(final FileInfoContainer infoContainer,
-                                final String excludeIfCondition, final int stringIndex) {
+  public void pushExcludeIfData(
+      final FileInfoContainer infoContainer,
+      final String excludeIfCondition,
+      final int stringIndex
+  ) {
     requireNonNull(infoContainer, "File info is null");
     requireNonNull(excludeIfCondition, "Condition is null");
 
@@ -169,7 +172,8 @@ public final class PreprocessingState {
       throw new IllegalArgumentException("Unexpected string index [" + stringIndex + ']');
     }
 
-    deferredExcludeStack.push(new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
+    this.deferredExcludeStack.push(
+        new ExcludeIfInfo(infoContainer, excludeIfCondition, stringIndex));
   }
 
   public ResettablePrinter getSelectedPrinter() {
@@ -295,11 +299,6 @@ public final class PreprocessingState {
   public boolean isIncludeStackEmpty() {
     return includeStack.isEmpty();
   }
-
-  public boolean isOnlyRootOnStack() {
-    return includeStack.size() == 1;
-  }
-
 
   private TextFileDataContainer cloneTopTextDataContainer() {
     final TextFileDataContainer topElement = requireNonNull(includeStack.peek());
@@ -553,7 +552,7 @@ public final class PreprocessingState {
     }
 
     if (wasSaved) {
-      findFirstActiveFileContainer(context).ifPresent(t -> t.getGeneratedResources().add(outFile));
+      findActiveFileInfoContainer(context).ifPresent(t -> t.getGeneratedResources().add(outFile));
       if (this.context.isKeepAttributes() && outFile.exists()) {
         PreprocessorUtils.copyFileAttributes(this.getRootFileInfo().getSourceFile(), outFile);
       }

@@ -506,7 +506,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Set a shared source, it is an object saved into the inside map for a name
+   * Set a shared source, it is an object saved into the internal map for a name
    *
    * @param name the name for the saved project, must not be null
    * @param obj  the object to be saved in, must not be null
@@ -519,7 +519,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Get a shared source from inside map
+   * Get a shared source from internal map
    *
    * @param name the name of the needed object, it must not be null
    * @return a cached object or null if it is not found
@@ -531,7 +531,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Remove a shared object from the inside map for its name
+   * Remove a shared object from the internal map for its name
    *
    * @param name the object name, it must not be null
    * @return removing object or null if it is not found
@@ -754,7 +754,7 @@ public class PreprocessorContext {
   }
 
   /**
-   * Remove all local variables from the inside storage
+   * Remove all local variables from the internal storage
    *
    * @return this preprocessor context
    */
@@ -812,10 +812,10 @@ public class PreprocessorContext {
   }
 
   /**
-   * Check that there is a named global variable in the inside storage
+   * Check that there is a named global variable in the internal storage
    *
    * @param name the checking name, it will be normalized to the supported format, it can be null
-   * @return true if such variable is presented for its name in the inside storage, otherwise false (also it is false if the name is null)
+   * @return true if such variable is presented for its name in the internal storage, otherwise false (also it is false if the name is null)
    */
   public boolean containsGlobalVariable(final String name) {
     if (name == null) {

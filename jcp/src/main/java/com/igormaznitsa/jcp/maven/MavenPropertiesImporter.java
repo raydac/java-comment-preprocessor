@@ -88,7 +88,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     for (final String paramName : TO_IMPORT) {
       final String varName = "mvn." + paramName.toLowerCase(Locale.ROOT);
       final String value = getProperty(this.project, paramName);
-      addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
+      addVariableIntoInternalMap(context, varName, Value.valueOf(value), logAddedProperties);
     }
 
     // add active profile ids
@@ -99,7 +99,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
       }
       profileIds.append(profile.getId());
     }
-    addVariableIntoInsideMap(context, "mvn.project.activeprofiles",
+    addVariableIntoInternalMap(context, "mvn.project.activeprofiles",
         Value.valueOf(profileIds.toString()), logAddedProperties);
 
     // add properties
@@ -108,7 +108,7 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
           "mvn.project.property." + propertyName.toLowerCase(Locale.ROOT).replace(' ', '_');
       final String value = this.findPropertyValue(propertyName);
       if (value != null) {
-        addVariableIntoInsideMap(context, varName, Value.valueOf(value), logAddedProperties);
+        addVariableIntoInternalMap(context, varName, Value.valueOf(value), logAddedProperties);
       }
     }
   }
@@ -169,8 +169,8 @@ public class MavenPropertiesImporter implements SpecialVariableProcessor {
     context.logInfo("Added MAVEN property " + varName + '=' + textValue);
   }
 
-  private void addVariableIntoInsideMap(final PreprocessorContext context, final String name,
-                                        final Value value, final boolean verbose) {
+  private void addVariableIntoInternalMap(final PreprocessorContext context, final String name,
+                                          final Value value, final boolean verbose) {
     if (internalVarMap.containsKey(name)) {
       throw context.makeException("Duplicated importing value detected [" + name + ']', null);
     }

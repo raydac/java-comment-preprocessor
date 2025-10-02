@@ -22,7 +22,7 @@
 package com.igormaznitsa.jcp.expression.functions;
 
 import static com.igormaznitsa.jcp.utils.IOUtils.closeQuietly;
-import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findFirstActiveFileContainer;
+import static com.igormaznitsa.jcp.utils.PreprocessorUtils.findActiveFileInfoContainer;
 
 import com.igormaznitsa.jcp.containers.FileInfoContainer;
 import com.igormaznitsa.jcp.context.CommentRemoverType;
@@ -100,7 +100,7 @@ public class FunctionEVALFILE extends AbstractFunction {
       final PreprocessingState state =
           fileContainer.preprocessFileWithNotification(evalContext, null, false);
 
-      findFirstActiveFileContainer(context)
+      findActiveFileInfoContainer(context)
           .ifPresent(f -> {
             f.getIncludedSources().add(fileToEvaluate);
             f.getIncludedSources().addAll(evalContext.findAllInputFiles());

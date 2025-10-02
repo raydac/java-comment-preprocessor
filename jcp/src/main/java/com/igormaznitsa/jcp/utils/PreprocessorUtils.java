@@ -78,41 +78,39 @@ public final class PreprocessorUtils {
   }
 
   /**
-   * Find first presented FileInfoContainer among incoming files for include stack files.
-   *
-   * @param context preprocessor context, must not be null
-   * @return found FileInfoContainr or empty optional
-   * @see FileInfoContainer
-   * @since 7.0.3
-   */
-  public static Optional<FileInfoContainer> findFirstActiveFileContainer(
-      final PreprocessorContext context
-  ) {
-    final Optional<FileInfoContainer> result = context.getPreprocessingState()
-        .getIncludeStack()
-        .stream()
-        .map(TextFileDataContainer::getFile)
-        .map(x -> context.findFileInfoContainer(x).orElse(null))
-        .filter(Objects::nonNull)
-        .findFirst();
-    return result.isPresent() ? result :
-        Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
-  }
-
-  /**
-   * Find active FileInfoContainer among files for active include stack file.
+   * Find active FileInfoContainer in a context.
    *
    * @param context preprocessor context, must not be null
    * @return found FileInfoContainer or empty optional
    * @see FileInfoContainer
    * @since 7.3.0
    */
-  public static Optional<FileInfoContainer> findActiveFileContainer(
+  public static Optional<FileInfoContainer> findActiveFileInfoContainer(
       final PreprocessorContext context
   ) {
-    return context.getPreprocessingState().findActiveTextFileDataContainer()
+    final Optional<FileInfoContainer> result = context.getPreprocessingState()
+        .getIncludeStack()
+        .stream()
+        .findFirst()
         .map(TextFileDataContainer::getFile)
         .flatMap(context::findFileInfoContainer);
+    return result.isPresent() ? result :
+        Optional.ofNullable(context.getPreprocessingState().getRootFileInfo());
+  }
+
+  /**
+   * Find current file position info in a context.
+   *
+   * @param context preprocessor context, must not be null
+   * @return found current file position info, must not be null
+   * @since 7.3.0
+   * @throws PreprocessorException thrown if it is impossible to find position info.
+   */
+  public static FilePositionInfo extractFilePositionInfo(
+      final PreprocessorContext context
+  ) {
+    return context.getPreprocessingState().findFilePositionInfo()
+        .orElseThrow(() -> context.makeException("Can't find position info in the context", null));
   }
 
   /**

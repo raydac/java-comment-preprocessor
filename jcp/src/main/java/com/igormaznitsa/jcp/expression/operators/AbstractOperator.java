@@ -78,7 +78,6 @@ public abstract class AbstractOperator implements ExpressionItem {
    * @param operatorClass the class to be used for search, must not be null
    * @return an instance of the handler or null if there is not any such one
    */
-
   public static <E extends AbstractOperator> E findForClass(final Class<E> operatorClass) {
     for (final AbstractOperator operator : getAllOperators()) {
       if (operator.getClass() == operatorClass) {
@@ -94,7 +93,6 @@ public abstract class AbstractOperator implements ExpressionItem {
    * @return for operators it is always ExpressionItemType.OPERATOR
    */
   @Override
-
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.OPERATOR;
   }
@@ -111,7 +109,6 @@ public abstract class AbstractOperator implements ExpressionItem {
    *
    * @return the operator keyword, must not be null
    */
-
   public abstract String getKeyword();
 
   /**
@@ -119,11 +116,9 @@ public abstract class AbstractOperator implements ExpressionItem {
    *
    * @return the operator reference as a String, must not be null
    */
-
   public abstract String getReference();
 
   @Override
-
   public String toString() {
     return "OPERATOR: " + getKeyword();
   }

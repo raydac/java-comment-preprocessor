@@ -25,8 +25,7 @@ import com.igormaznitsa.jcp.context.CommentRemoverType;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
- * The handler processing the flag to clear all sources in the destination
- * directory from inside comments
+ * Processes the flag that clears all source files from the destination directory, stripping them even from within comments.
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
@@ -36,7 +35,7 @@ public class RemoveCommentsHandler implements CommandLineHandler {
 
   @Override
   public String getDescription() {
-    return "strip all comments from output files";
+    return "strip all comments in result files";
   }
 
   @Override

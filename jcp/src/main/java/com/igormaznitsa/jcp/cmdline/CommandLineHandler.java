@@ -24,7 +24,7 @@ package com.igormaznitsa.jcp.cmdline;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 
 /**
- * The interface describes a command line key handler. It is not just a handler
+ * The interface describes a command line key handler. It is not just a handler,
  * but it will be called for all met keys to recognize one to be processed.
  *
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
