@@ -252,51 +252,63 @@ public final class Value implements ExpressionItem {
   public String toStringDetail() {
     switch (type) {
       case BOOLEAN: {
-        return "Boolean : " + value;
+        return "Boolean: " + value;
       }
       case INT: {
-        return "Integer : " + value;
+        return "Integer: " + value;
       }
       case UNKNOWN: {
-        return "Unknown : -";
+        return "Unknown: -";
       }
       case FLOAT: {
-        return "Float : " + value;
+        return "Float: " + value;
       }
       case STRING: {
-        return "String : " + value;
+        return "String: " + value;
       }
     }
-    return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
+    return "Unexpected unsupported type, contact developer [" + type + "]";
   }
 
   @Override
-
   public String toString() {
-    switch (type) {
+    switch (this.type) {
       case BOOLEAN:
-        return asBoolean().toString();
+        return this.asBoolean().toString();
       case INT:
-        return asLong().toString();
+        return this.asLong().toString();
       case UNKNOWN:
         return "<UNKNOWN>";
       case FLOAT:
-        return asFloat().toString();
+        return this.asFloat().toString();
       case STRING:
         return asString();
       default:
-        return "!!! ERROR , UNSUPPORTED TYPE [" + type + "]";
+        return "Unexpected unsupported type, contact developer [" + type + "]";
+    }
+  }
+
+  public boolean toBoolean() {
+    switch (this.type) {
+      case BOOLEAN:
+        return this.asBoolean();
+      case INT:
+        return this.asLong() != 0L;
+      case FLOAT:
+        return Math.round(this.asFloat()) != 0;
+      case STRING:
+        return "true".equalsIgnoreCase(this.asString().trim());
+      default:
+        return false;
     }
   }
 
   @Override
-
   public ExpressionItemType getExpressionItemType() {
     return ExpressionItemType.VALUE;
   }
 
   @Override
-
   public ExpressionItemPriority getExpressionItemPriority() {
     return ExpressionItemPriority.VALUE;
   }
