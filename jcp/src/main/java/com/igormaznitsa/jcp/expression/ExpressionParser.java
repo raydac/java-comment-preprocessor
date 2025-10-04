@@ -609,7 +609,8 @@ public final class ExpressionParser {
                 context.getPreprocessorExtensions().stream()
                     .filter(x -> x.isAllowed(context))
                     .filter(x -> x.hasUserFunction(userFunctionName,
-                        PreprocessorExtension.ANY_ARITY)).findFirst().orElse(null);
+                        Set.of()))
+                    .findFirst().orElse(null);
 
             if (preprocessorExtension == null) {
               throw context.makeException(

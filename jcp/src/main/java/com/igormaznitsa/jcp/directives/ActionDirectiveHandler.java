@@ -28,13 +28,13 @@ import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.ExpressionItem;
 import com.igormaznitsa.jcp.expression.ExpressionParser;
 import com.igormaznitsa.jcp.expression.ExpressionTree;
-import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The class implements the //#action directive handler
@@ -83,14 +83,9 @@ public class ActionDirectiveHandler extends AbstractDirectiveHandler {
             null);
       }
 
-      final Value[] argValues = new Value[args.size()];
-      int index = 0;
-      for (final ExpressionTree expr : args) {
-        final Value val = Expression.evalTree(expr, context);
-        argValues[index++] = val;
-      }
-
-      if (!extension.processAction(context, argValues)) {
+      if (!extension.processAction(context,
+          args.stream().map(x -> Expression.evalTree(x, context)).collect(
+              Collectors.toList()))) {
         throw context.makeException("Unable to process an action", null);
       }
     } catch (IOException ex) {

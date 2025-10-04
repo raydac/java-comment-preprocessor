@@ -23,7 +23,6 @@ package com.igormaznitsa.jcp.expression.functions;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,7 +47,7 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   @Test
   public void testExecution_withArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
-    when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
+    when(mock.hasUserFunction(anyString(), any())).thenReturn(true);
     when(mock.isAllowed(any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
@@ -72,7 +71,7 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
   @Test
   public void testExecution_withoutArguments() throws Exception {
     final PreprocessorExtension mock = mock(PreprocessorExtension.class);
-    when(mock.hasUserFunction(anyString(), anyInt())).thenReturn(true);
+    when(mock.hasUserFunction(anyString(), any())).thenReturn(true);
     when(mock.isAllowed(any())).thenReturn(true);
 
     final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());

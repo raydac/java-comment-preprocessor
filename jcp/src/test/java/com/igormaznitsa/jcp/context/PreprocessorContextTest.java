@@ -265,12 +265,12 @@ public class PreprocessorContextTest {
           }
 
           @Override
-          public boolean hasUserFunction(String name, int arity) {
+          public boolean hasUserFunction(String name, Set<Integer> arity) {
             return true;
           }
 
           @Override
-          public boolean processAction(PreprocessorContext context, Value[] parameters) {
+          public boolean processAction(PreprocessorContext context, List<Value> parameters) {
             throw new UnsupportedOperationException(
                 "Not supported yet.");
           }

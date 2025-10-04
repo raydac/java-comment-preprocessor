@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.jcp.expression.ExpressionTreeElement.ANY_ARITY;
+
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
@@ -140,6 +142,9 @@ public class Expression {
     final List<List<ValueType>> allowedSignatures = functionElement.getAllowedArgumentTypes();
     List<ValueType> allowed = null;
     for (final List<ValueType> current : allowedSignatures) {
+      if (current.size() != arguments.size()) {
+        continue;
+      }
       boolean allCompatible = true;
 
       int thatIndex = 0;
@@ -161,9 +166,13 @@ public class Expression {
     }
 
     if (allowed == null) {
-      throw context.makeException(
-          "[Expression]Unsupported argument detected for '" + functionElement.getName() + '\'',
-          null);
+      if (functionElement.getArity().contains(ANY_ARITY)) {
+        signature.append(ValueType.ANY.getSignature());
+      } else {
+        throw context.makeException(
+            "[Expression]Unsupported argument detected for '" + functionElement.getName() + '\'',
+            null);
+      }
     }
 
     if (functionElement instanceof FunctionDefinedByUser) {

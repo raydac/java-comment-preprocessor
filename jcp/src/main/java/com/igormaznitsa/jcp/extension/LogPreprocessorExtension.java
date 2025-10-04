@@ -4,11 +4,11 @@ package com.igormaznitsa.jcp.extension;
 import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Preprocessor extension which just make info logging for arguments of action calls and also
@@ -42,13 +42,14 @@ public class LogPreprocessorExtension implements PreprocessorExtension {
   }
 
   @Override
-  public boolean hasUserFunction(String name, int arity) {
+  public boolean hasUserFunction(String name, Set<Integer> arity) {
     return true;
   }
 
   @Override
-  public boolean processAction(final PreprocessorContext context, final Value[] parameters) {
-    context.logInfo(String.format("Called action: %s at %s", Arrays.toString(parameters),
+  public boolean processAction(final PreprocessorContext context, final List<Value> parameters) {
+    context.logInfo(String.format("Called action: %s at %s", parameters.stream().map(
+            Value::toString).collect(Collectors.joining(",")),
         findPosition(context)));
     return true;
   }

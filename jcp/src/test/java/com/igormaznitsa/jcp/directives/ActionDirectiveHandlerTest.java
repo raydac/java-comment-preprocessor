@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.when;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
+import java.util.List;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -46,10 +48,10 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
   @Override
   public void testExecution() throws Exception {
     final PreprocessorExtension mockup = mock(PreprocessorExtension.class);
-    when(mockup.hasUserFunction(anyString(), anyInt())).thenReturn(true);
+    when(mockup.hasUserFunction(anyString(), any())).thenReturn(true);
     when(mockup.hasAction(anyInt())).thenReturn(true);
     when(mockup.isAllowed(any())).thenReturn(true);
-    when(mockup.processAction(any(PreprocessorContext.class), any(Value[].class))).thenReturn(
+    when(mockup.processAction(any(PreprocessorContext.class), anyList())).thenReturn(
         Boolean.TRUE);
 
     assertFilePreprocessing("directive_action.txt", false, mockup, null);
@@ -62,7 +64,7 @@ public class ActionDirectiveHandlerTest extends AbstractDirectiveHandlerAcceptan
     final Value val6 = Value.valueOf("hello,");
 
     verify(mockup).processAction(any(PreprocessorContext.class),
-        eq(new Value[] {val1, val2, val3, val4, val5, val6}));
+        eq(List.of(val1, val2, val3, val4, val5, val6)));
   }
 
   @Test

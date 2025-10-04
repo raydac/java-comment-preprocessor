@@ -36,11 +36,6 @@ import java.util.Set;
  */
 public interface PreprocessorExtension extends PreprocessorContextAware, ExecutionAllowable {
 
-  /**
-   * Undefined arity. In case of functions it means to check only name.
-   */
-  int ANY_ARITY = -1;
-
   @Override
   default boolean isAllowed(PreprocessorContext context) {
     return true;
@@ -59,12 +54,11 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
    * Allows to check that the extension contains a user defined function with required number of parameters.
    *
    * @param name  name of the function to be checked, must not be null
-   * @param arity number of parameters for action, if ANY_ARITY then check only by name
+   * @param arity set of numbers of parameters for action, if empty set then check only name
    * @return true if such user defined function is provided by the extension
-   * @see #ANY_ARITY
-   * @since 7.2.2
+   * @since 7.3.0
    */
-  boolean hasUserFunction(String name, int arity);
+  boolean hasUserFunction(String name, Set<Integer> arity);
 
   /**
    * To process an action (it will be called if the preprocessor is met
@@ -74,8 +68,9 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
    * @param parameters the parameters of the action directive, must not be null
    * @return true if the action has been processed successfully or false, if it
    * is false then exception will be thrown and preprocessing will be stopped
+   * @since 7.3.0
    */
-  boolean processAction(PreprocessorContext context, Value[] parameters);
+  boolean processAction(PreprocessorContext context, List<Value> parameters);
 
   /**
    * Call to process a user function (such functions start with $)
@@ -85,7 +80,7 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
    *                     must not be null
    * @param arguments    the function arguments, must not be null
    * @return a calculated value, it must not be null
-   * @since 7.1.2
+   * @since 7.3.0
    */
   Value processUserFunction(PreprocessorContext context, String functionName,
                             List<Value> arguments);

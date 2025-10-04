@@ -50,11 +50,11 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
   }
 
   @Override
-  public boolean processAction(final PreprocessorContext context, final Value[] parameters) {
+  public boolean processAction(final PreprocessorContext context, final List<Value> parameters) {
     calledaction++;
-    assertEquals(1000L, parameters[0].asLong().longValue());
-    assertEquals("hello", parameters[1].asString());
-    assertEquals(123L, parameters[2].asLong().longValue());
+    assertEquals(1000L, parameters.get(0).asLong().longValue());
+    assertEquals("hello", parameters.get(1).asString());
+    assertEquals(123L, parameters.get(2).asLong().longValue());
     return true;
   }
 
@@ -79,9 +79,9 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
   }
 
   @Override
-  public boolean hasUserFunction(String name, int arity) {
+  public boolean hasUserFunction(String name, Set<Integer> arity) {
     if ("testfunc".equals(name)) {
-      return arity == ANY_ARITY || arity == 3;
+      return arity.isEmpty() || arity.contains(3);
     }
     return false;
   }

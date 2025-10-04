@@ -344,8 +344,10 @@ public class ExpressionTreeElement {
           this.includeStack, null);
     }
 
-    if (childrenSlots.length != arguments.size()) {
-      throw new PreprocessorException("Wrong argument list size", this.sourceString,
+    if (!this.expectedArities.contains(ANY_ARITY) &&
+        !this.expectedArities.contains(arguments.size())) {
+      throw new PreprocessorException(
+          "Wrong argument list size, expected arities: " + this.expectedArities, this.sourceString,
           this.includeStack, null);
     }
 

@@ -81,8 +81,10 @@ public final class FunctionDefinedByUser extends AbstractFunction {
               null);
     }
 
+    final Set<Integer> expectedArity = Set.of(values.size());
+
     final PreprocessorExtension extension =
-        extensionList.stream().filter(x -> x.hasUserFunction(this.name, values.size()))
+        extensionList.stream().filter(x -> x.hasUserFunction(this.name, expectedArity))
             .findFirst().orElseThrow(() -> context
                 .makeException(
                     "Can't find any preprocessor extension to process function " + this.name + " for " +

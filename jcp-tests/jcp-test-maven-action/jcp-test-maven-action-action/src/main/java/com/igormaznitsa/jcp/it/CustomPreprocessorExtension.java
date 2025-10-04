@@ -17,16 +17,16 @@ public class CustomPreprocessorExtension implements PreprocessorExtension {
   }
 
   @Override
-  public boolean hasUserFunction(String name, int arity) {
+  public boolean hasUserFunction(String name, Set<Integer> arity) {
     if ("hellofunc".equals(name)) {
-      return arity == ANY_ARITY || arity == 1;
+      return arity.isEmpty() || arity.contains(1);
     }
     return false;
   }
 
   @Override
-  public boolean processAction(PreprocessorContext context, Value[] parameters) {
-    System.out.println("Called action for parameters: " + Arrays.toString(parameters));
+  public boolean processAction(PreprocessorContext context, List<Value> parameters) {
+    System.out.println("Called action for parameters: " + parameters);
     return true;
   }
 
