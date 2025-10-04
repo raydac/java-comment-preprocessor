@@ -34,8 +34,8 @@ import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
@@ -76,18 +76,18 @@ public abstract class AbstractFunctionTest extends AbstractSpyPreprocessorContex
   }
 
   protected void assertAllowedArguments(final AbstractFunction function,
-                                        final ValueType[][] checkingData) {
-    final ValueType[][] argTypes = function.getAllowedArgumentTypes();
-    for (final ValueType[] currentTypes : argTypes) {
+                                        final List<List<ValueType>> checkingData) {
+    final List<List<ValueType>> argTypes = function.getAllowedArgumentTypes();
+    for (final List<ValueType> currentTypes : argTypes) {
       boolean found = false;
-      for (final ValueType[] etalon : checkingData) {
-        if (Arrays.deepEquals(currentTypes, etalon)) {
+      for (final List<ValueType> etalon : checkingData) {
+        if (currentTypes.equals(etalon)) {
           found = true;
           break;
         }
       }
       if (!found) {
-        fail("Found not allowed argument types " + Arrays.toString(currentTypes));
+        fail("Found not allowed argument types " + currentTypes);
       }
     }
   }

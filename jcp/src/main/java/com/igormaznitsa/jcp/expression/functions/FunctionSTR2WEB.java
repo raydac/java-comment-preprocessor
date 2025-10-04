@@ -35,13 +35,11 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2WEB extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2web";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeHtml3(value.asString());
 
@@ -59,13 +57,11 @@ public final class FunctionSTR2WEB extends AbstractStrConverter {
   }
 
   @Override
-
   public String getReference() {
     return "escape string for HTML3";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

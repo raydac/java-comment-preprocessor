@@ -29,6 +29,8 @@ import com.igormaznitsa.jcp.expression.operators.OperatorSUB;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class describes a wrapper around an expression item to be saved into an expression tree
@@ -75,10 +77,18 @@ public class ExpressionTreeElement {
    */
   private int nextChildSlot = 0;
 
+  private static final Set<Integer> ZERO_ARITY = Set.of(0);
+
   private ExpressionTreeElement() {
     this.sourceString = "";
     this.includeStack = new FilePositionInfo[0];
   }
+  /**
+   * Set of allowed arities.
+   *
+   * @since 7.3.0
+   */
+  private Set<Integer> allowedArities = Set.of();
 
   /**
    * The constructor
@@ -97,16 +107,43 @@ public class ExpressionTreeElement {
           this.includeStack, null);
     }
 
-    int arity = 0;
+    final int arity;
     if (item.getExpressionItemType() == ExpressionItemType.OPERATOR) {
       arity = ((AbstractOperator) item).getArity();
+      this.allowedArities = Set.of(arity);
     } else if (item.getExpressionItemType() == ExpressionItemType.FUNCTION) {
-      arity = ((AbstractFunction) item).getArity();
+      final AbstractFunction functionItem = (AbstractFunction) item;
+      this.allowedArities = functionItem.getArity();
+      arity = this.allowedArities.stream().mapToInt(x -> x).max().orElse(0);
+    } else {
+      arity = 0;
+      this.allowedArities = ZERO_ARITY;
     }
     priority = item.getExpressionItemPriority().getPriority();
     this.savedItem = item;
     childElements = arity == 0 ? EMPTY : new ExpressionTreeElement[arity];
     Arrays.fill(this.childElements, EMPTY_SLOT);
+  }
+
+  /**
+   * Get effective child slots.
+   *
+   * @return list of non-empty child slots.
+   * @since 7.3.0
+   */
+  public List<ExpressionTreeElement> extractEffectiveChildren() {
+    return Arrays.stream(this.childElements).takeWhile(x -> x != EMPTY_SLOT)
+        .collect(Collectors.toUnmodifiableList());
+  }
+
+  /**
+   * Variants of allowed arities by the expression tree element
+   *
+   * @return allowed artiy numbers as set
+   * @since 7.3.0
+   */
+  public Set<Integer> getAllowedArities() {
+    return this.allowedArities;
   }
 
   /**
@@ -166,7 +203,7 @@ public class ExpressionTreeElement {
    * @return the priority
    */
   public int getPriority() {
-    return priority;
+    return this.priority;
   }
 
   /**

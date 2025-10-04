@@ -28,6 +28,8 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.w3c.dom.Document;
@@ -43,10 +45,9 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   public static final String RES_XML_DOC_PREFIX = "xml_doc_";
   public static final String RES_XML_ELEMENT_PREFIX = "xml_elem_";
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "xml_open";
   }
@@ -95,25 +96,21 @@ public final class FunctionXML_OPEN extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "open and parse XML file";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

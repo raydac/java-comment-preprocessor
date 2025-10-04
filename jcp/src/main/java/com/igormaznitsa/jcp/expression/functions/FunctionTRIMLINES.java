@@ -34,13 +34,11 @@ import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 public final class FunctionTRIMLINES extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "trimlines";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String text = value.asString();
     final StringBuilder result = new StringBuilder(text.length());
@@ -59,13 +57,11 @@ public final class FunctionTRIMLINES extends AbstractStrConverter {
   }
 
   @Override
-
   public String getReference() {
     return "trim each line found in string, remove empty lines";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

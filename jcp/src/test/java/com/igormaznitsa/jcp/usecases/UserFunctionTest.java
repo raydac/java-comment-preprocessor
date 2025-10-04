@@ -28,6 +28,8 @@ import com.igormaznitsa.jcp.JcpPreprocessor;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
+import java.util.List;
+import java.util.Set;
 
 public class UserFunctionTest extends AbstractUseCaseTest implements PreprocessorExtension {
 
@@ -58,12 +60,12 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
 
   @Override
   public Value processUserFunction(final PreprocessorContext preprocessorContext,
-                                   final String functionName, final Value[] arguments) {
-    if ("testfunc".equals(functionName) && arguments.length == 3) {
+                                   final String functionName, final List<Value> arguments) {
+    if ("testfunc".equals(functionName) && arguments.size() == 3) {
       calledfunc++;
-      assertEquals(1L, arguments[0].asLong().longValue());
-      assertEquals("hry", arguments[1].asString());
-      assertEquals(3L, arguments[2].asLong().longValue());
+      assertEquals(1L, arguments.get(0).asLong().longValue());
+      assertEquals("hry", arguments.get(1).asString());
+      assertEquals(3L, arguments.get(2).asLong().longValue());
       return Value.valueOf("yayaya");
     } else {
       fail("Unexpected function '" + functionName + '\'');
@@ -85,8 +87,8 @@ public class UserFunctionTest extends AbstractUseCaseTest implements Preprocesso
   }
 
   @Override
-  public int getUserFunctionArity(final String functionName) {
-    return "testfunc".equals(functionName) ? 3 : -1;
+  public Set<Integer> getUserFunctionArity(final String functionName) {
+    return "testfunc".equals(functionName) ? Set.of(3) : Set.of(-1);
   }
 
 }

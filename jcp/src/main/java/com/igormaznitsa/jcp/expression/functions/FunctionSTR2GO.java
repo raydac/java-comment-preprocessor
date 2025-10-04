@@ -26,6 +26,7 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements escape function handler to escape strings to be used in Go.
@@ -34,21 +35,18 @@ import java.util.List;
  */
 public final class FunctionSTR2GO extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
-
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.BOOLEAN));
 
   private static String toUnicode(final char c) {
     final StringBuilder result = new StringBuilder(4);
     final String hex = Integer.toHexString(c);
 
     result.append("0".repeat(4 - hex.length()));
-
     result.append(hex);
 
     return result.toString();
   }
-
 
   private static String escapeGo(final String value) {
     final StringBuilder result = new StringBuilder();
@@ -103,12 +101,11 @@ public final class FunctionSTR2GO extends AbstractFunction {
   }
 
   @Override
-
   public String getName() {
     return "str2go";
   }
 
-
+  // called through reflection
   public Value executeStrBool(final PreprocessorContext context, final Value source,
                               final Value splitAndQuoteLines) {
     if (splitAndQuoteLines.asBoolean()) {
@@ -138,14 +135,12 @@ public final class FunctionSTR2GO extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 

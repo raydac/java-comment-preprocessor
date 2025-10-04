@@ -30,6 +30,7 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.Test;
 
@@ -132,12 +133,12 @@ public class FunctionEVALFILETest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(1, HANDLER.getArity());
+    assertEquals(Set.of(1), HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.STRING)));
   }
 
   @Override

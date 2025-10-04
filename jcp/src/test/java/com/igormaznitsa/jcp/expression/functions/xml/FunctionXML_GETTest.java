@@ -26,6 +26,8 @@ import static org.junit.Assert.assertEquals;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
+import java.util.List;
 import org.junit.Test;
 
 public class FunctionXML_GETTest extends AbstractFunctionXMLTest {
@@ -84,12 +86,12 @@ public class FunctionXML_GETTest extends AbstractFunctionXMLTest {
 
   @Override
   public void testArity() {
-    assertEquals(2, HANDLER.getArity());
+    assertEquals(AbstractFunction.ARITY_2, HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING, ValueType.INT}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.STRING, ValueType.INT)));
   }
 
   @Override

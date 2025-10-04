@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the abs function handler
@@ -32,45 +34,38 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionABS extends AbstractFunction {
 
-  private static final ValueType[][] ARGUMENT_TYPES =
-      new ValueType[][] {{ValueType.INT}, {ValueType.FLOAT}};
+  private static final List<List<ValueType>> ARGUMENT_TYPES =
+      List.of(List.of(ValueType.INT), List.of(ValueType.FLOAT));
 
   @Override
-
   public String getName() {
     return "abs";
   }
 
-
   public Value executeInt(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Math.abs(value.asLong()));
   }
-
 
   public Value executeFloat(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Math.abs(value.asFloat()));
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARGUMENT_TYPES;
   }
 
   @Override
-
   public String getReference() {
-    return "numeric absolute value";
+    return "returns the absolute value of the given number";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.ANY;
   }

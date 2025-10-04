@@ -26,6 +26,8 @@ import static org.junit.Assert.assertEquals;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
+import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class FunctionSTR2JAVATest extends AbstractFunctionTest {
@@ -71,12 +73,12 @@ public class FunctionSTR2JAVATest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(2, HANDLER.getArity());
+    assertEquals(Set.of(2), HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.STRING, ValueType.BOOLEAN)));
   }
 
   @Override

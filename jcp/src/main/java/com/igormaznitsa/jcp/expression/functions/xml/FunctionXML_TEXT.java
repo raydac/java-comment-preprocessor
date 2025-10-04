@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import org.w3c.dom.Element;
 
 /**
@@ -33,7 +35,7 @@ import org.w3c.dom.Element;
  */
 public final class FunctionXML_TEXT extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
   @Override
   public String getName() {
@@ -46,12 +48,12 @@ public final class FunctionXML_TEXT extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 

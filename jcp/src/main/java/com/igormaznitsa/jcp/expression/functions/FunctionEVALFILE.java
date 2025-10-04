@@ -32,6 +32,8 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The Function makes preprocessing of a file and return result as a string value. It uses the current preprocessor context as the context for preprocessing the file.
@@ -40,38 +42,32 @@ import java.io.StringWriter;
  */
 public class FunctionEVALFILE extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "evalfile";
   }
 
   @Override
-
   public String getReference() {
-    return "preprocess file and get result as string";
+    return "preprocess file and return result as string";
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }
-
 
   private PreprocessorContext prepareContext(final PreprocessorContext base) {
     final PreprocessorContext result = new PreprocessorContext(base);
@@ -82,7 +78,6 @@ public class FunctionEVALFILE extends AbstractFunction {
     result.setCareForLastEol(true);
     return result;
   }
-
 
   public Value executeStr(final PreprocessorContext context, final Value strFilePath) {
     final String filePath = strFilePath.asString();

@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the IS function handler
@@ -32,18 +34,19 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionIS extends AbstractFunction {
 
-  private static final ValueType[][] SIGNATURES =
-      new ValueType[][] {{ValueType.STRING, ValueType.ANY}};
+  private static final List<List<ValueType>> SIGNATURES =
+      List.of(List.of(ValueType.STRING, ValueType.ANY));
 
   @Override
-
   public String getName() {
     return "is";
   }
 
-
-  public Value executeStrAny(final PreprocessorContext context, final Value varName,
-                             final Value value) {
+  // called through reflection!
+  public Value executeStrAny(
+      final PreprocessorContext context,
+      final Value varName,
+      final Value value) {
     final Value currentValue = context.findVariableForName(varName.asString(), false);
 
     Value result = Value.BOOLEAN_FALSE;
@@ -57,25 +60,21 @@ public final class FunctionIS extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return SIGNATURES;
   }
 
   @Override
-
   public String getReference() {
     return "check that string is string form of value";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.BOOLEAN;
   }

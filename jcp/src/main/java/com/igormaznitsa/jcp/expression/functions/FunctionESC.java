@@ -24,21 +24,21 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * The class implements escape function handler to escape strings to be used inside preprocessor string value definitions.
  */
 public final class FunctionESC extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "esc";
   }
-
 
   public Value executeStr(final PreprocessorContext context, final Value source) {
     final String sourceString = source.asString();
@@ -87,25 +87,21 @@ public final class FunctionESC extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "escape string chars";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

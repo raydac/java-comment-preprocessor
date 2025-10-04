@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class is parent for converting classes.
@@ -32,20 +34,18 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public abstract class AbstractStrConverter extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
 
   public abstract Value executeStr(final PreprocessorContext context, final Value stringToConvert);
 
   @Override
-  public final int getArity() {
-    return 1;
+  public final Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public final ValueType[][] getAllowedArgumentTypes() {
+  public final List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 }

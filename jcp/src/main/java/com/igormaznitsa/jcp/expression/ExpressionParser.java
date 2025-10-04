@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * This class is a parser allows to parse an expression and make a tree as the output
@@ -205,9 +206,12 @@ public final class ExpressionParser {
    * @return an expression tree containing parsed function arguments
    * @throws IOException it will be thrown if there is any problem to read chars
    */
-  private ExpressionTree readFunction(final AbstractFunction function, final PushbackReader reader,
-                                      final PreprocessorContext context,
-                                      final FilePositionInfo[] includeStack, final String sources)
+  private ExpressionTree readFunction(
+      final AbstractFunction function,
+      final PushbackReader reader,
+      final PreprocessorContext context,
+      final FilePositionInfo[] includeStack,
+      final String sources)
       throws IOException {
     final ExpressionItem expectedBracket = nextItem(reader, context);
     if (expectedBracket == null) {
@@ -215,11 +219,10 @@ public final class ExpressionParser {
           .makeException("Detected function without params [" + function.getName() + ']', null);
     }
 
-    final int arity = function.getArity();
+    final int maxArity = function.getArity().stream().mapToInt(x -> x).max().orElse(0);
 
     ExpressionTree functionTree;
-
-    if (arity == 0) {
+    if (maxArity == 0) {
       final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
       final ExpressionItem lastItem =
           readFunctionArgument(reader, subExpression, context, includeStack, sources);
@@ -236,9 +239,8 @@ public final class ExpressionParser {
         functionTree.addItem(function);
       }
     } else {
-
-      final List<ExpressionTree> arguments = new ArrayList<>(arity);
-      for (int i = 0; i < function.getArity(); i++) {
+      final List<ExpressionTree> arguments = new ArrayList<>();
+      for (int i = 0; i < maxArity; i++) {
         final ExpressionTree subExpression = new ExpressionTree(includeStack, sources);
         final ExpressionItem lastItem =
             readFunctionArgument(reader, subExpression, context, includeStack, sources);
@@ -250,7 +252,7 @@ public final class ExpressionParser {
           arguments.add(subExpression);
         } else {
           throw context
-              .makeException("Wrong argument for function [" + function.getName() + ']', null);
+              .makeException("Error argument for function '" + function.getName() + '\'', null);
         }
       }
 
@@ -258,10 +260,11 @@ public final class ExpressionParser {
       functionTree.addItem(function);
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
-      if (arguments.size() != functionTreeElement.getArity()) {
+      if (!functionTreeElement.getAllowedArities().contains(arguments.size())) {
         throw context.makeException(
-            "Wrong argument number detected '" + function.getName() + "', must be " +
-                function.getArity() + " argument(s)", null);
+            "Wrong argument number detected for '" + function.getName() + "', expected " +
+                function.getArity().stream().map(Object::toString)
+                    .collect(Collectors.joining(";")) + " argument(s)", null);
       }
 
       functionTreeElement.fillArguments(arguments);

@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -37,14 +39,13 @@ import org.w3c.dom.NodeList;
  */
 public final class FunctionXML_XLIST extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.STRING));
 
   @Override
   public String getName() {
     return "xml_xlist";
   }
-
 
   public Value executeStrStr(final PreprocessorContext context, final Value documentId,
                              final Value xPath) {
@@ -69,12 +70,12 @@ public final class FunctionXML_XLIST extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 

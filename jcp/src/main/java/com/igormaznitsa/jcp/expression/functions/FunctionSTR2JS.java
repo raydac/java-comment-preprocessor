@@ -35,26 +35,22 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2JS extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2js";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeEcmaScript(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
-
   public String getReference() {
     return "escape string for EcmaScript/JavaScript";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

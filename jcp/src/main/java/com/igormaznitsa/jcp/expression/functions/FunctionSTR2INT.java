@@ -33,25 +33,21 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2INT extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2int";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Long.parseLong(value.asString().trim()));
   }
 
   @Override
-
   public String getReference() {
     return "string to integer";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.INT;
   }

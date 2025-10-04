@@ -30,7 +30,9 @@ import com.igormaznitsa.jcp.expression.operators.AbstractOperator;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -89,12 +91,21 @@ public class Expression {
     return exp.eval(context);
   }
 
-  private ExpressionTreeElement evalFunction(final ExpressionTreeElement functionElement,
-                                             final PreprocessorContext context) {
-    final AbstractFunction function = (AbstractFunction) functionElement.getItem();
+  private ExpressionTreeElement evalFunction(
+      final ExpressionTreeElement treeElement,
+      final PreprocessorContext context) {
 
-    final int arity = function.getArity();
-    final Value[] arguments = new Value[arity];
+    final AbstractFunction functionElement = (AbstractFunction) treeElement.getItem();
+    final List<ExpressionTreeElement> children = treeElement.extractEffectiveChildren();
+
+    if (!functionElement.getArity().contains(children.size())) {
+      throw context
+          .makeException(
+              "Can't find '" + functionElement.getName() + "' for arity " + children.size(), null);
+    }
+
+    final int arity = children.size();
+    final List<Value> arguments = new ArrayList<>();
     final Class<?>[] methodArguments = new Class<?>[arity + 1];
     methodArguments[0] = PreprocessorContext.class;
 
@@ -112,27 +123,27 @@ public class Expression {
 
     for (int i = 0; i < arity; i++) {
       final ExpressionTreeElement item =
-          this.calculateTreeElement(functionElement.getChildForIndex(i), context);
+          this.calculateTreeElement(children.get(i), context);
 
       final ExpressionItem itemValue = item.getItem();
 
       if (itemValue instanceof Value) {
-        arguments[i] = (Value) itemValue;
+        arguments.add((Value) itemValue);
       } else {
         throw context.makeException(
-            "[Expression]Wrong argument type detected for the '" + function.getName() +
+            "[Expression]Wrong argument type detected for the '" + functionElement.getName() +
                 "' function", null);
       }
     }
 
-    final ValueType[][] allowedSignatures = function.getAllowedArgumentTypes();
-    ValueType[] allowed = null;
-    for (final ValueType[] current : allowedSignatures) {
+    final List<List<ValueType>> allowedSignatures = functionElement.getAllowedArgumentTypes();
+    List<ValueType> allowed = null;
+    for (final List<ValueType> current : allowedSignatures) {
       boolean allCompatible = true;
 
       int thatIndex = 0;
       for (final ValueType type : current) {
-        if (!type.isCompatible(arguments[thatIndex].getType())) {
+        if (!type.isCompatible(arguments.get(thatIndex).getType())) {
           allCompatible = false;
           break;
         }
@@ -150,11 +161,12 @@ public class Expression {
 
     if (allowed == null) {
       throw context.makeException(
-          "[Expression]Unsupported argument detected for '" + function.getName() + '\'', null);
+          "[Expression]Unsupported argument detected for '" + functionElement.getName() + '\'',
+          null);
     }
 
-    if (function instanceof FunctionDefinedByUser) {
-      final FunctionDefinedByUser userFunction = (FunctionDefinedByUser) function;
+    if (functionElement instanceof FunctionDefinedByUser) {
+      final FunctionDefinedByUser userFunction = (FunctionDefinedByUser) functionElement;
       try {
         return new ExpressionTreeElement(userFunction.execute(context, arguments), stack, sources);
       } catch (Exception unexpected) {
@@ -164,15 +176,16 @@ public class Expression {
       }
     } else {
       try {
-        final Method method = function.getClass().getMethod(signature.toString(), methodArguments);
+        final Method method =
+            functionElement.getClass().getMethod(signature.toString(), methodArguments);
 
         final Object[] callArgs = new Object[arity + 1];
         callArgs[0] = context;
-        System.arraycopy(arguments, 0, callArgs, 1, arity);
+        System.arraycopy(arguments.toArray(), 0, callArgs, 1, arity);
 
-        final Value result = (Value) method.invoke(function, callArgs);
+        final Value result = (Value) method.invoke(functionElement, callArgs);
 
-        if (!result.getType().isCompatible(function.getResultType())) {
+        if (!result.getType().isCompatible(functionElement.getResultType())) {
           throw context.makeException("[Expression]Unsupported function result detected [" +
               result.getType().getSignature() + ']', null);
         }
@@ -189,7 +202,7 @@ public class Expression {
         }
         throw context.makeException(
             "[Expression]Can't execute a function method to process data [" +
-                function.getClass().getName() + '.' + signature + ']', unexpected);
+                functionElement.getClass().getName() + '.' + signature + ']', unexpected);
       }
     }
   }
@@ -323,7 +336,7 @@ public class Expression {
       }
       break;
       case FUNCTION: {
-        treeElement = evalFunction(element, context);
+        treeElement = this.evalFunction(element, context);
       }
       break;
     }

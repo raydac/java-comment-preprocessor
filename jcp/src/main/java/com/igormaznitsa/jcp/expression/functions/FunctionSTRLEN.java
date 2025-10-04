@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the STRLEN function handler
@@ -32,10 +34,9 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionSTRLEN extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES = new ValueType[][] {{ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES = List.of(List.of(ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "strlen";
   }
@@ -46,14 +47,12 @@ public final class FunctionSTRLEN extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 

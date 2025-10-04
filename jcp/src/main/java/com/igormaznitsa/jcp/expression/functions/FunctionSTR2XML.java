@@ -35,26 +35,22 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2XML extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2xml";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeXml10(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
-
   public String getReference() {
     return "escape string for XML(1.0)";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

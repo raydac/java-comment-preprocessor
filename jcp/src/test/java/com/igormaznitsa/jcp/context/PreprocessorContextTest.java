@@ -277,13 +277,13 @@ public class PreprocessorContextTest {
 
           @Override
           public Value processUserFunction(PreprocessorContext context, String functionName,
-                                           Value[] arguments) {
+                                           List<Value> arguments) {
             throw new UnsupportedOperationException(
                 "Not supported yet.");
           }
 
           @Override
-          public int getUserFunctionArity(String functionName) {
+          public Set<Integer> getUserFunctionArity(String functionName) {
             throw new UnsupportedOperationException(
                 "Not supported yet.");
           }

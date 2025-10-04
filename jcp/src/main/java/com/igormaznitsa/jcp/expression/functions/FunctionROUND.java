@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the round function handler
@@ -32,45 +34,38 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionROUND extends AbstractFunction {
 
-  private static final ValueType[][] SIGNATURES =
-      new ValueType[][] {{ValueType.FLOAT}, {ValueType.INT}};
+  private static final List<List<ValueType>> SIGNATURES =
+      List.of(List.of(ValueType.FLOAT), List.of(ValueType.INT));
 
   @Override
-
   public String getName() {
     return "round";
   }
 
-
   public Value executeInt(final PreprocessorContext context, final Value value) {
     return value;
   }
-
 
   public Value executeFloat(final PreprocessorContext context, final Value value) {
     return Value.valueOf(Long.valueOf(Math.round(value.asFloat())));
   }
 
   @Override
-  public int getArity() {
-    return 1;
+  public Set<Integer> getArity() {
+    return ARITY_1;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return SIGNATURES;
   }
 
   @Override
-
   public String getReference() {
     return "round float value to nearest integer";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.INT;
   }

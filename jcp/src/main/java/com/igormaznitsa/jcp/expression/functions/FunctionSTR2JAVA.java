@@ -28,6 +28,7 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.utils.PreprocessorUtils;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements escape function handler to escape strings to be used in java.
@@ -36,15 +37,13 @@ import java.util.List;
  */
 public final class FunctionSTR2JAVA extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.BOOLEAN}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.BOOLEAN));
 
   @Override
-
   public String getName() {
     return "str2java";
   }
-
 
   public Value executeStrBool(final PreprocessorContext context, final Value source,
                               final Value splitAndQuoteLines) {
@@ -75,25 +74,21 @@ public final class FunctionSTR2JAVA extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "escape string for Java";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

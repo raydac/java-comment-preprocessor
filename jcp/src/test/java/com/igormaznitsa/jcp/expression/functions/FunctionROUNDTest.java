@@ -25,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class FunctionROUNDTest extends AbstractFunctionTest {
@@ -65,12 +67,12 @@ public class FunctionROUNDTest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(1, HANDLER.getArity());
+    assertEquals(Set.of(1), HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.INT}, {ValueType.FLOAT}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.INT), List.of(ValueType.FLOAT)));
   }
 
   @Override

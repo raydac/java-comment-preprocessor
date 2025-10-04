@@ -38,6 +38,7 @@ import com.igormaznitsa.jcp.expression.functions.xml.FunctionXML_XLIST;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -48,6 +49,12 @@ import java.util.stream.Collectors;
  * @author Igor Maznitsa (igor.maznitsa@igormaznitsa.com)
  */
 public abstract class AbstractFunction implements ExpressionItem {
+
+  public static final Set<Integer> ARITY_0 = Set.of(0);
+  public static final Set<Integer> ARITY_1 = Set.of(1);
+  public static final Set<Integer> ARITY_1_2 = Set.of(1, 2);
+  public static final Set<Integer> ARITY_2 = Set.of(2);
+  public static final Set<Integer> ARITY_3 = Set.of(3);
 
   /**
    * The string contains the prefix for all executing methods of functions
@@ -164,19 +171,20 @@ public abstract class AbstractFunction implements ExpressionItem {
   public abstract String getReference();
 
   /**
-   * Get the function arity
+   * Get the function arities
    *
-   * @return the function arity (zero or greater)
+   * @return all allowed arities for the function
+   * @since 7.3.0
    */
-  public abstract int getArity();
+  public abstract Set<Integer> getArity();
 
   /**
    * Get arrays of supported argument types
    *
-   * @return the array of argument type combinations allowed by the function
+   * @return list of argument type combinations allowed by the function
    * handler, must not be null
    */
-  public abstract ValueType[][] getAllowedArgumentTypes();
+  public abstract List<List<ValueType>> getAllowedArgumentTypes();
 
   /**
    * Get the result type

@@ -192,16 +192,16 @@ public final class InfoHelper {
     final String result = func.getResultType().getSignature().toUpperCase(Locale.ROOT);
 
     int variantIndex = 0;
-    for (ValueType[] signature : func.getAllowedArgumentTypes()) {
+    for (final List<ValueType> signature : func.getAllowedArgumentTypes()) {
       if (variantIndex > 0) {
         variants.append(" | ");
       }
       variants.append(result).append(' ').append(funcName).append(" (");
-      for (int i = 0; i < signature.length; i++) {
+      for (int i = 0; i < signature.size(); i++) {
         if (i > 0) {
           variants.append(',');
         }
-        variants.append(signature[i].getSignature().toUpperCase(Locale.ROOT));
+        variants.append(signature.get(i).getSignature().toUpperCase(Locale.ROOT));
       }
       variants.append(')');
       variantIndex++;

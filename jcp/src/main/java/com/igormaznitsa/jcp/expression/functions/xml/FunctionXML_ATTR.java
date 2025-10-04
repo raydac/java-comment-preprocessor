@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the xml_attr function
@@ -32,11 +34,10 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionXML_ATTR extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "xml_attr";
   }
@@ -48,25 +49,21 @@ public final class FunctionXML_ATTR extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "get value of named element attribute, if not found then empty string";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

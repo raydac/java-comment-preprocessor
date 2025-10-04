@@ -35,26 +35,22 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2CSV extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2csv";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeCsv(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
-
   public String getReference() {
     return "escape string for CSV";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

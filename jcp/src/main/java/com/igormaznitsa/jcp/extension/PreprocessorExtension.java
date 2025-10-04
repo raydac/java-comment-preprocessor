@@ -25,6 +25,8 @@ import com.igormaznitsa.jcp.context.ExecutionAllowable;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.context.PreprocessorContextAware;
 import com.igormaznitsa.jcp.expression.Value;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The interface describes an extension which can be connected to a preprocessor
@@ -81,12 +83,12 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
    * @param context      the current preprocessor context, must not be null
    * @param functionName the name of the function (without $ and in low case),
    *                     must not be null
-   * @param arguments    the function arguments as an array, must not be null
+   * @param arguments    the function arguments, must not be null
    * @return a calculated value, it must not be null
    * @since 7.1.2
    */
   Value processUserFunction(PreprocessorContext context, String functionName,
-                            Value[] arguments);
+                            List<Value> arguments);
 
   /**
    * When a preprocessor meets a user defined function (the function starts with
@@ -94,7 +96,8 @@ public interface PreprocessorExtension extends PreprocessorContextAware, Executi
    *
    * @param functionName the function name without $ and in low case, must not
    *                     be null
-   * @return the function arity (the argument number), zero or a great value
+   * @return the function arity (the argument number), zero or a great values
+   * @since 7.3.0
    */
-  int getUserFunctionArity(String functionName);
+  Set<Integer> getUserFunctionArity(String functionName);
 }

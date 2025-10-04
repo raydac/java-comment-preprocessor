@@ -29,7 +29,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.zip.Deflater;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -42,8 +44,8 @@ import org.apache.commons.io.FileUtils;
  */
 public class FunctionBINFILE extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.STRING));
 
   private static boolean hasSplitFlag(final String name, final Type type) {
     final String opts = name.substring(type.name.length());
@@ -166,14 +168,12 @@ public class FunctionBINFILE extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 

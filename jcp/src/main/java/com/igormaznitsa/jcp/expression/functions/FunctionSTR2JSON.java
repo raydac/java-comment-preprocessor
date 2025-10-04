@@ -35,26 +35,22 @@ import com.igormaznitsa.jcp.expression.ValueType;
 public final class FunctionSTR2JSON extends AbstractStrConverter {
 
   @Override
-
   public String getName() {
     return "str2json";
   }
 
   @Override
-
   public Value executeStr(final PreprocessorContext context, final Value value) {
     final String escaped = escapeJson(value.asString());
     return Value.valueOf(escaped);
   }
 
   @Override
-
   public String getReference() {
     return "escape string for JSON";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

@@ -27,6 +27,8 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Expression;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class FunctionBINFILETest extends AbstractFunctionTest {
@@ -238,12 +240,12 @@ public class FunctionBINFILETest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(2, HANDLER.getArity());
+    assertEquals(Set.of(2), HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING, ValueType.STRING}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.STRING, ValueType.STRING)));
   }
 
   @Override

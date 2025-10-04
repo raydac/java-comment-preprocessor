@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the ISSUBSTR function handler
@@ -32,15 +34,13 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionISSUBSTR extends AbstractFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "issubstr";
   }
-
 
   public Value executeStrStr(final PreprocessorContext context, final Value subStrValue,
                              final Value strValue) {
@@ -50,25 +50,21 @@ public final class FunctionISSUBSTR extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "check that string contains substring (case insensitive)";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.BOOLEAN;
   }

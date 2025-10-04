@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class implements the xml_get function handler
@@ -32,15 +34,13 @@ import com.igormaznitsa.jcp.expression.ValueType;
  */
 public final class FunctionXML_GET extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.INT}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.INT));
 
   @Override
-
   public String getName() {
     return "xml_get";
   }
-
 
   public Value executeStrInt(final PreprocessorContext context, final Value elementListId,
                              final Value elementIndex) {
@@ -49,25 +49,21 @@ public final class FunctionXML_GET extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
-    return "get positioned element from list by its index (0 is first)";
+    return "get positioned element from list by index (0 based)";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

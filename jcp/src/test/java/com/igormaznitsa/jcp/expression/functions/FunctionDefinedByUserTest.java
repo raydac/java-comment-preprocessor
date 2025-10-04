@@ -24,6 +24,7 @@ package com.igormaznitsa.jcp.expression.functions;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -39,8 +40,8 @@ import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
-import org.mockito.AdditionalMatchers;
 
 public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTest {
 
@@ -55,17 +56,17 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
     final Value testResult = Value.valueOf("result");
     context.addPreprocessorExtension(mock);
 
-    when(mock.processUserFunction(any(), eq("test"), any(Value[].class))).thenReturn(testResult);
-    when(mock.getUserFunctionArity(eq("test"))).thenReturn(5);
+    when(mock.processUserFunction(any(), eq("test"), anyList())).thenReturn(testResult);
+    when(mock.getUserFunctionArity(eq("test"))).thenReturn(Set.of(5));
 
     assertEquals(testResult, Expression.evalExpression("$test(1,2,3,4,5+6)", context));
 
-    verify(mock).processUserFunction(any(), eq("test"), AdditionalMatchers.aryEq(new Value[] {
+    verify(mock).processUserFunction(any(), eq("test"), eq(List.of(
         Value.valueOf(1L),
         Value.valueOf(2L),
         Value.valueOf(3L),
         Value.valueOf(4L),
-        Value.valueOf(11L)}));
+        Value.valueOf(11L))));
   }
 
   @Test
@@ -82,11 +83,11 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
     final Value testResult = Value.valueOf("result");
     context.addPreprocessorExtension(mock);
 
-    when(mock.processUserFunction(any(), eq("test"), any(Value[].class))).thenReturn(testResult);
-    when(mock.getUserFunctionArity(eq("test"))).thenReturn(0);
+    when(mock.processUserFunction(any(), eq("test"), anyList())).thenReturn(testResult);
+    when(mock.getUserFunctionArity(eq("test"))).thenReturn(Set.of(0));
 
     assertEquals(testResult, Expression.evalExpression("$test()", context));
 
-    verify(mock).processUserFunction(any(), eq("test"), AdditionalMatchers.aryEq(new Value[0]));
+    verify(mock).processUserFunction(any(), eq("test"), eq(List.of()));
   }
 }

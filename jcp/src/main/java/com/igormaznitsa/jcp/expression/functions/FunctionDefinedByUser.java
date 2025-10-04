@@ -29,6 +29,8 @@ import com.igormaznitsa.jcp.expression.ValueType;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class implements the user defined function handler (a function which name
@@ -39,26 +41,23 @@ import java.util.List;
 public final class FunctionDefinedByUser extends AbstractFunction {
 
   private final String name;
-  private final int argsNumber;
-  private final ValueType[][] argTypes;
+  private final Set<Integer> allowedArities;
+  private final List<List<ValueType>> argTypes;
 
-  public FunctionDefinedByUser(final String name, final int argsNumber,
+  public FunctionDefinedByUser(final String name, final Set<Integer> allowedArities,
                                final PreprocessorContext context) {
     super();
     requireNonNull(name, "Name is null");
     requireNonNull(context, "Context is null");
 
-    if (argsNumber < 0) {
-      throw context.makeException("Unexpected argument number [" + argsNumber + ']', null);
-    }
-
     this.name = name;
-    this.argsNumber = argsNumber;
+    this.allowedArities = Set.copyOf(allowedArities);
 
-    final ValueType[] types = new ValueType[argsNumber];
-
-    Arrays.fill(types, ValueType.ANY);
-    this.argTypes = new ValueType[][] {types};
+    this.argTypes = allowedArities.stream().map(x -> {
+      final ValueType[] types = new ValueType[x];
+      Arrays.fill(types, ValueType.ANY);
+      return List.of(types);
+    }).collect(Collectors.toUnmodifiableList());
   }
 
   @Override
@@ -68,12 +67,12 @@ public final class FunctionDefinedByUser extends AbstractFunction {
   }
 
   @Override
-  public int getArity() {
-    return argsNumber;
+  public Set<Integer> getArity() {
+    return this.allowedArities;
   }
 
 
-  public Value execute(final PreprocessorContext context, final Value[] values) {
+  public Value execute(final PreprocessorContext context, final List<Value> values) {
     final List<PreprocessorExtension> extensionList = context.getPreprocessorExtensions();
     if (extensionList.isEmpty()) {
       throw context
@@ -83,31 +82,27 @@ public final class FunctionDefinedByUser extends AbstractFunction {
     }
 
     final PreprocessorExtension extension =
-        extensionList.stream().filter(x -> x.hasUserFunction(this.name, values.length))
+        extensionList.stream().filter(x -> x.hasUserFunction(this.name, values.size()))
             .findFirst().orElseThrow(() -> context
                 .makeException(
                     "Can't find any preprocessor extension to process function " + this.name + " for " +
-                        values.length + " argument(s)", null));
-    context.logDebug("Processing " + this.name + '/' + values.length + " by " +
+                        values.size() + " argument(s)", null));
+    context.logDebug("Processing " + this.name + '/' + values.size() + " by " +
         extension.getClass().getCanonicalName());
     return extension.processUserFunction(context, name, values);
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
-    return argTypes;
+  public List<List<ValueType>> getAllowedArgumentTypes() {
+    return this.argTypes;
   }
 
   @Override
-
   public String getReference() {
     return "user defined function";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.ANY;
   }

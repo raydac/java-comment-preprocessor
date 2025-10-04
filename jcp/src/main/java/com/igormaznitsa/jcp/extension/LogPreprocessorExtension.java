@@ -5,6 +5,8 @@ import com.igormaznitsa.jcp.containers.TextFileDataContainer;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,20 +55,20 @@ public class LogPreprocessorExtension implements PreprocessorExtension {
 
   @Override
   public Value processUserFunction(final PreprocessorContext context, final String functionName,
-                                   final Value[] arguments) {
+                                   final List<Value> arguments) {
     context.logInfo(
         String.format("Called user function '%s'(%s) at %s",
-            functionName, Arrays.toString(arguments),
+            functionName, arguments,
             findPosition(context)));
     return Value.BOOLEAN_TRUE;
   }
 
   @Override
-  public int getUserFunctionArity(final String functionName) {
+  public Set<Integer> getUserFunctionArity(final String functionName) {
     final Matcher matcher = PATTERN.matcher(functionName);
     if (matcher.find() && matcher.group(2) != null) {
-      return Integer.parseInt(matcher.group(2));
+      return Set.of(Integer.parseInt(matcher.group(2)));
     }
-    return 0;
+    return Set.of(0);
   }
 }

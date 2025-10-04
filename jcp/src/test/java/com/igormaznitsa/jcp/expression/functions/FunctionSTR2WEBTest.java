@@ -25,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 public class FunctionSTR2WEBTest extends AbstractFunctionTest {
@@ -61,12 +63,12 @@ public class FunctionSTR2WEBTest extends AbstractFunctionTest {
 
   @Override
   public void testArity() {
-    assertEquals(1, HANDLER.getArity());
+    assertEquals(Set.of(1), HANDLER.getArity());
   }
 
   @Override
   public void testAllowedArgumentTypes() {
-    assertAllowedArguments(HANDLER, new ValueType[][] {{ValueType.STRING}});
+    assertAllowedArguments(HANDLER, List.of(List.of(ValueType.STRING)));
   }
 
   @Override

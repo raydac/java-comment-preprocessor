@@ -24,6 +24,8 @@ package com.igormaznitsa.jcp.expression.functions.xml;
 import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.expression.ValueType;
+import java.util.List;
+import java.util.Set;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -34,15 +36,13 @@ import org.w3c.dom.NodeList;
  */
 public final class FunctionXML_LIST extends AbstractXMLFunction {
 
-  private static final ValueType[][] ARG_TYPES =
-      new ValueType[][] {{ValueType.STRING, ValueType.STRING}};
+  private static final List<List<ValueType>> ARG_TYPES =
+      List.of(List.of(ValueType.STRING, ValueType.STRING));
 
   @Override
-
   public String getName() {
     return "xml_list";
   }
-
 
   public Value executeStrStr(final PreprocessorContext context, final Value elementId,
                              final Value elementTag) {
@@ -61,25 +61,21 @@ public final class FunctionXML_LIST extends AbstractXMLFunction {
   }
 
   @Override
-  public int getArity() {
-    return 2;
+  public Set<Integer> getArity() {
+    return ARITY_2;
   }
 
   @Override
-
-
-  public ValueType[][] getAllowedArgumentTypes() {
+  public List<List<ValueType>> getAllowedArgumentTypes() {
     return ARG_TYPES;
   }
 
   @Override
-
   public String getReference() {
     return "get list of elements by tag name";
   }
 
   @Override
-
   public ValueType getResultType() {
     return ValueType.STRING;
   }

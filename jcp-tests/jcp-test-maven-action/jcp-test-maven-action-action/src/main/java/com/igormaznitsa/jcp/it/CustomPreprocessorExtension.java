@@ -4,8 +4,12 @@ import com.igormaznitsa.jcp.context.PreprocessorContext;
 import com.igormaznitsa.jcp.expression.Value;
 import com.igormaznitsa.jcp.extension.PreprocessorExtension;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.List;
 
 public class CustomPreprocessorExtension implements PreprocessorExtension {
+
+  private static final Set<Integer> ARITY = Set.of(1);
 
   @Override
   public boolean hasAction(int arity) {
@@ -27,9 +31,9 @@ public class CustomPreprocessorExtension implements PreprocessorExtension {
   }
 
   @Override
-  public int getUserFunctionArity(String functionName) {
+  public Set<Integer> getUserFunctionArity(String functionName) {
     if (functionName.equals("hellofunc")) {
-      return 1;
+      return ARITY;
     } else {
       throw new IllegalArgumentException("Unexpected user function: " + functionName);
     }
@@ -39,9 +43,9 @@ public class CustomPreprocessorExtension implements PreprocessorExtension {
   public Value processUserFunction(
       PreprocessorContext context,
       String functionName,
-      Value[] arguments) {
+      List<Value> arguments) {
     if (functionName.equals("hellofunc")) {
-      return Value.valueOf("Hello " + arguments[0].toString() + "!");
+      return Value.valueOf("Hello " + arguments.get(0).toString() + "!");
     } else {
       throw new IllegalArgumentException("Unexpected user function call: " + functionName);
     }
