@@ -21,6 +21,8 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.jcp.expression.functions.AbstractFunction.ARITY_0;
+
 import com.igormaznitsa.jcp.exceptions.FilePositionInfo;
 import com.igormaznitsa.jcp.exceptions.PreprocessorException;
 import com.igormaznitsa.jcp.expression.functions.AbstractFunction;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
 public class ExpressionTreeElement {
 
   public static final ExpressionTreeElement EMPTY_SLOT = new ExpressionTreeElement();
+
   /**
    * Inside constant to be used for speed up some operations
    */
@@ -48,6 +51,8 @@ public class ExpressionTreeElement {
    * Empty array to avoid unnecessary operations
    */
   private static final ExpressionTreeElement[] EMPTY = new ExpressionTreeElement[0];
+  public static final int ANY_ARITY = -1;
+  private static final int MAX_FUNCTION_ARGUMENTS = 256;
   /**
    * Contains the source string for the expression.
    */
@@ -63,7 +68,7 @@ public class ExpressionTreeElement {
   /**
    * The array contains links to the tree element children
    */
-  private ExpressionTreeElement[] childElements;
+  private ExpressionTreeElement[] childrenSlots;
   /**
    * The link to the parent element, if it is the tree root then it contains null
    */
@@ -75,21 +80,18 @@ public class ExpressionTreeElement {
   /**
    * Because I fill children sequentially, the variable contains the index of the first empty child slot
    */
-  private int nextChildSlot = 0;
-
-  private static final Set<Integer> ZERO_ARITY = Set.of(0);
-
-  private ExpressionTreeElement() {
-    this.sourceString = "";
-    this.includeStack = new FilePositionInfo[0];
-  }
+  private int nextChildSlotIndex = 0;
   /**
    * Set of allowed arities.
    *
    * @since 7.3.0
    */
-  private Set<Integer> allowedArities = Set.of();
+  private Set<Integer> expectedArities = Set.of();
 
+  private ExpressionTreeElement() {
+    this.sourceString = "";
+    this.includeStack = new FilePositionInfo[0];
+  }
   /**
    * The constructor
    *
@@ -107,22 +109,23 @@ public class ExpressionTreeElement {
           this.includeStack, null);
     }
 
-    final int arity;
     if (item.getExpressionItemType() == ExpressionItemType.OPERATOR) {
-      arity = ((AbstractOperator) item).getArity();
-      this.allowedArities = Set.of(arity);
+      final int arity = ((AbstractOperator) item).getArity();
+      this.expectedArities = Set.of(arity);
+      this.childrenSlots = new ExpressionTreeElement[arity];
     } else if (item.getExpressionItemType() == ExpressionItemType.FUNCTION) {
       final AbstractFunction functionItem = (AbstractFunction) item;
-      this.allowedArities = functionItem.getArity();
-      arity = this.allowedArities.stream().mapToInt(x -> x).max().orElse(0);
+      this.expectedArities = functionItem.getArity();
+      final int arity = this.expectedArities.stream().mapToInt(x -> x).max().orElse(0);
+      this.childrenSlots = this.expectedArities.contains(ANY_ARITY) ?
+          new ExpressionTreeElement[MAX_FUNCTION_ARGUMENTS] : new ExpressionTreeElement[arity];
     } else {
-      arity = 0;
-      this.allowedArities = ZERO_ARITY;
+      this.expectedArities = ARITY_0;
+      this.childrenSlots = EMPTY;
     }
-    priority = item.getExpressionItemPriority().getPriority();
+    this.priority = item.getExpressionItemPriority().getPriority();
     this.savedItem = item;
-    childElements = arity == 0 ? EMPTY : new ExpressionTreeElement[arity];
-    Arrays.fill(this.childElements, EMPTY_SLOT);
+    Arrays.fill(this.childrenSlots, EMPTY_SLOT);
   }
 
   /**
@@ -132,18 +135,18 @@ public class ExpressionTreeElement {
    * @since 7.3.0
    */
   public List<ExpressionTreeElement> extractEffectiveChildren() {
-    return Arrays.stream(this.childElements).takeWhile(x -> x != EMPTY_SLOT)
+    return Arrays.stream(this.childrenSlots).takeWhile(x -> x != EMPTY_SLOT)
         .collect(Collectors.toUnmodifiableList());
   }
 
   /**
    * Variants of allowed arities by the expression tree element
    *
-   * @return allowed artiy numbers as set
+   * @return set contains number of expected arities
    * @since 7.3.0
    */
-  public Set<Integer> getAllowedArities() {
-    return this.allowedArities;
+  public Set<Integer> getExpectedArities() {
+    return this.expectedArities;
   }
 
   /**
@@ -176,15 +179,6 @@ public class ExpressionTreeElement {
 
   public ExpressionItem getItem() {
     return this.savedItem;
-  }
-
-  /**
-   * Get arity for the element (I mean possible children number)
-   *
-   * @return the arity, zero for elements without children
-   */
-  public int getArity() {
-    return childElements.length;
   }
 
   /**
@@ -247,7 +241,7 @@ public class ExpressionTreeElement {
 
     boolean result = false;
 
-    final ExpressionTreeElement[] children = childElements;
+    final ExpressionTreeElement[] children = childrenSlots;
     final int len = children.length;
 
     for (int i = 0; i < len; i++) {
@@ -272,7 +266,7 @@ public class ExpressionTreeElement {
 
   public ExpressionTreeElement getChildForIndex(final int index) {
     assertNotEmptySlot();
-    return this.childElements[index];
+    return this.childrenSlots[index];
   }
 
   /**
@@ -287,11 +281,8 @@ public class ExpressionTreeElement {
     Objects.requireNonNull(element, "The element is null");
 
     final int newElementPriority = element.getPriority();
-
     ExpressionTreeElement result = this;
-
     final ExpressionTreeElement parentTreeElement = this.parentTreeElement;
-
     final int currentPriority = getPriority();
 
     if (newElementPriority < currentPriority) {
@@ -305,22 +296,21 @@ public class ExpressionTreeElement {
       if (parentTreeElement != null) {
         parentTreeElement.replaceElement(this, element);
       }
-      if (element.nextChildSlot >= element.childElements.length) {
+      if (element.nextChildSlotIndex >= element.childrenSlots.length) {
         throw new PreprocessorException(
             "[Expression]Can't process expression item, may be wrong number of arguments",
             this.sourceString, this.includeStack, null);
       }
-      element.childElements[element.nextChildSlot] = this;
-      element.nextChildSlot++;
+      element.childrenSlots[element.nextChildSlotIndex] = this;
+      element.nextChildSlotIndex++;
       this.parentTreeElement = element;
       result = element;
-    } else if (isFull()) {
-      final int lastElementIndex = getArity() - 1;
-
-      final ExpressionTreeElement lastElement = childElements[lastElementIndex];
+    } else if (this.isFull()) {
+      final int lastElementIndex = this.nextChildSlotIndex - 1;
+      final ExpressionTreeElement lastElement = this.childrenSlots[lastElementIndex];
       if (lastElement.getPriority() > newElementPriority) {
         element.addElementToNextFreeSlot(lastElement);
-        childElements[lastElementIndex] = element;
+        this.childrenSlots[lastElementIndex] = element;
         element.parentTreeElement = this;
         result = element;
       }
@@ -338,7 +328,7 @@ public class ExpressionTreeElement {
    * @return true if there is not any free child slot else false
    */
   public boolean isFull() {
-    return nextChildSlot >= childElements.length;
+    return this.nextChildSlotIndex >= this.childrenSlots.length;
   }
 
   /**
@@ -354,7 +344,7 @@ public class ExpressionTreeElement {
           this.includeStack, null);
     }
 
-    if (childElements.length != arguments.size()) {
+    if (childrenSlots.length != arguments.size()) {
       throw new PreprocessorException("Wrong argument list size", this.sourceString,
           this.includeStack, null);
     }
@@ -366,7 +356,7 @@ public class ExpressionTreeElement {
             this.sourceString, this.includeStack, null);
       }
 
-      if (!childElements[i].isEmptySlot()) {
+      if (!childrenSlots[i].isEmptySlot()) {
         throw new PreprocessorException(
             "[Expression]Non-empty slot detected, it is possible that there is a program error, contact a developer please",
             this.sourceString, this.includeStack, null);
@@ -377,7 +367,7 @@ public class ExpressionTreeElement {
         throw new PreprocessorException("[Expression]Empty argument [" + (i + 1) + "] detected",
             this.sourceString, this.includeStack, null);
       }
-      childElements[i] = root;
+      childrenSlots[i] = root;
       root.parentTreeElement = this;
 
       i++;
@@ -395,7 +385,7 @@ public class ExpressionTreeElement {
           this.includeStack, null);
     }
 
-    if (childElements.length == 0) {
+    if (childrenSlots.length == 0) {
       throw new PreprocessorException(
           "[Expression]Unexpected element, may be unknown function [" + savedItem.toString() + ']',
           this.sourceString, this.includeStack, null);
@@ -404,7 +394,7 @@ public class ExpressionTreeElement {
           "[Expression]There is not any possibility to add new argument [" + savedItem.toString() +
               ']', this.sourceString, this.includeStack, null);
     } else {
-      childElements[nextChildSlot++] = element;
+      childrenSlots[nextChildSlotIndex++] = element;
     }
     element.parentTreeElement = this;
   }
@@ -418,20 +408,20 @@ public class ExpressionTreeElement {
       switch (savedItem.getExpressionItemType()) {
         case OPERATOR: {
           if (savedItem == OPERATOR_SUB) {
-            if (!childElements[0].isEmptySlot() && childElements[1].isEmptySlot()) {
-              final ExpressionTreeElement left = childElements[0];
+            if (!childrenSlots[0].isEmptySlot() && childrenSlots[1].isEmptySlot()) {
+              final ExpressionTreeElement left = childrenSlots[0];
               final ExpressionItem item = left.getItem();
               if (item.getExpressionItemType() == ExpressionItemType.VALUE) {
                 final Value val = (Value) item;
                 switch (val.getType()) {
                   case INT: {
-                    childElements = EMPTY;
+                    childrenSlots = EMPTY;
                     savedItem = Value.valueOf(-val.asLong());
                     makeMaxPriority();
                   }
                   break;
                   case FLOAT: {
-                    childElements = EMPTY;
+                    childrenSlots = EMPTY;
                     savedItem = Value.valueOf(0.0f - val.asFloat());
                     makeMaxPriority();
                   }
@@ -445,14 +435,14 @@ public class ExpressionTreeElement {
                 }
               }
             } else {
-              for (final ExpressionTreeElement element : childElements) {
+              for (final ExpressionTreeElement element : childrenSlots) {
                 if (!element.isEmptySlot()) {
                   element.postProcess();
                 }
               }
             }
           } else {
-            for (final ExpressionTreeElement element : childElements) {
+            for (final ExpressionTreeElement element : childrenSlots) {
               if (!element.isEmptySlot()) {
                 element.postProcess();
               }
@@ -461,7 +451,7 @@ public class ExpressionTreeElement {
         }
         break;
         case FUNCTION: {
-          for (final ExpressionTreeElement element : childElements) {
+          for (final ExpressionTreeElement element : childrenSlots) {
             if (!element.isEmptySlot()) {
               element.postProcess();
             }

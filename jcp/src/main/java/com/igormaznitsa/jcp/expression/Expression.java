@@ -98,7 +98,8 @@ public class Expression {
     final AbstractFunction functionElement = (AbstractFunction) treeElement.getItem();
     final List<ExpressionTreeElement> children = treeElement.extractEffectiveChildren();
 
-    if (!functionElement.getArity().contains(children.size())) {
+    if (!functionElement.getArity().contains(-1) &&
+        !functionElement.getArity().contains(children.size())) {
       throw context
           .makeException(
               "Can't find '" + functionElement.getName() + "' for arity " + children.size(), null);

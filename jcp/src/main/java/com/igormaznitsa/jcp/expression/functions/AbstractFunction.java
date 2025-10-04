@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractFunction implements ExpressionItem {
 
+  public static final Set<Integer> ARITY_ANY = Set.of(-1);
   public static final Set<Integer> ARITY_0 = Set.of(0);
   public static final Set<Integer> ARITY_1 = Set.of(1);
   public static final Set<Integer> ARITY_1_2 = Set.of(1, 2);

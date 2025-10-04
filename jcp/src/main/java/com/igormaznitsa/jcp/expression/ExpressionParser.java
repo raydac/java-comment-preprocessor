@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.expression;
 
+import static com.igormaznitsa.jcp.expression.ExpressionTreeElement.ANY_ARITY;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -38,6 +39,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -260,7 +262,8 @@ public final class ExpressionParser {
       functionTree.addItem(function);
       ExpressionTreeElement functionTreeElement = functionTree.getRoot();
 
-      if (!functionTreeElement.getAllowedArities().contains(arguments.size())) {
+      final Set<Integer> expectedArities = functionTreeElement.getExpectedArities();
+      if (!expectedArities.contains(ANY_ARITY) && !expectedArities.contains(arguments.size())) {
         throw context.makeException(
             "Wrong argument number detected for '" + function.getName() + "', expected " +
                 function.getArity().stream().map(Object::toString)
