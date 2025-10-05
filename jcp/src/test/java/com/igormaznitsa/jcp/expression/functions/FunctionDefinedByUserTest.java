@@ -21,6 +21,7 @@
 
 package com.igormaznitsa.jcp.expression.functions;
 
+import static com.igormaznitsa.jcp.expression.ExpressionTreeElement.ANY_ARITY;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -57,6 +58,30 @@ public class FunctionDefinedByUserTest extends AbstractSpyPreprocessorContextTes
 
     when(mock.processUserFunction(any(), eq("test"), anyList())).thenReturn(testResult);
     when(mock.getUserFunctionArity(eq("test"))).thenReturn(Set.of(5));
+
+    assertEquals(testResult, Expression.evalExpression("$test(1,2,3,4,5+6)", context));
+
+    verify(mock).processUserFunction(any(), eq("test"), eq(List.of(
+        Value.valueOf(1L),
+        Value.valueOf(2L),
+        Value.valueOf(3L),
+        Value.valueOf(4L),
+        Value.valueOf(11L))));
+  }
+
+  @Test
+  public void testExecution_withAnyArguments() throws Exception {
+    final PreprocessorExtension mock = mock(PreprocessorExtension.class);
+    when(mock.hasUserFunction(anyString(), any())).thenReturn(true);
+    when(mock.isAllowed(any())).thenReturn(true);
+
+    final PreprocessorContext context = preparePreprocessorContext(getCurrentTestFolder());
+
+    final Value testResult = Value.valueOf("result");
+    context.addPreprocessorExtension(mock);
+
+    when(mock.processUserFunction(any(), eq("test"), anyList())).thenReturn(testResult);
+    when(mock.getUserFunctionArity(eq("test"))).thenReturn(Set.of(ANY_ARITY));
 
     assertEquals(testResult, Expression.evalExpression("$test(1,2,3,4,5+6)", context));
 

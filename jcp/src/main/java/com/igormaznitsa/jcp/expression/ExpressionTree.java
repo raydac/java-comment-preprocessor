@@ -62,14 +62,18 @@ public class ExpressionTree {
    */
   public void addItem(final ExpressionItem item) {
     if (item == null) {
-      throw new PreprocessorException("[Expression]Item is null", this.sources, this.includeStack,
+      throw new PreprocessorException(
+          "[Expression]Item is null",
+          this.sources,
+          this.includeStack,
           null);
     }
 
-    if (last.isEmptySlot()) {
-      last = new ExpressionTreeElement(item, this.includeStack, this.sources);
+    if (this.last.isEmptySlot()) {
+      this.last = new ExpressionTreeElement(item, this.includeStack, this.sources);
     } else {
-      last = last.addTreeElement(new ExpressionTreeElement(item, this.includeStack, this.sources));
+      this.last = this.last.addTreeElement(
+          new ExpressionTreeElement(item, this.includeStack, this.sources));
     }
   }
 

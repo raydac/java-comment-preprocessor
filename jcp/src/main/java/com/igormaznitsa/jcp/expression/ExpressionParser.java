@@ -22,6 +22,7 @@
 package com.igormaznitsa.jcp.expression;
 
 import static com.igormaznitsa.jcp.expression.ExpressionTreeElement.ANY_ARITY;
+import static com.igormaznitsa.jcp.expression.ExpressionTreeElement.MAX_FUNCTION_ARGUMENTS;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -111,7 +112,7 @@ public final class ExpressionParser {
     final PreprocessingState state = context.getPreprocessingState();
     result = new ExpressionTree(state.makeIncludeStack(), state.getLastReadString());
 
-    if (readExpression(reader, result, context, false, false) != null) {
+    if (this.readExpression(reader, result, context, false, false) != null) {
       final String text = "Unexpected result during parsing [" + expressionStr + ']';
       throw context.makeException(text, null);
     }
@@ -187,8 +188,7 @@ public final class ExpressionParser {
         }
       } else if (nextItem.getExpressionItemType() == ExpressionItemType.FUNCTION) {
         final AbstractFunction function = (AbstractFunction) nextItem;
-        ExpressionTree functionTree = readFunction(function, reader, context, stack, sourceLine);
-        tree.addTree(functionTree);
+        tree.addTree(this.readFunction(function, reader, context, stack, sourceLine));
       } else {
         tree.addItem(nextItem);
       }
@@ -221,7 +221,9 @@ public final class ExpressionParser {
           .makeException("Detected function without params [" + function.getName() + ']', null);
     }
 
-    final int maxArity = function.getArity().stream().mapToInt(x -> x).max().orElse(0);
+    final Set<Integer> arities = function.getArity();
+    final int maxArity = arities.contains(ANY_ARITY) ? MAX_FUNCTION_ARGUMENTS :
+        arities.stream().mapToInt(x -> x).max().orElse(0);
 
     ExpressionTree functionTree;
     if (maxArity == 0) {
@@ -617,8 +619,14 @@ public final class ExpressionParser {
                   "Can't find any preprocessor extension processing the user functions [" +
                       userFunctionName + ']', null);
             } else {
-              result = new FunctionDefinedByUser(userFunctionName,
-                  preprocessorExtension.getUserFunctionArity(userFunctionName), context);
+              final Set<Integer> arities =
+                  preprocessorExtension.getUserFunctionArity(userFunctionName);
+              if (arities.isEmpty()) {
+                throw context.makeException(
+                    "Empty arity set for preprocessor extension processing the user functions [" +
+                        userFunctionName + ']', null);
+              }
+              result = new FunctionDefinedByUser(userFunctionName, arities, context);
             }
           } else if ("true".equals(str)) {
             result = Value.BOOLEAN_TRUE;
