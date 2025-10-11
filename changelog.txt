@@ -1,10 +1,10 @@
-__7.3.0 (SNAPSHOT)__
+__7.3.0 (11-okt-2025)__
 
 - added way to manipulate current JCP text buffers as string variables: `jcp.text.buffer.all`,`jcp.text.buffer.middle`,`jcp.text.buffer.prefix` and `jcp.text.buffer.postfix`
 - added way to find `PreprocessorExtension` and `SpecialVariableProcessor` among Java services
 - refactoring of API for `SpecialVariableProcessor` and `CommentTextProcessor`
 - replaced single string property `actionPreprocessorExtension` by string list `actionPreprocessorExtensions` to provide way for many preprocessor extensions.
-- internal refactoring
+- internal refactoring mainly to provide way for multiple external services implementing extensions
 
 __7.2.1 (21-jul-2025)__
 

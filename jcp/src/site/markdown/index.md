@@ -14,7 +14,7 @@ Just add code-snippet below into build section and the plugin will be started du
         <plugin>
             <groupId>com.igormaznitsa</groupId>
             <artifactId>jcp</artifactId>
-            <version>7.2.1</version>
+            <version>7.3.0</version>
             <executions>
                 <execution>
                     <id>preprocess-sources</id>

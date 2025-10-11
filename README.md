@@ -1,7 +1,7 @@
 ![Logo](assets/banner.png)
 
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%20License%202.0-green.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Maven central](https://img.shields.io/badge/maven%20central-7.2.1-green.svg)](https://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.2.1|jar)
+[![Maven central](https://img.shields.io/badge/maven%20central-7.3.0-green.svg)](https://search.maven.org/#artifactdetails|com.igormaznitsa|jcp|7.3.0|jar)
 [![Java 11+](https://img.shields.io/badge/java-11%2b-green.svg)](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 [![Maven 3.0+](https://img.shields.io/badge/maven-3.0%2b-green.svg)](https://maven.apache.org/)
 [![Gradle 6.0+](https://img.shields.io/badge/gradle-6.0%2b-green.svg)](https://gradle.org/)
@@ -10,18 +10,20 @@
 
 # Changelog
 
+__7.3.0 (11-okt-2025)__
+
+- added way to manipulate current JCP text buffers as string variables: `jcp.text.buffer.all`,`jcp.text.buffer.middle`,
+  `jcp.text.buffer.prefix` and `jcp.text.buffer.postfix`
+- added way to find `PreprocessorExtension` and `SpecialVariableProcessor` among Java services
+- refactoring of API for `SpecialVariableProcessor` and `CommentTextProcessor`
+- replaced single string property `actionPreprocessorExtension` by string list `actionPreprocessorExtensions` to provide
+  way for many preprocessor extensions.
+- internal refactoring mainly to provide way for multiple external services implementing extensions
+
 __7.2.1 (21-jul-2025)__
 
 - refactoring of CommentTextProcessor call
 - refactoring
-
-__7.2.0 (13-jul-2025)__
-
-- minimum JDK version 11
-- added support for external processors calls during uncommenting actions `//$` and `//$$`, processors can be provided
-  as services
-- removed support of Gradle 5
-- updated dependencies
 
 [Full changelog](https://github.com/raydac/java-comment-preprocessor/blob/master/changelog.txt)
 
@@ -57,7 +59,7 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
            <plugin>
                 <groupId>com.igormaznitsa</groupId>
                 <artifactId>jcp</artifactId>
-                <version>7.2.1</version>
+                <version>7.3.0</version>
                 <executions>
                     <execution>
                         <id>preprocessSources</id>
@@ -76,13 +78,13 @@ The preprocessor has been published in [the Maven Central](https://search.maven.
 # How to use from command line
 The uber-jar can be started directly under Java through CLI interface. Let's take a look at short example below how to start it in command line under Linux:
 ```
-java -jar jcp-7.2.1.jar  --i:./test --o:./result
+java -jar jcp-7.3.0.jar  --i:./test --o:./result
 ```
 The example above just preprocessing files from ./test folder (which extensions allowed to be preprocessed by default), and placing result files into ./result folder. Keep in your mind that the preprocessor processing not all files, for instance XML files will not be preprocessed by default. Files which extension not marked for preprocessing will be just copied (of course if the extensions is not in the excluded extension list)
 
 More complex example:
 ```
-java -jar jcp-7.2.1.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
+java -jar jcp-7.3.0.jar  --c --r --v --f:java,xml --ef:none --i:./test --o:./result  '--p:HelloWorld=$Hello world$'
 ```
 - --c clear the destination folder before work
 - --r remove all Java-style comments from preprocessed result files
@@ -141,6 +143,6 @@ In opposite a regular document, a Java document has as minimum two sections - pr
 # How to remove all comments from sources
 Sometimes it is very useful to remove totally all comments from sources, such possibility included into JCP and can be activated with either a special flag or command line switcher. The example below shows how to remove all comments with CLI use:
 ```
-java -jar ./jcp-7.2.1.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
+java -jar ./jcp-7.3.0.jar --i:/sourceFolder --o:/resultFolder -ef:none --r
 ``` 
 
