@@ -9,7 +9,7 @@ Just add the snippet into pom.xml
         <plugin>
             <groupId>com.igormaznitsa</groupId>
             <artifactId>jcp</artifactId>
-            <version>7.3.0</version>
+            <version>7.3.1-SNAPSHOT</version>
             <executions>
                 <execution>
                     <id>preprocessSources</id>
