@@ -60,7 +60,6 @@ public class OperatorNOTTest extends AbstractOperatorTest {
   @Override
   public void testExecution_PreprocessorException() throws Exception {
     assertPreprocessorException("!");
-//TODO        assertIllegalStateException("2!");
     assertPreprocessorException("!\"test\"");
     assertPreprocessorException("!3.2");
   }

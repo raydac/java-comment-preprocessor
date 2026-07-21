@@ -1,0 +1,29 @@
+## 1. Implementation Progress
+- Added comprehensive user manual at assets/manual.md (document v1.0) covering project purpose, CLI, Maven/Gradle integration, all directives, functions, and processing phases.
+
+## 2. Architecture & Technical Discoveries
+- JCP uses two-pass processing: global phase (//#global, //#_if, //#excludeif) then preprocessing phase (all other directives).
+- Directive prefix is //# inside comments; macros use /*$expression$*/ form.
+- Legacy README references SRV_CUR_FILE/SRV_OUT_DIR; actual vars are jcp.src.name and jcp.dst.dir.
+- Gradle plugin id: com.igormaznitsa.jcp; task name: preprocess. Maven goal: preprocess on com.igormaznitsa:jcp.
+
+## 3. Technical Debt & Refactoring
+- README still uses outdated SRV_* variable names; manual.md documents correct names.
+- FlushDirectiveHandler and NoAutoFlushHandler lack execution tests (TODO in tests).
+
+## 4. Current Work In Progress
+- (none)
+
+## 5. Known Issues & Limitations
+- Published release is 7.3.0; development version in pom is 7.3.1-SNAPSHOT.
+
+## 6. Open Questions & Pending Decisions
+- (none)
+
+## 7. Useful References
+- User manual: assets/manual.md
+- CLI help: java -jar jcp.jar /H
+- Maven plugin site: https://raydac.github.io/jcp-maven-plugin-site/index.html
+
+## 8. User Advice and Recommendations
+- User requested manual in assets/ with sections: purpose, integration (CLI/Maven/Gradle), directives with phases, functions. Plain English, well formatted.

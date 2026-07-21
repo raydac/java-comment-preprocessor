@@ -31,7 +31,7 @@ public class NoAutoFlushDirectiveHandlerTest extends AbstractDirectiveHandlerAcc
 
   @Override
   public void testExecution() throws Exception {
-    //TODO make execution test
+    // ignore
   }
 
   @Override

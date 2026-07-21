@@ -62,7 +62,6 @@ public class OperatorSUBTest extends AbstractOperatorTest {
   @Override
   public void testExecution_PreprocessorException() throws Exception {
     assertPreprocessorException("-");
-//TODO        assertIllegalStateException("1-");
     assertPreprocessorException("1-\"test\"");
     assertPreprocessorException("1-true");
     assertPreprocessorException("true-1");
