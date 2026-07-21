@@ -1,5 +1,6 @@
 ## 1. Implementation Progress
-- Added comprehensive user manual at assets/manual.md (document v1.0) covering project purpose, CLI, Maven/Gradle integration, all directives, functions, and processing phases.
+- Expanded prefix/postfix section (doc v1.2).
+- Added Apache Ant integration section 2.4 (doc v1.3).
 
 ## 2. Architecture & Technical Discoveries
 - JCP uses two-pass processing: global phase (//#global, //#_if, //#excludeif) then preprocessing phase (all other directives).
